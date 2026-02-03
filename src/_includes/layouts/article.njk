@@ -1,0 +1,14 @@
+---
+layout: layouts/base.njk
+---
+<article class="article">
+  <header class="article-header">
+    <h1 class="article-title">{{ title }}</h1>
+    {% if description %}
+    <p class="article-description">{{ description }}</p>
+    {% endif %}
+  </header>
+  <div class="article-body">
+    {{ content | safe }}
+  </div>
+</article>

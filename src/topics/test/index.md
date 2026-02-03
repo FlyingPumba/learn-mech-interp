@@ -3,8 +3,6 @@ title: Test Article
 description: A minimal test article to verify the build and deployment pipeline
 ---
 
-# Test Article
-
 This is a test article to verify:
 
 1. The Eleventy build completes successfully
