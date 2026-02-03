@@ -31,11 +31,11 @@ Decimal phases appear between their surrounding integers in numeric order.
   2. Pushing to main triggers a GitHub Actions workflow that deploys the site to GitHub Pages without manual intervention
   3. A test article is accessible at its thematic URL path (e.g., `/topics/test/`) on the live GitHub Pages site
   4. The thematic folder structure exists and new content files placed in `/topics/<name>/` automatically build to the correct output path
-**Plans**: TBD
+**Plans**: 2 plans
 
 Plans:
-- [ ] 01-01: TBD
-- [ ] 01-02: TBD
+- [ ] 01-01-PLAN.md - Initialize Eleventy project with thematic folder structure
+- [ ] 01-02-PLAN.md - GitHub Actions deployment workflow and verification
 
 ### Phase 2: Template System & Design
 **Goal**: All pages inherit from a shared layout system with Distill.pub-inspired academic design, responsive across desktop and mobile, so that adding new articles requires only a Markdown file with front matter
@@ -139,7 +139,7 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Foundation & Deployment | 0/TBD | Not started | - |
+| 1. Foundation & Deployment | 0/2 | Ready to execute | - |
 | 2. Template System & Design | 0/TBD | Not started | - |
 | 3. Content Rendering Engine | 0/TBD | Not started | - |
 | 4. Content Authoring & Pilot Articles | 0/TBD | Not started | - |
