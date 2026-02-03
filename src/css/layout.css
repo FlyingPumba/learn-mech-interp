@@ -83,7 +83,8 @@ main {
 /* Desktop breakpoint (1200px+) */
 @media (min-width: 1200px) {
   :root {
-    --font-size-h1: 3rem;
+    /* Reduced h1 for better proportion - Distill-style */
+    --font-size-h1: 2.25rem;
     --font-size-h2: 1.75rem;
     --font-size-h3: 1.375rem;
   }
