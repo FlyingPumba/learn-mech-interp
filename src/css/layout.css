@@ -94,3 +94,33 @@ main {
     padding-bottom: var(--spacing-section, 4rem);
   }
 }
+
+/* Wide screen breakpoint (1400px+) */
+/* Prepares layout for future margin notes - Distill's approach */
+/* Content stays centered with room for margin columns on sides */
+@media (min-width: 1400px) {
+  .container {
+    max-width: 1400px;
+  }
+
+  /* Article layout: centered content with margin room */
+  .article {
+    display: grid;
+    grid-template-columns: 1fr minmax(auto, var(--content-width-wide, 80ch)) 1fr;
+    gap: 0;
+  }
+
+  .article > * {
+    grid-column: 2;
+  }
+
+  .article-header {
+    grid-column: 2;
+  }
+
+  .article-body {
+    grid-column: 2;
+  }
+
+  /* Future: margin notes will use grid-column: 3 */
+}
