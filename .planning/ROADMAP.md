@@ -38,7 +38,7 @@ Plans:
 - [x] 01-02-PLAN.md - GitHub Actions deployment workflow and verification
 
 ### Phase 2: Template System & Design
-**Goal**: All pages inherit from a shared layout system with Distill.pub-inspired academic design, responsive across desktop and mobile, so that adding new articles requires only a Markdown file with front matter
+**Goal**: All pages inherit from a shared layout system with polished, modern academic design, responsive across desktop and mobile, so that adding new articles requires only a Markdown file with front matter
 **Depends on**: Phase 1
 **Requirements**: INFR-03, INFR-06, NAV-01, CONT-11, DSGN-01, DSGN-04
 **Success Criteria** (what must be TRUE):
@@ -47,11 +47,13 @@ Plans:
   3. The site layout works on desktop (1200px+) and mobile (320px+) without horizontal scrolling or overlapping elements
   4. All pages use semantic HTML elements (`<article>`, `<nav>`, `<main>`, `<section>`) with proper heading hierarchy
   5. CSS custom properties control all theme values (colors, spacing, fonts) from a single location
-**Plans**: 2 plans
+  6. Site feels modern and polished with intentional visual design (not plain/default styling)
+**Plans**: 3 plans
 
 Plans:
-- [ ] 02-01-PLAN.md - CSS design system with custom properties and responsive styles
-- [ ] 02-02-PLAN.md - Template system with partials and visual verification
+- [x] 02-01-PLAN.md - CSS design system with custom properties and responsive styles
+- [x] 02-02-PLAN.md - Template system with partials and visual verification
+- [x] 02-03-PLAN.md - Visual polish with collaborative design research
 
 ### Phase 3: Content Rendering Engine
 **Goal**: The article template can render all content types needed for MI educational material -- math equations, code blocks, figures with captions, paper citations with hover details, margin notes, and collapsible prompts
@@ -139,7 +141,7 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Foundation & Deployment | 2/2 | Complete | 2026-02-03 |
-| 2. Template System & Design | 0/2 | Not started | - |
+| 2. Template System & Design | 3/3 | Complete | 2026-02-03 |
 | 3. Content Rendering Engine | 0/TBD | Not started | - |
 | 4. Content Authoring & Pilot Articles | 0/TBD | Not started | - |
 | 5. Navigation & Information Architecture | 0/TBD | Not started | - |
