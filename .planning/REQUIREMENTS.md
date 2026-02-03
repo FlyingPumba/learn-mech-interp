@@ -7,11 +7,11 @@
 
 ### Infrastructure
 
-- [ ] **INFR-01**: Site builds to fully static HTML/CSS/JS deployable on GitHub Pages
-- [ ] **INFR-02**: Eleventy static site generator with Nunjucks templating for DRY layouts
+- [x] **INFR-01**: Site builds to fully static HTML/CSS/JS deployable on GitHub Pages
+- [x] **INFR-02**: Eleventy static site generator with Nunjucks templating for DRY layouts
 - [ ] **INFR-03**: Shared base layout (header, footer, navigation) inherited by all pages
-- [ ] **INFR-04**: Thematic folder structure for content (e.g., `/topics/probing/`, `/topics/steering/`)
-- [ ] **INFR-05**: GitHub Actions CI/CD pipeline deploying to GitHub Pages on push
+- [x] **INFR-04**: Thematic folder structure for content (e.g., `/topics/probing/`, `/topics/steering/`)
+- [x] **INFR-05**: GitHub Actions CI/CD pipeline deploying to GitHub Pages on push
 - [ ] **INFR-06**: CSS custom properties (variables) for theming from day one
 
 ### Navigation
@@ -99,11 +99,11 @@
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| INFR-01 | Phase 1 | Pending |
-| INFR-02 | Phase 1 | Pending |
+| INFR-01 | Phase 1 | Complete |
+| INFR-02 | Phase 1 | Complete |
 | INFR-03 | Phase 2 | Pending |
-| INFR-04 | Phase 1 | Pending |
-| INFR-05 | Phase 1 | Pending |
+| INFR-04 | Phase 1 | Complete |
+| INFR-05 | Phase 1 | Complete |
 | INFR-06 | Phase 2 | Pending |
 | NAV-01 | Phase 2 | Pending |
 | NAV-02 | Phase 5 | Pending |
