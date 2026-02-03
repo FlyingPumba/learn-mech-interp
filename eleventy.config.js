@@ -6,6 +6,9 @@ export default function(eleventyConfig) {
   // Add base plugin for path prefix support on GitHub Pages
   eleventyConfig.addPlugin(EleventyHtmlBasePlugin);
 
+  // Pass through CSS files to _site/css/
+  eleventyConfig.addPassthroughCopy("src/css");
+
   return {
     dir: {
       input: "src",

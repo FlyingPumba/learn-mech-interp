@@ -1,0 +1,95 @@
+/* Layout Styles - Responsive Container and Content
+ * Mobile-first approach with min-width breakpoints
+ * Uses CSS custom properties from variables.css
+ */
+
+/* Container - centers content with max-width */
+.container {
+  width: 100%;
+  max-width: var(--container-max-width, 1200px);
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: var(--container-padding, 1.5rem);
+  padding-right: var(--container-padding, 1.5rem);
+}
+
+/* Main content area - ensures footer stays at bottom */
+main {
+  min-height: calc(100vh - 200px);
+  padding-top: var(--spacing-lg, 1.5rem);
+  padding-bottom: var(--spacing-2xl, 3rem);
+}
+
+/* Article body - optimal reading width (60-75 chars) */
+.article-body {
+  max-width: var(--content-width, 65ch);
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: var(--container-padding, 1.5rem);
+  padding-right: var(--container-padding, 1.5rem);
+}
+
+/* Wide content - for figures, code blocks, tables */
+.wide {
+  max-width: var(--content-width-wide, 80ch);
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Full width content - edge to edge */
+.full-width {
+  width: 100%;
+  max-width: none;
+}
+
+/* Section spacing */
+.section {
+  margin-bottom: var(--spacing-section, 4rem);
+}
+
+/* Prose container - centered readable content */
+.prose {
+  max-width: var(--content-width, 65ch);
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Stack layout - vertical spacing between children */
+.stack > * + * {
+  margin-top: var(--spacing-md, 1rem);
+}
+
+.stack-lg > * + * {
+  margin-top: var(--spacing-lg, 1.5rem);
+}
+
+/* Tablet breakpoint (768px+) */
+@media (min-width: 768px) {
+  :root {
+    --container-padding: var(--spacing-xl, 2rem);
+  }
+
+  main {
+    padding-top: var(--spacing-xl, 2rem);
+    padding-bottom: var(--spacing-3xl, 4rem);
+  }
+
+  .article-body {
+    padding-left: 0;
+    padding-right: 0;
+  }
+}
+
+/* Desktop breakpoint (1200px+) */
+@media (min-width: 1200px) {
+  :root {
+    --font-size-h1: 3rem;
+    --font-size-h2: 1.75rem;
+    --font-size-h3: 1.375rem;
+  }
+
+  main {
+    padding-top: var(--spacing-2xl, 3rem);
+    padding-bottom: var(--spacing-section, 4rem);
+  }
+}

@@ -1,0 +1,193 @@
+/* Component Styles - Reusable UI Components
+ * Uses CSS custom properties from variables.css
+ */
+
+/* Site Header */
+.site-header {
+  padding: var(--spacing-md, 1rem) 0;
+  border-bottom: 1px solid var(--color-border, rgba(0, 0, 0, 0.1));
+}
+
+/* Site Navigation */
+.site-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  max-width: var(--container-max-width, 1200px);
+  margin: 0 auto;
+  padding-left: var(--container-padding, 1.5rem);
+  padding-right: var(--container-padding, 1.5rem);
+}
+
+/* Site Logo */
+.site-logo {
+  font-family: var(--font-heading, serif);
+  font-size: 1.25rem;
+  font-weight: 400;
+  color: var(--color-text, rgba(0, 0, 0, 0.87));
+  text-decoration: none;
+}
+
+.site-logo:hover {
+  color: var(--color-link, #0066cc);
+}
+
+/* Navigation Links */
+.nav-links {
+  display: flex;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  gap: var(--spacing-lg, 1.5rem);
+}
+
+.nav-links a {
+  color: var(--color-text-secondary, rgba(0, 0, 0, 0.6));
+  text-decoration: none;
+  font-size: var(--font-size-small, 0.875rem);
+  transition: color var(--transition-fast, 150ms ease);
+}
+
+.nav-links a:hover {
+  color: var(--color-text, rgba(0, 0, 0, 0.87));
+}
+
+/* Site Footer */
+.site-footer {
+  padding: var(--spacing-xl, 2rem) 0;
+  border-top: 1px solid var(--color-border, rgba(0, 0, 0, 0.1));
+  color: var(--color-text-secondary, rgba(0, 0, 0, 0.6));
+  font-size: var(--font-size-small, 0.875rem);
+}
+
+.site-footer .container {
+  text-align: center;
+}
+
+/* Article */
+.article {
+  max-width: var(--content-width-wide, 80ch);
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: var(--container-padding, 1.5rem);
+  padding-right: var(--container-padding, 1.5rem);
+}
+
+/* Article Header */
+.article-header {
+  margin-bottom: var(--spacing-2xl, 3rem);
+  padding-bottom: var(--spacing-lg, 1.5rem);
+  border-bottom: 1px solid var(--color-border, rgba(0, 0, 0, 0.1));
+}
+
+/* Article Title */
+.article-title {
+  font-size: var(--font-size-h1, 2.5rem);
+  margin-top: 0;
+  margin-bottom: var(--spacing-md, 1rem);
+}
+
+/* Article Description/Subtitle */
+.article-description {
+  font-size: 1.125rem;
+  color: var(--color-text-secondary, rgba(0, 0, 0, 0.6));
+  line-height: var(--line-height-body, 1.6);
+  margin-bottom: 0;
+}
+
+/* Article Meta (date, author, etc.) */
+.article-meta {
+  font-size: var(--font-size-small, 0.875rem);
+  color: var(--color-text-muted, rgba(0, 0, 0, 0.4));
+  margin-top: var(--spacing-md, 1rem);
+}
+
+/* Article Body */
+.article .article-body {
+  padding-left: 0;
+  padding-right: 0;
+}
+
+/* Topic Card (for topic listing pages) */
+.topic-card {
+  padding: var(--spacing-lg, 1.5rem);
+  border: 1px solid var(--color-border, rgba(0, 0, 0, 0.1));
+  border-radius: var(--radius-lg, 8px);
+  margin-bottom: var(--spacing-md, 1rem);
+  transition: border-color var(--transition-base, 200ms ease);
+}
+
+.topic-card:hover {
+  border-color: var(--color-border-strong, rgba(0, 0, 0, 0.2));
+}
+
+.topic-card h2,
+.topic-card h3 {
+  margin-top: 0;
+}
+
+.topic-card a {
+  text-decoration: none;
+}
+
+.topic-card a:hover {
+  text-decoration: underline;
+}
+
+/* Button */
+.btn {
+  display: inline-block;
+  padding: var(--spacing-sm, 0.5rem) var(--spacing-md, 1rem);
+  font-size: var(--font-size-small, 0.875rem);
+  font-family: var(--font-body, sans-serif);
+  color: var(--color-link, #0066cc);
+  background: transparent;
+  border: 1px solid var(--color-link, #0066cc);
+  border-radius: var(--radius-md, 4px);
+  text-decoration: none;
+  cursor: pointer;
+  transition: all var(--transition-fast, 150ms ease);
+}
+
+.btn:hover {
+  background: var(--color-link, #0066cc);
+  color: var(--color-background, #ffffff);
+}
+
+/* Skip Link (accessibility) */
+.skip-link {
+  position: absolute;
+  top: -40px;
+  left: 0;
+  background: var(--color-text, rgba(0, 0, 0, 0.87));
+  color: var(--color-background, #ffffff);
+  padding: var(--spacing-sm, 0.5rem) var(--spacing-md, 1rem);
+  z-index: 100;
+  transition: top var(--transition-fast, 150ms ease);
+}
+
+.skip-link:focus {
+  top: 0;
+}
+
+/* Responsive adjustments for components */
+@media (min-width: 768px) {
+  .site-nav {
+    padding-left: var(--spacing-xl, 2rem);
+    padding-right: var(--spacing-xl, 2rem);
+  }
+
+  .article {
+    padding-left: 0;
+    padding-right: 0;
+  }
+
+  .article-header {
+    text-align: center;
+    margin-bottom: var(--spacing-3xl, 4rem);
+  }
+
+  .article-description {
+    font-size: 1.25rem;
+  }
+}
