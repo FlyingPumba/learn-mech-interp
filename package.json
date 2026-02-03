@@ -1,0 +1,16 @@
+{
+  "name": "learn-mech-interp",
+  "version": "1.0.0",
+  "description": "A static website for learning Mechanistic Interpretability",
+  "type": "module",
+  "scripts": {
+    "build": "eleventy",
+    "start": "eleventy --serve"
+  },
+  "keywords": ["mechanistic-interpretability", "machine-learning", "eleventy"],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@11ty/eleventy": "^3.1.2"
+  }
+}

@@ -1,0 +1,8 @@
+# Dependencies
+node_modules/
+
+# Eleventy build output
+_site/
+
+# OS files
+.DS_Store
