@@ -16,8 +16,8 @@
 /* Main content area - ensures footer stays at bottom */
 main {
   min-height: calc(100vh - 200px);
-  padding-top: var(--spacing-lg, 1.5rem);
-  padding-bottom: var(--spacing-2xl, 3rem);
+  padding-top: 0;
+  padding-bottom: var(--spacing-xl, 2rem);
 }
 
 /* Article body - optimal reading width (60-75 chars) */
@@ -70,8 +70,8 @@ main {
   }
 
   main {
-    padding-top: var(--spacing-xl, 2rem);
-    padding-bottom: var(--spacing-3xl, 4rem);
+    padding-top: 0;
+    padding-bottom: var(--spacing-2xl, 3rem);
   }
 
   .article-body {
@@ -90,8 +90,8 @@ main {
   }
 
   main {
-    padding-top: var(--spacing-2xl, 3rem);
-    padding-bottom: var(--spacing-section, 4rem);
+    padding-top: 0;
+    padding-bottom: var(--spacing-3xl, 4rem);
   }
 }
 
