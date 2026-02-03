@@ -5,33 +5,33 @@
 See: .planning/PROJECT.md (updated 2026-02-02)
 
 **Core value:** People can learn Mechanistic Interpretability through well-structured, readable articles that build from foundations to frontier research, with easy navigation between topics and direct links to source papers.
-**Current focus:** Phase 2 in progress - CSS Design System complete
+**Current focus:** Phase 2 in progress - Template System complete, visual polish next
 
 ## Current Position
 
 Phase: 2 of 7 (Template System & Design)
-Plan: 1 of 3 in current phase
+Plan: 2 of 3 in current phase
 Status: In progress
-Last activity: 2026-02-03 - Completed 02-01-PLAN.md (CSS Design System)
+Last activity: 2026-02-03 - Completed 02-02-PLAN.md (Template Hierarchy)
 
-Progress: [===.......] ~20%
+Progress: [====......] ~27%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 3
-- Average duration: 2min 9s
-- Total execution time: 0.11 hours
+- Total plans completed: 4
+- Average duration: 2min 45s
+- Total execution time: 0.18 hours
 
 **By Phase:**
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
 | 01-foundation-deployment | 2 | 3min 28s | 1min 44s |
-| 02-template-system-and-design | 1 | 3min | 3min |
+| 02-template-system-and-design | 2 | 8min | 4min |
 
 **Recent Trend:**
-- Last 5 plans: 01-01 (2min 28s), 01-02 (~1min), 02-01 (3min)
+- Last 5 plans: 01-01 (2min 28s), 01-02 (~1min), 02-01 (3min), 02-02 (~5min)
 - Trend: Stable
 
 *Updated after each plan completion*
@@ -52,6 +52,9 @@ Recent decisions affecting current work:
 - [02-01]: 42 CSS custom properties for complete theming control (dark mode, accessibility ready)
 - [02-01]: System font stacks (Charter serif, system sans) for zero web font cost
 - [02-01]: 65ch content width based on 60-75 char optimal reading research
+- [02-02]: Partials directory for shared components (header.njk, footer.njk)
+- [02-02]: Layout chaining: article.njk extends base.njk for DRY structure
+- [02-02]: Article title rendered by layout, not content files
 
 ### Pending Todos
 
@@ -65,18 +68,21 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-02-03
-Stopped at: Completed 02-01-PLAN.md - CSS Design System
+Stopped at: Completed 02-02-PLAN.md - Template Hierarchy
 Resume file: None
 
 ## Phase 2 Progress
 
 Template System & Design phase in progress:
 - [x] 02-01: CSS Design System (42 custom properties, responsive breakpoints)
-- [ ] 02-02: Template Hierarchy (base.njk update, article.njk, page.njk, partials)
-- [ ] 02-03: Homepage & Navigation (topic listing, navigation structure)
+- [x] 02-02: Template Hierarchy (header/footer partials, article layout chaining)
+- [ ] 02-03: Visual Polish (navigation styling, typography refinement)
 
 Key artifacts created:
 - src/css/variables.css - Design tokens
 - src/css/base.css - Reset and typography
 - src/css/layout.css - Responsive layout
 - src/css/components.css - UI components
+- src/_includes/partials/header.njk - Site header with navigation
+- src/_includes/partials/footer.njk - Site footer
+- src/_includes/layouts/article.njk - Article layout extending base
