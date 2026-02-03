@@ -47,12 +47,11 @@ Plans:
   3. The site layout works on desktop (1200px+) and mobile (320px+) without horizontal scrolling or overlapping elements
   4. All pages use semantic HTML elements (`<article>`, `<nav>`, `<main>`, `<section>`) with proper heading hierarchy
   5. CSS custom properties control all theme values (colors, spacing, fonts) from a single location
-**Plans**: TBD
+**Plans**: 2 plans
 
 Plans:
-- [ ] 02-01: TBD
-- [ ] 02-02: TBD
-- [ ] 02-03: TBD
+- [ ] 02-01-PLAN.md - CSS design system with custom properties and responsive styles
+- [ ] 02-02-PLAN.md - Template system with partials and visual verification
 
 ### Phase 3: Content Rendering Engine
 **Goal**: The article template can render all content types needed for MI educational material -- math equations, code blocks, figures with captions, paper citations with hover details, margin notes, and collapsible prompts
@@ -140,7 +139,7 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Foundation & Deployment | 2/2 | Complete | 2026-02-03 |
-| 2. Template System & Design | 0/TBD | Not started | - |
+| 2. Template System & Design | 0/2 | Not started | - |
 | 3. Content Rendering Engine | 0/TBD | Not started | - |
 | 4. Content Authoring & Pilot Articles | 0/TBD | Not started | - |
 | 5. Navigation & Information Architecture | 0/TBD | Not started | - |
