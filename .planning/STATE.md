@@ -5,32 +5,32 @@
 See: .planning/PROJECT.md (updated 2026-02-02)
 
 **Core value:** People can learn Mechanistic Interpretability through well-structured, readable articles that build from foundations to frontier research, with easy navigation between topics and direct links to source papers.
-**Current focus:** Phase 1 - Foundation & Deployment
+**Current focus:** Phase 1 Complete - Ready for Phase 2
 
 ## Current Position
 
-Phase: 1 of 7 (Foundation & Deployment)
-Plan: 1 of TBD in current phase
-Status: In progress
-Last activity: 2026-02-03 - Completed 01-01-PLAN.md (Initialize Eleventy project)
+Phase: 1 of 7 (Foundation & Deployment) - COMPLETE
+Plan: 2 of 2 in current phase
+Status: Phase complete
+Last activity: 2026-02-03 - Completed 01-02-PLAN.md (GitHub Actions deployment)
 
-Progress: [=.........] ~5%
+Progress: [==........] ~15%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 1
-- Average duration: 2min 28s
-- Total execution time: 0.04 hours
+- Total plans completed: 2
+- Average duration: 1min 44s
+- Total execution time: 0.06 hours
 
 **By Phase:**
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
-| 01-foundation-deployment | 1 | 2min 28s | 2min 28s |
+| 01-foundation-deployment | 2 | 3min 28s | 1min 44s |
 
 **Recent Trend:**
-- Last 5 plans: 01-01 (2min 28s)
+- Last 5 plans: 01-01 (2min 28s), 01-02 (~1min)
 - Trend: -
 
 *Updated after each plan completion*
@@ -46,6 +46,8 @@ Recent decisions affecting current work:
 - [Roadmap]: Content authoring phase (Phase 4) deliberately placed after rendering engine (Phase 3) so pilot articles can validate all content types
 - [01-01]: Use EleventyHtmlBasePlugin with plain absolute URLs instead of url filter to avoid double pathPrefix
 - [01-01]: Directory data files (topics.11tydata.js) for layout/permalink inheritance pattern established
+- [01-02]: Use official GitHub Pages actions at v4+ (older versions deprecated)
+- [01-02]: Node.js 20 with npm caching for faster CI builds
 
 ### Pending Todos
 
@@ -59,5 +61,16 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-02-03
-Stopped at: Completed 01-01-PLAN.md
+Stopped at: Completed 01-02-PLAN.md - Phase 1 complete
 Resume file: None
+
+## Phase 1 Completion Summary
+
+Foundation & Deployment phase complete with:
+- Eleventy 3.x build infrastructure (ESM config)
+- Nunjucks templating with base layout
+- Thematic /topics/ folder structure with directory data
+- GitHub Actions CI/CD pipeline
+- GitHub Pages deployment verified
+
+Ready to begin Phase 2: Template System & Design

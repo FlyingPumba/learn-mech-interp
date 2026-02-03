@@ -12,7 +12,7 @@ This roadmap delivers a static educational website for Mechanistic Interpretabil
 
 Decimal phases appear between their surrounding integers in numeric order.
 
-- [ ] **Phase 1: Foundation & Deployment** - Eleventy scaffolding, build pipeline, and GitHub Pages deployment with a single test article
+- [x] **Phase 1: Foundation & Deployment** - Eleventy scaffolding, build pipeline, and GitHub Pages deployment with a single test article
 - [ ] **Phase 2: Template System & Design** - DRY layout system, responsive design, academic typography, and CSS theming
 - [ ] **Phase 3: Content Rendering Engine** - KaTeX math, code highlighting, figures, citations, margin notes, and interactive elements
 - [ ] **Phase 4: Content Authoring & Pilot Articles** - Typst-to-article conversion workflow validated with 2-3 representative pilot articles
@@ -34,8 +34,8 @@ Decimal phases appear between their surrounding integers in numeric order.
 **Plans**: 2 plans
 
 Plans:
-- [ ] 01-01-PLAN.md - Initialize Eleventy project with thematic folder structure
-- [ ] 01-02-PLAN.md - GitHub Actions deployment workflow and verification
+- [x] 01-01-PLAN.md - Initialize Eleventy project with thematic folder structure
+- [x] 01-02-PLAN.md - GitHub Actions deployment workflow and verification
 
 ### Phase 2: Template System & Design
 **Goal**: All pages inherit from a shared layout system with Distill.pub-inspired academic design, responsive across desktop and mobile, so that adding new articles requires only a Markdown file with front matter
@@ -139,7 +139,7 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Foundation & Deployment | 0/2 | Ready to execute | - |
+| 1. Foundation & Deployment | 2/2 | Complete | 2026-02-03 |
 | 2. Template System & Design | 0/TBD | Not started | - |
 | 3. Content Rendering Engine | 0/TBD | Not started | - |
 | 4. Content Authoring & Pilot Articles | 0/TBD | Not started | - |
