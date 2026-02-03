@@ -1,0 +1,148 @@
+# Roadmap: Learn Mechanistic Interpretability
+
+## Overview
+
+This roadmap delivers a static educational website for Mechanistic Interpretability, built with Eleventy and deployed on GitHub Pages. The journey starts with deployment infrastructure, builds up a template system and content rendering engine, validates the Typst-to-article conversion workflow on pilot articles, adds navigation and information architecture, migrates all course content, then layers on search and polish. Each phase delivers a coherent, verifiable capability that unblocks the next.
+
+## Phases
+
+**Phase Numbering:**
+- Integer phases (1, 2, 3): Planned milestone work
+- Decimal phases (2.1, 2.2): Urgent insertions (marked with INSERTED)
+
+Decimal phases appear between their surrounding integers in numeric order.
+
+- [ ] **Phase 1: Foundation & Deployment** - Eleventy scaffolding, build pipeline, and GitHub Pages deployment with a single test article
+- [ ] **Phase 2: Template System & Design** - DRY layout system, responsive design, academic typography, and CSS theming
+- [ ] **Phase 3: Content Rendering Engine** - KaTeX math, code highlighting, figures, citations, margin notes, and interactive elements
+- [ ] **Phase 4: Content Authoring & Pilot Articles** - Typst-to-article conversion workflow validated with 2-3 representative pilot articles
+- [ ] **Phase 5: Navigation & Information Architecture** - Sidebar, homepage, learning path, breadcrumbs, TOC, and article metadata indicators
+- [ ] **Phase 6: Search & Glossary** - Pagefind client-side search and curated MI glossary page
+- [ ] **Phase 7: Polish & Accessibility** - Dark mode, keyboard navigation, accessibility features, and reading time estimates
+
+## Phase Details
+
+### Phase 1: Foundation & Deployment
+**Goal**: A minimal Eleventy site builds and deploys to GitHub Pages automatically on push, proving the entire pipeline works before any real content is added
+**Depends on**: Nothing (first phase)
+**Requirements**: INFR-01, INFR-02, INFR-04, INFR-05
+**Success Criteria** (what must be TRUE):
+  1. Running the build command produces a fully static `_site/` directory with valid HTML, CSS, and JS files
+  2. Pushing to main triggers a GitHub Actions workflow that deploys the site to GitHub Pages without manual intervention
+  3. A test article is accessible at its thematic URL path (e.g., `/topics/test/`) on the live GitHub Pages site
+  4. The thematic folder structure exists and new content files placed in `/topics/<name>/` automatically build to the correct output path
+**Plans**: TBD
+
+Plans:
+- [ ] 01-01: TBD
+- [ ] 01-02: TBD
+
+### Phase 2: Template System & Design
+**Goal**: All pages inherit from a shared layout system with Distill.pub-inspired academic design, responsive across desktop and mobile, so that adding new articles requires only a Markdown file with front matter
+**Depends on**: Phase 1
+**Requirements**: INFR-03, INFR-06, NAV-01, CONT-11, DSGN-01, DSGN-04
+**Success Criteria** (what must be TRUE):
+  1. Changing the header or footer in one template file propagates to every page on the site
+  2. Articles render with clean academic typography: readable font at ~18px, 60-75 character line width, generous whitespace
+  3. The site layout works on desktop (1200px+) and mobile (320px+) without horizontal scrolling or overlapping elements
+  4. All pages use semantic HTML elements (`<article>`, `<nav>`, `<main>`, `<section>`) with proper heading hierarchy
+  5. CSS custom properties control all theme values (colors, spacing, fonts) from a single location
+**Plans**: TBD
+
+Plans:
+- [ ] 02-01: TBD
+- [ ] 02-02: TBD
+- [ ] 02-03: TBD
+
+### Phase 3: Content Rendering Engine
+**Goal**: The article template can render all content types needed for MI educational material -- math equations, code blocks, figures with captions, paper citations with hover details, margin notes, and collapsible prompts
+**Depends on**: Phase 2
+**Requirements**: CONT-01, CONT-02, CONT-03, CONT-04, CONT-05, CONT-06, CONT-07, CONT-08, CONT-09, CONT-10, CONT-12
+**Success Criteria** (what must be TRUE):
+  1. Inline and display math renders correctly at build time (no client-side KaTeX JS needed) and equations do not overflow on mobile viewports
+  2. Paper references appear as numbered inline citations; hovering on desktop shows full citation details (title, authors, year, venue); tapping on mobile expands the citation
+  3. Margin notes display in the margin on wide screens and collapse to expandable inline notes on narrow screens
+  4. Code blocks render with Python/PyTorch syntax highlighting, and figures display with proper `<figure>`/`<figcaption>` elements and alt text
+  5. "Pause and think" prompts appear as collapsible `<details>`/`<summary>` blocks that readers can expand
+**Plans**: TBD
+
+Plans:
+- [ ] 03-01: TBD
+- [ ] 03-02: TBD
+- [ ] 03-03: TBD
+
+### Phase 4: Content Authoring & Pilot Articles
+**Goal**: The Typst-to-article conversion workflow is validated end-to-end with 2-3 representative pilot articles spanning different difficulty levels, proving that the full course can be converted at quality
+**Depends on**: Phase 3
+**Requirements**: AUTH-01, AUTH-02, AUTH-03, AUTH-04, AUTH-05, AUTH-06
+**Success Criteria** (what must be TRUE):
+  1. At least 2-3 pilot articles exist as readable long-form content (not bullet-point fragments), each reorganized by theme rather than by lecture week
+  2. Each article has complete front matter (title, description, prerequisites, difficulty, block/category) and the build system uses this metadata
+  3. Mentions of concepts covered in other articles link directly to those articles (cross-article concept linking works)
+  4. Paper references are embedded throughout pilot articles with working links to source papers in new tabs
+  5. Course diagrams appear in pilot articles with descriptive alt text and proper figure/caption markup
+**Plans**: TBD
+
+Plans:
+- [ ] 04-01: TBD
+- [ ] 04-02: TBD
+- [ ] 04-03: TBD
+
+### Phase 5: Navigation & Information Architecture
+**Goal**: Users can navigate the full site through multiple paths -- a sidebar topic hierarchy, a guided learning path on the homepage, breadcrumbs, prev/next links, and in-page table of contents -- without getting lost
+**Depends on**: Phase 4
+**Requirements**: NAV-02, NAV-03, NAV-04, NAV-05, NAV-06, NAV-07, NAV-08, NAV-09, NAV-10
+**Success Criteria** (what must be TRUE):
+  1. A sidebar shows the full topic hierarchy with the current page highlighted, and collapses to a hamburger menu on mobile
+  2. The homepage has a hero section explaining the site, a clear "start here" entry point, and a visual learning path showing suggested reading order through all topics
+  3. Each article shows breadcrumbs (Home > Block > Topic), previous/next links following the learning path, and an auto-generated table of contents fixed on wide screens
+  4. Each article displays prerequisite indicators ("read X first" with links) and a difficulty badge (Foundational / Intermediate / Advanced)
+**Plans**: TBD
+
+Plans:
+- [ ] 05-01: TBD
+- [ ] 05-02: TBD
+- [ ] 05-03: TBD
+
+### Phase 6: Search & Glossary
+**Goal**: Users can find any concept across all articles through full-text search and browse a curated MI glossary, making the site useful as both a learning resource and a reference
+**Depends on**: Phase 5 (needs bulk content for meaningful search testing; glossary data populated alongside content)
+**Requirements**: SRCH-01, SRCH-02, SRCH-03, SRCH-04, SRCH-05
+**Success Criteria** (what must be TRUE):
+  1. Typing a query into the search box returns relevant articles with title, excerpt, and relevance ranking, and the search works offline
+  2. The search index is generated at build time and does not include raw LaTeX or KaTeX HTML markup (keeping index size reasonable)
+  3. A glossary page lists MI terms alphabetically with brief definitions and links to relevant article sections
+**Plans**: TBD
+
+Plans:
+- [ ] 06-01: TBD
+- [ ] 06-02: TBD
+
+### Phase 7: Polish & Accessibility
+**Goal**: The site meets accessibility standards and provides quality-of-life features (dark mode, reading time, keyboard navigation) that make it feel polished and professional
+**Depends on**: Phase 6
+**Requirements**: DSGN-02, DSGN-03, DSGN-05, DSGN-06, DSGN-07
+**Success Criteria** (what must be TRUE):
+  1. Dark mode activates automatically via `prefers-color-scheme` and can be toggled manually; KaTeX rendering, code blocks, and diagrams all display correctly in dark mode
+  2. The site is fully keyboard-navigable with visible focus indicators, and a skip-to-content link appears on Tab for screen reader users
+  3. Each article displays a reading time estimate near the title, calculated from word count at build time
+**Plans**: TBD
+
+Plans:
+- [ ] 07-01: TBD
+- [ ] 07-02: TBD
+
+## Progress
+
+**Execution Order:**
+Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7
+
+| Phase | Plans Complete | Status | Completed |
+|-------|----------------|--------|-----------|
+| 1. Foundation & Deployment | 0/TBD | Not started | - |
+| 2. Template System & Design | 0/TBD | Not started | - |
+| 3. Content Rendering Engine | 0/TBD | Not started | - |
+| 4. Content Authoring & Pilot Articles | 0/TBD | Not started | - |
+| 5. Navigation & Information Architecture | 0/TBD | Not started | - |
+| 6. Search & Glossary | 0/TBD | Not started | - |
+| 7. Polish & Accessibility | 0/TBD | Not started | - |

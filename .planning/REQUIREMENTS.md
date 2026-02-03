@@ -99,58 +99,58 @@
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| INFR-01 | - | Pending |
-| INFR-02 | - | Pending |
-| INFR-03 | - | Pending |
-| INFR-04 | - | Pending |
-| INFR-05 | - | Pending |
-| INFR-06 | - | Pending |
-| NAV-01 | - | Pending |
-| NAV-02 | - | Pending |
-| NAV-03 | - | Pending |
-| NAV-04 | - | Pending |
-| NAV-05 | - | Pending |
-| NAV-06 | - | Pending |
-| NAV-07 | - | Pending |
-| NAV-08 | - | Pending |
-| NAV-09 | - | Pending |
-| NAV-10 | - | Pending |
-| CONT-01 | - | Pending |
-| CONT-02 | - | Pending |
-| CONT-03 | - | Pending |
-| CONT-04 | - | Pending |
-| CONT-05 | - | Pending |
-| CONT-06 | - | Pending |
-| CONT-07 | - | Pending |
-| CONT-08 | - | Pending |
-| CONT-09 | - | Pending |
-| CONT-10 | - | Pending |
-| CONT-11 | - | Pending |
-| CONT-12 | - | Pending |
-| AUTH-01 | - | Pending |
-| AUTH-02 | - | Pending |
-| AUTH-03 | - | Pending |
-| AUTH-04 | - | Pending |
-| AUTH-05 | - | Pending |
-| AUTH-06 | - | Pending |
-| SRCH-01 | - | Pending |
-| SRCH-02 | - | Pending |
-| SRCH-03 | - | Pending |
-| SRCH-04 | - | Pending |
-| SRCH-05 | - | Pending |
-| DSGN-01 | - | Pending |
-| DSGN-02 | - | Pending |
-| DSGN-03 | - | Pending |
-| DSGN-04 | - | Pending |
-| DSGN-05 | - | Pending |
-| DSGN-06 | - | Pending |
-| DSGN-07 | - | Pending |
+| INFR-01 | Phase 1 | Pending |
+| INFR-02 | Phase 1 | Pending |
+| INFR-03 | Phase 2 | Pending |
+| INFR-04 | Phase 1 | Pending |
+| INFR-05 | Phase 1 | Pending |
+| INFR-06 | Phase 2 | Pending |
+| NAV-01 | Phase 2 | Pending |
+| NAV-02 | Phase 5 | Pending |
+| NAV-03 | Phase 5 | Pending |
+| NAV-04 | Phase 5 | Pending |
+| NAV-05 | Phase 5 | Pending |
+| NAV-06 | Phase 5 | Pending |
+| NAV-07 | Phase 5 | Pending |
+| NAV-08 | Phase 5 | Pending |
+| NAV-09 | Phase 5 | Pending |
+| NAV-10 | Phase 5 | Pending |
+| CONT-01 | Phase 3 | Pending |
+| CONT-02 | Phase 3 | Pending |
+| CONT-03 | Phase 3 | Pending |
+| CONT-04 | Phase 3 | Pending |
+| CONT-05 | Phase 3 | Pending |
+| CONT-06 | Phase 3 | Pending |
+| CONT-07 | Phase 3 | Pending |
+| CONT-08 | Phase 3 | Pending |
+| CONT-09 | Phase 3 | Pending |
+| CONT-10 | Phase 3 | Pending |
+| CONT-11 | Phase 2 | Pending |
+| CONT-12 | Phase 3 | Pending |
+| AUTH-01 | Phase 4 | Pending |
+| AUTH-02 | Phase 4 | Pending |
+| AUTH-03 | Phase 4 | Pending |
+| AUTH-04 | Phase 4 | Pending |
+| AUTH-05 | Phase 4 | Pending |
+| AUTH-06 | Phase 4 | Pending |
+| SRCH-01 | Phase 6 | Pending |
+| SRCH-02 | Phase 6 | Pending |
+| SRCH-03 | Phase 6 | Pending |
+| SRCH-04 | Phase 6 | Pending |
+| SRCH-05 | Phase 6 | Pending |
+| DSGN-01 | Phase 2 | Pending |
+| DSGN-02 | Phase 7 | Pending |
+| DSGN-03 | Phase 7 | Pending |
+| DSGN-04 | Phase 2 | Pending |
+| DSGN-05 | Phase 7 | Pending |
+| DSGN-06 | Phase 7 | Pending |
+| DSGN-07 | Phase 7 | Pending |
 
 **Coverage:**
-- v1 requirements: 41 total
-- Mapped to phases: 0
-- Unmapped: 41
+- v1 requirements: 46 total
+- Mapped to phases: 46
+- Unmapped: 0
 
 ---
 *Requirements defined: 2026-02-02*
-*Last updated: 2026-02-02 after initial definition*
+*Last updated: 2026-02-02 after roadmap creation (phase mappings added)*
