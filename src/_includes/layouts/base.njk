@@ -3,31 +3,18 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>{{ title }}</title>
-  <style>
-    /* Minimal inline styles for readability (will be replaced in Phase 2) */
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, sans-serif;
-      line-height: 1.6;
-      max-width: 800px;
-      margin: 0 auto;
-      padding: 2rem 1rem;
-      color: #333;
-    }
-    h1, h2, h3 {
-      line-height: 1.3;
-    }
-    a {
-      color: #0066cc;
-    }
-    main {
-      margin-top: 1rem;
-    }
-  </style>
+  <title>{% if title %}{{ title }} | {% endif %}Learn Mechanistic Interpretability</title>
+  <meta name="description" content="{{ description | default('Learn Mechanistic Interpretability through structured articles covering transformer internals to frontier research.') }}">
+  <link rel="stylesheet" href="/css/variables.css">
+  <link rel="stylesheet" href="/css/base.css">
+  <link rel="stylesheet" href="/css/layout.css">
+  <link rel="stylesheet" href="/css/components.css">
 </head>
 <body>
+  {% include "partials/header.njk" %}
   <main>
     {{ content | safe }}
   </main>
+  {% include "partials/footer.njk" %}
 </body>
 </html>
