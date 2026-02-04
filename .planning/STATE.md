@@ -5,23 +5,23 @@
 See: .planning/PROJECT.md (updated 2026-02-02)
 
 **Core value:** People can learn Mechanistic Interpretability through well-structured, readable articles that build from foundations to frontier research, with easy navigation between topics and direct links to source papers.
-**Current focus:** Phase 3 complete - Content Rendering Engine
+**Current focus:** Phase 4 in progress - Content Authoring & Pilot Articles
 
 ## Current Position
 
-Phase: 3 of 7 (Content Rendering Engine)
-Plan: 2 of 2 in current phase
-Status: Phase complete
-Last activity: 2026-02-03 - Completed 03-02-PLAN.md (Citations, Margin Notes, Collapsible Prompts)
+Phase: 4 of 7 (Content Authoring & Pilot Articles)
+Plan: 1 of 3 in current phase
+Status: In progress
+Last activity: 2026-02-04 - Completed 04-01-PLAN.md (Infrastructure Prep and Attention Mechanism Article)
 
-Progress: [=====.....] ~50%
+Progress: [========..] ~80%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 7
+- Total plans completed: 8
 - Average duration: ~4min
-- Total execution time: ~0.44 hours
+- Total execution time: ~0.51 hours
 
 **By Phase:**
 
@@ -30,10 +30,11 @@ Progress: [=====.....] ~50%
 | 01-foundation-deployment | 2 | 3min 28s | 1min 44s |
 | 02-template-system-and-design | 3 | 23min | ~8min |
 | 03-content-rendering-engine | 2 | 5min 48s | ~3min |
+| 04-content-authoring-pilot-articles | 1 | 3min 45s | 3min 45s |
 
 **Recent Trend:**
-- Last 5 plans: 02-02 (~5min), 02-03 (~15min), 03-01 (2min 38s), 03-02 (3min 10s)
-- Trend: Content rendering plans consistently fast (~3min); shortcode+CSS work is straightforward
+- Last 5 plans: 02-03 (~15min), 03-01 (2min 38s), 03-02 (3min 10s), 04-01 (3min 45s)
+- Trend: First editorial content plan completed in ~4min, below the 2-4x risk estimate
 
 *Updated after each plan completion*
 
@@ -68,6 +69,9 @@ Recent decisions affecting current work:
 - [03-02]: Float+negative-margin for sidenotes within existing grid (simpler than grid-column: 3)
 - [03-02]: CSS-only tooltips with focus-within for mobile accessibility (no JavaScript)
 - [03-02]: Module-scope counters reset via eleventy.before event for --serve mode
+- [04-01]: Blockquote format for definitions (no custom shortcode needed)
+- [04-01]: 11 entries in references.json (conmy2023ioi pre-existed from Phase 3)
+- [04-01]: Sidenotes for supplementary context in articles (low-rank bottleneck, causal masking, etc.)
 
 ### Pending Todos
 
@@ -75,27 +79,25 @@ None yet.
 
 ### Blockers/Concerns
 
-- Phase 4 is highest risk: Typst-to-article conversion is editorial work that may take 2-4x expected time per research findings
+- Phase 4 risk update: First pilot article (Attention Mechanism) completed in ~4min, well under the 2-4x estimate. However, this article had no images. Superposition article (04-02) has 6 diagrams and may take longer.
 - Requirements doc claims 41 requirements but actual count is 46; traceability table corrected during roadmap creation
 
 ## Session Continuity
 
-Last session: 2026-02-03
-Stopped at: Completed 03-02-PLAN.md - Citations, Margin Notes, Collapsible Prompts (Phase 3 complete)
+Last session: 2026-02-04
+Stopped at: Completed 04-01-PLAN.md - Infrastructure Prep and Attention Mechanism Article
 Resume file: None
 
-## Phase 3 Complete
+## Phase 4 Progress
 
-Content Rendering Engine phase complete. All 6 content types operational:
-- [x] 03-01: Math, Code, Figures (KaTeX + PrismJS + figure plugin)
-- [x] 03-02: Citations, Margin Notes, Collapsible Prompts (shortcodes + Tufte CSS + details/summary)
+Content Authoring & Pilot Articles phase in progress:
+- [x] 04-01: Infrastructure Prep and Attention Mechanism Article
+- [ ] 04-02: The Superposition Hypothesis (intermediate, 6 diagrams)
+- [ ] 04-03: Activation Patching and Causal Interventions (advanced, 3 diagrams)
 
-Key artifacts:
-- eleventy.config.js - markdown-it plugins + 3 shortcodes (cite, sidenote, marginnote) with counter reset
-- src/_data/references.json - 5 MI paper citations for inline references
-- src/css/components.css - Citation tooltips, sidenote/marginnote styles, details/summary styles
-- src/css/layout.css - 1400px+ grid with sidenote margin positioning
-- src/css/katex-overrides.css - Mobile overflow fixes for math
-- src/css/prism-theme.css - Academic-light code theme
-- src/_includes/layouts/base.njk - KaTeX CDN + custom CSS links
-- src/topics/test/index.md - Comprehensive demo of all 6 content types
+Key artifacts so far:
+- eleventy.config.js - Image passthrough added for topic images
+- src/_includes/layouts/article.njk - Prerequisites rendering added
+- src/_data/references.json - 11 entries covering all 3 pilot articles
+- src/css/components.css - Prerequisites styling added
+- src/topics/attention-mechanism/index.md - Complete pilot article (~2400 words, all 6 content types)
