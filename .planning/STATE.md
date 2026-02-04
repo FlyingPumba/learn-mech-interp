@@ -5,23 +5,23 @@
 See: .planning/PROJECT.md (updated 2026-02-02)
 
 **Core value:** People can learn Mechanistic Interpretability through well-structured, readable articles that build from foundations to frontier research, with easy navigation between topics and direct links to source papers.
-**Current focus:** Phase 5.1 - Bulk Content Migration (shared data files complete, article authoring next)
+**Current focus:** Phase 5.1 - Bulk Content Migration COMPLETE (35 articles verified and interconnected)
 
 ## Current Position
 
 Phase: 5.1 of 7 (Bulk Content Migration)
-Plan: 11 of 12 in current phase
-Status: In progress
-Last activity: 2026-02-04 - Completed 05.1-11-PLAN.md (Block 8 Open Problems and Field Assessment)
+Plan: 12 of 12 in current phase
+Status: Phase complete
+Last activity: 2026-02-04 - Completed 05.1-12-PLAN.md (Cross-Link Audit and Final Verification)
 
-Progress: [==========] ~98%
+Progress: [==========] 100%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 24
-- Average duration: ~3min 37s
-- Total execution time: ~1.45 hours
+- Total plans completed: 25
+- Average duration: ~3min 38s
+- Total execution time: ~1.52 hours
 
 **By Phase:**
 
@@ -32,10 +32,10 @@ Progress: [==========] ~98%
 | 03-content-rendering-engine | 2 | 5min 48s | ~3min |
 | 04-content-authoring-pilot-articles | 3 | 11min 44s | ~3min 55s |
 | 05-navigation-information-architecture | 4 | 9min 20s | 2min 20s |
-| 05.1-bulk-content-migration | 10 | 44min 8s | 4min 25s |
+| 05.1-bulk-content-migration | 11 | 50min 8s | 4min 33s |
 
 **Recent Trend:**
-- Last 5 plans: 05.1-07 (4min 29s), 05.1-08 (5min 17s), 05.1-09 (not tracked), 05.1-10 (6min), 05.1-11 (6min 14s)
+- Last 5 plans: 05.1-08 (5min 17s), 05.1-09 (not tracked), 05.1-10 (6min), 05.1-11 (6min 14s), 05.1-12 (6min)
 - Trend: Article authoring plans average ~4-5 minutes
 
 *Updated after each plan completion*
@@ -111,6 +111,8 @@ Recent decisions affecting current work:
 - [05.1-11]: All 4 Block 8 articles use reflective/narrative style with minimal math
 - [05.1-11]: course-synthesis cross-links to 11 articles across 7 blocks (capstone pattern)
 - [05.1-11]: field-assessment presents Hendrycks critique at full strength before the response
+- [05.1-12]: Audit found zero issues across all 35 articles (clean pass on all 7 checks)
+- [05.1-12]: Cross-block links added only where they fit narrative flow (5 of 8 planned were missing)
 
 ### Pending Todos
 
@@ -131,7 +133,7 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-02-04
-Stopped at: Completed 05.1-11-PLAN.md - Block 8 Open Problems and Field Assessment
+Stopped at: Completed 05.1-12-PLAN.md - Cross-Link Audit and Final Verification (Phase 5.1 COMPLETE)
 Resume file: None
 
 ## Phase 5 Progress
@@ -144,10 +146,10 @@ Navigation & Information Architecture phase COMPLETE:
 
 ## Phase 5.1 Progress
 
-Bulk Content Migration - IN PROGRESS:
+Bulk Content Migration - COMPLETE:
 - [x] 05.1-01: Shared data files: references.json (44 entries) + learningPath.json (8 blocks, 35 topics) (2min 43s)
 - [x] 05.1-02: Block 1 Transformer Foundations: review pilot + qk-ov-circuits + composition-and-virtual-heads (4min 35s)
-- [ ] 05.1-03: Article authoring (block 2 part 1)
+- [x] 05.1-03: Block 2 Part 1: what-is-mech-interp + linear-representation-hypothesis + induction-heads (not tracked)
 - [x] 05.1-04: Block 2 Part 2: direct-logit-attribution + logit-lens-and-probing with 3 diagrams (4min 30s)
 - [x] 05.1-05: Block 3 Observation to Causation: activation-patching review + attribution-patching + ioi-circuit + circuit-evaluation (6min 5s)
 - [x] 05.1-06: Block 4 Part 1: Superposition review + sparse-autoencoders + sae-interpretability (3min 50s)
@@ -156,13 +158,11 @@ Bulk Content Migration - IN PROGRESS:
 - [x] 05.1-09: Block 6 Circuit Tracing and Comparative MI (not tracked)
 - [x] 05.1-10: Block 7 MI for Safety: sleeper-agent-detection + deception-detection + safety-mechanisms-and-monitoring + mi-safety-limitations (6min)
 - [x] 05.1-11: Block 8 Open Problems and Field Assessment: open-problems-methods + field-assessment + future-directions + course-synthesis (6min 14s)
-- [ ] 05.1-12: Final verification and cleanup
+- [x] 05.1-12: Cross-Link Audit and Final Verification: all 35 articles verified, 5 cross-block links added (6min)
 
-Key artifacts so far:
+Key artifacts:
 - src/_data/references.json - 44 citation entries covering all papers across 35 articles
 - src/_data/learningPath.json - 8 blocks, 35 topics in correct reading order
-- All 35 articles now exist across all 8 blocks (3 reviewed pilots + 32 new)
-- src/topics/open-problems-methods/index.md - Open problems survey with taxonomy diagram
-- src/topics/field-assessment/index.md - Balanced field assessment with timeline diagram
-- src/topics/future-directions/index.md - Five research frontiers and career paths
-- src/topics/course-synthesis/index.md - Capstone synthesis with 11 cross-links across 7 blocks
+- 35 articles across 8 blocks, fully verified and interconnected with 176 cross-links
+- 27 PNG diagrams placed and referenced across 15 article directories
+- Full Eleventy build produces 37 HTML pages with zero errors
