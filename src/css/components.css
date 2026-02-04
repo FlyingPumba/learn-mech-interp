@@ -568,3 +568,138 @@ label.sidenote-toggle:not(.sidenote-number) {
   border-bottom: 1px solid var(--color-border, rgba(0, 0, 0, 0.1));
   padding-bottom: var(--spacing-sm, 0.5rem);
 }
+
+/* ==========================================================================
+   SIDEBAR NAVIGATION
+   Topic hierarchy sidebar with block groupings.
+   Desktop: always visible in left column. Mobile: hidden, toggled by hamburger.
+   ========================================================================== */
+
+.sidebar {
+  padding: var(--spacing-lg, 1.5rem);
+  border-right: 1px solid var(--color-border, rgba(0, 0, 0, 0.08));
+  background: var(--color-background, #ffffff);
+}
+
+.sidebar-inner {
+  position: sticky;
+  top: var(--spacing-lg, 1.5rem);
+}
+
+.sidebar-title {
+  font-size: var(--font-size-small, 0.875rem);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--color-text-muted, rgba(0, 0, 0, 0.4));
+  margin: 0 0 var(--spacing-md, 1rem) 0;
+}
+
+.sidebar-block {
+  margin-bottom: var(--spacing-lg, 1.5rem);
+}
+
+.sidebar-block-title {
+  font-size: var(--font-size-small, 0.875rem);
+  font-weight: 600;
+  color: var(--color-text, rgba(0, 0, 0, 0.87));
+  margin: 0 0 var(--spacing-sm, 0.5rem) 0;
+}
+
+.sidebar-topics {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.sidebar-topics li {
+  margin-bottom: 0.125rem;
+}
+
+.sidebar-topics a {
+  display: block;
+  padding: 0.25rem 0.5rem;
+  font-size: var(--font-size-small, 0.875rem);
+  color: var(--color-text-secondary, rgba(0, 0, 0, 0.6));
+  text-decoration: none;
+  border-radius: var(--radius-sm, 3px);
+  transition: all var(--transition-fast, 150ms ease);
+}
+
+.sidebar-topics a:hover {
+  color: var(--color-link, #004276);
+  background: rgba(0, 66, 118, 0.04);
+}
+
+.sidebar-topics a.sidebar-active,
+.sidebar-topics a[aria-current="page"] {
+  color: var(--color-link, #004276);
+  background: rgba(0, 66, 118, 0.08);
+  font-weight: 600;
+}
+
+/* ==========================================================================
+   HAMBURGER TOGGLE (Mobile)
+   Shows/hides sidebar on small screens. Hidden on desktop via CSS.
+   ========================================================================== */
+
+.sidebar-toggle {
+  display: none;
+  background: none;
+  border: none;
+  padding: var(--spacing-sm, 0.5rem);
+  cursor: pointer;
+}
+
+.hamburger-icon {
+  display: block;
+  width: 20px;
+  height: 2px;
+  background: var(--color-text, rgba(0, 0, 0, 0.87));
+  position: relative;
+}
+
+.hamburger-icon::before,
+.hamburger-icon::after {
+  content: "";
+  display: block;
+  width: 20px;
+  height: 2px;
+  background: var(--color-text, rgba(0, 0, 0, 0.87));
+  position: absolute;
+  left: 0;
+}
+
+.hamburger-icon::before {
+  top: -6px;
+}
+
+.hamburger-icon::after {
+  top: 6px;
+}
+
+/* Mobile: sidebar hidden, slides in from left when toggled */
+@media (max-width: 1199px) {
+  .sidebar-toggle {
+    display: block;
+  }
+
+  .sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 280px;
+    height: 100vh;
+    z-index: 50;
+    overflow-y: auto;
+    transform: translateX(-100%);
+    transition: transform 0.3s ease;
+    border-right: 1px solid var(--color-border, rgba(0, 0, 0, 0.1));
+    box-shadow: none;
+  }
+
+  .sidebar.sidebar-open {
+    transform: translateX(0);
+    box-shadow: 4px 0 12px rgba(0, 0, 0, 0.1);
+  }
+}

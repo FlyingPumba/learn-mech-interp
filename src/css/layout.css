@@ -93,6 +93,14 @@ main {
     padding-top: 0;
     padding-bottom: var(--spacing-3xl, 4rem);
   }
+
+  /* Page-level grid: sidebar + main content */
+  .page-layout {
+    display: grid;
+    grid-template-columns: 240px 1fr;
+    max-width: 1400px;
+    margin: 0 auto;
+  }
 }
 
 /* Wide screen breakpoint (1400px+) */
