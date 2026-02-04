@@ -70,4 +70,161 @@
   /* Transitions */
   --transition-fast: 150ms ease;
   --transition-base: 200ms ease;
+
+  /* Colors - Syntax Highlighting (Prism) */
+  --prism-comment: rgba(0, 0, 0, 0.4);
+  --prism-punctuation: rgba(0, 0, 0, 0.6);
+  --prism-keyword: #004276;
+  --prism-string: #22863a;
+  --prism-number: #6f42c1;
+  --prism-function: #005cc5;
+  --prism-operator: rgba(0, 0, 0, 0.6);
+  --prism-class: #005cc5;
+  --prism-attr-name: #6f42c1;
+  --prism-deleted: #b31d28;
+  --prism-deleted-bg: rgba(179, 29, 40, 0.08);
+  --prism-inserted: #22863a;
+  --prism-inserted-bg: rgba(34, 134, 58, 0.08);
+  --prism-highlight-bg: rgba(0, 66, 118, 0.06);
+
+  /* Colors - Selection */
+  --color-selection: rgba(0, 66, 118, 0.2);
+
+  /* Colors - Difficulty Badges */
+  --color-badge-foundational-bg: #e8f5e9;
+  --color-badge-foundational-text: #2e7d32;
+  --color-badge-intermediate-bg: #fff3e0;
+  --color-badge-intermediate-text: #e65100;
+  --color-badge-advanced-bg: #fce4ec;
+  --color-badge-advanced-text: #c62828;
+
+  /* Colors - Decorative */
+  --color-header-gradient: rgba(0, 66, 118, 0.02);
+  --color-hero-gradient-start: rgba(0, 66, 118, 0.03);
+  --color-hero-gradient-end: rgba(0, 66, 118, 0.01);
+  --color-sidebar-shadow: rgba(0, 0, 0, 0.1);
+  --color-btn-secondary-hover-bg: rgba(0, 66, 118, 0.04);
+  --color-sidebar-hover-bg: rgba(0, 66, 118, 0.04);
+  --color-sidebar-active-bg: rgba(0, 66, 118, 0.08);
+  --color-feature-card-shadow: rgba(0, 0, 0, 0.04);
+}
+
+/* Dark theme - auto-detection via system preference */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    /* Text */
+    --color-text: rgba(255, 255, 255, 0.87);
+    --color-text-secondary: rgba(255, 255, 255, 0.6);
+    --color-text-muted: rgba(255, 255, 255, 0.4);
+
+    /* Background */
+    --color-background: #1a1a2e;
+    --color-background-subtle: rgba(255, 255, 255, 0.04);
+    --color-background-code: rgba(255, 255, 255, 0.08);
+
+    /* Interactive */
+    --color-link: #6db3f2;
+    --color-link-hover: #8ec5f5;
+    --color-link-visited: #a0aec0;
+
+    /* Borders */
+    --color-border: rgba(255, 255, 255, 0.1);
+    --color-border-strong: rgba(255, 255, 255, 0.2);
+
+    /* Prism (dark palette) */
+    --prism-comment: rgba(255, 255, 255, 0.4);
+    --prism-punctuation: rgba(255, 255, 255, 0.5);
+    --prism-keyword: #7ec8e3;
+    --prism-string: #98c379;
+    --prism-number: #d19a66;
+    --prism-function: #dcdcaa;
+    --prism-operator: rgba(255, 255, 255, 0.5);
+    --prism-class: #4ec9b0;
+    --prism-attr-name: #c678dd;
+    --prism-deleted: #e06c75;
+    --prism-deleted-bg: rgba(224, 108, 117, 0.15);
+    --prism-inserted: #98c379;
+    --prism-inserted-bg: rgba(152, 195, 121, 0.15);
+    --prism-highlight-bg: rgba(109, 179, 242, 0.1);
+
+    /* Selection */
+    --color-selection: rgba(109, 179, 242, 0.3);
+
+    /* Difficulty Badges (darker, more saturated for dark backgrounds) */
+    --color-badge-foundational-bg: rgba(46, 125, 50, 0.2);
+    --color-badge-foundational-text: #81c784;
+    --color-badge-intermediate-bg: rgba(230, 81, 0, 0.2);
+    --color-badge-intermediate-text: #ffb74d;
+    --color-badge-advanced-bg: rgba(198, 40, 40, 0.2);
+    --color-badge-advanced-text: #ef9a9a;
+
+    /* Decorative */
+    --color-header-gradient: rgba(109, 179, 242, 0.03);
+    --color-hero-gradient-start: rgba(109, 179, 242, 0.04);
+    --color-hero-gradient-end: rgba(109, 179, 242, 0.01);
+    --color-sidebar-shadow: rgba(0, 0, 0, 0.3);
+    --color-btn-secondary-hover-bg: rgba(109, 179, 242, 0.08);
+    --color-sidebar-hover-bg: rgba(109, 179, 242, 0.06);
+    --color-sidebar-active-bg: rgba(109, 179, 242, 0.12);
+    --color-feature-card-shadow: rgba(0, 0, 0, 0.2);
+  }
+}
+
+/* Dark theme - manual override via data attribute */
+[data-theme="dark"] {
+  /* Text */
+  --color-text: rgba(255, 255, 255, 0.87);
+  --color-text-secondary: rgba(255, 255, 255, 0.6);
+  --color-text-muted: rgba(255, 255, 255, 0.4);
+
+  /* Background */
+  --color-background: #1a1a2e;
+  --color-background-subtle: rgba(255, 255, 255, 0.04);
+  --color-background-code: rgba(255, 255, 255, 0.08);
+
+  /* Interactive */
+  --color-link: #6db3f2;
+  --color-link-hover: #8ec5f5;
+  --color-link-visited: #a0aec0;
+
+  /* Borders */
+  --color-border: rgba(255, 255, 255, 0.1);
+  --color-border-strong: rgba(255, 255, 255, 0.2);
+
+  /* Prism (dark palette) */
+  --prism-comment: rgba(255, 255, 255, 0.4);
+  --prism-punctuation: rgba(255, 255, 255, 0.5);
+  --prism-keyword: #7ec8e3;
+  --prism-string: #98c379;
+  --prism-number: #d19a66;
+  --prism-function: #dcdcaa;
+  --prism-operator: rgba(255, 255, 255, 0.5);
+  --prism-class: #4ec9b0;
+  --prism-attr-name: #c678dd;
+  --prism-deleted: #e06c75;
+  --prism-deleted-bg: rgba(224, 108, 117, 0.15);
+  --prism-inserted: #98c379;
+  --prism-inserted-bg: rgba(152, 195, 121, 0.15);
+  --prism-highlight-bg: rgba(109, 179, 242, 0.1);
+
+  /* Selection */
+  --color-selection: rgba(109, 179, 242, 0.3);
+
+  /* Difficulty Badges (darker, more saturated for dark backgrounds) */
+  --color-badge-foundational-bg: rgba(46, 125, 50, 0.2);
+  --color-badge-foundational-text: #81c784;
+  --color-badge-intermediate-bg: rgba(230, 81, 0, 0.2);
+  --color-badge-intermediate-text: #ffb74d;
+  --color-badge-advanced-bg: rgba(198, 40, 40, 0.2);
+  --color-badge-advanced-text: #ef9a9a;
+
+  /* Decorative */
+  --color-header-gradient: rgba(109, 179, 242, 0.03);
+  --color-hero-gradient-start: rgba(109, 179, 242, 0.04);
+  --color-hero-gradient-end: rgba(109, 179, 242, 0.01);
+  --color-sidebar-shadow: rgba(0, 0, 0, 0.3);
+  --color-btn-secondary-hover-bg: rgba(109, 179, 242, 0.08);
+  --color-sidebar-hover-bg: rgba(109, 179, 242, 0.06);
+  --color-sidebar-active-bg: rgba(109, 179, 242, 0.12);
+  --color-feature-card-shadow: rgba(0, 0, 0, 0.2);
 }
