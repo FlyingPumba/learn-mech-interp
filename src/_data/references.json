@@ -1,0 +1,37 @@
+{
+  "elhage2022toy": {
+    "title": "Toy Models of Superposition",
+    "authors": "Elhage, N., Hume, T., Olsson, C., et al.",
+    "year": 2022,
+    "venue": "Anthropic",
+    "url": "https://transformer-circuits.pub/2022/toy_model/index.html"
+  },
+  "olsson2022context": {
+    "title": "In-context Learning and Induction Heads",
+    "authors": "Olsson, C., Elhage, N., Nanda, N., et al.",
+    "year": 2022,
+    "venue": "Anthropic",
+    "url": "https://transformer-circuits.pub/2022/in-context-learning-and-induction-heads/index.html"
+  },
+  "elhage2021mathematical": {
+    "title": "A Mathematical Framework for Transformer Circuits",
+    "authors": "Elhage, N., Nanda, N., Olsson, C., et al.",
+    "year": 2021,
+    "venue": "Anthropic",
+    "url": "https://transformer-circuits.pub/2021/framework/index.html"
+  },
+  "bricken2023monosemanticity": {
+    "title": "Towards Monosemanticity: Decomposing Language Models With Dictionary Learning",
+    "authors": "Bricken, T., Templeton, A., Batson, J., et al.",
+    "year": 2023,
+    "venue": "Anthropic",
+    "url": "https://transformer-circuits.pub/2023/monosemantic-features/index.html"
+  },
+  "conmy2023ioi": {
+    "title": "Towards Automated Circuit Discovery for Mechanistic Interpretability",
+    "authors": "Conmy, A., Mavor-Parker, A. N., Lynch, A., et al.",
+    "year": 2023,
+    "venue": "NeurIPS",
+    "url": "https://arxiv.org/abs/2304.14997"
+  }
+}

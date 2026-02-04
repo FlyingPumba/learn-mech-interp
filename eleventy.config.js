@@ -6,7 +6,19 @@ import markdownIt from "markdown-it";
 import { katex } from "@mdit/plugin-katex";
 import { figure } from "@mdit/plugin-figure";
 
+// Shortcode counters (reset on each build to prevent stale values in --serve mode)
+let citationCounter = {};
+let sidenoteCounter = {};
+let marginCounter = {};
+
 export default function(eleventyConfig) {
+  // Reset shortcode counters before each build
+  eleventyConfig.on("eleventy.before", () => {
+    citationCounter = {};
+    sidenoteCounter = {};
+    marginCounter = {};
+  });
+
   // Configure markdown-it with KaTeX and figure plugins
   const md = markdownIt({ html: true })
     .use(katex, {
@@ -26,6 +38,26 @@ export default function(eleventyConfig) {
 
   // Pass through CSS files to _site/css/
   eleventyConfig.addPassthroughCopy("src/css");
+
+  // Citation shortcode: {% cite "key" %} renders numbered inline citation with tooltip
+  eleventyConfig.addShortcode("cite", function(key) {
+    const pageUrl = this.page.url;
+    if (!citationCounter[pageUrl]) citationCounter[pageUrl] = 0;
+    citationCounter[pageUrl]++;
+
+    const refs = this.ctx.references || {};
+    const ref = refs[key];
+    if (!ref) return `<span class="citation-error">[??]</span>`;
+
+    const num = citationCounter[pageUrl];
+    return `<span class="citation" tabindex="0" role="doc-noteref">` +
+      `<a href="${ref.url}" target="_blank" rel="noopener" class="citation-number">[${num}]</a>` +
+      `<span class="citation-tooltip" role="tooltip">` +
+        `<strong>${ref.title}</strong><br>` +
+        `${ref.authors}<br>` +
+        `<em>${ref.venue}, ${ref.year}</em>` +
+      `</span></span>`;
+  });
 
   return {
     dir: {
