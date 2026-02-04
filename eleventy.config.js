@@ -39,6 +39,9 @@ export default function(eleventyConfig) {
   // Pass through CSS files to _site/css/
   eleventyConfig.addPassthroughCopy("src/css");
 
+  // Pass through article-local images (e.g., src/topics/superposition/images/)
+  eleventyConfig.addPassthroughCopy("src/topics/*/images");
+
   // Citation shortcode: {% cite "key" %} renders numbered inline citation with tooltip
   eleventyConfig.addShortcode("cite", function(key) {
     const pageUrl = this.page.url;

@@ -7,6 +7,9 @@ layout: layouts/base.njk
     {% if description %}
     <p class="article-description">{{ description }}</p>
     {% endif %}
+    {% if prerequisites and prerequisites.length %}
+    <p class="article-prerequisites">Prerequisites: {% for prereq in prerequisites %}{% if loop.index > 1 %}, {% endif %}<a href="{{ prereq.url }}">{{ prereq.title }}</a>{% endfor %}</p>
+    {% endif %}
   </header>
   <div class="article-body">
     {{ content | safe }}

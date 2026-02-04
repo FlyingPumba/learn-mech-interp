@@ -33,5 +33,47 @@
     "year": 2023,
     "venue": "NeurIPS",
     "url": "https://arxiv.org/abs/2304.14997"
+  },
+  "vaswani2017attention": {
+    "title": "Attention Is All You Need",
+    "authors": "Vaswani, A., Shazeer, N., Parmar, N., et al.",
+    "year": 2017,
+    "venue": "NeurIPS",
+    "url": "https://arxiv.org/abs/1706.03762"
+  },
+  "alammar2018illustrated": {
+    "title": "The Illustrated Transformer",
+    "authors": "Alammar, J.",
+    "year": 2018,
+    "venue": "Blog post",
+    "url": "https://jalammar.github.io/illustrated-transformer/"
+  },
+  "heimersheim2024patching": {
+    "title": "How to Use and Interpret Activation Patching",
+    "authors": "Heimersheim, S., Nanda, N.",
+    "year": 2024,
+    "venue": "arXiv",
+    "url": "https://arxiv.org/abs/2404.15255"
+  },
+  "nanda2023attribution": {
+    "title": "Attribution Patching: Activation Patching At Industrial Scale Using Differential Calculus",
+    "authors": "Nanda, N.",
+    "year": 2023,
+    "venue": "Blog post",
+    "url": "https://www.neelnanda.io/mechanistic-interpretability/attribution-patching"
+  },
+  "wang2022ioi": {
+    "title": "Interpretability in the Wild: a Circuit for Indirect Object Identification in GPT-2 Small",
+    "authors": "Wang, K., Variengien, A., Conmy, A., et al.",
+    "year": 2022,
+    "venue": "arXiv",
+    "url": "https://arxiv.org/abs/2211.00593"
+  },
+  "olah2020zoom": {
+    "title": "Zoom In: An Introduction to Circuits",
+    "authors": "Olah, C., Cammarata, N., Schubert, L., et al.",
+    "year": 2020,
+    "venue": "Distill",
+    "url": "https://distill.pub/2020/circuits/zoom-in/"
   }
 }
