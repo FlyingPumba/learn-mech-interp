@@ -223,9 +223,12 @@
    ========================================================================== */
 
 .hero {
-  padding: var(--spacing-xl, 2rem) var(--container-padding, 1.5rem) var(--spacing-2xl, 3rem);
+  padding: var(--spacing-2xl, 3rem) var(--container-padding, 1.5rem);
   background: linear-gradient(180deg, var(--color-hero-gradient-start) 0%, var(--color-hero-gradient-end) 50%, transparent 100%);
-  border-bottom: 1px solid var(--color-border, rgba(0, 0, 0, 0.06));
+  border-bottom: none;
+  min-height: 60vh;
+  display: flex;
+  align-items: center;
 }
 
 .hero-content {
@@ -590,7 +593,7 @@ label.sidenote-toggle:not(.sidenote-number) {
    ========================================================================== */
 
 .sidebar {
-  padding: var(--spacing-lg, 1.5rem);
+  padding: var(--spacing-md, 1rem);
   border-right: 1px solid var(--color-border, rgba(0, 0, 0, 0.08));
   background: var(--color-background, #ffffff);
 }
@@ -606,25 +609,28 @@ label.sidenote-toggle:not(.sidenote-number) {
   text-transform: uppercase;
   letter-spacing: 0.05em;
   color: var(--color-text-muted, rgba(0, 0, 0, 0.4));
-  margin: 0 0 var(--spacing-md, 1rem) 0;
+  margin: 0 0 var(--spacing-sm, 0.5rem) 0;
 }
 
 .sidebar-block {
   border: 0;
-  margin-bottom: var(--spacing-lg, 1.5rem);
+  margin-bottom: var(--spacing-md, 1rem);
 }
 
 .sidebar-block-title {
   font-size: var(--font-size-small, 0.875rem);
   font-weight: 600;
   color: var(--color-text, rgba(0, 0, 0, 0.87));
-  margin: 0 0 var(--spacing-sm, 0.5rem) 0;
+  margin: 0;
+  padding: 0.25rem 0;
+  line-height: var(--line-height-tight, 1.2);
   cursor: pointer;
   user-select: none;
   display: flex;
   align-items: center;
   justify-content: space-between;
   list-style: none;
+  gap: 0.5rem;
 }
 
 .sidebar-block-title::-webkit-details-marker {
@@ -642,6 +648,10 @@ label.sidenote-toggle:not(.sidenote-number) {
   transform: rotate(90deg);
 }
 
+.sidebar-block[open] > .sidebar-block-title {
+  margin-bottom: 0.25rem;
+}
+
 .sidebar-topics {
   list-style: none;
   margin: 0;
@@ -649,12 +659,12 @@ label.sidenote-toggle:not(.sidenote-number) {
 }
 
 .sidebar-topics li {
-  margin-bottom: 0.125rem;
+  margin-bottom: 0.0625rem;
 }
 
 .sidebar-topics a {
   display: block;
-  padding: 0.25rem 0.5rem;
+  padding: 0.2rem 0.4rem;
   font-size: var(--font-size-small, 0.875rem);
   color: var(--color-text-secondary, rgba(0, 0, 0, 0.6));
   text-decoration: none;

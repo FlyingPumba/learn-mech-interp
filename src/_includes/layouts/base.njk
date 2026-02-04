@@ -30,7 +30,9 @@
       {{ content | safe }}
     </main>
   </div>
-  {% include "partials/footer.njk" %}
+  {% if page.url != "/" %}
+    {% include "partials/footer.njk" %}
+  {% endif %}
   <script src="/js/sidebar-toggle.js"></script>
   <script src="/js/theme-toggle.js"></script>
 </body>
