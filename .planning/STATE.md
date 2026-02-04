@@ -5,23 +5,23 @@
 See: .planning/PROJECT.md (updated 2026-02-02)
 
 **Core value:** People can learn Mechanistic Interpretability through well-structured, readable articles that build from foundations to frontier research, with easy navigation between topics and direct links to source papers.
-**Current focus:** Phase 4 in progress - Content Authoring & Pilot Articles
+**Current focus:** Phase 4 complete - Content Authoring & Pilot Articles
 
 ## Current Position
 
 Phase: 4 of 7 (Content Authoring & Pilot Articles)
-Plan: 2 of 3 in current phase
-Status: In progress
-Last activity: 2026-02-04 - Completed 04-02-PLAN.md (The Superposition Hypothesis)
+Plan: 3 of 3 in current phase
+Status: Phase complete
+Last activity: 2026-02-04 - Completed 04-03-PLAN.md (Activation Patching and Causal Interventions)
 
-Progress: [=========.] ~85%
+Progress: [=========.] ~90%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 9
+- Total plans completed: 10
 - Average duration: ~4min
-- Total execution time: ~0.57 hours
+- Total execution time: ~0.65 hours
 
 **By Phase:**
 
@@ -30,11 +30,11 @@ Progress: [=========.] ~85%
 | 01-foundation-deployment | 2 | 3min 28s | 1min 44s |
 | 02-template-system-and-design | 3 | 23min | ~8min |
 | 03-content-rendering-engine | 2 | 5min 48s | ~3min |
-| 04-content-authoring-pilot-articles | 2 | 7min 05s | ~3min 33s |
+| 04-content-authoring-pilot-articles | 3 | 11min 44s | ~3min 55s |
 
 **Recent Trend:**
-- Last 5 plans: 03-01 (2min 38s), 03-02 (3min 10s), 04-01 (3min 45s), 04-02 (3min 20s)
-- Trend: Diagram-heavy article (6 images) completed in ~3min 20s, comparable to text-only article
+- Last 5 plans: 03-02 (3min 10s), 04-01 (3min 45s), 04-02 (3min 20s), 04-03 (4min 39s)
+- Trend: Multi-citation advanced article with 3 diagrams and cross-links completed in ~4min 39s
 
 *Updated after each plan completion*
 
@@ -74,6 +74,8 @@ Recent decisions affecting current work:
 - [04-01]: Sidenotes for supplementary context in articles (low-rank bottleneck, causal masking, etc.)
 - [04-02]: Manual "Figure N:" prefix in captions (consistent pattern across articles)
 - [04-02]: Olah et al. (2020) citation for polysemanticity evidence in superposition article
+- [04-03]: Superposition cross-link placed in Attribution Patching section (polysemanticity context)
+- [04-03]: Two pause-and-think prompts per article (adapted second from source exercise)
 
 ### Pending Todos
 
@@ -81,23 +83,23 @@ None yet.
 
 ### Blockers/Concerns
 
-- Phase 4 risk update: Superposition article (6 diagrams, ~3000 words) completed in ~3min 20s, confirming image pipeline adds negligible overhead. Remaining plan (04-03) should be similar.
+- Phase 4 complete: All 3 pilot articles validated. Cross-article linking works end-to-end. All 6 content types confirmed working across articles.
 - Requirements doc claims 41 requirements but actual count is 46; traceability table corrected during roadmap creation
 
 ## Session Continuity
 
 Last session: 2026-02-04
-Stopped at: Completed 04-02-PLAN.md - The Superposition Hypothesis
+Stopped at: Completed 04-03-PLAN.md - Activation Patching and Causal Interventions (Phase 4 complete)
 Resume file: None
 
 ## Phase 4 Progress
 
-Content Authoring & Pilot Articles phase in progress:
+Content Authoring & Pilot Articles phase COMPLETE:
 - [x] 04-01: Infrastructure Prep and Attention Mechanism Article
 - [x] 04-02: The Superposition Hypothesis (intermediate, 6 diagrams)
-- [ ] 04-03: Activation Patching and Causal Interventions (advanced, 3 diagrams)
+- [x] 04-03: Activation Patching and Causal Interventions (advanced, 3 diagrams)
 
-Key artifacts so far:
+Key artifacts:
 - eleventy.config.js - Image passthrough added for topic images
 - src/_includes/layouts/article.njk - Prerequisites rendering added
 - src/_data/references.json - 11 entries covering all 3 pilot articles
@@ -105,3 +107,5 @@ Key artifacts so far:
 - src/topics/attention-mechanism/index.md - Complete pilot article (~2400 words, all 6 content types)
 - src/topics/superposition/index.md - Complete pilot article (~3000 words, 6 diagrams, all 6 content types)
 - src/topics/superposition/images/ - 6 PNG diagrams (phase diagram, geometry series)
+- src/topics/activation-patching/index.md - Complete pilot article (~2750 words, 3 diagrams, 4 papers cited)
+- src/topics/activation-patching/images/ - 3 PNG diagrams (setup, layers, heads)
