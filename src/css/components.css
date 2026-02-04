@@ -134,6 +134,12 @@
   margin-bottom: 0;
 }
 
+/* Article Prerequisites - enhanced with "Read first:" label */
+.prerequisites-label {
+  font-weight: 600;
+  color: var(--color-text-secondary, rgba(0, 0, 0, 0.6));
+}
+
 /* Article Meta (date, author, etc.) */
 .article-meta {
   font-size: var(--font-size-small, 0.875rem);
@@ -701,5 +707,227 @@ label.sidenote-toggle:not(.sidenote-number) {
   .sidebar.sidebar-open {
     transform: translateX(0);
     box-shadow: 4px 0 12px rgba(0, 0, 0, 0.1);
+  }
+}
+
+/* ==========================================================================
+   BREADCRUMBS
+   Home > Block > Article navigation path.
+   ========================================================================== */
+
+.breadcrumbs {
+  max-width: var(--content-width-wide, 80ch);
+  margin: 0 auto;
+  padding: var(--spacing-sm, 0.5rem) var(--container-padding, 1.5rem);
+}
+
+.breadcrumbs ol {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+  font-size: var(--font-size-small, 0.875rem);
+  color: var(--color-text-muted, rgba(0, 0, 0, 0.4));
+}
+
+.breadcrumbs li:not(:last-child)::after {
+  content: ">";
+  margin-left: 0.25rem;
+  color: var(--color-text-muted, rgba(0, 0, 0, 0.3));
+}
+
+.breadcrumbs a {
+  color: var(--color-text-secondary, rgba(0, 0, 0, 0.6));
+  text-decoration: none;
+}
+
+.breadcrumbs a:hover {
+  color: var(--color-link, #004276);
+}
+
+.breadcrumbs [aria-current="page"] {
+  color: var(--color-text, rgba(0, 0, 0, 0.87));
+}
+
+@media (min-width: 768px) {
+  .breadcrumbs {
+    padding-left: 0;
+    padding-right: 0;
+  }
+}
+
+/* ==========================================================================
+   DIFFICULTY BADGES
+   Color-coded indicators for article difficulty level.
+   ========================================================================== */
+
+.difficulty-badge {
+  display: inline-block;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 0.2em 0.6em;
+  border-radius: 3px;
+  margin-bottom: var(--spacing-sm, 0.5rem);
+}
+
+.difficulty-foundational {
+  background: #e8f5e9;
+  color: #2e7d32;
+}
+
+.difficulty-intermediate {
+  background: #fff3e0;
+  color: #e65100;
+}
+
+.difficulty-advanced {
+  background: #fce4ec;
+  color: #c62828;
+}
+
+/* ==========================================================================
+   TABLE OF CONTENTS
+   Auto-generated from h2/h3 headings. Hidden on mobile, sticky on wide screens.
+   ========================================================================== */
+
+.article-content-wrapper {
+  position: relative;
+}
+
+.article-toc {
+  display: none;
+}
+
+.toc-heading {
+  font-size: var(--font-size-small, 0.875rem);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--color-text-muted, rgba(0, 0, 0, 0.4));
+  margin: 0 0 var(--spacing-sm, 0.5rem) 0;
+}
+
+.article-toc ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.article-toc li {
+  margin-bottom: 0.25rem;
+}
+
+.article-toc a {
+  font-size: var(--font-size-small, 0.875rem);
+  color: var(--color-text-secondary, rgba(0, 0, 0, 0.6));
+  text-decoration: none;
+  display: block;
+  padding: 0.125rem 0;
+  transition: color var(--transition-fast, 150ms ease);
+}
+
+.article-toc a:hover {
+  color: var(--color-link, #004276);
+}
+
+/* Nested TOC items (h3) are indented */
+.article-toc ul ul {
+  padding-left: var(--spacing-md, 1rem);
+}
+
+/* Show TOC on wide screens, positioned in right margin */
+@media (min-width: 1400px) {
+  .article-content-wrapper {
+    display: grid;
+    grid-template-columns: minmax(auto, var(--content-width, 65ch)) 220px;
+    gap: var(--spacing-xl, 2rem);
+    align-items: start;
+  }
+
+  .article-toc {
+    display: block;
+    position: sticky;
+    top: var(--spacing-xl, 2rem);
+    max-height: calc(100vh - 4rem);
+    overflow-y: auto;
+  }
+}
+
+/* ==========================================================================
+   PREVIOUS/NEXT ARTICLE NAVIGATION
+   Sequential navigation links at the bottom of articles.
+   ========================================================================== */
+
+.article-nav {
+  max-width: var(--content-width-wide, 80ch);
+  margin: var(--spacing-2xl, 3rem) auto;
+  padding: 0 var(--container-padding, 1.5rem);
+  display: flex;
+  justify-content: space-between;
+  gap: var(--spacing-md, 1rem);
+}
+
+.article-nav-link {
+  display: flex;
+  flex-direction: column;
+  text-decoration: none;
+  padding: var(--spacing-md, 1rem);
+  border: 1px solid var(--color-border, rgba(0, 0, 0, 0.1));
+  border-radius: var(--radius-lg, 8px);
+  transition: border-color var(--transition-fast, 150ms ease);
+  flex: 1;
+  max-width: 48%;
+}
+
+.article-nav-link:hover {
+  border-color: var(--color-link, #004276);
+}
+
+.article-nav-prev {
+  align-items: flex-start;
+}
+
+.article-nav-next {
+  align-items: flex-end;
+  margin-left: auto;
+}
+
+.article-nav-label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--color-text-muted, rgba(0, 0, 0, 0.4));
+  margin-bottom: 0.25rem;
+}
+
+.article-nav-title {
+  font-size: var(--font-size-small, 0.875rem);
+  color: var(--color-link, #004276);
+  font-weight: 500;
+}
+
+@media (max-width: 480px) {
+  .article-nav {
+    flex-direction: column;
+  }
+
+  .article-nav-link {
+    max-width: 100%;
+  }
+
+  .article-nav-next {
+    align-items: flex-start;
+  }
+}
+
+@media (min-width: 768px) {
+  .article-nav {
+    padding-left: 0;
+    padding-right: 0;
   }
 }
