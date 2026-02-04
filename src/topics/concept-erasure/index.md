@@ -1,0 +1,74 @@
+---
+title: "Concept Erasure with LEACE"
+description: "How LEACE provides a mathematically guaranteed method for erasing specific concepts from model representations, complementing the steering methods of representation engineering."
+prerequisites:
+  - title: "The Refusal Direction"
+    url: "/topics/refusal-direction/"
+difficulty: "advanced"
+block: "representation-engineering"
+category: "methods"
+---
+
+## The Complement to Steering
+
+[Activation engineering](/topics/activation-engineering/) *adds* a direction to steer model behavior. The [refusal direction](/topics/refusal-direction/) showed we can also *remove* a direction to disable a behavior. But projection-based removal offers no formal guarantee -- a sufficiently powerful non-linear classifier might still detect traces of the erased concept in the modified representations.
+
+What if we want to **provably** erase a concept? Not just project it out at one layer, but guarantee that no linear classifier can recover it from the modified representations?
+
+Belrose et al. (2023) introduced **LEACE** (LEAst-squares Concept Erasure): a closed-form method that achieves exactly this guarantee {% cite "belrose2023leace" %}.
+
+> **LEACE (LEAst-squares Concept Erasure):** A closed-form projection method that provably prevents *all* linear classifiers from predicting a target concept from the modified representations, while making the smallest possible change to those representations in the least-squares sense.
+
+If [representation engineering](/topics/representation-engineering/) gives us a toolkit of *read, add, and remove*, LEACE provides the mathematically strongest version of "remove."{% sidenote "The name LEACE stands for LEAst-squares Concept Erasure, emphasizing both the optimality criterion (least-squares, meaning minimal distortion) and the goal (concept erasure, meaning complete removal of linear information about a concept)." %}
+
+## The LEACE Guarantee
+
+Unlike iterative methods such as INLP (Iterative Nullspace Projection), which repeatedly finds and removes linear classifiers, LEACE has a **mathematical guarantee**:
+
+- After LEACE, **no** linear classifier can predict the erased concept from the modified representations. The mutual information between the modified representations and the concept label is zero for all linear readouts.
+
+- The modification is the **smallest possible** change that achieves this guarantee. LEACE minimizes the expected squared difference between original and modified representations.
+
+- The solution is computed in **closed form**. No iterative optimization, no adversarial games, no convergence concerns. The projection matrix is computed directly from the data covariance and the concept labels.{% sidenote "The closed-form solution is a significant practical advantage. Iterative methods like INLP require training and removing classifiers in a loop, which is slow and can fail to converge. LEACE computes the answer in one pass through the data, making it both faster and more reliable." %}
+
+The core idea is an orthogonal projection. LEACE identifies the subspace that carries all linear information about the target concept, then projects the representations onto the orthogonal complement of that subspace. Everything in the concept subspace is removed; everything outside it is preserved.
+
+<details class="pause-and-think">
+<summary>Pause and think: Linear versus non-linear erasure</summary>
+
+LEACE guarantees that no *linear* classifier can recover the erased concept. But what about non-linear classifiers? Could a deep neural network still detect traces of the erased concept in the modified representations?
+
+In principle, yes. LEACE only guarantees erasure against linear readouts. Non-linear classifiers could potentially recover information from higher-order correlations or non-linear interactions between features. However, the linear representation hypothesis suggests that most high-level concepts in transformers are encoded as linear directions. If the concept is primarily linear, LEACE removes the vast majority of the signal. The residual non-linear information, if any, would be much harder to exploit.
+
+</details>
+
+## Concept Scrubbing
+
+To erase a concept throughout the entire model -- not just at one layer -- LEACE is applied sequentially through all layers. This procedure is called **concept scrubbing**:
+
+1. Compute the LEACE projection at layer 1, apply it.
+2. Compute the LEACE projection at layer 2 (on the already-modified activations), apply it.
+3. Continue through all layers.
+
+The sequential application is necessary. Naive independent erasure at each layer can fail because later layers can **reconstruct** the erased information from residual signals. If layer 3 sees the original activations from layer 2 (which still contain the concept), it can re-derive the concept information even though layer 1's representation was scrubbed. Sequential application ensures that each layer sees only the already-scrubbed representations from previous layers.
+
+<details class="pause-and-think">
+<summary>Pause and think: The reconstruction problem</summary>
+
+Why can later layers reconstruct erased information? Consider a concept encoded redundantly across layers 1, 2, and 3. If you erase it only at layer 1, layers 2 and 3 still contain the original representation. Since the residual stream carries information forward, layer 3 can combine its own concept information with the residual stream to reconstruct what was erased at layer 1. What does this tell us about the challenge of erasing concepts from deep networks?
+
+It tells us that erasure must be holistic. A concept is not stored in one location -- it is distributed across the entire residual stream. Effective erasure requires intervening at every point where the concept can be read. This is why concept scrubbing applies LEACE at every layer in sequence, ensuring the concept cannot be reconstructed downstream.
+
+</details>
+
+## The Complete Representation Toolkit
+
+With LEACE, the [representation engineering](/topics/representation-engineering/) toolkit is complete:{% sidenote "Each operation in the toolkit corresponds to a fundamental geometric operation on the activation space. Reading is projection onto a subspace. Steering is translation along a direction. Erasure is projection onto an orthogonal complement. These three operations -- project, translate, project-out -- exhaust the basic linear operations on a one-dimensional subspace." %}
+
+- **Read** with LAT and linear probes -- detect what concepts are encoded in the model's representations.
+- **Add** with ActAdd, CAA, and representation control -- steer behavior toward a concept by adding its direction.
+- **Remove** with LEACE and concept scrubbing -- provably erase a concept by projecting onto the orthogonal complement of its direction.
+
+The three operations form a principled framework for understanding and controlling model representations. Reading tells us what is there. Adding lets us amplify or introduce it. Removing lets us guarantee it is gone.
+
+The contrast with the [refusal direction](/topics/refusal-direction/) is instructive. Arditi et al. removed the refusal direction via simple projection, which was effective but offered no formal guarantee. LEACE would provide a stronger erasure -- guaranteeing that no linear probe could recover refusal-related information from the modified representations. The tradeoff is that LEACE requires computing the full covariance structure, while simple projection requires only the direction itself.
