@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-02-02)
 
 **Core value:** People can learn Mechanistic Interpretability through well-structured, readable articles that build from foundations to frontier research, with easy navigation between topics and direct links to source papers.
-**Current focus:** Phase 7 in progress - Polish & Accessibility
+**Current focus:** All phases complete -- v1 milestone delivered
 
 ## Current Position
 
 Phase: 7 of 7 (Polish & Accessibility)
-Plan: 1 of 2 in current phase
-Status: In progress
-Last activity: 2026-02-04 - Completed 07-01-PLAN.md (Dark Mode Color System)
+Plan: 2 of 2 in current phase
+Status: Complete
+Last activity: 2026-02-04 - Completed 07-02-PLAN.md (Toggle + Template Wiring)
 
-Progress: [=============================-] 97% (29/30 plans)
+Progress: [==============================] 100% (30/30 plans)
 
 ## Performance Metrics
 
@@ -35,7 +35,7 @@ Progress: [=============================-] 97% (29/30 plans)
 | 05.1-bulk-content-migration | 11 | 50min 8s | 4min 33s |
 | 06-search-and-glossary | 2 | 7min 5s | 3min 33s |
 
-| 07-polish-accessibility | 1 | 2min 47s | 2min 47s |
+| 07-polish-accessibility | 2 | ~6min | ~3min |
 
 **Recent Trend:**
 - Last 5 plans: 05.1-12 (6min), 06-01 (2min 2s), 06-02 (5min 3s), 07-01 (2min 47s)
@@ -144,12 +144,12 @@ None yet.
 - Phase 5 complete: Full navigation in place (sidebar, homepage learning path, breadcrumbs, TOC, prev/next, difficulty badges, prerequisites)
 - Requirements doc claims 41 requirements but actual count is 46; traceability table corrected during roadmap creation
 - Phase 6 complete: Search and glossary both functional, glossary nav link now resolves
-- Phase 7 plan 01 complete: Dark mode CSS foundation in place, needs toggle and template wiring (plan 02)
+- Phase 7 complete: Dark mode with toggle, FOUC prevention, skip-link, focus indicators, reading time -- all verified
 
 ## Session Continuity
 
 Last session: 2026-02-04
-Stopped at: Completed 07-01-PLAN.md - Dark Mode Color System
+Stopped at: All phases complete -- v1 milestone delivered
 Resume file: None
 
 ## Phase 5 Progress
@@ -197,6 +197,6 @@ Key artifacts:
 
 ## Phase 7 Progress
 
-Polish & Accessibility - IN PROGRESS:
+Polish & Accessibility - COMPLETE:
 - [x] 07-01: Dark mode color system: variables, Prism migration, focus indicators (2min 47s)
-- [ ] 07-02: Toggle and template wiring
+- [x] 07-02: Toggle + template wiring: theme toggle JS, FOUC prevention, skip-link, reading time (approved by user)

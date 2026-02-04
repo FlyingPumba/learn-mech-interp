@@ -19,7 +19,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] **Phase 5: Navigation & Information Architecture** - Sidebar, homepage, learning path, breadcrumbs, TOC, and article metadata indicators
 - [x] **Phase 5.1: Bulk Content Migration** (INSERTED) - Convert all remaining Typst course content into thematic articles with diagrams, references, and cross-links
 - [x] **Phase 6: Search & Glossary** - Pagefind client-side search and curated MI glossary page
-- [ ] **Phase 7: Polish & Accessibility** - Dark mode, keyboard navigation, accessibility features, and reading time estimates
+- [x] **Phase 7: Polish & Accessibility** - Dark mode, keyboard navigation, accessibility features, and reading time estimates
 
 ## Phase Details
 
@@ -161,8 +161,8 @@ Plans:
 **Plans**: 2 plans
 
 Plans:
-- [ ] 07-01-PLAN.md -- Dark mode color system: CSS variable overrides, Prism migration, hardcoded color fixes, focus indicators
-- [ ] 07-02-PLAN.md -- Toggle + template wiring: theme toggle JS, FOUC prevention, skip-link, reading time filter, visual verification
+- [x] 07-01-PLAN.md -- Dark mode color system: CSS variable overrides, Prism migration, hardcoded color fixes, focus indicators
+- [x] 07-02-PLAN.md -- Toggle + template wiring: theme toggle JS, FOUC prevention, skip-link, reading time filter, visual verification
 
 ## Progress
 
@@ -178,4 +178,4 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 5.1 -> 6 -> 7
 | 5. Navigation & Information Architecture | 4/4 | Complete | 2026-02-04 |
 | 5.1. Bulk Content Migration (INSERTED) | 12/12 | Complete | 2026-02-04 |
 | 6. Search & Glossary | 2/2 | Complete | 2026-02-04 |
-| 7. Polish & Accessibility | 0/TBD | Not started | - |
+| 7. Polish & Accessibility | 2/2 | Complete | 2026-02-04 |
