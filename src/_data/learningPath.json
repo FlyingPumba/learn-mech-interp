@@ -1,0 +1,25 @@
+{
+  "blocks": [
+    {
+      "slug": "transformer-foundations",
+      "title": "Transformer Foundations",
+      "topics": [
+        { "slug": "attention-mechanism", "title": "The Attention Mechanism" }
+      ]
+    },
+    {
+      "slug": "superposition-and-feature-extraction",
+      "title": "Superposition & Feature Extraction",
+      "topics": [
+        { "slug": "superposition", "title": "The Superposition Hypothesis" }
+      ]
+    },
+    {
+      "slug": "observation-to-causation",
+      "title": "Observation to Causation",
+      "topics": [
+        { "slug": "activation-patching", "title": "Activation Patching and Causal Interventions" }
+      ]
+    }
+  ]
+}

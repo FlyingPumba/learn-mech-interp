@@ -16,9 +16,11 @@
   "license": "ISC",
   "dependencies": {
     "@11ty/eleventy": "^3.1.2",
+    "@11ty/eleventy-navigation": "^1.0.5",
     "@11ty/eleventy-plugin-syntaxhighlight": "^5.0.2",
     "@mdit/plugin-figure": "^0.22.3",
     "@mdit/plugin-katex": "^0.24.2",
+    "eleventy-plugin-toc": "^1.1.5",
     "katex": "^0.16.28"
   }
 }
