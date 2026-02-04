@@ -17,15 +17,15 @@
 ### Navigation
 
 - [x] **NAV-01**: Responsive layout that works on desktop (1200px+) and mobile (320px+)
-- [ ] **NAV-02**: Sidebar navigation showing full topic hierarchy with current page highlighted
-- [ ] **NAV-03**: Sidebar collapses to hamburger menu on mobile
-- [ ] **NAV-04**: Breadcrumb navigation showing Home > Block > Topic
-- [ ] **NAV-05**: Previous/Next article links at bottom of each article, following learning path order
-- [ ] **NAV-06**: In-page table of contents auto-generated from headings, fixed on wide screens
-- [ ] **NAV-07**: Homepage with hero section explaining the site and clear "start here" entry point
-- [ ] **NAV-08**: Guided learning path visualization on homepage showing suggested reading order through all topics
-- [ ] **NAV-09**: Prerequisite indicators per article showing "read X first" with links to those articles
-- [ ] **NAV-10**: Difficulty indicators per article (Foundational / Intermediate / Advanced)
+- [x] **NAV-02**: Sidebar navigation showing full topic hierarchy with current page highlighted
+- [x] **NAV-03**: Sidebar collapses to hamburger menu on mobile
+- [x] **NAV-04**: Breadcrumb navigation showing Home > Block > Topic
+- [x] **NAV-05**: Previous/Next article links at bottom of each article, following learning path order
+- [x] **NAV-06**: In-page table of contents auto-generated from headings, fixed on wide screens
+- [x] **NAV-07**: Homepage with hero section explaining the site and clear "start here" entry point
+- [x] **NAV-08**: Guided learning path visualization on homepage showing suggested reading order through all topics
+- [x] **NAV-09**: Prerequisite indicators per article showing "read X first" with links to those articles
+- [x] **NAV-10**: Difficulty indicators per article (Foundational / Intermediate / Advanced)
 
 ### Content Rendering
 
@@ -106,15 +106,15 @@
 | INFR-05 | Phase 1 | Complete |
 | INFR-06 | Phase 2 | Complete |
 | NAV-01 | Phase 2 | Complete |
-| NAV-02 | Phase 5 | Pending |
-| NAV-03 | Phase 5 | Pending |
-| NAV-04 | Phase 5 | Pending |
-| NAV-05 | Phase 5 | Pending |
-| NAV-06 | Phase 5 | Pending |
-| NAV-07 | Phase 5 | Pending |
-| NAV-08 | Phase 5 | Pending |
-| NAV-09 | Phase 5 | Pending |
-| NAV-10 | Phase 5 | Pending |
+| NAV-02 | Phase 5 | Complete |
+| NAV-03 | Phase 5 | Complete |
+| NAV-04 | Phase 5 | Complete |
+| NAV-05 | Phase 5 | Complete |
+| NAV-06 | Phase 5 | Complete |
+| NAV-07 | Phase 5 | Complete |
+| NAV-08 | Phase 5 | Complete |
+| NAV-09 | Phase 5 | Complete |
+| NAV-10 | Phase 5 | Complete |
 | CONT-01 | Phase 3 | Complete |
 | CONT-02 | Phase 3 | Complete |
 | CONT-03 | Phase 3 | Complete |
