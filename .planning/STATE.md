@@ -19,9 +19,9 @@ Progress: [=========.] ~95%
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 23
-- Average duration: ~3min 36s
-- Total execution time: ~1.38 hours
+- Total plans completed: 24
+- Average duration: ~3min 43s
+- Total execution time: ~1.49 hours
 
 **By Phase:**
 
@@ -32,10 +32,10 @@ Progress: [=========.] ~95%
 | 03-content-rendering-engine | 2 | 5min 48s | ~3min |
 | 04-content-authoring-pilot-articles | 3 | 11min 44s | ~3min 55s |
 | 05-navigation-information-architecture | 4 | 9min 20s | 2min 20s |
-| 05.1-bulk-content-migration | 9 | 37min 54s | 4min 13s |
+| 05.1-bulk-content-migration | 10 | 44min 55s | 4min 30s |
 
 **Recent Trend:**
-- Last 5 plans: 05.1-06 (3min 50s), 05.1-07 (4min 29s), 05.1-08 (5min 17s), 05.1-09 (not tracked), 05.1-10 (6min)
+- Last 5 plans: 05.1-06 (3min 50s), 05.1-07 (4min 29s), 05.1-08 (5min 17s), 05.1-09 (7min 1s), 05.1-10 (6min)
 - Trend: Article authoring plans average ~4-5 minutes
 
 *Updated after each plan completion*
@@ -108,6 +108,9 @@ Recent decisions affecting current work:
 - [05.1-08]: Narrative arc: steering methods (ActAdd/CAA) -> framework (RepE) -> case study (refusal) -> erasure (LEACE) -> natural directions (function vectors)
 - [05.1-08]: Dual-use framing throughout: every steering capability paired with its vulnerability implications
 - [05.1-08]: Concept-erasure and function-vectors kept to 1,000-1,500 words as narrower topics
+- [05.1-09]: Block narrative arc: tools (transcoders) -> methodology (tracing) -> comparison (crosscoders, universality) -> extension (multimodal)
+- [05.1-09]: CKA/SVCCA integrated into universality article rather than a separate article
+- [05.1-09]: Multimodal MI uses CLIP as deep example (closest parallel to text SAE work)
 - [05.1-10]: Promise-then-limitation pairing: each safety application article pairs positive results with explicit caveats in the same article
 - [05.1-10]: mi-safety-limitations organized as 6 numbered limitations for directness and clarity
 - [05.1-10]: SAE failure for deception detection covered in deception-detection article (evidence), then referenced as general limitation in mi-safety-limitations (pattern)
@@ -153,7 +156,7 @@ Bulk Content Migration - IN PROGRESS:
 - [x] 05.1-06: Block 4 Part 1: Superposition review + sparse-autoencoders + sae-interpretability (3min 50s)
 - [x] 05.1-07: Block 4 Part 2: scaling-monosemanticity + sae-variants-and-evaluation (4min 29s)
 - [x] 05.1-08: Block 5 Representation Engineering: activation-engineering + representation-engineering + refusal-direction + concept-erasure + function-vectors (5min 17s)
-- [ ] 05.1-09: Block 6 Circuit Tracing & Comparative MI
+- [x] 05.1-09: Block 6 Circuit Tracing & Comparative MI: transcoders + circuit-tracing + crosscoders-and-model-diffing + universality + multimodal-mi (7min 1s)
 - [x] 05.1-10: Block 7 MI for Safety: sleeper-agent-detection + deception-detection + safety-mechanisms-and-monitoring + mi-safety-limitations (6min)
 - [ ] 05.1-11 through 05.1-12: Article authoring (remaining 2 plans)
 
@@ -182,3 +185,8 @@ Key artifacts so far:
 - src/topics/deception-detection/index.md - Alignment faking, behavioral eval failure, SAE failure for deception
 - src/topics/safety-mechanisms-and-monitoring/index.md - Refusal recap, model organisms, sabotage evals, monitoring
 - src/topics/mi-safety-limitations/index.md - 6 honest limitations, the gap, Swiss cheese model
+- src/topics/transcoders/index.md - Transcoder architecture, SAE comparison, clean factorization
+- src/topics/circuit-tracing/index.md - Sparse feature circuits, attribution graphs, Biology paper case studies
+- src/topics/crosscoders-and-model-diffing/index.md - Crosscoder model diffing, shared/exclusive features
+- src/topics/universality/index.md - CKA, SVCCA, three dimensions of universality
+- src/topics/multimodal-mi/index.md - CLIP, VLMs, diffusion model interpretability
