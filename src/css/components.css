@@ -194,20 +194,28 @@
   border: 0;
 }
 
-/* Skip Link (accessibility) */
+/* ==========================================================================
+   SKIP LINK
+   Accessibility: skip-to-content link, hidden until focused.
+   ========================================================================== */
+
 .skip-link {
   position: absolute;
-  top: -40px;
-  left: 0;
-  background: var(--color-text, rgba(0, 0, 0, 0.87));
-  color: var(--color-background, #ffffff);
-  padding: var(--spacing-sm, 0.5rem) var(--spacing-md, 1rem);
-  z-index: 100;
-  transition: top var(--transition-fast, 150ms ease);
+  top: -100%;
+  left: var(--spacing-md);
+  padding: var(--spacing-xs) var(--spacing-sm);
+  background: var(--color-background);
+  border: 2px solid var(--color-link);
+  border-radius: var(--radius-md);
+  color: var(--color-link);
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  text-decoration: none;
+  z-index: 1000;
 }
 
 .skip-link:focus {
-  top: 0;
+  top: var(--spacing-sm);
 }
 
 /* ==========================================================================
@@ -682,6 +690,33 @@ label.sidenote-toggle:not(.sidenote-number) {
 
 .hamburger-icon::after {
   top: 6px;
+}
+
+/* ==========================================================================
+   THEME TOGGLE
+   Dark/light mode switch button in header.
+   ========================================================================== */
+
+.theme-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: var(--spacing-xs);
+  cursor: pointer;
+  color: var(--color-text-secondary);
+  transition: color var(--transition-fast), border-color var(--transition-fast);
+}
+
+.theme-toggle:hover {
+  color: var(--color-link);
+  border-color: var(--color-border-strong);
+}
+
+.theme-toggle svg {
+  display: block;
 }
 
 /* Mobile: sidebar hidden, slides in from left when toggled */

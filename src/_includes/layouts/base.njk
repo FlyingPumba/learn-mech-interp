@@ -5,6 +5,14 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>{% if title %}{{ title }} | {% endif %}Learn Mechanistic Interpretability</title>
   <meta name="description" content="{{ description | default('Learn Mechanistic Interpretability through structured articles covering transformer internals to frontier research.') }}">
+  <script>
+  (function() {
+    var t = localStorage.getItem('theme');
+    if (t === 'dark' || t === 'light') {
+      document.documentElement.setAttribute('data-theme', t);
+    }
+  })();
+  </script>
   <link rel="stylesheet" href="/css/variables.css">
   <link rel="stylesheet" href="/css/base.css">
   <link rel="stylesheet" href="/css/layout.css">
@@ -14,14 +22,16 @@
   <link rel="stylesheet" href="/css/prism-theme.css">
 </head>
 <body>
+  <a href="#main-content" class="skip-link">Skip to content</a>
   {% include "partials/header.njk" %}
   <div class="page-layout">
     {% include "partials/sidebar.njk" %}
-    <main>
+    <main id="main-content">
       {{ content | safe }}
     </main>
   </div>
   {% include "partials/footer.njk" %}
   <script src="/js/sidebar-toggle.js"></script>
+  <script src="/js/theme-toggle.js"></script>
 </body>
 </html>
