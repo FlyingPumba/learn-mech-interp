@@ -206,4 +206,6 @@ But "the best tool we have" does not mean "good enough." The decomposition is no
 
 This does not invalidate SAEs. It contextualizes them. They are a necessary but insufficient step toward understanding model internals. We should use SAEs with awareness of their limitations, not treat their outputs as ground truth.
 
+Beyond decomposition, the features and directions that SAEs discover can be leveraged for [activation engineering](/topics/activation-engineering/), which offers a different approach to manipulating model representations: rather than extracting features, it adds or removes directions to steer behavior at inference time.
+
 The next step beyond per-layer SAEs is [transcoders](/topics/transcoders/) -- models that directly map features between layers rather than decomposing each layer independently. And beyond individual features lies the question of how features connect into circuits, which is the domain of [circuit tracing and attribution graphs](/topics/circuit-tracing/).

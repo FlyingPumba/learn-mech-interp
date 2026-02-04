@@ -176,7 +176,7 @@ $$
 \text{Logits} = \text{Unembed}\!\left(\text{LN}\!\left(\text{Embed}(\mathbf{x}) + \sum_{l=0}^{L-1}\left[\text{Attn}^l + \text{MLP}^l\right]\right)\right)
 $$
 
-Ignoring layer norms, the output is determined by a sum of contributions from the token embedding (the direct path), each attention head in each layer, and each MLP in each layer. This decomposition is what makes mechanistic interpretability possible: we can trace the contribution of any individual component through to the final output.
+Ignoring layer norms, the output is determined by a sum of contributions from the token embedding (the direct path), each attention head in each layer, and each MLP in each layer. This decomposition is what makes [mechanistic interpretability](/topics/what-is-mech-interp/) possible: we can trace the contribution of any individual component through to the final output.
 
 Most mechanistic interpretability research focuses on decoder-only architectures because the causal mask means each position is a well-defined prediction problem. At position $i$, the model must predict token $i+1$ using only tokens $0, \ldots, i$. This gives us a clean experimental setup where we know exactly what information is available at each position. The models studied most heavily in the field (GPT-2 and similar autoregressive architectures) all follow this pattern.
 
