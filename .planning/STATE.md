@@ -148,7 +148,7 @@ Bulk Content Migration - IN PROGRESS:
 - [x] 05.1-04: Block 2 Part 2: direct-logit-attribution + logit-lens-and-probing with 3 diagrams (4min 30s)
 - [x] 05.1-05: Block 3 Observation to Causation: activation-patching review + attribution-patching + ioi-circuit + circuit-evaluation (6min 5s)
 - [x] 05.1-06: Block 4 Part 1: Superposition review + sparse-autoencoders + sae-interpretability (3min 50s)
-- [x] 05.1-07: Block 4 Part 2: sae-variants-and-evaluation (4min 29s)
+- [x] 05.1-07: Block 4 Part 2: scaling-monosemanticity + sae-variants-and-evaluation (4min 29s)
 - [x] 05.1-08: Block 5 Representation Engineering: activation-engineering + representation-engineering + refusal-direction + concept-erasure + function-vectors (5min 17s)
 - [ ] 05.1-09 through 05.1-12: Article authoring (remaining 4 plans)
 
@@ -166,7 +166,8 @@ Key artifacts so far:
 - src/topics/ioi-circuit/index.md - IOI task, discovery methodology, head classes, algorithm
 - src/topics/ioi-circuit/images/ioi_circuit_diagram.png - IOI circuit diagram
 - src/topics/circuit-evaluation/index.md - Evaluation criteria, causal scrubbing, limitations
-- src/topics/sae-variants-and-evaluation/index.md - SAE evolution, Golden Gate Claude, limitations
+- src/topics/scaling-monosemanticity/index.md - Golden Gate Claude, safety features, scaling laws
+- src/topics/sae-variants-and-evaluation/index.md - Gated/TopK/JumpReLU SAEs, SAEBench, limitations
 - src/topics/activation-engineering/index.md - ActAdd, CAA, steering methods with diagram
 - src/topics/representation-engineering/index.md - RepE paradigm, LAT, representation control
 - src/topics/refusal-direction/index.md - Refusal direction case study with 2 diagrams
