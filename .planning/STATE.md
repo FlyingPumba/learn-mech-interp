@@ -5,23 +5,23 @@
 See: .planning/PROJECT.md (updated 2026-02-02)
 
 **Core value:** People can learn Mechanistic Interpretability through well-structured, readable articles that build from foundations to frontier research, with easy navigation between topics and direct links to source papers.
-**Current focus:** Phase 5.1 - Bulk Content Migration COMPLETE (35 articles verified and interconnected)
+**Current focus:** Phase 6 - Search and Glossary (Pagefind search live, glossary next)
 
 ## Current Position
 
-Phase: 5.1 of 7 (Bulk Content Migration)
-Plan: 12 of 12 in current phase
-Status: Phase complete
-Last activity: 2026-02-04 - Completed 05.1-12-PLAN.md (Cross-Link Audit and Final Verification)
+Phase: 6 of 7 (Search and Glossary)
+Plan: 1 of 2 in current phase
+Status: In progress
+Last activity: 2026-02-04 - Completed 06-01-PLAN.md (Pagefind Search Integration)
 
-Progress: [==========] 100%
+Progress: [============================-] 96% (27/28 plans)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 25
-- Average duration: ~3min 38s
-- Total execution time: ~1.52 hours
+- Total plans completed: 26
+- Average duration: ~3min 34s
+- Total execution time: ~1.55 hours
 
 **By Phase:**
 
@@ -33,10 +33,11 @@ Progress: [==========] 100%
 | 04-content-authoring-pilot-articles | 3 | 11min 44s | ~3min 55s |
 | 05-navigation-information-architecture | 4 | 9min 20s | 2min 20s |
 | 05.1-bulk-content-migration | 11 | 50min 8s | 4min 33s |
+| 06-search-and-glossary | 1 | 2min 2s | 2min 2s |
 
 **Recent Trend:**
-- Last 5 plans: 05.1-08 (5min 17s), 05.1-09 (not tracked), 05.1-10 (6min), 05.1-11 (6min 14s), 05.1-12 (6min)
-- Trend: Article authoring plans average ~4-5 minutes
+- Last 5 plans: 05.1-10 (6min), 05.1-11 (6min 14s), 05.1-12 (6min), 06-01 (2min 2s)
+- Trend: Infrastructure plans faster than content authoring
 
 *Updated after each plan completion*
 
@@ -113,6 +114,10 @@ Recent decisions affecting current work:
 - [05.1-11]: field-assessment presents Hendrycks critique at full strength before the response
 - [05.1-12]: Audit found zero issues across all 35 articles (clean pass on all 7 checks)
 - [05.1-12]: Cross-block links added only where they fit narrative flow (5 of 8 planned were missing)
+- [06-01]: Pagefind as devDependency with eleventy.after hook for automatic index generation
+- [06-01]: data-pagefind-body scopes indexing to article body content only (36 pages indexed, non-article pages excluded)
+- [06-01]: Hardcoded baseUrl in PagefindUI JS (EleventyHtmlBasePlugin only transforms HTML attributes, not JS strings)
+- [06-01]: Glossary nav link added before glossary page exists (temporary 404, avoids double header edit)
 
 ### Pending Todos
 
@@ -129,11 +134,12 @@ None yet.
 
 - Phase 5 complete: Full navigation in place (sidebar, homepage learning path, breadcrumbs, TOC, prev/next, difficulty badges, prerequisites)
 - Requirements doc claims 41 requirements but actual count is 46; traceability table corrected during roadmap creation
+- Glossary nav link in header will 404 until Plan 06-02 completes
 
 ## Session Continuity
 
 Last session: 2026-02-04
-Stopped at: Completed 05.1-12-PLAN.md - Cross-Link Audit and Final Verification (Phase 5.1 COMPLETE)
+Stopped at: Completed 06-01-PLAN.md - Pagefind Search Integration
 Resume file: None
 
 ## Phase 5 Progress
@@ -165,4 +171,10 @@ Key artifacts:
 - src/_data/learningPath.json - 8 blocks, 35 topics in correct reading order
 - 35 articles across 8 blocks, fully verified and interconnected with 176 cross-links
 - 27 PNG diagrams placed and referenced across 15 article directories
-- Full Eleventy build produces 37 HTML pages with zero errors
+- Full Eleventy build produces 38 HTML pages with zero errors
+
+## Phase 6 Progress
+
+Search and Glossary - In progress:
+- [x] 06-01: Pagefind search integration: install, build hook, search page, themed UI, header nav (2min 2s)
+- [ ] 06-02: Glossary page with term definitions and cross-references
