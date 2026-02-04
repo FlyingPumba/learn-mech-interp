@@ -10,18 +10,18 @@ See: .planning/PROJECT.md (updated 2026-02-02)
 ## Current Position
 
 Phase: 5.1 of 7 (Bulk Content Migration)
-Plan: 8 of 12 in current phase
+Plan: 10 of 12 in current phase
 Status: In progress
-Last activity: 2026-02-04 - Completed 05.1-05-PLAN.md (Block 3 Observation to Causation)
+Last activity: 2026-02-04 - Completed 05.1-10-PLAN.md (Block 7 MI for Safety)
 
 Progress: [=========.] ~95%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 20
+- Total plans completed: 23
 - Average duration: ~3min 36s
-- Total execution time: ~1.20 hours
+- Total execution time: ~1.38 hours
 
 **By Phase:**
 
@@ -105,6 +105,9 @@ Recent decisions affecting current work:
 - [05.1-05]: Kept attribution/path patching content in activation-patching pilot and added cross-links to new deep-dive article
 - [05.1-05]: IOI circuit diagram placed in ioi-circuit/images/ but referenced from circuit-evaluation article (cross-article asset sharing)
 - [05.1-05]: ioi-circuit scoped to core 4 head classes, circuit-evaluation covers remaining heads + evaluation framework
+- [05.1-08]: Narrative arc: steering methods (ActAdd/CAA) -> framework (RepE) -> case study (refusal) -> erasure (LEACE) -> natural directions (function vectors)
+- [05.1-08]: Dual-use framing throughout: every steering capability paired with its vulnerability implications
+- [05.1-08]: Concept-erasure and function-vectors kept to 1,000-1,500 words as narrower topics
 
 ### Pending Todos
 
@@ -145,7 +148,9 @@ Bulk Content Migration - IN PROGRESS:
 - [x] 05.1-04: Block 2 Part 2: direct-logit-attribution + logit-lens-and-probing with 3 diagrams (4min 30s)
 - [x] 05.1-05: Block 3 Observation to Causation: activation-patching review + attribution-patching + ioi-circuit + circuit-evaluation (6min 5s)
 - [x] 05.1-06: Block 4 Part 1: Superposition review + sparse-autoencoders + sae-interpretability (3min 50s)
-- [ ] 05.1-07 through 05.1-12: Article authoring (remaining 6 plans)
+- [x] 05.1-07: Block 4 Part 2: sae-variants-and-evaluation (4min 29s)
+- [x] 05.1-08: Block 5 Representation Engineering: activation-engineering + representation-engineering + refusal-direction + concept-erasure + function-vectors (5min 17s)
+- [ ] 05.1-09 through 05.1-12: Article authoring (remaining 4 plans)
 
 Key artifacts so far:
 - src/_data/references.json - 44 citation entries covering all papers across 35 articles
@@ -161,3 +166,9 @@ Key artifacts so far:
 - src/topics/ioi-circuit/index.md - IOI task, discovery methodology, head classes, algorithm
 - src/topics/ioi-circuit/images/ioi_circuit_diagram.png - IOI circuit diagram
 - src/topics/circuit-evaluation/index.md - Evaluation criteria, causal scrubbing, limitations
+- src/topics/sae-variants-and-evaluation/index.md - SAE evolution, Golden Gate Claude, limitations
+- src/topics/activation-engineering/index.md - ActAdd, CAA, steering methods with diagram
+- src/topics/representation-engineering/index.md - RepE paradigm, LAT, representation control
+- src/topics/refusal-direction/index.md - Refusal direction case study with 2 diagrams
+- src/topics/concept-erasure/index.md - LEACE concept erasure
+- src/topics/function-vectors/index.md - Function vectors, natural task directions
