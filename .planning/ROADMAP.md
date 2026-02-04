@@ -81,12 +81,12 @@ Plans:
   3. Mentions of concepts covered in other articles link directly to those articles (cross-article concept linking works)
   4. Paper references are embedded throughout pilot articles with working links to source papers in new tabs
   5. Course diagrams appear in pilot articles with descriptive alt text and proper figure/caption markup
-**Plans**: TBD
+**Plans**: 3 plans
 
 Plans:
-- [ ] 04-01: TBD
-- [ ] 04-02: TBD
-- [ ] 04-03: TBD
+- [ ] 04-01-PLAN.md -- Infrastructure prep, references expansion, and "The Attention Mechanism" pilot article
+- [ ] 04-02-PLAN.md -- "The Superposition Hypothesis" pilot article (6 diagrams)
+- [ ] 04-03-PLAN.md -- "Activation Patching and Causal Interventions" pilot article (cross-article links)
 
 ### Phase 5: Navigation & Information Architecture
 **Goal**: Users can navigate the full site through multiple paths -- a sidebar topic hierarchy, a guided learning path on the homepage, breadcrumbs, prev/next links, and in-page table of contents -- without getting lost
@@ -142,7 +142,7 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7
 | 1. Foundation & Deployment | 2/2 | Complete | 2026-02-03 |
 | 2. Template System & Design | 3/3 | Complete | 2026-02-03 |
 | 3. Content Rendering Engine | 2/2 | Complete | 2026-02-03 |
-| 4. Content Authoring & Pilot Articles | 0/TBD | Not started | - |
+| 4. Content Authoring & Pilot Articles | 0/3 | Not started | - |
 | 5. Navigation & Information Architecture | 0/TBD | Not started | - |
 | 6. Search & Glossary | 0/TBD | Not started | - |
 | 7. Polish & Accessibility | 0/TBD | Not started | - |
