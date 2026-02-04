@@ -5,23 +5,23 @@
 See: .planning/PROJECT.md (updated 2026-02-02)
 
 **Core value:** People can learn Mechanistic Interpretability through well-structured, readable articles that build from foundations to frontier research, with easy navigation between topics and direct links to source papers.
-**Current focus:** Phase 2 complete - Ready for verification
+**Current focus:** Phase 3 in progress - Content Rendering Engine
 
 ## Current Position
 
-Phase: 2 of 7 (Template System & Design)
-Plan: 3 of 3 in current phase
-Status: Plans complete, verifying
-Last activity: 2026-02-03 - Completed 02-03-PLAN.md (Visual Polish)
+Phase: 3 of 7 (Content Rendering Engine)
+Plan: 1 of 2 in current phase
+Status: In progress
+Last activity: 2026-02-03 - Completed 03-01-PLAN.md (Math, Code, Figures)
 
-Progress: [====......] ~30%
+Progress: [=====.....] ~43%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 5
+- Total plans completed: 6
 - Average duration: 4min
-- Total execution time: 0.33 hours
+- Total execution time: 0.38 hours
 
 **By Phase:**
 
@@ -29,10 +29,11 @@ Progress: [====......] ~30%
 |-------|-------|-------|----------|
 | 01-foundation-deployment | 2 | 3min 28s | 1min 44s |
 | 02-template-system-and-design | 3 | 23min | ~8min |
+| 03-content-rendering-engine | 1 | 2min 38s | 2min 38s |
 
 **Recent Trend:**
-- Last 5 plans: 01-02 (~1min), 02-01 (3min), 02-02 (~5min), 02-03 (~15min)
-- Trend: Design work takes longer (expected)
+- Last 5 plans: 02-01 (3min), 02-02 (~5min), 02-03 (~15min), 03-01 (2min 38s)
+- Trend: Plugin installation plans are fast; design/polish plans take longer
 
 *Updated after each plan completion*
 
@@ -59,6 +60,10 @@ Recent decisions affecting current work:
 - [02-03]: Sans-serif typography throughout (modern direction)
 - [02-03]: Light theme only, compact header/footer heights
 - [02-03]: Hero section pattern for landing pages
+- [03-01]: KaTeX CSS from CDN (jsdelivr v0.16.28), not bundled locally
+- [03-01]: Custom Prism theme using site CSS variables for academic aesthetic
+- [03-01]: htmlAndMathml KaTeX output for visual rendering + screen reader accessibility
+- [03-01]: markdown-it plugin chain via setLibrary, Eleventy plugins via addPlugin
 
 ### Pending Todos
 
@@ -72,24 +77,18 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-02-03
-Stopped at: Completed 02-03-PLAN.md - Visual Polish
+Stopped at: Completed 03-01-PLAN.md - Math, Code, Figures
 Resume file: None
 
-## Phase 2 Completion Summary
+## Phase 3 Progress
 
-Template System & Design phase complete with:
-- [x] 02-01: CSS Design System (42 custom properties, responsive breakpoints)
-- [x] 02-02: Template Hierarchy (header/footer partials, article layout chaining)
-- [x] 02-03: Visual Polish (hero section, feature cards, refined design)
+Content Rendering Engine phase in progress:
+- [x] 03-01: Math, Code, Figures (KaTeX + PrismJS + figure plugin)
+- [ ] 03-02: Citations, Margin Notes, Collapsible Prompts
 
-Key artifacts created:
-- src/css/variables.css - Design tokens
-- src/css/base.css - Reset and typography
-- src/css/layout.css - Responsive layout
-- src/css/components.css - UI components (hero, cards, buttons)
-- src/_includes/partials/header.njk - Site header with navigation
-- src/_includes/partials/footer.njk - Single-line footer
-- src/_includes/layouts/article.njk - Article layout extending base
-- src/index.njk - Homepage with hero and feature cards
-
-Ready to verify Phase 2 goal achievement.
+Key artifacts created so far:
+- eleventy.config.js - Updated with markdown-it plugins and syntax highlight plugin
+- src/css/katex-overrides.css - Mobile overflow fixes for math
+- src/css/prism-theme.css - Academic-light code theme
+- src/_includes/layouts/base.njk - Updated with KaTeX CDN + custom CSS links
+- src/topics/test/index.md - Content rendering demo article

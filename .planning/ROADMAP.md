@@ -68,7 +68,7 @@ Plans:
 **Plans**: 2 plans
 
 Plans:
-- [ ] 03-01-PLAN.md -- Build-time math rendering, syntax highlighting, and figures
+- [x] 03-01-PLAN.md -- Build-time math rendering, syntax highlighting, and figures
 - [ ] 03-02-PLAN.md -- Citations with hover tooltips, margin notes, and collapsible prompts
 
 ### Phase 4: Content Authoring & Pilot Articles
