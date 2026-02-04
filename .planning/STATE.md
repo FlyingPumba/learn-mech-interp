@@ -10,18 +10,18 @@ See: .planning/PROJECT.md (updated 2026-02-02)
 ## Current Position
 
 Phase: 5 of 7 (Navigation & Information Architecture)
-Plan: 2 of 4 in current phase
+Plan: 3 of 4 in current phase
 Status: In progress
-Last activity: 2026-02-04 - Completed 05-02-PLAN.md (Sidebar navigation, mobile hamburger toggle, page layout)
+Last activity: 2026-02-04 - Completed 05-03-PLAN.md (Article navigation: breadcrumbs, TOC, prev/next, difficulty badge, prerequisites)
 
-Progress: [=========.] ~93%
+Progress: [=========.] ~95%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 12
-- Average duration: ~3min 35s
-- Total execution time: ~0.71 hours
+- Total plans completed: 13
+- Average duration: ~3min 27s
+- Total execution time: ~0.75 hours
 
 **By Phase:**
 
@@ -31,11 +31,11 @@ Progress: [=========.] ~93%
 | 02-template-system-and-design | 3 | 23min | ~8min |
 | 03-content-rendering-engine | 2 | 5min 48s | ~3min |
 | 04-content-authoring-pilot-articles | 3 | 11min 44s | ~3min 55s |
-| 05-navigation-information-architecture | 2 | 3min 29s | 1min 45s |
+| 05-navigation-information-architecture | 3 | 7min 51s | 2min 37s |
 
 **Recent Trend:**
-- Last 5 plans: 04-02 (3min 20s), 04-03 (4min 39s), 05-01 (1min 37s), 05-02 (1min 52s)
-- Trend: Navigation plans completing fast; sidebar + CSS in under 2 minutes
+- Last 5 plans: 04-03 (4min 39s), 05-01 (1min 37s), 05-02 (1min 52s), 05-03 (4min 22s)
+- Trend: 05-03 took longer due to TOC heading ID compatibility issue (markdown-it-anchor fix)
 
 *Updated after each plan completion*
 
@@ -83,6 +83,9 @@ Recent decisions affecting current work:
 - [05-02]: learningPath.json as sidebar data source (blocks are not pages, avoids navigation plugin parent key issue)
 - [05-02]: Page-level grid at 1200px+, article-level grid remains at 1400px+ (independent grids)
 - [05-02]: Progressive enhancement for hamburger (hidden by default, JS removes hidden on load)
+- [05-03]: markdown-it-anchor with @sindresorhus/slugify for heading IDs at render time (TOC filter compatibility)
+- [05-03]: TOC hidden on mobile, sticky sidebar at 1400px+ using CSS grid within article-content-wrapper
+- [05-03]: Difficulty badge colors: green (foundational), orange (intermediate), red (advanced)
 
 ### Pending Todos
 
@@ -96,7 +99,7 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-02-04
-Stopped at: Completed 05-02-PLAN.md - Sidebar navigation, mobile hamburger toggle, page layout
+Stopped at: Completed 05-03-PLAN.md - Article navigation: breadcrumbs, TOC, prev/next, difficulty badge, prerequisites
 Resume file: None
 
 ## Phase 5 Progress
@@ -104,14 +107,16 @@ Resume file: None
 Navigation & Information Architecture phase IN PROGRESS:
 - [x] 05-01: Foundation: plugins, data, collection (1min 37s)
 - [x] 05-02: Sidebar navigation, mobile hamburger toggle, page layout restructuring (1min 52s)
-- [ ] 05-03: Article navigation: breadcrumbs, TOC, prev/next, difficulty badge, prerequisites
+- [x] 05-03: Article navigation: breadcrumbs, TOC, prev/next, difficulty badge, prerequisites (4min 22s)
 - [ ] 05-04: Homepage: learning path visualization, fix "start here" link
 
 Key artifacts:
-- package.json - @11ty/eleventy-navigation@1.0.5, eleventy-plugin-toc@1.1.5 added
-- eleventy.config.js - IdAttributePlugin, eleventyNavigationPlugin, pluginTOC registered; learningPath collection; src/js passthrough
+- package.json - @11ty/eleventy-navigation, eleventy-plugin-toc, markdown-it-anchor added
+- eleventy.config.js - IdAttributePlugin, eleventyNavigationPlugin, pluginTOC, markdown-it-anchor registered; learningPath collection; src/js passthrough
 - src/_data/learningPath.json - 3 blocks, 3 topics (canonical ordering)
 - src/topics/topics.11tydata.js - eleventyComputed with eleventyNavigation metadata
 - src/_includes/partials/sidebar.njk - Topic hierarchy sidebar from learningPath data
 - src/_includes/layouts/base.njk - Page-level grid layout with sidebar + main
+- src/_includes/layouts/article.njk - Breadcrumbs, difficulty badge, prerequisites, TOC, prev/next navigation
+- src/css/components.css - Breadcrumbs, difficulty badges, TOC, prev/next CSS
 - src/js/sidebar-toggle.js - Accessible hamburger toggle with ARIA management
