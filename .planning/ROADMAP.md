@@ -97,12 +97,13 @@ Plans:
   2. The homepage has a hero section explaining the site, a clear "start here" entry point, and a visual learning path showing suggested reading order through all topics
   3. Each article shows breadcrumbs (Home > Block > Topic), previous/next links following the learning path, and an auto-generated table of contents fixed on wide screens
   4. Each article displays prerequisite indicators ("read X first" with links) and a difficulty badge (Foundational / Intermediate / Advanced)
-**Plans**: TBD
+**Plans**: 4 plans
 
 Plans:
-- [ ] 05-01: TBD
-- [ ] 05-02: TBD
-- [ ] 05-03: TBD
+- [ ] 05-01-PLAN.md -- Foundation: install plugins, create learningPath.json, register plugins, create collection
+- [ ] 05-02-PLAN.md -- Sidebar navigation, mobile hamburger toggle, page layout restructuring
+- [ ] 05-03-PLAN.md -- Article navigation: breadcrumbs, TOC, prev/next, difficulty badge, prerequisites
+- [ ] 05-04-PLAN.md -- Homepage: learning path visualization, fix "start here" link
 
 ### Phase 6: Search & Glossary
 **Goal**: Users can find any concept across all articles through full-text search and browse a curated MI glossary, making the site useful as both a learning resource and a reference
