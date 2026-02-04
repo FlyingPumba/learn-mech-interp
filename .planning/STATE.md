@@ -10,18 +10,18 @@ See: .planning/PROJECT.md (updated 2026-02-02)
 ## Current Position
 
 Phase: 5.1 of 7 (Bulk Content Migration)
-Plan: 1 of 12 in current phase
+Plan: 6 of 12 in current phase
 Status: In progress
-Last activity: 2026-02-04 - Completed 05.1-01-PLAN.md (Shared data files: references.json + learningPath.json)
+Last activity: 2026-02-04 - Completed 05.1-06-PLAN.md (Block 4 Part 1: Superposition and SAEs)
 
 Progress: [=========.] ~95%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 15
-- Average duration: ~3min 10s
-- Total execution time: ~0.80 hours
+- Total plans completed: 16
+- Average duration: ~3min 14s
+- Total execution time: ~0.86 hours
 
 **By Phase:**
 
@@ -32,11 +32,11 @@ Progress: [=========.] ~95%
 | 03-content-rendering-engine | 2 | 5min 48s | ~3min |
 | 04-content-authoring-pilot-articles | 3 | 11min 44s | ~3min 55s |
 | 05-navigation-information-architecture | 4 | 9min 20s | 2min 20s |
-| 05.1-bulk-content-migration | 1 | 2min 43s | 2min 43s |
+| 05.1-bulk-content-migration | 2 | 6min 33s | 3min 17s |
 
 **Recent Trend:**
-- Last 5 plans: 05-02 (1min 52s), 05-03 (4min 22s), 05-04 (1min 29s), 05.1-01 (2min 43s)
-- Trend: Data file plans execute quickly
+- Last 5 plans: 05-03 (4min 22s), 05-04 (1min 29s), 05.1-01 (2min 43s), 05.1-06 (3min 50s)
+- Trend: Article authoring plans average ~3-4 minutes
 
 *Updated after each plan completion*
 
@@ -90,6 +90,9 @@ Recent decisions affecting current work:
 - [05-04]: learningPath.blocks[0].topics[0] used to dynamically resolve first article for hero "Start Learning" button
 - [05.1-01]: references.json expanded to 44 entries (11 existing + 33 new) for all 35 articles
 - [05.1-01]: learningPath.json expanded to 8 blocks, 35 topics in reading order
+- [05.1-06]: Superposition pilot confirmed complete -- only added forward cross-link to sparse-autoencoders
+- [05.1-06]: SAE article structured as problem-solution arc: dictionary learning framing, architecture, training, results
+- [05.1-06]: sae-interpretability separated from sparse-autoencoders for narrative focus
 
 ### Pending Todos
 
@@ -110,7 +113,7 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-02-04
-Stopped at: Completed 05.1-01-PLAN.md - Shared data files: references.json + learningPath.json
+Stopped at: Completed 05.1-06-PLAN.md - Block 4 Part 1: Superposition and SAEs
 Resume file: None
 
 ## Phase 5 Progress
@@ -125,8 +128,12 @@ Navigation & Information Architecture phase COMPLETE:
 
 Bulk Content Migration - IN PROGRESS:
 - [x] 05.1-01: Shared data files: references.json (44 entries) + learningPath.json (8 blocks, 35 topics) (2min 43s)
-- [ ] 05.1-02 through 05.1-12: Article authoring (remaining 11 plans)
+- [ ] 05.1-02 through 05.1-05: Article authoring (blocks 1-3)
+- [x] 05.1-06: Block 4 Part 1: Superposition review + sparse-autoencoders + sae-interpretability (3min 50s)
+- [ ] 05.1-07 through 05.1-12: Article authoring (remaining 6 plans)
 
 Key artifacts so far:
 - src/_data/references.json - 44 citation entries covering all papers across 35 articles
 - src/_data/learningPath.json - 8 blocks, 35 topics in correct reading order
+- src/topics/sparse-autoencoders/index.md - SAE architecture, dictionary learning, Towards Monosemanticity
+- src/topics/sae-interpretability/index.md - Feature dashboards and automated interpretability
