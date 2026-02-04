@@ -75,5 +75,236 @@
     "year": 2020,
     "venue": "Distill",
     "url": "https://distill.pub/2020/circuits/zoom-in/"
+  },
+  "bereska2024review": {
+    "title": "Mechanistic Interpretability for AI Safety -- A Review",
+    "authors": "Bereska, L., Gavves, E.",
+    "year": 2024,
+    "venue": "TMLR",
+    "url": "https://arxiv.org/abs/2404.14082"
+  },
+  "nostalgebraist2020logitlens": {
+    "title": "interpreting GPT: the logit lens",
+    "authors": "nostalgebraist",
+    "year": 2020,
+    "venue": "Blog post",
+    "url": "https://www.lesswrong.com/posts/AcKRB8wDpdaN6v6ru/interpreting-gpt-the-logit-lens"
+  },
+  "belrose2023tunedlens": {
+    "title": "Eliciting Latent Predictions from Transformers with the Tuned Lens",
+    "authors": "Belrose, N., Ostrovsky, I., McKinney, L., et al.",
+    "year": 2023,
+    "venue": "arXiv",
+    "url": "https://arxiv.org/abs/2303.08112"
+  },
+  "hewitt2019structural": {
+    "title": "A Structural Probe for Finding Syntax in Word Representations",
+    "authors": "Hewitt, J., Manning, C. D.",
+    "year": 2019,
+    "venue": "NAACL",
+    "url": "https://aclanthology.org/N19-1419/"
+  },
+  "voita2020mdl": {
+    "title": "Information-Theoretic Probing with Minimum Description Length",
+    "authors": "Voita, E., Titov, I.",
+    "year": 2020,
+    "venue": "EMNLP",
+    "url": "https://arxiv.org/abs/2003.12298"
+  },
+  "elazar2021amnesic": {
+    "title": "Amnesic Probing: Behavioral Explanation with Amnesic Counterfactuals",
+    "authors": "Elazar, Y., Ravfogel, S., Jacovi, A., Goldberg, Y.",
+    "year": 2021,
+    "venue": "TACL",
+    "url": "https://aclanthology.org/2021.tacl-1.10/"
+  },
+  "belinkov2022probing": {
+    "title": "Probing Classifiers: Promises, Shortcomings, and Advances",
+    "authors": "Belinkov, Y.",
+    "year": 2022,
+    "venue": "Computational Linguistics",
+    "url": "https://aclanthology.org/2022.cl-1.7/"
+  },
+  "chan2022causalscrubbing": {
+    "title": "Causal Scrubbing: A Method for Rigorously Testing Interpretability Hypotheses",
+    "authors": "Chan, L., Garriga-Alonso, A., Goldowsky-Dill, N., et al.",
+    "year": 2022,
+    "venue": "Redwood Research",
+    "url": "https://www.alignmentforum.org/posts/JvZhhzycHu2Yd57RN/causal-scrubbing-a-method-for-rigorously-testing"
+  },
+  "templeton2024scaling": {
+    "title": "Scaling Monosemanticity: Extracting Interpretable Features from Claude 3 Sonnet",
+    "authors": "Templeton, A., Conerly, T., Marcus, J., et al.",
+    "year": 2024,
+    "venue": "Anthropic",
+    "url": "https://transformer-circuits.pub/2024/scaling-monosemanticity/index.html"
+  },
+  "rajamanoharan2024gated": {
+    "title": "Improving Dictionary Learning with Gated Sparse Autoencoders",
+    "authors": "Rajamanoharan, S., Conmy, A., Smith, L., et al.",
+    "year": 2024,
+    "venue": "NeurIPS",
+    "url": "https://arxiv.org/abs/2404.16014"
+  },
+  "gao2024scaling": {
+    "title": "Scaling and Evaluating Sparse Autoencoders",
+    "authors": "Gao, L., Dupre la Tour, T., Tillman, H., et al.",
+    "year": 2024,
+    "venue": "ICLR 2025",
+    "url": "https://arxiv.org/abs/2406.04093"
+  },
+  "rajamanoharan2024jumprelu": {
+    "title": "Jumping Ahead: Improving Reconstruction Fidelity with JumpReLU Sparse Autoencoders",
+    "authors": "Rajamanoharan, S., Lieberum, T., Sonnerat, N., et al.",
+    "year": 2024,
+    "venue": "arXiv",
+    "url": "https://arxiv.org/abs/2407.14435"
+  },
+  "karvonen2025saebench": {
+    "title": "SAEBench: A Comprehensive Benchmark for Sparse Autoencoders in Language Model Interpretability",
+    "authors": "Karvonen, A., Rager, C., Lin, J., et al.",
+    "year": 2025,
+    "venue": "arXiv",
+    "url": "https://arxiv.org/abs/2503.09532"
+  },
+  "chanin2024absorption": {
+    "title": "A is for Absorption: Studying Feature Splitting and Absorption in Sparse Autoencoders",
+    "authors": "Chanin, D., Wilken-Smith, J., Dulka, T., et al.",
+    "year": 2024,
+    "venue": "NeurIPS Workshop",
+    "url": "https://arxiv.org/abs/2409.14507"
+  },
+  "turner2024steering": {
+    "title": "Steering Language Models With Activation Engineering",
+    "authors": "Turner, A. M., Thiergart, L., Leech, G., et al.",
+    "year": 2024,
+    "venue": "arXiv",
+    "url": "https://arxiv.org/abs/2308.10248"
+  },
+  "panickssery2024caa": {
+    "title": "Steering Llama 2 via Contrastive Activation Addition",
+    "authors": "Panickssery, N., Gabrieli, N., Schulz, J., et al.",
+    "year": 2024,
+    "venue": "ACL",
+    "url": "https://arxiv.org/abs/2312.06681"
+  },
+  "zou2023repe": {
+    "title": "Representation Engineering: A Top-Down Approach to AI Transparency",
+    "authors": "Zou, A., Phan, L., Chen, S., et al.",
+    "year": 2023,
+    "venue": "arXiv",
+    "url": "https://arxiv.org/abs/2310.01405"
+  },
+  "arditi2024refusal": {
+    "title": "Refusal in Language Models Is Mediated by a Single Direction",
+    "authors": "Arditi, A., Obeso, O., Syed, A., et al.",
+    "year": 2024,
+    "venue": "NeurIPS",
+    "url": "https://arxiv.org/abs/2406.11717"
+  },
+  "todd2024function": {
+    "title": "Function Vectors in Large Language Models",
+    "authors": "Todd, E., Li, M. L., Sharma, A. S., et al.",
+    "year": 2024,
+    "venue": "ICLR",
+    "url": "https://arxiv.org/abs/2310.15213"
+  },
+  "belrose2023leace": {
+    "title": "LEACE: Perfect Linear Concept Erasure in Closed Form",
+    "authors": "Belrose, N., Schneider-Joseph, D., Ravfogel, S., et al.",
+    "year": 2023,
+    "venue": "NeurIPS",
+    "url": "https://arxiv.org/abs/2306.03819"
+  },
+  "lindsey2025circuittracing": {
+    "title": "Circuit Tracing: Revealing Computational Graphs in Language Models",
+    "authors": "Lindsey, J., Batson, J., Denison, C., et al.",
+    "year": 2025,
+    "venue": "Anthropic",
+    "url": "https://transformer-circuits.pub/2025/attribution-graphs/methods.html"
+  },
+  "anthropic2025biology": {
+    "title": "On the Biology of a Large Language Model",
+    "authors": "Anthropic",
+    "year": 2025,
+    "venue": "Anthropic",
+    "url": "https://transformer-circuits.pub/2025/attribution-graphs/biology.html"
+  },
+  "dunefsky2024transcoders": {
+    "title": "Transcoders Find Interpretable LLM Feature Circuits",
+    "authors": "Dunefsky, J., Chlenski, P., Nanda, N.",
+    "year": 2024,
+    "venue": "NeurIPS",
+    "url": "https://arxiv.org/abs/2406.11944"
+  },
+  "marks2024sparse": {
+    "title": "Sparse Feature Circuits: Discovering and Editing Interpretable Causal Graphs in Language Models",
+    "authors": "Marks, S., Rager, C., Michaud, E. J., et al.",
+    "year": 2024,
+    "venue": "ICLR 2025",
+    "url": "https://arxiv.org/abs/2403.19647"
+  },
+  "gurnee2024universal": {
+    "title": "Universal Neurons in GPT2 Language Models",
+    "authors": "Gurnee, W., Horsley, T., Guo, Z. C., et al.",
+    "year": 2024,
+    "venue": "TMLR",
+    "url": "https://arxiv.org/abs/2401.12181"
+  },
+  "lin2025multimodal": {
+    "title": "A Survey on Mechanistic Interpretability for Multi-Modal Foundation Models",
+    "authors": "Lin, Z., Basu, S., Beigi, M., et al.",
+    "year": 2025,
+    "venue": "arXiv",
+    "url": "https://arxiv.org/abs/2502.17516"
+  },
+  "hubinger2024sleeper": {
+    "title": "Sleeper Agents: Training Deceptive LLMs that Persist Through Safety Training",
+    "authors": "Hubinger, E., Denison, C., Mu, J., et al.",
+    "year": 2024,
+    "venue": "arXiv",
+    "url": "https://arxiv.org/abs/2401.05566"
+  },
+  "greenblatt2024alignment": {
+    "title": "Alignment Faking in Large Language Models",
+    "authors": "Greenblatt, R., Denison, C., Wright, B., et al.",
+    "year": 2024,
+    "venue": "arXiv",
+    "url": "https://arxiv.org/abs/2412.14093"
+  },
+  "anthropic2024probes": {
+    "title": "Simple Probes Can Catch Sleeper Agents",
+    "authors": "Anthropic",
+    "year": 2024,
+    "venue": "Anthropic Research Blog",
+    "url": "https://www.anthropic.com/research/probes-catch-sleeper-agents"
+  },
+  "nanda2022openproblems": {
+    "title": "200 Concrete Open Problems in Mechanistic Interpretability",
+    "authors": "Nanda, N.",
+    "year": 2022,
+    "venue": "Alignment Forum",
+    "url": "https://www.alignmentforum.org/s/yivyHaCAmMJ3CqSyj"
+  },
+  "sharkey2025openproblems": {
+    "title": "Open Problems in Mechanistic Interpretability",
+    "authors": "Sharkey, L., Chughtai, B., Batson, J., et al.",
+    "year": 2025,
+    "venue": "TMLR",
+    "url": "https://arxiv.org/abs/2501.16496"
+  },
+  "rai2024practical": {
+    "title": "A Practical Review of Mechanistic Interpretability for Transformer-Based Language Models",
+    "authors": "Rai, D., Zhou, Y., Feng, S., et al.",
+    "year": 2024,
+    "venue": "arXiv",
+    "url": "https://arxiv.org/abs/2407.02646"
+  },
+  "park2023lrh": {
+    "title": "The Linear Representation Hypothesis and the Geometry of Large Language Models",
+    "authors": "Park, K., Choe, Y. J., Veitch, V.",
+    "year": 2023,
+    "venue": "arXiv",
+    "url": "https://arxiv.org/abs/2311.03658"
   }
 }
