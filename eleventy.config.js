@@ -113,9 +113,11 @@ export default function(eleventyConfig) {
     sidenoteCounter[pageUrl]++;
     const id = `sn-${sidenoteCounter[pageUrl]}`;
 
-    return `<label for="${id}" class="sidenote-toggle sidenote-number"></label>` +
+    return `<span class="sidenote-wrapper">` +
+      `<label for="${id}" class="sidenote-toggle sidenote-number"></label>` +
       `<input type="checkbox" id="${id}" class="sidenote-toggle-input"/>` +
-      `<span class="sidenote">${content}</span>`;
+      `<span class="sidenote">${content}</span>` +
+    `</span>`;
   });
 
   // Margin note shortcode: {% marginnote "content" %} renders unnumbered margin note
@@ -125,9 +127,11 @@ export default function(eleventyConfig) {
     marginCounter[pageUrl]++;
     const id = `mn-${marginCounter[pageUrl]}`;
 
-    return `<label for="${id}" class="sidenote-toggle marginnote-indicator">&#8853;</label>` +
+    return `<span class="sidenote-wrapper">` +
+      `<label for="${id}" class="sidenote-toggle marginnote-indicator">&#8853;</label>` +
       `<input type="checkbox" id="${id}" class="sidenote-toggle-input"/>` +
-      `<span class="marginnote">${content}</span>`;
+      `<span class="marginnote">${content}</span>` +
+    `</span>`;
   });
 
   // Reading time filter: strips HTML, counts words, returns "N min read"

@@ -482,12 +482,18 @@
 /* ==========================================================================
    SIDENOTES & MARGIN NOTES
    Tufte-style CSS-only responsive sidenotes using the checkbox hack.
-   Desktop: float into right margin. Mobile: expand via toggle.
+   Hover: show in a popover box near the reference.
    ========================================================================== */
 
 /* Sidenote numbering via CSS counters */
+.sidenote-wrapper {
+  position: relative;
+  display: inline;
+}
+
 .sidenote-number {
   counter-increment: sidenote-counter;
+  cursor: pointer;
 }
 
 .sidenote-number::after {
@@ -495,6 +501,7 @@
   font-size: 0.75rem;
   vertical-align: super;
   line-height: 0;
+  color: var(--color-link, #004276);
 }
 
 .sidenote::before {
@@ -504,27 +511,28 @@
   line-height: 0;
 }
 
-/* Desktop: show sidenotes floated into the right margin */
+/* Popover box (hidden unless hovered/focused/toggled) */
 .sidenote,
 .marginnote {
-  float: right;
-  clear: right;
-  margin-right: -60%;
-  width: 50%;
-  font-size: var(--font-size-small, 0.875rem);
-  line-height: 1.3;
-  margin-top: 0.3rem;
-  margin-bottom: var(--spacing-sm, 0.5rem);
-  vertical-align: baseline;
-  position: relative;
-}
-
-/* Hide toggle controls on desktop */
-.sidenote-toggle-input {
   display: none;
+  position: absolute;
+  left: 0;
+  top: 1.35em;
+  z-index: 20;
+  width: min(360px, 80vw);
+  max-width: 360px;
+  padding: var(--spacing-sm, 0.5rem) var(--spacing-md, 1rem);
+  background: var(--color-background, #ffffff);
+  border: 1px solid var(--color-border, rgba(0, 0, 0, 0.1));
+  border-radius: var(--radius-md, 4px);
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.12);
+  font-size: var(--font-size-small, 0.875rem);
+  line-height: 1.4;
+  color: var(--color-text, rgba(0, 0, 0, 0.87));
 }
 
-label.sidenote-toggle:not(.sidenote-number) {
+/* Hide the checkbox, but keep label working */
+.sidenote-toggle-input {
   display: none;
 }
 
@@ -534,29 +542,26 @@ label.sidenote-toggle:not(.sidenote-number) {
   color: var(--color-link, #004276);
 }
 
-/* Mobile/tablet: collapse sidenotes to expandable toggles */
-@media (max-width: 1399px) {
+/* Show on hover / keyboard focus / click-toggle */
+.sidenote-wrapper:hover > .sidenote,
+.sidenote-wrapper:hover > .marginnote,
+.sidenote-wrapper:focus-within > .sidenote,
+.sidenote-wrapper:focus-within > .marginnote,
+.sidenote-toggle-input:checked + .sidenote,
+.sidenote-toggle-input:checked + .marginnote {
+  display: block;
+}
+
+/* On touch/small screens, show expanded notes inline (not as a popover). */
+@media (max-width: 767px), (hover: none) {
   .sidenote,
   .marginnote {
-    display: none;
-  }
-
-  label.sidenote-toggle:not(.sidenote-number) {
-    display: inline;
-    cursor: pointer;
-  }
-
-  .sidenote-toggle-input:checked + .sidenote,
-  .sidenote-toggle-input:checked + .marginnote {
-    display: block;
-    float: none;
-    width: 95%;
-    margin: var(--spacing-sm, 0.5rem) 2.5%;
+    position: static;
+    width: 100%;
+    max-width: none;
+    margin: var(--spacing-xs, 0.25rem) 0;
     background: var(--color-background-subtle, rgba(0, 0, 0, 0.02));
-    padding: var(--spacing-sm, 0.5rem) var(--spacing-md, 1rem);
-    border-radius: var(--radius-md, 4px);
-    font-size: var(--font-size-small, 0.875rem);
-    line-height: 1.4;
+    box-shadow: none;
   }
 }
 
