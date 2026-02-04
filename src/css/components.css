@@ -1050,3 +1050,35 @@ label.sidenote-toggle:not(.sidenote-number) {
     padding: var(--spacing-3xl, 4rem) var(--spacing-xl, 2rem);
   }
 }
+
+/* ==========================================================================
+   PAGEFIND SEARCH UI
+   Theming overrides for the Pagefind search widget to match site design.
+   ========================================================================== */
+
+.pagefind-ui {
+  --pagefind-ui-scale: 0.9;
+  --pagefind-ui-primary: var(--color-link, #004276);
+  --pagefind-ui-text: var(--color-text, rgba(0, 0, 0, 0.87));
+  --pagefind-ui-background: var(--color-background, #ffffff);
+  --pagefind-ui-border: var(--color-border, rgba(0, 0, 0, 0.1));
+  --pagefind-ui-tag: var(--color-background-subtle, rgba(0, 0, 0, 0.02));
+  --pagefind-ui-border-width: 1px;
+  --pagefind-ui-border-radius: var(--radius-md, 4px);
+  --pagefind-ui-font: var(--font-body);
+}
+
+.search-page {
+  max-width: var(--content-width-wide);
+  margin: 0 auto;
+  padding: var(--spacing-xl) var(--container-padding);
+}
+
+.search-page h1 {
+  margin-bottom: var(--spacing-sm);
+}
+
+.search-page > p {
+  color: var(--color-text-secondary);
+  margin-bottom: var(--spacing-xl);
+}

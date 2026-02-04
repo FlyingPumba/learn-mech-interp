@@ -1,0 +1,22 @@
+---
+title: Search
+layout: layouts/base.njk
+---
+<div class="search-page">
+  <h1>Search Articles</h1>
+  <p>Search across all mechanistic interpretability articles.</p>
+  <div id="search"></div>
+</div>
+
+<link href="/pagefind/pagefind-ui.css" rel="stylesheet">
+<script src="/pagefind/pagefind-ui.js"></script>
+<script>
+  window.addEventListener('DOMContentLoaded', function() {
+    new PagefindUI({
+      element: "#search",
+      showSubResults: true,
+      showImages: false,
+      baseUrl: "/learn-mech-interp/"
+    });
+  });
+</script>
