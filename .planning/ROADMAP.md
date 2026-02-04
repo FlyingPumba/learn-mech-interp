@@ -144,11 +144,11 @@ Plans:
   1. Typing a query into the search box returns relevant articles with title, excerpt, and relevance ranking, and the search works offline
   2. The search index is generated at build time and does not include raw LaTeX or KaTeX HTML markup (keeping index size reasonable)
   3. A glossary page lists MI terms alphabetically with brief definitions and links to relevant article sections
-**Plans**: TBD
+**Plans**: 2 plans
 
 Plans:
-- [ ] 06-01: TBD
-- [ ] 06-02: TBD
+- [ ] 06-01-PLAN.md -- Pagefind search integration: install, build hook, search page, CSS theming, header nav
+- [ ] 06-02-PLAN.md -- Glossary data and page: ~70 curated MI terms, alphabetical template, glossary CSS
 
 ### Phase 7: Polish & Accessibility
 **Goal**: The site meets accessibility standards and provides quality-of-life features (dark mode, reading time, keyboard navigation) that make it feel polished and professional
@@ -177,5 +177,5 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 5.1 -> 6 -> 7
 | 4. Content Authoring & Pilot Articles | 3/3 | Complete | 2026-02-04 |
 | 5. Navigation & Information Architecture | 4/4 | Complete | 2026-02-04 |
 | 5.1. Bulk Content Migration (INSERTED) | 12/12 | Complete | 2026-02-04 |
-| 6. Search & Glossary | 0/TBD | Not started | - |
+| 6. Search & Glossary | 0/2 | Not started | - |
 | 7. Polish & Accessibility | 0/TBD | Not started | - |
