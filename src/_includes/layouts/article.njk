@@ -1,17 +1,71 @@
 ---
 layout: layouts/base.njk
 ---
+{# Breadcrumbs: Home > Block Title > Current Article #}
+{% set blockSlug = eleventyNavigation.parent if eleventyNavigation else null %}
+{% set blockTitle = null %}
+{% if blockSlug %}
+  {% for b in learningPath.blocks %}
+    {% if b.slug == blockSlug %}
+      {% set blockTitle = b.title %}
+    {% endif %}
+  {% endfor %}
+{% endif %}
+<nav class="breadcrumbs" aria-label="Breadcrumb">
+  <ol>
+    <li><a href="/">Home</a></li>
+    {% if blockTitle %}
+      <li>{{ blockTitle }}</li>
+    {% endif %}
+    <li aria-current="page">{{ title }}</li>
+  </ol>
+</nav>
+
 <article class="article">
   <header class="article-header">
+    {% if difficulty %}
+      <span class="difficulty-badge difficulty-{{ difficulty }}">{{ difficulty | capitalize }}</span>
+    {% endif %}
     <h1 class="article-title">{{ title }}</h1>
     {% if description %}
     <p class="article-description">{{ description }}</p>
     {% endif %}
     {% if prerequisites and prerequisites.length %}
-    <p class="article-prerequisites">Prerequisites: {% for prereq in prerequisites %}{% if loop.index > 1 %}, {% endif %}<a href="{{ prereq.url }}">{{ prereq.title }}</a>{% endfor %}</p>
+    <div class="article-prerequisites">
+      <span class="prerequisites-label">Read first:</span>
+      {% for prereq in prerequisites %}{% if loop.index > 1 %}, {% endif %}<a href="{{ prereq.url }}">{{ prereq.title }}</a>{% endfor %}
+    </div>
     {% endif %}
   </header>
-  <div class="article-body">
-    {{ content | safe }}
+
+  <div class="article-content-wrapper">
+    <div class="article-body">
+      {{ content | safe }}
+    </div>
+
+    <aside class="article-toc" aria-label="Table of contents">
+      <h2 class="toc-heading">Contents</h2>
+      {{ content | toc | safe }}
+    </aside>
   </div>
 </article>
+
+{# Previous/Next navigation #}
+{% set prevArticle = collections.learningPath | getPreviousCollectionItem(page) %}
+{% set nextArticle = collections.learningPath | getNextCollectionItem(page) %}
+{% if prevArticle or nextArticle %}
+<nav class="article-nav" aria-label="Article navigation">
+  {% if prevArticle %}
+    <a href="{{ prevArticle.url }}" class="article-nav-link article-nav-prev">
+      <span class="article-nav-label">Previous</span>
+      <span class="article-nav-title">{{ prevArticle.data.title }}</span>
+    </a>
+  {% endif %}
+  {% if nextArticle %}
+    <a href="{{ nextArticle.url }}" class="article-nav-link article-nav-next">
+      <span class="article-nav-label">Next</span>
+      <span class="article-nav-title">{{ nextArticle.data.title }}</span>
+    </a>
+  {% endif %}
+</nav>
+{% endif %}

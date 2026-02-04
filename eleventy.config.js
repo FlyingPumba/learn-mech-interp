@@ -8,6 +8,8 @@ import pluginTOC from "eleventy-plugin-toc";
 import markdownIt from "markdown-it";
 import { katex } from "@mdit/plugin-katex";
 import { figure } from "@mdit/plugin-figure";
+import markdownItAnchor from "markdown-it-anchor";
+import slugify from "@sindresorhus/slugify";
 
 // Shortcode counters (reset on each build to prevent stale values in --serve mode)
 let citationCounter = {};
@@ -29,7 +31,8 @@ export default function(eleventyConfig) {
       throwOnError: false,
       errorColor: "#cc0000"
     })
-    .use(figure);
+    .use(figure)
+    .use(markdownItAnchor, { permalink: false, slugify });
 
   eleventyConfig.setLibrary("md", md);
 
