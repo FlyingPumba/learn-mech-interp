@@ -68,6 +68,9 @@ export default function(eleventyConfig) {
   // Pass through CSS files to _site/css/
   eleventyConfig.addPassthroughCopy("src/css");
 
+  // Pass through JS files to _site/js/
+  eleventyConfig.addPassthroughCopy("src/js");
+
   // Pass through article-local images (e.g., src/topics/superposition/images/)
   eleventyConfig.addPassthroughCopy("src/topics/*/images");
 

@@ -15,9 +15,13 @@
 </head>
 <body>
   {% include "partials/header.njk" %}
-  <main>
-    {{ content | safe }}
-  </main>
+  <div class="page-layout">
+    {% include "partials/sidebar.njk" %}
+    <main>
+      {{ content | safe }}
+    </main>
+  </div>
   {% include "partials/footer.njk" %}
+  <script src="/js/sidebar-toggle.js"></script>
 </body>
 </html>

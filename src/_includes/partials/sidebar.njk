@@ -1,0 +1,19 @@
+<nav id="sidebar" class="sidebar" aria-label="Topics">
+  <div class="sidebar-inner">
+    <h2 class="sidebar-title">Topics</h2>
+    {% for block in learningPath.blocks %}
+    <div class="sidebar-block">
+      <h3 class="sidebar-block-title">{{ block.title }}</h3>
+      <ul class="sidebar-topics">
+        {% for topic in block.topics %}
+        <li>
+          <a href="/topics/{{ topic.slug }}/"{% if page.fileSlug == topic.slug %} aria-current="page" class="sidebar-active"{% endif %}>
+            {{ topic.title }}
+          </a>
+        </li>
+        {% endfor %}
+      </ul>
+    </div>
+    {% endfor %}
+  </div>
+</nav>
