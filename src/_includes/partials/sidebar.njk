@@ -2,8 +2,14 @@
   <div class="sidebar-inner">
     <h2 class="sidebar-title">Topics</h2>
     {% for block in learningPath.blocks %}
-    <div class="sidebar-block">
-      <h3 class="sidebar-block-title">{{ block.title }}</h3>
+    {% set blockHasCurrent = false %}
+    {% for topic in block.topics %}
+      {% if page.fileSlug == topic.slug %}
+        {% set blockHasCurrent = true %}
+      {% endif %}
+    {% endfor %}
+    <details class="sidebar-block"{% if blockHasCurrent %} open{% endif %}>
+      <summary class="sidebar-block-title">{{ block.title }}</summary>
       <ul class="sidebar-topics">
         {% for topic in block.topics %}
         <li>
@@ -13,7 +19,7 @@
         </li>
         {% endfor %}
       </ul>
-    </div>
+    </details>
     {% endfor %}
   </div>
 </nav>
