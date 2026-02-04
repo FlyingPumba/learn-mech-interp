@@ -1136,6 +1136,12 @@
   color: var(--color-text, rgba(0, 0, 0, 0.87));
 }
 
+.learning-path-block-meta {
+  font-size: 0.9375rem;
+  color: var(--color-text-secondary, rgba(0, 0, 0, 0.6));
+  margin: 0.2rem 0 0 0;
+}
+
 .learning-path-topics {
   list-style: none;
   margin: 0;
@@ -1219,6 +1225,30 @@
   max-width: var(--content-width-wide);
   margin: 0 auto;
   padding: var(--spacing-xl) var(--container-padding);
+}
+
+/* ==========================================================================
+   TOPICS PAGE
+   Landing page for the full curriculum map.
+   ========================================================================== */
+
+.topics-page {
+  max-width: var(--content-width-wide);
+  margin: 0 auto;
+  padding: var(--spacing-xl) var(--container-padding) 0;
+}
+
+.topics-page h1 {
+  margin-bottom: var(--spacing-sm);
+}
+
+.topics-description {
+  color: var(--color-text-secondary);
+  margin-bottom: var(--spacing-lg);
+}
+
+.topics-actions {
+  justify-content: flex-start;
 }
 
 .glossary-page h1 {

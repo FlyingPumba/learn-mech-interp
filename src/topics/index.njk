@@ -1,0 +1,63 @@
+---
+title: Topics
+layout: layouts/base.njk
+description: Explore the full curriculum in suggested order or jump to any topic.
+permalink: /topics/
+eleventyExcludeFromCollections: true
+---
+{% set totalTopics = collections.learningPath | length %}
+{% set totalBlocks = learningPath.blocks | length %}
+{% set firstTopic = learningPath.blocks[0].topics[0] %}
+
+<div class="topics-page">
+  <h1>Topics</h1>
+  <p class="topics-description">Explore {{ totalTopics }} articles across {{ totalBlocks }} blocks. Follow the suggested order or jump straight to the topic you need.</p>
+  <div class="hero-actions topics-actions">
+    <a href="/topics/{{ firstTopic.slug }}/" class="btn btn-primary">Start Learning</a>
+    <a href="/glossary/" class="btn btn-secondary">Browse Glossary</a>
+  </div>
+</div>
+
+<section class="features">
+  <div class="features-grid">
+    <div class="feature-card">
+      <h3>{{ totalTopics }} articles</h3>
+      <p>Each topic is a focused, standalone deep dive that still fits the larger sequence.</p>
+    </div>
+    <div class="feature-card">
+      <h3>{{ totalBlocks }} learning blocks</h3>
+      <p>Topics are grouped by theme so you can build intuition before moving to advanced tools.</p>
+    </div>
+    <div class="feature-card">
+      <h3>Suggested order</h3>
+      <p>Read top-to-bottom for a guided path, or jump into any block whenever you need.</p>
+    </div>
+  </div>
+</section>
+
+<section class="learning-path">
+  <div class="learning-path-content">
+    <h2 class="learning-path-title">Curriculum Map</h2>
+    <p class="learning-path-description">Browse every block and topic in the recommended sequence.</p>
+    <ol class="learning-path-blocks">
+      {% for block in learningPath.blocks %}
+      <li class="learning-path-block">
+        <div class="learning-path-block-header">
+          <span class="learning-path-block-number">{{ loop.index }}</span>
+          <div>
+            <h3 class="learning-path-block-title">{{ block.title }}</h3>
+            <p class="learning-path-block-meta">{{ block.topics | length }} topics</p>
+          </div>
+        </div>
+        <ul class="learning-path-topics">
+          {% for topic in block.topics %}
+          <li class="learning-path-topic">
+            <a href="/topics/{{ topic.slug }}/">{{ topic.title }}</a>
+          </li>
+          {% endfor %}
+        </ul>
+      </li>
+      {% endfor %}
+    </ol>
+  </div>
+</section>
