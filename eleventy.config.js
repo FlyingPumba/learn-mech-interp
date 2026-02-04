@@ -130,6 +130,16 @@ export default function(eleventyConfig) {
       `<span class="marginnote">${content}</span>`;
   });
 
+  // Reading time filter: strips HTML, counts words, returns "N min read"
+  eleventyConfig.addFilter("readingTime", function(content) {
+    if (!content) return "";
+    var text = content.replace(/<[^>]*>/g, " ");
+    text = text.replace(/\s+/g, " ").trim();
+    var words = text.split(" ").filter(function(w) { return w.length > 0; }).length;
+    var minutes = Math.ceil(words / 230);
+    return minutes + " min read";
+  });
+
   return {
     dir: {
       input: "src",

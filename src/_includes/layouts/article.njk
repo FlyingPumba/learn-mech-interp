@@ -30,6 +30,9 @@ layout: layouts/base.njk
     {% if description %}
     <p class="article-description">{{ description }}</p>
     {% endif %}
+    <div class="article-meta">
+      {{ content | readingTime }}
+    </div>
     {% if prerequisites and prerequisites.length %}
     <div class="article-prerequisites">
       <span class="prerequisites-label">Read first:</span>
