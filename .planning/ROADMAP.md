@@ -17,7 +17,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] **Phase 3: Content Rendering Engine** - KaTeX math, code highlighting, figures, citations, margin notes, and interactive elements
 - [x] **Phase 4: Content Authoring & Pilot Articles** - Typst-to-article conversion workflow validated with 2-3 representative pilot articles
 - [x] **Phase 5: Navigation & Information Architecture** - Sidebar, homepage, learning path, breadcrumbs, TOC, and article metadata indicators
-- [ ] **Phase 5.1: Bulk Content Migration** (INSERTED) - Convert all remaining Typst course content into thematic articles with diagrams, references, and cross-links
+- [x] **Phase 5.1: Bulk Content Migration** (INSERTED) - Convert all remaining Typst course content into thematic articles with diagrams, references, and cross-links
 - [ ] **Phase 6: Search & Glossary** - Pagefind client-side search and curated MI glossary page
 - [ ] **Phase 7: Polish & Accessibility** - Dark mode, keyboard navigation, accessibility features, and reading time estimates
 
@@ -123,18 +123,18 @@ Plans:
 **Plans**: 12 plans
 
 Plans:
-- [ ] 05.1-01-PLAN.md -- Data prep: expand references.json (~32 new entries) and update learningPath.json (8 blocks, 35 topics)
-- [ ] 05.1-02-PLAN.md -- Block 1 Transformer Foundations: review attention-mechanism + create qk-ov-circuits, composition-and-virtual-heads (W1-W2)
-- [ ] 05.1-03-PLAN.md -- Block 2 Part 1: create what-is-mech-interp, linear-representation-hypothesis, induction-heads (W3-W4)
-- [ ] 05.1-04-PLAN.md -- Block 2 Part 2: create direct-logit-attribution, logit-lens-and-probing with 3 PNGs (W4-W5)
-- [ ] 05.1-05-PLAN.md -- Block 3 Observation to Causation: review activation-patching + create attribution-patching, ioi-circuit, circuit-evaluation with 1 PNG (W6-W8)
-- [ ] 05.1-06-PLAN.md -- Block 4 Part 1: review superposition + create sparse-autoencoders with 1 PNG, sae-interpretability (W9-W10)
-- [ ] 05.1-07-PLAN.md -- Block 4 Part 2: create scaling-monosemanticity, sae-variants-and-evaluation (W11)
-- [ ] 05.1-08-PLAN.md -- Block 5 Representation Engineering: create activation-engineering, representation-engineering, refusal-direction, concept-erasure, function-vectors with 3 PNGs (W12)
-- [ ] 05.1-09-PLAN.md -- Block 6 Circuit Tracing & Comparative MI: create transcoders, circuit-tracing, crosscoders-and-model-diffing, universality, multimodal-mi with 5 PNGs (W13-W14)
-- [ ] 05.1-10-PLAN.md -- Block 7 MI for Safety: create sleeper-agent-detection, deception-detection, safety-mechanisms-and-monitoring, mi-safety-limitations with 3 PNGs (W15)
-- [ ] 05.1-11-PLAN.md -- Block 8 Open Problems & Field Assessment: create open-problems-methods, field-assessment, future-directions, course-synthesis with 2 PNGs (W16)
-- [ ] 05.1-12-PLAN.md -- Cross-link audit and final verification across all 35 articles
+- [x] 05.1-01-PLAN.md -- Data prep: expand references.json (~32 new entries) and update learningPath.json (8 blocks, 35 topics)
+- [x] 05.1-02-PLAN.md -- Block 1 Transformer Foundations: review attention-mechanism + create qk-ov-circuits, composition-and-virtual-heads (W1-W2)
+- [x] 05.1-03-PLAN.md -- Block 2 Part 1: create what-is-mech-interp, linear-representation-hypothesis, induction-heads (W3-W4)
+- [x] 05.1-04-PLAN.md -- Block 2 Part 2: create direct-logit-attribution, logit-lens-and-probing with 3 PNGs (W4-W5)
+- [x] 05.1-05-PLAN.md -- Block 3 Observation to Causation: review activation-patching + create attribution-patching, ioi-circuit, circuit-evaluation with 1 PNG (W6-W8)
+- [x] 05.1-06-PLAN.md -- Block 4 Part 1: review superposition + create sparse-autoencoders with 1 PNG, sae-interpretability (W9-W10)
+- [x] 05.1-07-PLAN.md -- Block 4 Part 2: create scaling-monosemanticity, sae-variants-and-evaluation (W11)
+- [x] 05.1-08-PLAN.md -- Block 5 Representation Engineering: create activation-engineering, representation-engineering, refusal-direction, concept-erasure, function-vectors with 3 PNGs (W12)
+- [x] 05.1-09-PLAN.md -- Block 6 Circuit Tracing & Comparative MI: create transcoders, circuit-tracing, crosscoders-and-model-diffing, universality, multimodal-mi with 5 PNGs (W13-W14)
+- [x] 05.1-10-PLAN.md -- Block 7 MI for Safety: create sleeper-agent-detection, deception-detection, safety-mechanisms-and-monitoring, mi-safety-limitations with 3 PNGs (W15)
+- [x] 05.1-11-PLAN.md -- Block 8 Open Problems & Field Assessment: create open-problems-methods, field-assessment, future-directions, course-synthesis with 2 PNGs (W16)
+- [x] 05.1-12-PLAN.md -- Cross-link audit and final verification across all 35 articles
 
 ### Phase 6: Search & Glossary
 **Goal**: Users can find any concept across all articles through full-text search and browse a curated MI glossary, making the site useful as both a learning resource and a reference
@@ -176,6 +176,6 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 5.1 -> 6 -> 7
 | 3. Content Rendering Engine | 2/2 | Complete | 2026-02-03 |
 | 4. Content Authoring & Pilot Articles | 3/3 | Complete | 2026-02-04 |
 | 5. Navigation & Information Architecture | 4/4 | Complete | 2026-02-04 |
-| 5.1. Bulk Content Migration (INSERTED) | 0/12 | Not started | - |
+| 5.1. Bulk Content Migration (INSERTED) | 12/12 | Complete | 2026-02-04 |
 | 6. Search & Glossary | 0/TBD | Not started | - |
 | 7. Polish & Accessibility | 0/TBD | Not started | - |
