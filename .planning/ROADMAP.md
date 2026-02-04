@@ -18,7 +18,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] **Phase 4: Content Authoring & Pilot Articles** - Typst-to-article conversion workflow validated with 2-3 representative pilot articles
 - [x] **Phase 5: Navigation & Information Architecture** - Sidebar, homepage, learning path, breadcrumbs, TOC, and article metadata indicators
 - [x] **Phase 5.1: Bulk Content Migration** (INSERTED) - Convert all remaining Typst course content into thematic articles with diagrams, references, and cross-links
-- [ ] **Phase 6: Search & Glossary** - Pagefind client-side search and curated MI glossary page
+- [x] **Phase 6: Search & Glossary** - Pagefind client-side search and curated MI glossary page
 - [ ] **Phase 7: Polish & Accessibility** - Dark mode, keyboard navigation, accessibility features, and reading time estimates
 
 ## Phase Details
@@ -147,8 +147,8 @@ Plans:
 **Plans**: 2 plans
 
 Plans:
-- [ ] 06-01-PLAN.md -- Pagefind search integration: install, build hook, search page, CSS theming, header nav
-- [ ] 06-02-PLAN.md -- Glossary data and page: ~70 curated MI terms, alphabetical template, glossary CSS
+- [x] 06-01-PLAN.md -- Pagefind search integration: install, build hook, search page, CSS theming, header nav
+- [x] 06-02-PLAN.md -- Glossary data and page: ~70 curated MI terms, alphabetical template, glossary CSS
 
 ### Phase 7: Polish & Accessibility
 **Goal**: The site meets accessibility standards and provides quality-of-life features (dark mode, reading time, keyboard navigation) that make it feel polished and professional
@@ -177,5 +177,5 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 5.1 -> 6 -> 7
 | 4. Content Authoring & Pilot Articles | 3/3 | Complete | 2026-02-04 |
 | 5. Navigation & Information Architecture | 4/4 | Complete | 2026-02-04 |
 | 5.1. Bulk Content Migration (INSERTED) | 12/12 | Complete | 2026-02-04 |
-| 6. Search & Glossary | 0/2 | Not started | - |
+| 6. Search & Glossary | 2/2 | Complete | 2026-02-04 |
 | 7. Polish & Accessibility | 0/TBD | Not started | - |

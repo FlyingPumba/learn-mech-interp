@@ -5,23 +5,23 @@
 See: .planning/PROJECT.md (updated 2026-02-02)
 
 **Core value:** People can learn Mechanistic Interpretability through well-structured, readable articles that build from foundations to frontier research, with easy navigation between topics and direct links to source papers.
-**Current focus:** Phase 6 - Search and Glossary (Pagefind search live, glossary next)
+**Current focus:** Phase 6 complete. Ready for Phase 7 - Polish & Accessibility
 
 ## Current Position
 
 Phase: 6 of 7 (Search and Glossary)
-Plan: 1 of 2 in current phase
-Status: In progress
-Last activity: 2026-02-04 - Completed 06-01-PLAN.md (Pagefind Search Integration)
+Plan: 2 of 2 in current phase
+Status: Phase complete
+Last activity: 2026-02-04 - Completed 06-02-PLAN.md (Glossary Data and Page)
 
-Progress: [============================-] 96% (27/28 plans)
+Progress: [=============================] 100% (28/28 plans)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 26
-- Average duration: ~3min 34s
-- Total execution time: ~1.55 hours
+- Total plans completed: 28
+- Average duration: ~3min 33s
+- Total execution time: ~1.66 hours
 
 **By Phase:**
 
@@ -33,10 +33,10 @@ Progress: [============================-] 96% (27/28 plans)
 | 04-content-authoring-pilot-articles | 3 | 11min 44s | ~3min 55s |
 | 05-navigation-information-architecture | 4 | 9min 20s | 2min 20s |
 | 05.1-bulk-content-migration | 11 | 50min 8s | 4min 33s |
-| 06-search-and-glossary | 1 | 2min 2s | 2min 2s |
+| 06-search-and-glossary | 2 | 7min 5s | 3min 33s |
 
 **Recent Trend:**
-- Last 5 plans: 05.1-10 (6min), 05.1-11 (6min 14s), 05.1-12 (6min), 06-01 (2min 2s)
+- Last 5 plans: 05.1-11 (6min 14s), 05.1-12 (6min), 06-01 (2min 2s), 06-02 (5min 3s)
 - Trend: Infrastructure plans faster than content authoring
 
 *Updated after each plan completion*
@@ -118,6 +118,9 @@ Recent decisions affecting current work:
 - [06-01]: data-pagefind-body scopes indexing to article body content only (36 pages indexed, non-article pages excluded)
 - [06-01]: Hardcoded baseUrl in PagefindUI JS (EleventyHtmlBasePlugin only transforms HTML attributes, not JS strings)
 - [06-01]: Glossary nav link added before glossary page exists (temporary 404, avoids double header edit)
+- [06-02]: 70 glossary terms (10 beyond the 60 required minimum) for broader MI coverage
+- [06-02]: Pre-sorted JSON array via Python sort, not template-side sorting
+- [06-02]: Article-level links only (no section anchors) to avoid staleness
 
 ### Pending Todos
 
@@ -134,12 +137,12 @@ None yet.
 
 - Phase 5 complete: Full navigation in place (sidebar, homepage learning path, breadcrumbs, TOC, prev/next, difficulty badges, prerequisites)
 - Requirements doc claims 41 requirements but actual count is 46; traceability table corrected during roadmap creation
-- Glossary nav link in header will 404 until Plan 06-02 completes
+- Phase 6 complete: Search and glossary both functional, glossary nav link now resolves
 
 ## Session Continuity
 
 Last session: 2026-02-04
-Stopped at: Completed 06-01-PLAN.md - Pagefind Search Integration
+Stopped at: Completed 06-02-PLAN.md - Glossary Data and Page (Phase 6 complete)
 Resume file: None
 
 ## Phase 5 Progress
@@ -175,6 +178,12 @@ Key artifacts:
 
 ## Phase 6 Progress
 
-Search and Glossary - In progress:
+Search and Glossary - COMPLETE:
 - [x] 06-01: Pagefind search integration: install, build hook, search page, themed UI, header nav (2min 2s)
-- [ ] 06-02: Glossary page with term definitions and cross-references
+- [x] 06-02: Glossary data (70 terms) and page template with alphabetical navigation (5min 3s)
+
+Key artifacts:
+- src/_data/glossary.json - 70 MI terms with definitions and article links
+- src/glossary/index.njk - Glossary page template with letter navigation
+- src/search/index.njk - Search page with Pagefind UI
+- Full Eleventy build produces 39 HTML pages with zero errors
