@@ -15,10 +15,10 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  max-width: var(--container-max-width, 1200px);
-  margin: 0 auto;
-  padding-left: var(--container-padding, 1.5rem);
-  padding-right: var(--container-padding, 1.5rem);
+  max-width: none;
+  margin: 0;
+  padding-left: var(--edge-padding, 1.5rem);
+  padding-right: var(--edge-padding, 1.5rem);
 }
 
 /* Site Logo */
@@ -372,8 +372,8 @@
 
 @media (min-width: 768px) {
   .site-nav {
-    padding-left: var(--spacing-xl, 2rem);
-    padding-right: var(--spacing-xl, 2rem);
+    padding-left: var(--edge-padding, 1.5rem);
+    padding-right: var(--edge-padding, 1.5rem);
   }
 
   .article {
@@ -415,6 +415,16 @@
 }
 
 @media (min-width: 1200px) {
+  /* Align header content with the page grid + sidebar content padding. */
+  .site-nav {
+    max-width: none;
+    margin: 0;
+  }
+
+  .sidebar {
+    padding: var(--spacing-sm, 0.5rem) var(--edge-padding, 1.5rem);
+  }
+
   .hero-title {
     font-size: 2.5rem;
   }
@@ -604,7 +614,7 @@
    ========================================================================== */
 
 .sidebar {
-  padding: var(--spacing-md, 1rem);
+  padding: var(--spacing-sm, 0.5rem) var(--edge-padding, 1.5rem);
   border-right: 1px solid var(--color-border, rgba(0, 0, 0, 0.08));
   background: var(--color-background, #ffffff);
 }
@@ -625,7 +635,7 @@
 
 .sidebar-block {
   border: 0;
-  margin-bottom: var(--spacing-md, 1rem);
+  margin-bottom: 0.75rem;
 }
 
 .sidebar-block-title {
@@ -633,7 +643,7 @@
   font-weight: 600;
   color: var(--color-text, rgba(0, 0, 0, 0.87));
   margin: 0;
-  padding: 0.25rem 0;
+  padding: 0.2rem 0;
   line-height: var(--line-height-tight, 1.2);
   cursor: pointer;
   user-select: none;
@@ -675,7 +685,7 @@
 
 .sidebar-topics a {
   display: block;
-  padding: 0.2rem 0.4rem;
+  padding: 0.18rem 0.35rem;
   font-size: var(--font-size-small, 0.875rem);
   color: var(--color-text-secondary, rgba(0, 0, 0, 0.6));
   text-decoration: none;

@@ -98,8 +98,8 @@ main {
   .page-layout {
     display: grid;
     grid-template-columns: 240px 1fr;
-    max-width: 1400px;
-    margin: 0 auto;
+    max-width: none;
+    margin: 0;
   }
 }
 

@@ -60,6 +60,7 @@
   --content-width: 65ch;
   --content-width-wide: 80ch;
   --container-padding: 1.5rem;
+  --edge-padding: 1.25rem;
   --container-max-width: 1200px;
 
   /* Border Radius */

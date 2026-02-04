@@ -16,10 +16,15 @@ import slugify from "@sindresorhus/slugify";
 let citationCounter = {};
 let sidenoteCounter = {};
 let marginCounter = {};
+let buildId = Date.now();
 
 export default function(eleventyConfig) {
+  // Cache-busting for static assets (CSS/JS). Updates each rebuild in --serve mode.
+  eleventyConfig.addGlobalData("buildId", () => String(buildId));
+
   // Reset shortcode counters before each build
   eleventyConfig.on("eleventy.before", () => {
+    buildId = Date.now();
     citationCounter = {};
     sidenoteCounter = {};
     marginCounter = {};
