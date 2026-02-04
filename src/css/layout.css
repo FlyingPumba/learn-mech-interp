@@ -120,7 +120,18 @@ main {
 
   .article-body {
     grid-column: 2;
+    position: relative;
+    overflow: visible;
   }
 
-  /* Future: margin notes will use grid-column: 3 */
+  /* Sidenotes and margin notes float into the right margin area (grid column 3).
+     The float+negative-margin approach pulls them out of the content column
+     into the space provided by the 3-column grid. */
+  .sidenote,
+  .marginnote {
+    float: right;
+    clear: right;
+    margin-right: -60%;
+    width: 50%;
+  }
 }

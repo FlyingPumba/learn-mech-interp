@@ -59,6 +59,30 @@ export default function(eleventyConfig) {
       `</span></span>`;
   });
 
+  // Sidenote shortcode: {% sidenote "content" %} renders Tufte-style numbered sidenote
+  eleventyConfig.addShortcode("sidenote", function(content) {
+    const pageUrl = this.page.url;
+    if (!sidenoteCounter[pageUrl]) sidenoteCounter[pageUrl] = 0;
+    sidenoteCounter[pageUrl]++;
+    const id = `sn-${sidenoteCounter[pageUrl]}`;
+
+    return `<label for="${id}" class="sidenote-toggle sidenote-number"></label>` +
+      `<input type="checkbox" id="${id}" class="sidenote-toggle-input"/>` +
+      `<span class="sidenote">${content}</span>`;
+  });
+
+  // Margin note shortcode: {% marginnote "content" %} renders unnumbered margin note
+  eleventyConfig.addShortcode("marginnote", function(content) {
+    const pageUrl = this.page.url;
+    if (!marginCounter[pageUrl]) marginCounter[pageUrl] = 0;
+    marginCounter[pageUrl]++;
+    const id = `mn-${marginCounter[pageUrl]}`;
+
+    return `<label for="${id}" class="sidenote-toggle marginnote-indicator">&#8853;</label>` +
+      `<input type="checkbox" id="${id}" class="sidenote-toggle-input"/>` +
+      `<span class="marginnote">${content}</span>`;
+  });
+
   return {
     dir: {
       input: "src",
