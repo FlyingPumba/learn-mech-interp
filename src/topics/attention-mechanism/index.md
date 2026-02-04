@@ -9,9 +9,9 @@ category: "core-concepts"
 
 ## Why Attention?
 
-Consider the sentence: *"The cat sat on the mat because it was tired."* What does "it" refer to? For a human reader the answer is obvious -- "it" means the cat. But arriving at this answer requires looking back across the sentence and connecting a pronoun to the noun it references. A model that processes each token in isolation, without any ability to look at other positions, has no way to make this connection.
+Consider the sentence: *"The cat sat on the mat because it was tired."* What does "it" refer to? For a human reader the answer is obvious: "it" means the cat. But arriving at this answer requires looking back across the sentence and connecting a pronoun to the noun it references. A model that processes each token in isolation, without any ability to look at other positions, has no way to make this connection.
 
-A simple feed-forward network applied independently at each position treats every token as if the rest of the sequence does not exist. It can transform each token's representation, but it cannot move information between positions. Pronoun resolution, subject-verb agreement, long-range dependencies -- none of these are possible without some mechanism for tokens to communicate with one another.
+A simple feed-forward network applied independently at each position treats every token as if the rest of the sequence does not exist. It can transform each token's representation, but it cannot move information between positions. Pronoun resolution, subject-verb agreement, long-range dependencies: none of these are possible without some mechanism for tokens to communicate with one another.
 
 The **attention mechanism** solves this problem {% cite "vaswani2017attention" %}. It provides a structured way for each token to look at every other token in the sequence, decide which ones are relevant, and gather information from them. Rather than processing tokens in isolation, attention lets the model build context-dependent representations where each token's output reflects the entire input it has seen so far.
 
@@ -39,7 +39,7 @@ $$
 e_{i,j} = \mathbf{q}_i^T \mathbf{k}_j
 $$
 
-A large dot product means the query and key point in similar directions -- the model has learned that these two tokens are relevant to each other.
+A large dot product means the query and key point in similar directions, indicating the model has learned that these two tokens are relevant to each other.
 
 **Step 2: Scaling.** The raw dot-product scores grow in magnitude with the dimension $d_k$, which can push the softmax into regions with vanishingly small gradients. The fix is simple: divide by $\sqrt{d_k}$:
 
@@ -69,7 +69,7 @@ $$
 \text{Attn}(Q, K, V) = \text{softmax}\left(\frac{QK^T}{\sqrt{d_k}}\right)V
 $$
 
-This single equation is the core of the transformer {% cite "vaswani2017attention" %}. Everything else in the architecture -- multi-head attention, the residual stream, MLPs -- is built around it.
+This single equation is the core of the transformer {% cite "vaswani2017attention" %}. Everything else in the architecture (multi-head attention, the residual stream, MLPs) is built around it.
 
 ## Self-Attention and Causal Masking
 
@@ -81,7 +81,7 @@ In **decoder-only** transformers (such as GPT), there is an additional constrain
 
 ## Multi-Head Attention
 
-A single attention head can only learn one attention pattern -- one way of deciding which tokens are relevant to which. But language requires attending to multiple things simultaneously. A token might need to attend to the previous token (for syntax), to the subject of the sentence (for semantics), and to a matching pattern earlier in the text (for repetition), all at the same time.
+A single attention head can only learn one attention pattern, one way of deciding which tokens are relevant to which. But language requires attending to multiple things simultaneously. A token might need to attend to the previous token (for syntax), to the subject of the sentence (for semantics), and to a matching pattern earlier in the text (for repetition), all at the same time.
 
 The solution is to run multiple attention heads in parallel, each with its own learned projection matrices. Each head $h$ has its own $W_Q^h$, $W_K^h$, and $W_V^h$, and computes attention independently:
 
@@ -121,9 +121,9 @@ $$
 \mathbf{r}^L = \mathbf{r}^0 + \sum_{l=0}^{L-1} \left(\text{Attn}^l + \text{MLP}^l\right)
 $$
 
-Because the output is a sum of contributions, we can decompose it -- asking how much each component contributed to the final answer. This is the foundation of mechanistic interpretability. If the transformer's output is a sum of component contributions, then we can measure each one. This leads directly to techniques like direct logit attribution, which measures each head's contribution to the output logits, and activation patching, which tests whether a component is causally necessary. Both will be covered in later articles.
+Because the output is a sum of contributions, we can decompose it, asking how much each component contributed to the final answer. This is the foundation of mechanistic interpretability. If the transformer's output is a sum of component contributions, then we can measure each one. This leads directly to techniques like direct logit attribution, which measures each head's contribution to the output logits, and activation patching, which tests whether a component is causally necessary. Both will be covered in later articles.
 
-Components do not communicate directly with each other. All communication goes through the residual stream. Attention head 3 in layer 5 has no direct wire to MLP 2 in layer 7 -- instead, head 3 writes to the residual stream, and MLP 2 reads from it. This additive, shared-bus architecture is what makes the transformer amenable to mechanistic analysis.
+Components do not communicate directly with each other. All communication goes through the residual stream. Attention head 3 in layer 5 has no direct wire to MLP 2 in layer 7. Instead, head 3 writes to the residual stream, and MLP 2 reads from it. This additive, shared-bus architecture is what makes the transformer amenable to mechanistic analysis.
 
 <details class="pause-and-think">
 <summary>Pause and think: Understanding additive updates</summary>
@@ -178,14 +178,14 @@ $$
 
 Ignoring layer norms, the output is determined by a sum of contributions from the token embedding (the direct path), each attention head in each layer, and each MLP in each layer. This decomposition is what makes mechanistic interpretability possible: we can trace the contribution of any individual component through to the final output.
 
-Most mechanistic interpretability research focuses on decoder-only architectures because the causal mask means each position is a well-defined prediction problem. At position $i$, the model must predict token $i+1$ using only tokens $0, \ldots, i$. This gives us a clean experimental setup where we know exactly what information is available at each position. The models studied most heavily in the field -- GPT-2 and similar autoregressive architectures -- all follow this pattern.
+Most mechanistic interpretability research focuses on decoder-only architectures because the causal mask means each position is a well-defined prediction problem. At position $i$, the model must predict token $i+1$ using only tokens $0, \ldots, i$. This gives us a clean experimental setup where we know exactly what information is available at each position. The models studied most heavily in the field (GPT-2 and similar autoregressive architectures) all follow this pattern.
 
 For a thorough visual walkthrough of the transformer architecture, see Alammar's "The Illustrated Transformer" {% cite "alammar2018illustrated" %}, which provides step-by-step diagrams of the attention computation described above.
 
 <details class="pause-and-think">
 <summary>Pause and think: From architecture to interpretability</summary>
 
-If attention heads move information between positions, what determines *which* information gets moved and *where* it goes? The query and key matrices determine the "where" (which positions attend to which), while the value and output matrices determine the "what" (which information gets read and written). Decomposing attention into these two circuits -- the QK circuit and the OV circuit -- is one of the first steps in mechanistic interpretability.
+If attention heads move information between positions, what determines *which* information gets moved and *where* it goes? The query and key matrices determine the "where" (which positions attend to which), while the value and output matrices determine the "what" (which information gets read and written). Decomposing attention into these two circuits, the [QK circuit and the OV circuit](/topics/qk-ov-circuits/), is one of the first steps in mechanistic interpretability.
 
 </details>
 
