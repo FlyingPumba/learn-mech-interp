@@ -1082,3 +1082,94 @@ label.sidenote-toggle:not(.sidenote-number) {
   color: var(--color-text-secondary);
   margin-bottom: var(--spacing-xl);
 }
+
+/* ==========================================================================
+   GLOSSARY PAGE
+   Alphabetically organized glossary of MI terms with letter navigation.
+   ========================================================================== */
+
+.glossary-page {
+  max-width: var(--content-width-wide);
+  margin: 0 auto;
+  padding: var(--spacing-xl) var(--container-padding);
+}
+
+.glossary-page h1 {
+  margin-bottom: var(--spacing-sm);
+}
+
+.glossary-description {
+  color: var(--color-text-secondary);
+  margin-bottom: var(--spacing-xl);
+}
+
+.glossary-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-xs);
+  margin-bottom: var(--spacing-2xl);
+  padding: var(--spacing-sm) 0;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.glossary-nav a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  border-radius: var(--radius-md);
+  font-weight: 600;
+  text-decoration: none;
+  color: var(--color-link);
+}
+
+.glossary-nav a:hover {
+  background: var(--color-background-subtle);
+  color: var(--color-link-hover);
+}
+
+.glossary-letter {
+  font-size: var(--font-size-h2);
+  color: var(--color-link);
+  margin-top: var(--spacing-2xl);
+  margin-bottom: var(--spacing-md);
+  padding-bottom: var(--spacing-xs);
+  border-bottom: 2px solid var(--color-link);
+}
+
+.glossary-list {
+  margin: 0;
+  padding: 0;
+}
+
+.glossary-entry {
+  margin-bottom: var(--spacing-lg);
+}
+
+.glossary-entry dt {
+  font-weight: 600;
+  color: var(--color-text);
+  margin-bottom: var(--spacing-xs);
+}
+
+.glossary-entry dd {
+  margin-left: 0;
+  color: var(--color-text);
+  line-height: var(--line-height-body);
+}
+
+.glossary-links {
+  display: block;
+  margin-top: var(--spacing-xs);
+  font-size: var(--font-size-small);
+  color: var(--color-text-secondary);
+}
+
+.glossary-links a {
+  color: var(--color-link);
+}
+
+.glossary-links a:hover {
+  color: var(--color-link-hover);
+}

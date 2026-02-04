@@ -1,0 +1,47 @@
+---
+title: Glossary
+layout: layouts/base.njk
+---
+<div class="glossary-page">
+  <h1>MI Glossary</h1>
+  <p class="glossary-description">Key terms in mechanistic interpretability with links to articles where they are discussed.</p>
+
+  <nav class="glossary-nav" aria-label="Glossary alphabetical navigation">
+    {%- set letters = [] -%}
+    {%- for entry in glossary -%}
+      {%- set letter = entry.term[0] | upper -%}
+      {%- if letter not in letters -%}
+        {%- set _ = letters.push(letter) -%}
+      {%- endif -%}
+    {%- endfor -%}
+    {%- for letter in letters -%}
+      <a href="#letter-{{ letter }}">{{ letter }}</a>
+    {%- endfor -%}
+  </nav>
+
+  {%- set currentLetter = "" -%}
+  <dl class="glossary-list">
+  {%- for entry in glossary -%}
+    {%- set letter = entry.term[0] | upper -%}
+    {%- if letter != currentLetter -%}
+      {%- set currentLetter = letter -%}
+      </dl>
+      <h2 id="letter-{{ letter }}" class="glossary-letter">{{ letter }}</h2>
+      <dl class="glossary-list">
+    {%- endif -%}
+    <div class="glossary-entry">
+      <dt>{{ entry.term }}</dt>
+      <dd>
+        {{ entry.definition }}
+        {%- if entry.links.length -%}
+          <span class="glossary-links">See:
+          {%- for link in entry.links -%}
+            {% if loop.index > 1 %}, {% endif %}<a href="{{ link.article }}">{{ link.label }}</a>
+          {%- endfor -%}
+          </span>
+        {%- endif -%}
+      </dd>
+    </div>
+  {%- endfor -%}
+  </dl>
+</div>
