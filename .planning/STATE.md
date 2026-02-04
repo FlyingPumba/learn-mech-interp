@@ -10,18 +10,18 @@ See: .planning/PROJECT.md (updated 2026-02-02)
 ## Current Position
 
 Phase: 5.1 of 7 (Bulk Content Migration)
-Plan: 6 of 12 in current phase
+Plan: 7 of 12 in current phase
 Status: In progress
-Last activity: 2026-02-04 - Completed 05.1-06-PLAN.md (Block 4 Part 1: Superposition and SAEs)
+Last activity: 2026-02-04 - Completed 05.1-07-PLAN.md (Block 4 Part 2: Scaling and SAE Variants)
 
 Progress: [=========.] ~95%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 16
-- Average duration: ~3min 14s
-- Total execution time: ~0.86 hours
+- Total plans completed: 18
+- Average duration: ~3min 22s
+- Total execution time: ~1.01 hours
 
 **By Phase:**
 
@@ -32,10 +32,10 @@ Progress: [=========.] ~95%
 | 03-content-rendering-engine | 2 | 5min 48s | ~3min |
 | 04-content-authoring-pilot-articles | 3 | 11min 44s | ~3min 55s |
 | 05-navigation-information-architecture | 4 | 9min 20s | 2min 20s |
-| 05.1-bulk-content-migration | 2 | 6min 33s | 3min 17s |
+| 05.1-bulk-content-migration | 4 | 15min 32s | 3min 53s |
 
 **Recent Trend:**
-- Last 5 plans: 05-03 (4min 22s), 05-04 (1min 29s), 05.1-01 (2min 43s), 05.1-06 (3min 50s)
+- Last 5 plans: 05.1-01 (2min 43s), 05.1-04 (4min 30s), 05.1-06 (3min 50s), 05.1-07 (4min 29s)
 - Trend: Article authoring plans average ~3-4 minutes
 
 *Updated after each plan completion*
@@ -93,6 +93,11 @@ Recent decisions affecting current work:
 - [05.1-06]: Superposition pilot confirmed complete -- only added forward cross-link to sparse-autoencoders
 - [05.1-06]: SAE article structured as problem-solution arc: dictionary learning framing, architecture, training, results
 - [05.1-06]: sae-interpretability separated from sparse-autoencoders for narrative focus
+- [05.1-02]: attention-mechanism pilot confirmed complete against Week 1 Typst (no expansion needed)
+- [05.1-02]: Em dashes replaced with colons/commas/parentheses throughout pilot article
+- [05.1-04]: DLA article structured as: key insight -> decomposition -> per-token attribution -> attention patterns -> limitation
+- [05.1-04]: Attention pattern figures placed in logit-lens article (pairs with observational tools discussion and real GPT-2 data)
+- [05.1-04]: Both articles end with explicit forward-links to activation-patching establishing observation-to-causation transition
 
 ### Pending Todos
 
@@ -113,7 +118,7 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-02-04
-Stopped at: Completed 05.1-06-PLAN.md - Block 4 Part 1: Superposition and SAEs
+Stopped at: Completed 05.1-04-PLAN.md - Block 2 Part 2: DLA and Probing
 Resume file: None
 
 ## Phase 5 Progress
@@ -128,12 +133,15 @@ Navigation & Information Architecture phase COMPLETE:
 
 Bulk Content Migration - IN PROGRESS:
 - [x] 05.1-01: Shared data files: references.json (44 entries) + learningPath.json (8 blocks, 35 topics) (2min 43s)
-- [ ] 05.1-02 through 05.1-05: Article authoring (blocks 1-3)
+- [x] 05.1-02: Block 1 Transformer Foundations: review pilot + qk-ov-circuits + composition-and-virtual-heads (4min 35s)
+- [ ] 05.1-03 through 05.1-05: Article authoring (blocks 2-3)
 - [x] 05.1-06: Block 4 Part 1: Superposition review + sparse-autoencoders + sae-interpretability (3min 50s)
 - [ ] 05.1-07 through 05.1-12: Article authoring (remaining 6 plans)
 
 Key artifacts so far:
 - src/_data/references.json - 44 citation entries covering all papers across 35 articles
 - src/_data/learningPath.json - 8 blocks, 35 topics in correct reading order
+- src/topics/qk-ov-circuits/index.md - QK/OV circuit decomposition with worked example
+- src/topics/composition-and-virtual-heads/index.md - V/K/Q-composition, virtual heads, TransformerLens
 - src/topics/sparse-autoencoders/index.md - SAE architecture, dictionary learning, Towards Monosemanticity
 - src/topics/sae-interpretability/index.md - Feature dashboards and automated interpretability
