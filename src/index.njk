@@ -7,9 +7,35 @@ layout: layouts/base.njk
     <h1 class="hero-title">Learn Mechanistic Interpretability</h1>
     <p class="hero-description">Structured articles covering transformer internals, interpretability techniques, and frontier research.</p>
     <div class="hero-actions">
-      <a href="/topics/test/" class="btn btn-primary">Start Learning</a>
+      {% set firstTopic = learningPath.blocks[0].topics[0] %}
+      <a href="/topics/{{ firstTopic.slug }}/" class="btn btn-primary">Start Learning</a>
       <a href="/topics/" class="btn btn-secondary">Browse Topics</a>
     </div>
+  </div>
+</section>
+
+<section class="learning-path">
+  <div class="learning-path-content">
+    <h2 class="learning-path-title">Learning Path</h2>
+    <p class="learning-path-description">Follow this suggested reading order from foundations to advanced topics, or jump to any article.</p>
+
+    <ol class="learning-path-blocks">
+      {% for block in learningPath.blocks %}
+      <li class="learning-path-block">
+        <div class="learning-path-block-header">
+          <span class="learning-path-block-number">{{ loop.index }}</span>
+          <h3 class="learning-path-block-title">{{ block.title }}</h3>
+        </div>
+        <ol class="learning-path-topics">
+          {% for topic in block.topics %}
+          <li class="learning-path-topic">
+            <a href="/topics/{{ topic.slug }}/">{{ topic.title }}</a>
+          </li>
+          {% endfor %}
+        </ol>
+      </li>
+      {% endfor %}
+    </ol>
   </div>
 </section>
 
