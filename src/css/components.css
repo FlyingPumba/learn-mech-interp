@@ -7,7 +7,7 @@
 .site-header {
   padding: var(--spacing-sm, 0.5rem) 0;
   border-bottom: 1px solid var(--color-border, rgba(0, 0, 0, 0.08));
-  background: linear-gradient(180deg, rgba(0, 66, 118, 0.02) 0%, transparent 100%);
+  background: linear-gradient(180deg, var(--color-header-gradient) 0%, transparent 100%);
 }
 
 /* Site Navigation */
@@ -216,7 +216,7 @@
 
 .hero {
   padding: var(--spacing-xl, 2rem) var(--container-padding, 1.5rem) var(--spacing-2xl, 3rem);
-  background: linear-gradient(180deg, rgba(0, 66, 118, 0.03) 0%, rgba(0, 66, 118, 0.01) 50%, transparent 100%);
+  background: linear-gradient(180deg, var(--color-hero-gradient-start) 0%, var(--color-hero-gradient-end) 50%, transparent 100%);
   border-bottom: 1px solid var(--color-border, rgba(0, 0, 0, 0.06));
 }
 
@@ -298,7 +298,7 @@
 
 .btn-secondary:hover {
   border-color: var(--color-link, #004276);
-  background: rgba(0, 66, 118, 0.04);
+  background: var(--color-btn-secondary-hover-bg);
 }
 
 /* ==========================================================================
@@ -327,7 +327,7 @@
 
 .feature-card:hover {
   border-color: var(--color-border-strong, rgba(0, 0, 0, 0.15));
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+  box-shadow: 0 4px 12px var(--color-feature-card-shadow);
 }
 
 .feature-icon {
@@ -634,13 +634,13 @@ label.sidenote-toggle:not(.sidenote-number) {
 
 .sidebar-topics a:hover {
   color: var(--color-link, #004276);
-  background: rgba(0, 66, 118, 0.04);
+  background: var(--color-sidebar-hover-bg);
 }
 
 .sidebar-topics a.sidebar-active,
 .sidebar-topics a[aria-current="page"] {
   color: var(--color-link, #004276);
-  background: rgba(0, 66, 118, 0.08);
+  background: var(--color-sidebar-active-bg);
   font-weight: 600;
 }
 
@@ -706,7 +706,7 @@ label.sidenote-toggle:not(.sidenote-number) {
 
   .sidebar.sidebar-open {
     transform: translateX(0);
-    box-shadow: 4px 0 12px rgba(0, 0, 0, 0.1);
+    box-shadow: 4px 0 12px var(--color-sidebar-shadow);
   }
 }
 
@@ -775,18 +775,18 @@ label.sidenote-toggle:not(.sidenote-number) {
 }
 
 .difficulty-foundational {
-  background: #e8f5e9;
-  color: #2e7d32;
+  background: var(--color-badge-foundational-bg);
+  color: var(--color-badge-foundational-text);
 }
 
 .difficulty-intermediate {
-  background: #fff3e0;
-  color: #e65100;
+  background: var(--color-badge-intermediate-bg);
+  color: var(--color-badge-intermediate-text);
 }
 
 .difficulty-advanced {
-  background: #fce4ec;
-  color: #c62828;
+  background: var(--color-badge-advanced-bg);
+  color: var(--color-badge-advanced-text);
 }
 
 /* ==========================================================================

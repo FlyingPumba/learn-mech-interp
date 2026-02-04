@@ -195,11 +195,12 @@ small {
 
 /* Selection */
 ::selection {
-  background: rgba(0, 66, 118, 0.2);
+  background: var(--color-selection);
 }
 
 /* Focus styles for accessibility */
 :focus-visible {
-  outline: 2px solid var(--color-link, #0066cc);
+  outline: 2px solid var(--color-link);
   outline-offset: 2px;
+  box-shadow: 0 0 0 4px var(--color-background);
 }

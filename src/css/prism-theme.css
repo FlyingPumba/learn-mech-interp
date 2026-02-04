@@ -42,13 +42,13 @@ pre[class*="language-"] {
 .token.prolog,
 .token.doctype,
 .token.cdata {
-  color: rgba(0, 0, 0, 0.4);
+  color: var(--prism-comment);
   font-style: italic;
 }
 
 /* Punctuation */
 .token.punctuation {
-  color: rgba(0, 0, 0, 0.6);
+  color: var(--prism-punctuation);
 }
 
 /* Keywords and builtins: site accent blue */
@@ -57,7 +57,7 @@ pre[class*="language-"] {
 .token.tag,
 .token.boolean,
 .token.constant {
-  color: #004276;
+  color: var(--prism-keyword);
 }
 
 /* Strings: green */
@@ -65,41 +65,41 @@ pre[class*="language-"] {
 .token.char,
 .token.attr-value,
 .token.regex {
-  color: #22863a;
+  color: var(--prism-string);
 }
 
 /* Numbers: purple */
 .token.number {
-  color: #6f42c1;
+  color: var(--prism-number);
 }
 
 /* Functions: blue */
 .token.function {
-  color: #005cc5;
+  color: var(--prism-function);
 }
 
 /* Operators */
 .token.operator,
 .token.entity,
 .token.url {
-  color: rgba(0, 0, 0, 0.6);
+  color: var(--prism-operator);
 }
 
 /* Class names, types */
 .token.class-name,
 .token.maybe-class-name {
-  color: #005cc5;
+  color: var(--prism-class);
 }
 
 /* Attributes */
 .token.attr-name {
-  color: #6f42c1;
+  color: var(--prism-attr-name);
 }
 
 /* Decorators, annotations */
 .token.decorator,
 .token.annotation {
-  color: #6f42c1;
+  color: var(--prism-attr-name);
 }
 
 /* Important, bold */
@@ -115,18 +115,18 @@ pre[class*="language-"] {
 
 /* Deleted/inserted for diffs */
 .token.deleted {
-  color: #b31d28;
-  background: rgba(179, 29, 40, 0.08);
+  color: var(--prism-deleted);
+  background: var(--prism-deleted-bg);
 }
 
 .token.inserted {
-  color: #22863a;
-  background: rgba(34, 134, 58, 0.08);
+  color: var(--prism-inserted);
+  background: var(--prism-inserted-bg);
 }
 
 /* Line numbers and line highlighting (if used) */
 .highlight-line {
   display: inline-block;
   width: 100%;
-  background: rgba(0, 66, 118, 0.06);
+  background: var(--prism-highlight-bg);
 }
