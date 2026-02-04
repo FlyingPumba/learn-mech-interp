@@ -10,18 +10,18 @@ See: .planning/PROJECT.md (updated 2026-02-02)
 ## Current Position
 
 Phase: 4 of 7 (Content Authoring & Pilot Articles)
-Plan: 1 of 3 in current phase
+Plan: 2 of 3 in current phase
 Status: In progress
-Last activity: 2026-02-04 - Completed 04-01-PLAN.md (Infrastructure Prep and Attention Mechanism Article)
+Last activity: 2026-02-04 - Completed 04-02-PLAN.md (The Superposition Hypothesis)
 
-Progress: [========..] ~80%
+Progress: [=========.] ~85%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 8
+- Total plans completed: 9
 - Average duration: ~4min
-- Total execution time: ~0.51 hours
+- Total execution time: ~0.57 hours
 
 **By Phase:**
 
@@ -30,11 +30,11 @@ Progress: [========..] ~80%
 | 01-foundation-deployment | 2 | 3min 28s | 1min 44s |
 | 02-template-system-and-design | 3 | 23min | ~8min |
 | 03-content-rendering-engine | 2 | 5min 48s | ~3min |
-| 04-content-authoring-pilot-articles | 1 | 3min 45s | 3min 45s |
+| 04-content-authoring-pilot-articles | 2 | 7min 05s | ~3min 33s |
 
 **Recent Trend:**
-- Last 5 plans: 02-03 (~15min), 03-01 (2min 38s), 03-02 (3min 10s), 04-01 (3min 45s)
-- Trend: First editorial content plan completed in ~4min, below the 2-4x risk estimate
+- Last 5 plans: 03-01 (2min 38s), 03-02 (3min 10s), 04-01 (3min 45s), 04-02 (3min 20s)
+- Trend: Diagram-heavy article (6 images) completed in ~3min 20s, comparable to text-only article
 
 *Updated after each plan completion*
 
@@ -72,6 +72,8 @@ Recent decisions affecting current work:
 - [04-01]: Blockquote format for definitions (no custom shortcode needed)
 - [04-01]: 11 entries in references.json (conmy2023ioi pre-existed from Phase 3)
 - [04-01]: Sidenotes for supplementary context in articles (low-rank bottleneck, causal masking, etc.)
+- [04-02]: Manual "Figure N:" prefix in captions (consistent pattern across articles)
+- [04-02]: Olah et al. (2020) citation for polysemanticity evidence in superposition article
 
 ### Pending Todos
 
@@ -79,20 +81,20 @@ None yet.
 
 ### Blockers/Concerns
 
-- Phase 4 risk update: First pilot article (Attention Mechanism) completed in ~4min, well under the 2-4x estimate. However, this article had no images. Superposition article (04-02) has 6 diagrams and may take longer.
+- Phase 4 risk update: Superposition article (6 diagrams, ~3000 words) completed in ~3min 20s, confirming image pipeline adds negligible overhead. Remaining plan (04-03) should be similar.
 - Requirements doc claims 41 requirements but actual count is 46; traceability table corrected during roadmap creation
 
 ## Session Continuity
 
 Last session: 2026-02-04
-Stopped at: Completed 04-01-PLAN.md - Infrastructure Prep and Attention Mechanism Article
+Stopped at: Completed 04-02-PLAN.md - The Superposition Hypothesis
 Resume file: None
 
 ## Phase 4 Progress
 
 Content Authoring & Pilot Articles phase in progress:
 - [x] 04-01: Infrastructure Prep and Attention Mechanism Article
-- [ ] 04-02: The Superposition Hypothesis (intermediate, 6 diagrams)
+- [x] 04-02: The Superposition Hypothesis (intermediate, 6 diagrams)
 - [ ] 04-03: Activation Patching and Causal Interventions (advanced, 3 diagrams)
 
 Key artifacts so far:
@@ -101,3 +103,5 @@ Key artifacts so far:
 - src/_data/references.json - 11 entries covering all 3 pilot articles
 - src/css/components.css - Prerequisites styling added
 - src/topics/attention-mechanism/index.md - Complete pilot article (~2400 words, all 6 content types)
+- src/topics/superposition/index.md - Complete pilot article (~3000 words, 6 diagrams, all 6 content types)
+- src/topics/superposition/images/ - 6 PNG diagrams (phase diagram, geometry series)
