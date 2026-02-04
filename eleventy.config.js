@@ -1,7 +1,10 @@
 // Eleventy configuration (ESM syntax)
 // Source: https://www.11ty.dev/docs/config/
-import { EleventyHtmlBasePlugin } from "@11ty/eleventy";
+import fs from "node:fs";
+import { EleventyHtmlBasePlugin, IdAttributePlugin } from "@11ty/eleventy";
 import syntaxHighlight from "@11ty/eleventy-plugin-syntaxhighlight";
+import eleventyNavigationPlugin from "@11ty/eleventy-navigation";
+import pluginTOC from "eleventy-plugin-toc";
 import markdownIt from "markdown-it";
 import { katex } from "@mdit/plugin-katex";
 import { figure } from "@mdit/plugin-figure";
@@ -35,6 +38,32 @@ export default function(eleventyConfig) {
 
   // Syntax highlighting (PrismJS, build-time)
   eleventyConfig.addPlugin(syntaxHighlight);
+
+  // Heading ID attributes (required before TOC plugin)
+  eleventyConfig.addPlugin(IdAttributePlugin);
+
+  // Navigation plugin for sidebar hierarchy and breadcrumbs
+  eleventyConfig.addPlugin(eleventyNavigationPlugin);
+
+  // Table of contents from rendered headings
+  eleventyConfig.addPlugin(pluginTOC, {
+    tags: ["h2", "h3"],
+    wrapper: "",
+    wrapperClass: "",
+    ul: true
+  });
+
+  // Learning path collection: topics sorted by learningPath.json order
+  eleventyConfig.addCollection("learningPath", function(collectionApi) {
+    const pathData = JSON.parse(
+      fs.readFileSync("src/_data/learningPath.json", "utf-8")
+    );
+    const order = pathData.blocks.flatMap(b => b.topics.map(t => t.slug));
+    const topics = collectionApi.getFilteredByGlob("src/topics/*/index.md");
+    return topics
+      .filter(item => order.includes(item.fileSlug))
+      .sort((a, b) => order.indexOf(a.fileSlug) - order.indexOf(b.fileSlug));
+  });
 
   // Pass through CSS files to _site/css/
   eleventyConfig.addPassthroughCopy("src/css");
