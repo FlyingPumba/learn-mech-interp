@@ -32,10 +32,10 @@ Progress: [=========.] ~95%
 | 03-content-rendering-engine | 2 | 5min 48s | ~3min |
 | 04-content-authoring-pilot-articles | 3 | 11min 44s | ~3min 55s |
 | 05-navigation-information-architecture | 4 | 9min 20s | 2min 20s |
-| 05.1-bulk-content-migration | 6 | 26min 54s | 4min 29s |
+| 05.1-bulk-content-migration | 9 | 37min 54s | 4min 13s |
 
 **Recent Trend:**
-- Last 5 plans: 05.1-04 (4min 30s), 05.1-05 (6min 5s), 05.1-06 (3min 50s), 05.1-07 (4min 29s), 05.1-08 (5min 17s)
+- Last 5 plans: 05.1-06 (3min 50s), 05.1-07 (4min 29s), 05.1-08 (5min 17s), 05.1-09 (not tracked), 05.1-10 (6min)
 - Trend: Article authoring plans average ~4-5 minutes
 
 *Updated after each plan completion*
@@ -108,6 +108,9 @@ Recent decisions affecting current work:
 - [05.1-08]: Narrative arc: steering methods (ActAdd/CAA) -> framework (RepE) -> case study (refusal) -> erasure (LEACE) -> natural directions (function vectors)
 - [05.1-08]: Dual-use framing throughout: every steering capability paired with its vulnerability implications
 - [05.1-08]: Concept-erasure and function-vectors kept to 1,000-1,500 words as narrower topics
+- [05.1-10]: Promise-then-limitation pairing: each safety application article pairs positive results with explicit caveats in the same article
+- [05.1-10]: mi-safety-limitations organized as 6 numbered limitations for directness and clarity
+- [05.1-10]: SAE failure for deception detection covered in deception-detection article (evidence), then referenced as general limitation in mi-safety-limitations (pattern)
 
 ### Pending Todos
 
@@ -128,7 +131,7 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-02-04
-Stopped at: Completed 05.1-05-PLAN.md - Block 3 Observation to Causation
+Stopped at: Completed 05.1-10-PLAN.md - Block 7 MI for Safety
 Resume file: None
 
 ## Phase 5 Progress
@@ -150,7 +153,9 @@ Bulk Content Migration - IN PROGRESS:
 - [x] 05.1-06: Block 4 Part 1: Superposition review + sparse-autoencoders + sae-interpretability (3min 50s)
 - [x] 05.1-07: Block 4 Part 2: scaling-monosemanticity + sae-variants-and-evaluation (4min 29s)
 - [x] 05.1-08: Block 5 Representation Engineering: activation-engineering + representation-engineering + refusal-direction + concept-erasure + function-vectors (5min 17s)
-- [ ] 05.1-09 through 05.1-12: Article authoring (remaining 4 plans)
+- [ ] 05.1-09: Block 6 Circuit Tracing & Comparative MI
+- [x] 05.1-10: Block 7 MI for Safety: sleeper-agent-detection + deception-detection + safety-mechanisms-and-monitoring + mi-safety-limitations (6min)
+- [ ] 05.1-11 through 05.1-12: Article authoring (remaining 2 plans)
 
 Key artifacts so far:
 - src/_data/references.json - 44 citation entries covering all papers across 35 articles
@@ -173,3 +178,7 @@ Key artifacts so far:
 - src/topics/refusal-direction/index.md - Refusal direction case study with 2 diagrams
 - src/topics/concept-erasure/index.md - LEACE concept erasure
 - src/topics/function-vectors/index.md - Function vectors, natural task directions
+- src/topics/sleeper-agent-detection/index.md - Sleeper agent threat model, defection probes, trained-vs-natural caveat
+- src/topics/deception-detection/index.md - Alignment faking, behavioral eval failure, SAE failure for deception
+- src/topics/safety-mechanisms-and-monitoring/index.md - Refusal recap, model organisms, sabotage evals, monitoring
+- src/topics/mi-safety-limitations/index.md - 6 honest limitations, the gap, Swiss cheese model
