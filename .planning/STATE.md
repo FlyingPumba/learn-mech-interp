@@ -5,23 +5,23 @@
 See: .planning/PROJECT.md (updated 2026-02-02)
 
 **Core value:** People can learn Mechanistic Interpretability through well-structured, readable articles that build from foundations to frontier research, with easy navigation between topics and direct links to source papers.
-**Current focus:** Phase 6 complete. Ready for Phase 7 - Polish & Accessibility
+**Current focus:** Phase 7 in progress - Polish & Accessibility
 
 ## Current Position
 
-Phase: 6 of 7 (Search and Glossary)
-Plan: 2 of 2 in current phase
-Status: Phase complete
-Last activity: 2026-02-04 - Completed 06-02-PLAN.md (Glossary Data and Page)
+Phase: 7 of 7 (Polish & Accessibility)
+Plan: 1 of 2 in current phase
+Status: In progress
+Last activity: 2026-02-04 - Completed 07-01-PLAN.md (Dark Mode Color System)
 
-Progress: [=============================] 100% (28/28 plans)
+Progress: [=============================-] 97% (29/30 plans)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 28
-- Average duration: ~3min 33s
-- Total execution time: ~1.66 hours
+- Total plans completed: 29
+- Average duration: ~3min 30s
+- Total execution time: ~1.70 hours
 
 **By Phase:**
 
@@ -35,8 +35,10 @@ Progress: [=============================] 100% (28/28 plans)
 | 05.1-bulk-content-migration | 11 | 50min 8s | 4min 33s |
 | 06-search-and-glossary | 2 | 7min 5s | 3min 33s |
 
+| 07-polish-accessibility | 1 | 2min 47s | 2min 47s |
+
 **Recent Trend:**
-- Last 5 plans: 05.1-11 (6min 14s), 05.1-12 (6min), 06-01 (2min 2s), 06-02 (5min 3s)
+- Last 5 plans: 05.1-12 (6min), 06-01 (2min 2s), 06-02 (5min 3s), 07-01 (2min 47s)
 - Trend: Infrastructure plans faster than content authoring
 
 *Updated after each plan completion*
@@ -121,6 +123,10 @@ Recent decisions affecting current work:
 - [06-02]: 70 glossary terms (10 beyond the 60 required minimum) for broader MI coverage
 - [06-02]: Pre-sorted JSON array via Python sort, not template-side sorting
 - [06-02]: Article-level links only (no section anchors) to avoid staleness
+- [07-01]: Dark background color #1a1a2e (deep navy-purple, not pure black)
+- [07-01]: Dark link color #6db3f2 (lighter blue for dark backgrounds)
+- [07-01]: Prism dark palette inspired by VS Code dark theme
+- [07-01]: Dual-color focus approach: outline + background box-shadow halo for both-theme visibility
 
 ### Pending Todos
 
@@ -138,11 +144,12 @@ None yet.
 - Phase 5 complete: Full navigation in place (sidebar, homepage learning path, breadcrumbs, TOC, prev/next, difficulty badges, prerequisites)
 - Requirements doc claims 41 requirements but actual count is 46; traceability table corrected during roadmap creation
 - Phase 6 complete: Search and glossary both functional, glossary nav link now resolves
+- Phase 7 plan 01 complete: Dark mode CSS foundation in place, needs toggle and template wiring (plan 02)
 
 ## Session Continuity
 
 Last session: 2026-02-04
-Stopped at: Completed 06-02-PLAN.md - Glossary Data and Page (Phase 6 complete)
+Stopped at: Completed 07-01-PLAN.md - Dark Mode Color System
 Resume file: None
 
 ## Phase 5 Progress
@@ -187,3 +194,9 @@ Key artifacts:
 - src/glossary/index.njk - Glossary page template with letter navigation
 - src/search/index.njk - Search page with Pagefind UI
 - Full Eleventy build produces 39 HTML pages with zero errors
+
+## Phase 7 Progress
+
+Polish & Accessibility - IN PROGRESS:
+- [x] 07-01: Dark mode color system: variables, Prism migration, focus indicators (2min 47s)
+- [ ] 07-02: Toggle and template wiring
