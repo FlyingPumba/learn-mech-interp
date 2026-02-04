@@ -1,0 +1,758 @@
+[
+  {
+    "term": "Activation Engineering",
+    "definition": "A family of techniques that modify model behavior by adding computed direction vectors to intermediate activations at inference time, without changing model weights.",
+    "links": [
+      {
+        "article": "/topics/activation-engineering/",
+        "label": "Activation Engineering: ActAdd and CAA"
+      }
+    ]
+  },
+  {
+    "term": "Activation Patching",
+    "definition": "A causal intervention method where activations from a clean run are substituted into a corrupted run (or vice versa) at specific model components, revealing which components are causally important for a behavior.",
+    "links": [
+      {
+        "article": "/topics/activation-patching/",
+        "label": "Activation Patching and Causal Interventions"
+      }
+    ]
+  },
+  {
+    "term": "Alignment Faking",
+    "definition": "A scenario where a model behaves as if aligned during training or evaluation while harboring different objectives internally. Detecting alignment faking is a key motivation for mechanistic interpretability safety research.",
+    "links": [
+      {
+        "article": "/topics/deception-detection/",
+        "label": "Deception Detection and Alignment Faking"
+      }
+    ]
+  },
+  {
+    "term": "Attention Head",
+    "definition": "An individual attention computation within a multi-head attention layer. Each head independently computes attention patterns over the input sequence and produces a weighted combination of value vectors.",
+    "links": [
+      {
+        "article": "/topics/attention-mechanism/",
+        "label": "The Attention Mechanism"
+      }
+    ]
+  },
+  {
+    "term": "Attention Pattern",
+    "definition": "The matrix of attention weights produced by an attention head, showing how much each token position attends to every other position. Visualizing attention patterns is a foundational interpretability technique.",
+    "links": [
+      {
+        "article": "/topics/attention-mechanism/",
+        "label": "The Attention Mechanism"
+      },
+      {
+        "article": "/topics/logit-lens-and-probing/",
+        "label": "The Logit Lens, Tuned Lens, and Probing Classifiers"
+      }
+    ]
+  },
+  {
+    "term": "Attribution Graph",
+    "definition": "A computational graph produced by circuit tracing that maps how information flows through a model, showing which features and connections contribute to a specific output.",
+    "links": [
+      {
+        "article": "/topics/circuit-tracing/",
+        "label": "Circuit Tracing and Attribution Graphs"
+      }
+    ]
+  },
+  {
+    "term": "Attribution Patching",
+    "definition": "A linearized approximation of activation patching that uses gradients to estimate the causal effect of patching each component, making it computationally feasible to scan all components in a single forward and backward pass.",
+    "links": [
+      {
+        "article": "/topics/attribution-patching/",
+        "label": "Attribution Patching and Path Patching"
+      }
+    ]
+  },
+  {
+    "term": "Automated Interpretability",
+    "definition": "Methods that use language models to automatically generate and score natural language explanations of what individual neurons or features represent, reducing the need for manual inspection.",
+    "links": [
+      {
+        "article": "/topics/sae-interpretability/",
+        "label": "Feature Dashboards and Automated Interpretability"
+      }
+    ]
+  },
+  {
+    "term": "CAA (Contrastive Activation Addition)",
+    "definition": "A steering technique that computes a direction vector by contrasting model activations on paired prompts (e.g., honest vs. dishonest), then adds this vector during inference to shift model behavior along the target dimension.",
+    "links": [
+      {
+        "article": "/topics/activation-engineering/",
+        "label": "Activation Engineering: ActAdd and CAA"
+      }
+    ]
+  },
+  {
+    "term": "Causal Intervention",
+    "definition": "Any experimental technique that actively modifies model internals (activations, weights, or attention patterns) to test causal hypotheses about how a model computes its outputs, as opposed to purely observational analysis.",
+    "links": [
+      {
+        "article": "/topics/activation-patching/",
+        "label": "Activation Patching and Causal Interventions"
+      }
+    ]
+  },
+  {
+    "term": "Circuit (neural)",
+    "definition": "A subgraph of a neural network consisting of specific components (attention heads, MLP neurons, or features) and their connections that together implement an identifiable computational mechanism.",
+    "links": [
+      {
+        "article": "/topics/ioi-circuit/",
+        "label": "The IOI Circuit: Discovery and Mechanism"
+      },
+      {
+        "article": "/topics/circuit-evaluation/",
+        "label": "Circuit Evaluation: Faithfulness, Completeness, and Minimality"
+      }
+    ]
+  },
+  {
+    "term": "Circuit Tracing",
+    "definition": "A methodology developed by Anthropic for mapping information flow through neural networks by decomposing computations into interpretable features (via SAEs or transcoders) and tracing their causal connections.",
+    "links": [
+      {
+        "article": "/topics/circuit-tracing/",
+        "label": "Circuit Tracing and Attribution Graphs"
+      }
+    ]
+  },
+  {
+    "term": "Completeness (circuit)",
+    "definition": "A circuit evaluation criterion measuring whether the identified circuit accounts for all of the model's performance on a task. A complete circuit captures all relevant computation, with no important components left out.",
+    "links": [
+      {
+        "article": "/topics/circuit-evaluation/",
+        "label": "Circuit Evaluation: Faithfulness, Completeness, and Minimality"
+      }
+    ]
+  },
+  {
+    "term": "Composition (of attention heads)",
+    "definition": "The mechanism by which attention heads in different layers interact through the residual stream, where earlier heads write information that later heads read. Three types exist: Q-composition, K-composition, and V-composition.",
+    "links": [
+      {
+        "article": "/topics/composition-and-virtual-heads/",
+        "label": "Composition and Virtual Attention Heads"
+      }
+    ]
+  },
+  {
+    "term": "Concept Erasure",
+    "definition": "A technique for removing specific concepts from model representations by projecting activations onto the orthogonal complement of the concept's subspace, making the concept linearly unreadable from the modified representations.",
+    "links": [
+      {
+        "article": "/topics/concept-erasure/",
+        "label": "Concept Erasure with LEACE"
+      }
+    ]
+  },
+  {
+    "term": "Crosscoder",
+    "definition": "A variant of sparse autoencoders trained jointly on activations from multiple models (or the same model at different training stages), learning a shared feature dictionary that enables direct comparison of representations across models.",
+    "links": [
+      {
+        "article": "/topics/crosscoders-and-model-diffing/",
+        "label": "Crosscoders and Model Diffing"
+      }
+    ]
+  },
+  {
+    "term": "Dead Features",
+    "definition": "Features in a trained sparse autoencoder that never activate on any input in the dataset. Dead features represent wasted capacity and are a common training challenge for SAEs, addressed by techniques such as resampling.",
+    "links": [
+      {
+        "article": "/topics/sae-variants-and-evaluation/",
+        "label": "SAE Variants, Evaluation, and Honest Limitations"
+      }
+    ]
+  },
+  {
+    "term": "Deception Detection",
+    "definition": "The application of mechanistic interpretability to identify when a model is generating outputs that conflict with its internal representations, potentially indicating deceptive or unfaithful behavior.",
+    "links": [
+      {
+        "article": "/topics/deception-detection/",
+        "label": "Deception Detection and Alignment Faking"
+      }
+    ]
+  },
+  {
+    "term": "Dictionary Learning",
+    "definition": "A class of methods that learn an overcomplete set of basis vectors (a dictionary) to represent data as sparse combinations. In MI, dictionary learning via sparse autoencoders is used to decompose superposed neural network activations into interpretable features.",
+    "links": [
+      {
+        "article": "/topics/sparse-autoencoders/",
+        "label": "Sparse Autoencoders: Decomposing Superposition"
+      }
+    ]
+  },
+  {
+    "term": "Direct Logit Attribution (DLA)",
+    "definition": "An interpretability technique that decomposes a model's output logits into additive contributions from each component (attention heads and MLP layers) by projecting their residual stream writes onto the unembedding direction for a token of interest.",
+    "links": [
+      {
+        "article": "/topics/direct-logit-attribution/",
+        "label": "Direct Logit Attribution"
+      }
+    ]
+  },
+  {
+    "term": "Embedding",
+    "definition": "The mapping from discrete tokens to continuous vectors at the start of a transformer. The embedding matrix converts each token into a vector in the residual stream, where it can be read and modified by subsequent layers.",
+    "links": [
+      {
+        "article": "/topics/attention-mechanism/",
+        "label": "The Attention Mechanism"
+      },
+      {
+        "article": "/topics/direct-logit-attribution/",
+        "label": "Direct Logit Attribution"
+      }
+    ]
+  },
+  {
+    "term": "Faithfulness (circuit)",
+    "definition": "A circuit evaluation criterion measuring how well the circuit reproduces the full model's behavior when run in isolation. A faithful circuit produces similar outputs to the complete model on the target task.",
+    "links": [
+      {
+        "article": "/topics/circuit-evaluation/",
+        "label": "Circuit Evaluation: Faithfulness, Completeness, and Minimality"
+      }
+    ]
+  },
+  {
+    "term": "Feature (in MI)",
+    "definition": "A unit of neural network computation that represents a meaningful concept or pattern. In the context of superposition and SAEs, a feature is a direction in activation space corresponding to an interpretable property of the input.",
+    "links": [
+      {
+        "article": "/topics/superposition/",
+        "label": "The Superposition Hypothesis"
+      },
+      {
+        "article": "/topics/sparse-autoencoders/",
+        "label": "Sparse Autoencoders: Decomposing Superposition"
+      }
+    ]
+  },
+  {
+    "term": "Feature Absorption",
+    "definition": "A failure mode in sparse autoencoders where a feature absorbs activation patterns that should be captured by other features, reducing the fidelity of the learned decomposition and making some features appear more general than they should be.",
+    "links": [
+      {
+        "article": "/topics/sae-variants-and-evaluation/",
+        "label": "SAE Variants, Evaluation, and Honest Limitations"
+      }
+    ]
+  },
+  {
+    "term": "Feature Dashboard",
+    "definition": "A visualization tool that displays the top-activating dataset examples, logit effects, and other statistics for individual SAE features, helping researchers assess whether a feature corresponds to an interpretable concept.",
+    "links": [
+      {
+        "article": "/topics/sae-interpretability/",
+        "label": "Feature Dashboards and Automated Interpretability"
+      }
+    ]
+  },
+  {
+    "term": "Feature Splitting",
+    "definition": "The phenomenon where a single feature in a smaller SAE splits into multiple, more specific features when the SAE dictionary size is increased, revealing finer-grained structure in model representations.",
+    "links": [
+      {
+        "article": "/topics/scaling-monosemanticity/",
+        "label": "Scaling Monosemanticity and Feature Steering"
+      }
+    ]
+  },
+  {
+    "term": "Feature Steering",
+    "definition": "A technique for controlling model behavior by artificially amplifying or suppressing specific SAE features during inference, effectively pushing model outputs toward or away from concepts those features represent.",
+    "links": [
+      {
+        "article": "/topics/scaling-monosemanticity/",
+        "label": "Scaling Monosemanticity and Feature Steering"
+      }
+    ]
+  },
+  {
+    "term": "Function Vector",
+    "definition": "A direction in activation space that encodes an input-output function (such as 'translate English to French' or 'convert to past tense') rather than a static concept, enabling task transfer when added to unrelated prompts.",
+    "links": [
+      {
+        "article": "/topics/function-vectors/",
+        "label": "Function Vectors"
+      }
+    ]
+  },
+  {
+    "term": "Gated SAE",
+    "definition": "A sparse autoencoder architecture that separates the decision of whether a feature is active from the estimation of its magnitude, using a gating mechanism that reduces shrinkage bias present in standard L1-regularized SAEs.",
+    "links": [
+      {
+        "article": "/topics/sae-variants-and-evaluation/",
+        "label": "SAE Variants, Evaluation, and Honest Limitations"
+      }
+    ]
+  },
+  {
+    "term": "Ground Truth Problem",
+    "definition": "The fundamental challenge that mechanistic interpretability lacks an objective standard for evaluating whether a proposed explanation of model behavior is correct, since the true computational mechanisms are not independently observable.",
+    "links": [
+      {
+        "article": "/topics/open-problems-methods/",
+        "label": "Open Problems: Methods and Research Questions"
+      }
+    ]
+  },
+  {
+    "term": "IOI Circuit",
+    "definition": "The circuit discovered in GPT-2 Small that performs the Indirect Object Identification task, consisting of name movers, backup name movers, S-inhibition heads, induction-like heads, and duplicate token heads working together to predict the correct indirect object.",
+    "links": [
+      {
+        "article": "/topics/ioi-circuit/",
+        "label": "The IOI Circuit: Discovery and Mechanism"
+      }
+    ]
+  },
+  {
+    "term": "In-Context Learning",
+    "definition": "The ability of large language models to learn new tasks from examples provided in the prompt without weight updates. Induction heads are a key mechanism underlying this capability, performing pattern matching across the context window.",
+    "links": [
+      {
+        "article": "/topics/induction-heads/",
+        "label": "Induction Heads and In-Context Learning"
+      }
+    ]
+  },
+  {
+    "term": "Induction Head",
+    "definition": "A two-attention-head circuit that implements a simple copying mechanism: when the model sees a pattern like 'A B ... A', the induction head predicts 'B' will follow. Induction heads are a primary mechanism for in-context learning in transformers.",
+    "links": [
+      {
+        "article": "/topics/induction-heads/",
+        "label": "Induction Heads and In-Context Learning"
+      }
+    ]
+  },
+  {
+    "term": "Interpretability Illusion",
+    "definition": "The risk that an interpretability method appears to provide a correct explanation of model behavior but actually misses the true mechanism, giving researchers false confidence in their understanding of the model.",
+    "links": [
+      {
+        "article": "/topics/field-assessment/",
+        "label": "What MI Can and Cannot Do"
+      },
+      {
+        "article": "/topics/sae-variants-and-evaluation/",
+        "label": "SAE Variants, Evaluation, and Honest Limitations"
+      }
+    ]
+  },
+  {
+    "term": "Key Vector",
+    "definition": "The vector produced by applying the key weight matrix (W_K) to a token's representation. Key vectors are compared against query vectors via dot product to determine attention weights.",
+    "links": [
+      {
+        "article": "/topics/attention-mechanism/",
+        "label": "The Attention Mechanism"
+      },
+      {
+        "article": "/topics/qk-ov-circuits/",
+        "label": "QK and OV Circuits"
+      }
+    ]
+  },
+  {
+    "term": "LEACE",
+    "definition": "Least-squares Concept Erasure: a closed-form method for removing linear information about a concept from model representations by computing and projecting out the optimal linear subspace, guaranteeing that no linear classifier can recover the erased concept.",
+    "links": [
+      {
+        "article": "/topics/concept-erasure/",
+        "label": "Concept Erasure with LEACE"
+      }
+    ]
+  },
+  {
+    "term": "Linear Probe",
+    "definition": "A simple linear classifier trained on frozen model activations to test whether specific information (such as part of speech or sentiment) is linearly accessible at a given layer, providing evidence about what representations a model has learned.",
+    "links": [
+      {
+        "article": "/topics/logit-lens-and-probing/",
+        "label": "The Logit Lens, Tuned Lens, and Probing Classifiers"
+      }
+    ]
+  },
+  {
+    "term": "Linear Representation Hypothesis",
+    "definition": "The hypothesis that neural networks represent concepts as linear directions in activation space, so that adding or subtracting these directions corresponds to adding or removing the associated concept.",
+    "links": [
+      {
+        "article": "/topics/linear-representation-hypothesis/",
+        "label": "The Linear Representation Hypothesis"
+      }
+    ]
+  },
+  {
+    "term": "Logit Lens",
+    "definition": "An observational technique that applies the model's unembedding matrix to intermediate residual stream states, converting hidden representations into vocabulary-space predictions to see how the model's output evolves across layers.",
+    "links": [
+      {
+        "article": "/topics/logit-lens-and-probing/",
+        "label": "The Logit Lens, Tuned Lens, and Probing Classifiers"
+      }
+    ]
+  },
+  {
+    "term": "MLP Layer",
+    "definition": "The feedforward sublayer in a transformer block, consisting of two linear projections with a nonlinearity between them. MLP layers process each token position independently and are believed to store factual knowledge and perform feature transformations.",
+    "links": [
+      {
+        "article": "/topics/direct-logit-attribution/",
+        "label": "Direct Logit Attribution"
+      },
+      {
+        "article": "/topics/transcoders/",
+        "label": "Transcoders: Interpretable MLP Replacements"
+      }
+    ]
+  },
+  {
+    "term": "Mechanistic Interpretability",
+    "definition": "A subfield of AI safety research focused on reverse-engineering the internal computations of neural networks to understand how they process information and produce outputs, moving beyond behavioral analysis to study the mechanisms themselves.",
+    "links": [
+      {
+        "article": "/topics/what-is-mech-interp/",
+        "label": "What is Mechanistic Interpretability?"
+      }
+    ]
+  },
+  {
+    "term": "Minimality (circuit)",
+    "definition": "A circuit evaluation criterion measuring whether the circuit contains only components that are necessary for the task. A minimal circuit has no redundant parts whose removal would leave performance unchanged.",
+    "links": [
+      {
+        "article": "/topics/circuit-evaluation/",
+        "label": "Circuit Evaluation: Faithfulness, Completeness, and Minimality"
+      }
+    ]
+  },
+  {
+    "term": "Model Diffing",
+    "definition": "The practice of comparing internal representations between two related models (such as a base model and a fine-tuned version) to identify which features or circuits changed, using tools like crosscoders.",
+    "links": [
+      {
+        "article": "/topics/crosscoders-and-model-diffing/",
+        "label": "Crosscoders and Model Diffing"
+      }
+    ]
+  },
+  {
+    "term": "Monosemanticity",
+    "definition": "The property of a neuron or feature activating for exactly one interpretable concept. Monosemantic units are the goal of dictionary learning methods like SAEs, which aim to decompose polysemantic neurons into monosemantic features.",
+    "links": [
+      {
+        "article": "/topics/sparse-autoencoders/",
+        "label": "Sparse Autoencoders: Decomposing Superposition"
+      },
+      {
+        "article": "/topics/scaling-monosemanticity/",
+        "label": "Scaling Monosemanticity and Feature Steering"
+      }
+    ]
+  },
+  {
+    "term": "Multi-Head Attention",
+    "definition": "The mechanism of running multiple independent attention heads in parallel within a single layer, allowing the model to attend to different types of relationships simultaneously and combine their outputs.",
+    "links": [
+      {
+        "article": "/topics/attention-mechanism/",
+        "label": "The Attention Mechanism"
+      }
+    ]
+  },
+  {
+    "term": "Multimodal Interpretability",
+    "definition": "The application of mechanistic interpretability techniques to models that process multiple input modalities (such as vision and language), investigating how representations are shared or transformed across modalities.",
+    "links": [
+      {
+        "article": "/topics/multimodal-mi/",
+        "label": "Multimodal Mechanistic Interpretability"
+      }
+    ]
+  },
+  {
+    "term": "Name Mover Head",
+    "definition": "An attention head in the IOI circuit that attends to the indirect object name and copies it to the final token position, directly promoting that name in the output logits. Name movers are the output stage of the IOI circuit.",
+    "links": [
+      {
+        "article": "/topics/ioi-circuit/",
+        "label": "The IOI Circuit: Discovery and Mechanism"
+      }
+    ]
+  },
+  {
+    "term": "OV Circuit",
+    "definition": "The component of an attention head formed by the product of the value (W_V) and output (W_O) weight matrices. The OV circuit determines what information is written to the residual stream when a token is attended to.",
+    "links": [
+      {
+        "article": "/topics/qk-ov-circuits/",
+        "label": "QK and OV Circuits"
+      }
+    ]
+  },
+  {
+    "term": "Overcomplete Basis",
+    "definition": "A set of basis vectors that is larger than the dimensionality of the space it spans. In SAEs, an overcomplete basis allows the dictionary to have more features than the model's hidden dimension, enabling it to represent the many features packed into superposition.",
+    "links": [
+      {
+        "article": "/topics/sparse-autoencoders/",
+        "label": "Sparse Autoencoders: Decomposing Superposition"
+      }
+    ]
+  },
+  {
+    "term": "Path Patching",
+    "definition": "A refined variant of activation patching that isolates the effect of a specific computational path between two components, controlling for all other paths. This enables precise attribution of behavior to individual connections in a circuit.",
+    "links": [
+      {
+        "article": "/topics/attribution-patching/",
+        "label": "Attribution Patching and Path Patching"
+      }
+    ]
+  },
+  {
+    "term": "Polysemanticity",
+    "definition": "The property of a single neuron responding to multiple unrelated concepts. Polysemanticity is a consequence of superposition, where models encode more features than they have neurons by sharing neurons across features.",
+    "links": [
+      {
+        "article": "/topics/superposition/",
+        "label": "The Superposition Hypothesis"
+      }
+    ]
+  },
+  {
+    "term": "Previous Token Head",
+    "definition": "An attention head that consistently attends to the immediately preceding token. Previous token heads are one component of the induction circuit, copying positional information that induction heads use to complete repeated patterns.",
+    "links": [
+      {
+        "article": "/topics/induction-heads/",
+        "label": "Induction Heads and In-Context Learning"
+      }
+    ]
+  },
+  {
+    "term": "Probing Classifier",
+    "definition": "A simple model (typically linear) trained on neural network activations to predict properties of the input, used as a diagnostic tool to test what information is encoded at different layers of a network.",
+    "links": [
+      {
+        "article": "/topics/logit-lens-and-probing/",
+        "label": "The Logit Lens, Tuned Lens, and Probing Classifiers"
+      }
+    ]
+  },
+  {
+    "term": "QK Circuit",
+    "definition": "The component of an attention head formed by the product of the query (W_Q) and key (W_K) weight matrices. The QK circuit determines which tokens attend to which other tokens by computing attention scores.",
+    "links": [
+      {
+        "article": "/topics/qk-ov-circuits/",
+        "label": "QK and OV Circuits"
+      }
+    ]
+  },
+  {
+    "term": "Query Vector",
+    "definition": "The vector produced by applying the query weight matrix (W_Q) to a token's representation. Query vectors are compared against key vectors to compute attention scores that determine how much each position attends to others.",
+    "links": [
+      {
+        "article": "/topics/attention-mechanism/",
+        "label": "The Attention Mechanism"
+      },
+      {
+        "article": "/topics/qk-ov-circuits/",
+        "label": "QK and OV Circuits"
+      }
+    ]
+  },
+  {
+    "term": "Refusal Direction",
+    "definition": "A specific direction in a model's activation space that mediates refusal behavior. When this direction is removed or suppressed, the model stops refusing harmful requests, demonstrating that safety training creates a simple, linear mechanism.",
+    "links": [
+      {
+        "article": "/topics/refusal-direction/",
+        "label": "The Refusal Direction"
+      }
+    ]
+  },
+  {
+    "term": "Representation Engineering",
+    "definition": "A framework that treats model representations as the primary object of study and intervention, reading out concepts via probes and writing in modifications via activation addition, without needing to understand individual neurons.",
+    "links": [
+      {
+        "article": "/topics/representation-engineering/",
+        "label": "Representation Engineering"
+      }
+    ]
+  },
+  {
+    "term": "Representation Reading",
+    "definition": "The practice of extracting information about a model's internal state by training classifiers on its activations, used in safety contexts to detect when a model may be reasoning about deception or harmful content.",
+    "links": [
+      {
+        "article": "/topics/safety-mechanisms-and-monitoring/",
+        "label": "Safety Mechanisms and MI-Based Monitoring"
+      }
+    ]
+  },
+  {
+    "term": "Residual Stream",
+    "definition": "The central communication channel in a transformer, implemented as skip connections that allow each layer's output to be added to a running sum. All attention heads and MLP layers read from and write to this shared stream.",
+    "links": [
+      {
+        "article": "/topics/attention-mechanism/",
+        "label": "The Attention Mechanism"
+      },
+      {
+        "article": "/topics/direct-logit-attribution/",
+        "label": "Direct Logit Attribution"
+      }
+    ]
+  },
+  {
+    "term": "Safety Monitor",
+    "definition": "A system that uses mechanistic interpretability techniques (such as probes or feature monitors) to detect potentially dangerous model behaviors at inference time, enabling intervention before harmful outputs are produced.",
+    "links": [
+      {
+        "article": "/topics/safety-mechanisms-and-monitoring/",
+        "label": "Safety Mechanisms and MI-Based Monitoring"
+      }
+    ]
+  },
+  {
+    "term": "Scalability (of MI methods)",
+    "definition": "The open challenge of applying mechanistic interpretability techniques developed on small models (such as GPT-2) to production-scale systems with billions of parameters, where exhaustive analysis becomes computationally prohibitive.",
+    "links": [
+      {
+        "article": "/topics/open-problems-methods/",
+        "label": "Open Problems: Methods and Research Questions"
+      },
+      {
+        "article": "/topics/future-directions/",
+        "label": "The Future of Mechanistic Interpretability"
+      }
+    ]
+  },
+  {
+    "term": "Sleeper Agent",
+    "definition": "A model with a hidden backdoor that behaves normally under standard conditions but activates harmful behavior when a specific trigger is present. Detecting sleeper agents is a motivating application of MI for safety.",
+    "links": [
+      {
+        "article": "/topics/sleeper-agent-detection/",
+        "label": "Detecting Sleeper Agents"
+      }
+    ]
+  },
+  {
+    "term": "Sparse Autoencoder (SAE)",
+    "definition": "A dictionary learning method that decomposes a model's activations into a larger set of sparse, interpretable features. SAEs learn an overcomplete basis where each feature ideally corresponds to one human-understandable concept.",
+    "links": [
+      {
+        "article": "/topics/sparse-autoencoders/",
+        "label": "Sparse Autoencoders: Decomposing Superposition"
+      },
+      {
+        "article": "/topics/sae-interpretability/",
+        "label": "Feature Dashboards and Automated Interpretability"
+      }
+    ]
+  },
+  {
+    "term": "Superposition",
+    "definition": "The phenomenon where neural networks represent more features than they have dimensions by encoding features as nearly orthogonal directions in activation space, allowing models to store more concepts than their parameter count would naively permit.",
+    "links": [
+      {
+        "article": "/topics/superposition/",
+        "label": "The Superposition Hypothesis"
+      }
+    ]
+  },
+  {
+    "term": "Transcoder",
+    "definition": "A sparse autoencoder variant applied to MLP layers that maps from MLP inputs to MLP outputs, learning interpretable features that describe what transformations the MLP performs rather than what it represents.",
+    "links": [
+      {
+        "article": "/topics/transcoders/",
+        "label": "Transcoders: Interpretable MLP Replacements"
+      }
+    ]
+  },
+  {
+    "term": "Tuned Lens",
+    "definition": "An improvement on the logit lens that trains a learned affine transformation at each layer (rather than reusing the final unembedding matrix), producing more accurate predictions of the model's evolving computation at intermediate layers.",
+    "links": [
+      {
+        "article": "/topics/logit-lens-and-probing/",
+        "label": "The Logit Lens, Tuned Lens, and Probing Classifiers"
+      }
+    ]
+  },
+  {
+    "term": "Unembedding",
+    "definition": "The mapping from the final residual stream representation back to vocabulary logits at the end of a transformer. The unembedding matrix converts continuous vectors into token probabilities, and is central to techniques like the logit lens and direct logit attribution.",
+    "links": [
+      {
+        "article": "/topics/direct-logit-attribution/",
+        "label": "Direct Logit Attribution"
+      },
+      {
+        "article": "/topics/logit-lens-and-probing/",
+        "label": "The Logit Lens, Tuned Lens, and Probing Classifiers"
+      }
+    ]
+  },
+  {
+    "term": "Universality",
+    "definition": "The hypothesis that different neural networks trained on similar tasks converge on similar internal representations and circuits, suggesting that certain computational solutions are natural or optimal for given problems.",
+    "links": [
+      {
+        "article": "/topics/universality/",
+        "label": "Universality Across Models"
+      }
+    ]
+  },
+  {
+    "term": "Value Vector",
+    "definition": "The vector produced by applying the value weight matrix (W_V) to a token's representation. Value vectors carry the content information that gets written to the residual stream, weighted by the attention pattern.",
+    "links": [
+      {
+        "article": "/topics/attention-mechanism/",
+        "label": "The Attention Mechanism"
+      },
+      {
+        "article": "/topics/qk-ov-circuits/",
+        "label": "QK and OV Circuits"
+      }
+    ]
+  },
+  {
+    "term": "Virtual Attention Head",
+    "definition": "An emergent attention head that does not correspond to any single physical head in the model but arises from the composition of two or more heads across different layers communicating through the residual stream.",
+    "links": [
+      {
+        "article": "/topics/composition-and-virtual-heads/",
+        "label": "Composition and Virtual Attention Heads"
+      }
+    ]
+  }
+]
