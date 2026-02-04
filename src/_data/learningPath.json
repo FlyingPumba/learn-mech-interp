@@ -4,21 +4,83 @@
       "slug": "transformer-foundations",
       "title": "Transformer Foundations",
       "topics": [
-        { "slug": "attention-mechanism", "title": "The Attention Mechanism" }
+        { "slug": "attention-mechanism", "title": "The Attention Mechanism" },
+        { "slug": "qk-ov-circuits", "title": "QK and OV Circuits" },
+        { "slug": "composition-and-virtual-heads", "title": "Composition and Virtual Attention Heads" }
+      ]
+    },
+    {
+      "slug": "foundations-of-mi",
+      "title": "Foundations of MI",
+      "topics": [
+        { "slug": "what-is-mech-interp", "title": "What is Mechanistic Interpretability?" },
+        { "slug": "linear-representation-hypothesis", "title": "The Linear Representation Hypothesis" },
+        { "slug": "induction-heads", "title": "Induction Heads and In-Context Learning" },
+        { "slug": "direct-logit-attribution", "title": "Direct Logit Attribution" },
+        { "slug": "logit-lens-and-probing", "title": "The Logit Lens, Tuned Lens, and Probing Classifiers" }
+      ]
+    },
+    {
+      "slug": "observation-to-causation",
+      "title": "From Observation to Causation",
+      "topics": [
+        { "slug": "activation-patching", "title": "Activation Patching and Causal Interventions" },
+        { "slug": "attribution-patching", "title": "Attribution Patching and Path Patching" },
+        { "slug": "ioi-circuit", "title": "The IOI Circuit: Discovery and Mechanism" },
+        { "slug": "circuit-evaluation", "title": "Circuit Evaluation: Faithfulness, Completeness, and Minimality" }
       ]
     },
     {
       "slug": "superposition-and-feature-extraction",
       "title": "Superposition & Feature Extraction",
       "topics": [
-        { "slug": "superposition", "title": "The Superposition Hypothesis" }
+        { "slug": "superposition", "title": "The Superposition Hypothesis" },
+        { "slug": "sparse-autoencoders", "title": "Sparse Autoencoders: Decomposing Superposition" },
+        { "slug": "sae-interpretability", "title": "Feature Dashboards and Automated Interpretability" },
+        { "slug": "scaling-monosemanticity", "title": "Scaling Monosemanticity and Feature Steering" },
+        { "slug": "sae-variants-and-evaluation", "title": "SAE Variants, Evaluation, and Honest Limitations" }
       ]
     },
     {
-      "slug": "observation-to-causation",
-      "title": "Observation to Causation",
+      "slug": "representation-engineering",
+      "title": "Representation Engineering & Steering",
       "topics": [
-        { "slug": "activation-patching", "title": "Activation Patching and Causal Interventions" }
+        { "slug": "activation-engineering", "title": "Activation Engineering: ActAdd and CAA" },
+        { "slug": "representation-engineering", "title": "Representation Engineering" },
+        { "slug": "refusal-direction", "title": "The Refusal Direction" },
+        { "slug": "concept-erasure", "title": "Concept Erasure with LEACE" },
+        { "slug": "function-vectors", "title": "Function Vectors" }
+      ]
+    },
+    {
+      "slug": "circuit-tracing-and-comparative-mi",
+      "title": "Circuit Tracing & Comparative MI",
+      "topics": [
+        { "slug": "transcoders", "title": "Transcoders: Interpretable MLP Replacements" },
+        { "slug": "circuit-tracing", "title": "Circuit Tracing and Attribution Graphs" },
+        { "slug": "crosscoders-and-model-diffing", "title": "Crosscoders and Model Diffing" },
+        { "slug": "universality", "title": "Universality Across Models" },
+        { "slug": "multimodal-mi", "title": "Multimodal Mechanistic Interpretability" }
+      ]
+    },
+    {
+      "slug": "mi-for-safety",
+      "title": "MI for AI Safety",
+      "topics": [
+        { "slug": "sleeper-agent-detection", "title": "Detecting Sleeper Agents" },
+        { "slug": "deception-detection", "title": "Deception Detection and Alignment Faking" },
+        { "slug": "safety-mechanisms-and-monitoring", "title": "Safety Mechanisms and MI-Based Monitoring" },
+        { "slug": "mi-safety-limitations", "title": "Honest Limitations of MI for Safety" }
+      ]
+    },
+    {
+      "slug": "open-problems-and-frontiers",
+      "title": "Open Problems & Field Assessment",
+      "topics": [
+        { "slug": "open-problems-methods", "title": "Open Problems: Methods and Research Questions" },
+        { "slug": "field-assessment", "title": "What MI Can and Cannot Do" },
+        { "slug": "future-directions", "title": "The Future of Mechanistic Interpretability" },
+        { "slug": "course-synthesis", "title": "Course Synthesis" }
       ]
     }
   ]
