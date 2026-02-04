@@ -754,16 +754,7 @@ label.sidenote-toggle:not(.sidenote-number) {
 /* Mobile: sidebar hidden, slides in from left when toggled */
 @media (max-width: 1199px) {
   .sidebar {
-    position: static;
-    width: auto;
-    height: auto;
-    z-index: auto;
-    overflow: visible;
-    transform: none;
-    transition: none;
-    border-right: none;
-    border-bottom: 1px solid var(--color-border, rgba(0, 0, 0, 0.08));
-    box-shadow: none;
+    display: none;
   }
 
   .sidebar-inner {
