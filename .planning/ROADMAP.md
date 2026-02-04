@@ -100,7 +100,7 @@ Plans:
 **Plans**: 4 plans
 
 Plans:
-- [ ] 05-01-PLAN.md -- Foundation: install plugins, create learningPath.json, register plugins, create collection
+- [x] 05-01-PLAN.md -- Foundation: install plugins, create learningPath.json, register plugins, create collection
 - [ ] 05-02-PLAN.md -- Sidebar navigation, mobile hamburger toggle, page layout restructuring
 - [ ] 05-03-PLAN.md -- Article navigation: breadcrumbs, TOC, prev/next, difficulty badge, prerequisites
 - [ ] 05-04-PLAN.md -- Homepage: learning path visualization, fix "start here" link
@@ -144,6 +144,6 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7
 | 2. Template System & Design | 3/3 | Complete | 2026-02-03 |
 | 3. Content Rendering Engine | 2/2 | Complete | 2026-02-03 |
 | 4. Content Authoring & Pilot Articles | 3/3 | Complete | 2026-02-04 |
-| 5. Navigation & Information Architecture | 0/TBD | Not started | - |
+| 5. Navigation & Information Architecture | 1/4 | In progress | - |
 | 6. Search & Glossary | 0/TBD | Not started | - |
 | 7. Polish & Accessibility | 0/TBD | Not started | - |

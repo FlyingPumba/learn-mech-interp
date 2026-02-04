@@ -5,23 +5,23 @@
 See: .planning/PROJECT.md (updated 2026-02-02)
 
 **Core value:** People can learn Mechanistic Interpretability through well-structured, readable articles that build from foundations to frontier research, with easy navigation between topics and direct links to source papers.
-**Current focus:** Phase 4 complete - Content Authoring & Pilot Articles
+**Current focus:** Phase 5 in progress - Navigation & Information Architecture
 
 ## Current Position
 
-Phase: 4 of 7 (Content Authoring & Pilot Articles)
-Plan: 3 of 3 in current phase
-Status: Phase complete
-Last activity: 2026-02-04 - Completed 04-03-PLAN.md (Activation Patching and Causal Interventions)
+Phase: 5 of 7 (Navigation & Information Architecture)
+Plan: 1 of 4 in current phase
+Status: In progress
+Last activity: 2026-02-04 - Completed 05-01-PLAN.md (Foundation: plugins, data, collection)
 
-Progress: [=========.] ~90%
+Progress: [=========.] ~91%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 10
-- Average duration: ~4min
-- Total execution time: ~0.65 hours
+- Total plans completed: 11
+- Average duration: ~3min 45s
+- Total execution time: ~0.68 hours
 
 **By Phase:**
 
@@ -31,10 +31,11 @@ Progress: [=========.] ~90%
 | 02-template-system-and-design | 3 | 23min | ~8min |
 | 03-content-rendering-engine | 2 | 5min 48s | ~3min |
 | 04-content-authoring-pilot-articles | 3 | 11min 44s | ~3min 55s |
+| 05-navigation-information-architecture | 1 | 1min 37s | 1min 37s |
 
 **Recent Trend:**
-- Last 5 plans: 03-02 (3min 10s), 04-01 (3min 45s), 04-02 (3min 20s), 04-03 (4min 39s)
-- Trend: Multi-citation advanced article with 3 diagrams and cross-links completed in ~4min 39s
+- Last 5 plans: 04-01 (3min 45s), 04-02 (3min 20s), 04-03 (4min 39s), 05-01 (1min 37s)
+- Trend: Plugin/data infrastructure plan completed fastest yet at 1min 37s
 
 *Updated after each plan completion*
 
@@ -76,6 +77,9 @@ Recent decisions affecting current work:
 - [04-02]: Olah et al. (2020) citation for polysemanticity evidence in superposition article
 - [04-03]: Superposition cross-link placed in Attribution Patching section (polysemanticity context)
 - [04-03]: Two pause-and-think prompts per article (adapted second from source exercise)
+- [05-01]: page.fileSlug as eleventyNavigation key (stable, avoids special character issues)
+- [05-01]: learningPath collection filters by learningPath.json slugs (test article excluded)
+- [05-01]: IdAttributePlugin registered before TOC plugin (TOC reads heading IDs)
 
 ### Pending Todos
 
@@ -89,23 +93,19 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-02-04
-Stopped at: Completed 04-03-PLAN.md - Activation Patching and Causal Interventions (Phase 4 complete)
+Stopped at: Completed 05-01-PLAN.md - Foundation: plugins, data, collection
 Resume file: None
 
-## Phase 4 Progress
+## Phase 5 Progress
 
-Content Authoring & Pilot Articles phase COMPLETE:
-- [x] 04-01: Infrastructure Prep and Attention Mechanism Article
-- [x] 04-02: The Superposition Hypothesis (intermediate, 6 diagrams)
-- [x] 04-03: Activation Patching and Causal Interventions (advanced, 3 diagrams)
+Navigation & Information Architecture phase IN PROGRESS:
+- [x] 05-01: Foundation: plugins, data, collection (1min 37s)
+- [ ] 05-02: Sidebar navigation, mobile hamburger toggle, page layout restructuring
+- [ ] 05-03: Article navigation: breadcrumbs, TOC, prev/next, difficulty badge, prerequisites
+- [ ] 05-04: Homepage: learning path visualization, fix "start here" link
 
 Key artifacts:
-- eleventy.config.js - Image passthrough added for topic images
-- src/_includes/layouts/article.njk - Prerequisites rendering added
-- src/_data/references.json - 11 entries covering all 3 pilot articles
-- src/css/components.css - Prerequisites styling added
-- src/topics/attention-mechanism/index.md - Complete pilot article (~2400 words, all 6 content types)
-- src/topics/superposition/index.md - Complete pilot article (~3000 words, 6 diagrams, all 6 content types)
-- src/topics/superposition/images/ - 6 PNG diagrams (phase diagram, geometry series)
-- src/topics/activation-patching/index.md - Complete pilot article (~2750 words, 3 diagrams, 4 papers cited)
-- src/topics/activation-patching/images/ - 3 PNG diagrams (setup, layers, heads)
+- package.json - @11ty/eleventy-navigation@1.0.5, eleventy-plugin-toc@1.1.5 added
+- eleventy.config.js - IdAttributePlugin, eleventyNavigationPlugin, pluginTOC registered; learningPath collection added
+- src/_data/learningPath.json - 3 blocks, 3 topics (canonical ordering)
+- src/topics/topics.11tydata.js - eleventyComputed with eleventyNavigation metadata
