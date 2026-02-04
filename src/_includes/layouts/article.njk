@@ -48,7 +48,10 @@ layout: layouts/base.njk
 
     <aside class="article-toc" aria-label="Table of contents">
       <h2 class="toc-heading">Contents</h2>
-      {{ content | toc | safe }}
+      <div class="article-toc-nav">
+        <span class="toc-active-indicator" aria-hidden="true"></span>
+        {{ content | toc | safe }}
+      </div>
     </aside>
   </div>
 </article>

@@ -106,8 +106,8 @@
 
 /* Article Header */
 .article-header {
-  margin-bottom: var(--spacing-2xl, 3rem);
-  padding-bottom: var(--spacing-lg, 1.5rem);
+  margin-bottom: var(--spacing-xl, 2rem);
+  padding-bottom: var(--spacing-md, 1rem);
   border-bottom: 1px solid var(--color-border, rgba(0, 0, 0, 0.1));
 }
 
@@ -151,6 +151,12 @@
 .article .article-body {
   padding-left: 0;
   padding-right: 0;
+}
+
+/* Reduce dead space before first section heading */
+.article-body > h2:first-child,
+.article-body > h3:first-child {
+  margin-top: var(--spacing-lg, 1.5rem);
 }
 
 /* Topic Card (for topic listing pages) */
@@ -377,7 +383,7 @@
 
   .article-header {
     text-align: center;
-    margin-bottom: var(--spacing-3xl, 4rem);
+    margin-bottom: var(--spacing-xl, 2rem);
   }
 
   .article-description {
@@ -908,10 +914,64 @@
 
   .article-toc {
     display: block;
-    position: static;
-    max-height: none;
-    overflow: visible;
+    position: sticky;
+    top: var(--spacing-xl, 2rem);
+    max-height: calc(100vh - 4rem);
+    overflow-y: auto;
+    padding-top: var(--spacing-lg, 1.5rem);
   }
+}
+
+/* TOC "progress" rail + active marker (Linear-style) */
+.article-toc-nav {
+  position: relative;
+  padding-left: 14px;
+}
+
+.article-toc-nav::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  border-radius: 999px;
+  background: var(--color-border, rgba(0, 0, 0, 0.12));
+}
+
+.toc-active-indicator {
+  position: absolute;
+  left: 0;
+  width: 2px;
+  border-radius: 999px;
+  background: var(--color-text, rgba(0, 0, 0, 0.87));
+  opacity: var(--toc-indicator-opacity, 0);
+  height: var(--toc-indicator-height, 0px);
+  transform: translateY(var(--toc-indicator-top, 0px));
+  transition:
+    transform 180ms ease,
+    height 180ms ease,
+    opacity 180ms ease;
+}
+
+.article-toc ul {
+  margin: 0;
+  padding: 0;
+}
+
+.article-toc li {
+  margin: 0;
+}
+
+.article-toc a {
+  padding: 0.25rem 0;
+  color: var(--color-text-secondary, rgba(0, 0, 0, 0.6));
+}
+
+.article-toc a.toc-active,
+.article-toc a[aria-current="location"] {
+  color: var(--color-text, rgba(0, 0, 0, 0.87));
+  font-weight: 500;
 }
 
 /* ==========================================================================
