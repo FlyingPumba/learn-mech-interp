@@ -5,23 +5,23 @@
 See: .planning/PROJECT.md (updated 2026-02-02)
 
 **Core value:** People can learn Mechanistic Interpretability through well-structured, readable articles that build from foundations to frontier research, with easy navigation between topics and direct links to source papers.
-**Current focus:** Phase 5 complete - Navigation & Information Architecture
+**Current focus:** Phase 5.1 - Bulk Content Migration (shared data files complete, article authoring next)
 
 ## Current Position
 
-Phase: 5 of 7 (Navigation & Information Architecture)
-Plan: 4 of 4 in current phase
-Status: Phase complete
-Last activity: 2026-02-04 - Completed 05-04-PLAN.md (Homepage: learning path visualization, fix "start here" link)
+Phase: 5.1 of 7 (Bulk Content Migration)
+Plan: 1 of 12 in current phase
+Status: In progress
+Last activity: 2026-02-04 - Completed 05.1-01-PLAN.md (Shared data files: references.json + learningPath.json)
 
 Progress: [=========.] ~95%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 14
-- Average duration: ~3min 19s
-- Total execution time: ~0.77 hours
+- Total plans completed: 15
+- Average duration: ~3min 10s
+- Total execution time: ~0.80 hours
 
 **By Phase:**
 
@@ -32,10 +32,11 @@ Progress: [=========.] ~95%
 | 03-content-rendering-engine | 2 | 5min 48s | ~3min |
 | 04-content-authoring-pilot-articles | 3 | 11min 44s | ~3min 55s |
 | 05-navigation-information-architecture | 4 | 9min 20s | 2min 20s |
+| 05.1-bulk-content-migration | 1 | 2min 43s | 2min 43s |
 
 **Recent Trend:**
-- Last 5 plans: 05-01 (1min 37s), 05-02 (1min 52s), 05-03 (4min 22s), 05-04 (1min 29s)
-- Trend: Phase 5 plans consistently fast, averaging 2min 20s
+- Last 5 plans: 05-02 (1min 52s), 05-03 (4min 22s), 05-04 (1min 29s), 05.1-01 (2min 43s)
+- Trend: Data file plans execute quickly
 
 *Updated after each plan completion*
 
@@ -87,6 +88,8 @@ Recent decisions affecting current work:
 - [05-03]: TOC hidden on mobile, sticky at 1400px+
 - [05-03]: Difficulty badge colors: green/orange/red
 - [05-04]: learningPath.blocks[0].topics[0] used to dynamically resolve first article for hero "Start Learning" button
+- [05.1-01]: references.json expanded to 44 entries (11 existing + 33 new) for all 35 articles
+- [05.1-01]: learningPath.json expanded to 8 blocks, 35 topics in reading order
 
 ### Pending Todos
 
@@ -107,7 +110,7 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-02-04
-Stopped at: Completed 05-04-PLAN.md - Homepage: learning path visualization, fix "start here" link
+Stopped at: Completed 05.1-01-PLAN.md - Shared data files: references.json + learningPath.json
 Resume file: None
 
 ## Phase 5 Progress
@@ -118,14 +121,12 @@ Navigation & Information Architecture phase COMPLETE:
 - [x] 05-03: Article navigation: breadcrumbs, TOC, prev/next, difficulty badge, prerequisites (4min 22s)
 - [x] 05-04: Homepage: learning path visualization, fix "start here" link (1min 29s)
 
-Key artifacts:
-- package.json - @11ty/eleventy-navigation, eleventy-plugin-toc, markdown-it-anchor added
-- eleventy.config.js - IdAttributePlugin, eleventyNavigationPlugin, pluginTOC, markdown-it-anchor registered; learningPath collection; src/js passthrough
-- src/_data/learningPath.json - 3 blocks, 3 topics (canonical ordering)
-- src/topics/topics.11tydata.js - eleventyComputed with eleventyNavigation metadata
-- src/_includes/partials/sidebar.njk - Topic hierarchy sidebar from learningPath data
-- src/_includes/layouts/base.njk - Page-level grid layout with sidebar + main
-- src/_includes/layouts/article.njk - Breadcrumbs, difficulty badge, prerequisites, TOC, prev/next navigation
-- src/index.njk - Homepage with corrected hero link and learning path visualization
-- src/css/components.css - Breadcrumbs, difficulty badges, TOC, prev/next, learning path CSS
-- src/js/sidebar-toggle.js - Accessible hamburger toggle with ARIA management
+## Phase 5.1 Progress
+
+Bulk Content Migration - IN PROGRESS:
+- [x] 05.1-01: Shared data files: references.json (44 entries) + learningPath.json (8 blocks, 35 topics) (2min 43s)
+- [ ] 05.1-02 through 05.1-12: Article authoring (remaining 11 plans)
+
+Key artifacts so far:
+- src/_data/references.json - 44 citation entries covering all papers across 35 articles
+- src/_data/learningPath.json - 8 blocks, 35 topics in correct reading order
