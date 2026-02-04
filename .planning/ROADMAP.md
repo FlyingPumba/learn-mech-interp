@@ -120,10 +120,19 @@ Plans:
   5. Cross-article links connect related concepts across the full article set (not just within pilot articles)
   6. Each article has complete front matter (title, description, prerequisites, difficulty, block) and renders correctly with all content types
   7. Pilot articles from Phase 4 are expanded or supplemented to cover the full content of their respective weeks (weeks 1, 6, 9) -- no week content is skipped because "it was already done"
-**Plans**: TBD
+**Plans**: 10 plans
 
 Plans:
-- [ ] TBD (run /gsd:plan-phase 5.1 to break down)
+- [ ] 05.1-01-PLAN.md -- Data prep: add all references to references.json and update learningPath.json
+- [ ] 05.1-02-PLAN.md -- Block 1: review attention-mechanism + create transformer-circuits
+- [ ] 05.1-03-PLAN.md -- Block 2 Part 1: create what-is-mech-interp + induction-heads
+- [ ] 05.1-04-PLAN.md -- Block 2 Part 2 + Block 3 review: create observational-tools + review activation-patching
+- [ ] 05.1-05-PLAN.md -- Block 3: create ioi-circuit (Weeks 7-8 combined)
+- [ ] 05.1-06-PLAN.md -- Block 4: review superposition + create sparse-autoencoders + scaling-saes
+- [ ] 05.1-07-PLAN.md -- Block 5 Part 1: create steering + circuit-tracing (6 PNGs)
+- [ ] 05.1-08-PLAN.md -- Block 5 Part 2 + Block 6 Part 1: create model-diffing-universality + mi-safety (5 PNGs)
+- [ ] 05.1-09-PLAN.md -- Block 6 Part 2: create open-problems (capstone)
+- [ ] 05.1-10-PLAN.md -- Cross-link audit and final verification
 
 ### Phase 6: Search & Glossary
 **Goal**: Users can find any concept across all articles through full-text search and browse a curated MI glossary, making the site useful as both a learning resource and a reference
@@ -165,6 +174,6 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 5.1 -> 6 -> 7
 | 3. Content Rendering Engine | 2/2 | Complete | 2026-02-03 |
 | 4. Content Authoring & Pilot Articles | 3/3 | Complete | 2026-02-04 |
 | 5. Navigation & Information Architecture | 4/4 | Complete | 2026-02-04 |
-| 5.1. Bulk Content Migration (INSERTED) | 0/TBD | Not started | - |
+| 5.1. Bulk Content Migration (INSERTED) | 0/10 | Not started | - |
 | 6. Search & Glossary | 0/TBD | Not started | - |
 | 7. Polish & Accessibility | 0/TBD | Not started | - |
