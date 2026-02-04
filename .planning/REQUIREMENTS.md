@@ -44,12 +44,12 @@
 
 ### Content Authoring
 
-- [ ] **AUTH-01**: 16 weeks of Typst slide content converted to readable long-form Markdown articles
-- [ ] **AUTH-02**: Content reorganized into granular thematic pages (not by week)
-- [ ] **AUTH-03**: Each article has front matter: title, description, prerequisites, difficulty, block/category
-- [ ] **AUTH-04**: Cross-article concept links (mentions of "superposition" link to the superposition article)
-- [ ] **AUTH-05**: Paper references embedded throughout articles with links to source papers
-- [ ] **AUTH-06**: Course diagrams (~42 PNGs) placed in relevant articles with descriptive alt text
+- [ ] **AUTH-01**: 16 weeks of Typst slide content converted to readable long-form Markdown articles (3 pilot articles complete; full conversion pending)
+- [x] **AUTH-02**: Content reorganized into granular thematic pages (not by week)
+- [x] **AUTH-03**: Each article has front matter: title, description, prerequisites, difficulty, block/category
+- [x] **AUTH-04**: Cross-article concept links (mentions of "superposition" link to the superposition article)
+- [x] **AUTH-05**: Paper references embedded throughout articles with links to source papers
+- [x] **AUTH-06**: Course diagrams (~42 PNGs) placed in relevant articles with descriptive alt text (9 pilot diagrams complete)
 
 ### Search & Discovery
 
@@ -127,12 +127,12 @@
 | CONT-10 | Phase 3 | Complete |
 | CONT-11 | Phase 2 | Complete |
 | CONT-12 | Phase 3 | Complete |
-| AUTH-01 | Phase 4 | Pending |
-| AUTH-02 | Phase 4 | Pending |
-| AUTH-03 | Phase 4 | Pending |
-| AUTH-04 | Phase 4 | Pending |
-| AUTH-05 | Phase 4 | Pending |
-| AUTH-06 | Phase 4 | Pending |
+| AUTH-01 | Phase 4 | Partial (3 pilots) |
+| AUTH-02 | Phase 4 | Complete |
+| AUTH-03 | Phase 4 | Complete |
+| AUTH-04 | Phase 4 | Complete |
+| AUTH-05 | Phase 4 | Complete |
+| AUTH-06 | Phase 4 | Complete |
 | SRCH-01 | Phase 6 | Pending |
 | SRCH-02 | Phase 6 | Pending |
 | SRCH-03 | Phase 6 | Pending |
