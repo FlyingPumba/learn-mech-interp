@@ -878,17 +878,16 @@ label.sidenote-toggle:not(.sidenote-number) {
 @media (min-width: 1400px) {
   .article-content-wrapper {
     display: grid;
-    grid-template-columns: minmax(auto, var(--content-width, 65ch)) 220px;
+    grid-template-columns: minmax(0, var(--content-width, 65ch)) 220px;
     gap: var(--spacing-xl, 2rem);
     align-items: start;
   }
 
   .article-toc {
     display: block;
-    position: sticky;
-    top: var(--spacing-xl, 2rem);
-    max-height: calc(100vh - 4rem);
-    overflow-y: auto;
+    position: static;
+    max-height: none;
+    overflow: visible;
   }
 }
 

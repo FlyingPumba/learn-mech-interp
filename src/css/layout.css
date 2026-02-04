@@ -127,7 +127,6 @@ main {
   }
 
   .article-body {
-    grid-column: 2;
     position: relative;
     overflow: visible;
   }
