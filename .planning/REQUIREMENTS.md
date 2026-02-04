@@ -53,11 +53,11 @@
 
 ### Search & Discovery
 
-- [ ] **SRCH-01**: Client-side full-text search across all articles using Pagefind
-- [ ] **SRCH-02**: Search index generated at build time, works offline
-- [ ] **SRCH-03**: Search results show article title, excerpt, and relevance
-- [ ] **SRCH-04**: Curated glossary page with MI terms, brief definitions, and links to relevant article sections
-- [ ] **SRCH-05**: Glossary terms alphabetically organized
+- [x] **SRCH-01**: Client-side full-text search across all articles using Pagefind
+- [x] **SRCH-02**: Search index generated at build time, works offline
+- [x] **SRCH-03**: Search results show article title, excerpt, and relevance
+- [x] **SRCH-04**: Curated glossary page with MI terms, brief definitions, and links to relevant article sections
+- [x] **SRCH-05**: Glossary terms alphabetically organized
 
 ### Design & UX
 
@@ -133,11 +133,11 @@
 | AUTH-04 | Phase 4 | Complete |
 | AUTH-05 | Phase 4 | Complete |
 | AUTH-06 | Phase 4 | Complete |
-| SRCH-01 | Phase 6 | Pending |
-| SRCH-02 | Phase 6 | Pending |
-| SRCH-03 | Phase 6 | Pending |
-| SRCH-04 | Phase 6 | Pending |
-| SRCH-05 | Phase 6 | Pending |
+| SRCH-01 | Phase 6 | Complete |
+| SRCH-02 | Phase 6 | Complete |
+| SRCH-03 | Phase 6 | Complete |
+| SRCH-04 | Phase 6 | Complete |
+| SRCH-05 | Phase 6 | Complete |
 | DSGN-01 | Phase 2 | Complete |
 | DSGN-02 | Phase 7 | Pending |
 | DSGN-03 | Phase 7 | Pending |
