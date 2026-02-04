@@ -5,23 +5,23 @@
 See: .planning/PROJECT.md (updated 2026-02-02)
 
 **Core value:** People can learn Mechanistic Interpretability through well-structured, readable articles that build from foundations to frontier research, with easy navigation between topics and direct links to source papers.
-**Current focus:** Phase 3 in progress - Content Rendering Engine
+**Current focus:** Phase 3 complete - Content Rendering Engine
 
 ## Current Position
 
 Phase: 3 of 7 (Content Rendering Engine)
-Plan: 1 of 2 in current phase
-Status: In progress
-Last activity: 2026-02-03 - Completed 03-01-PLAN.md (Math, Code, Figures)
+Plan: 2 of 2 in current phase
+Status: Phase complete
+Last activity: 2026-02-03 - Completed 03-02-PLAN.md (Citations, Margin Notes, Collapsible Prompts)
 
-Progress: [=====.....] ~43%
+Progress: [=====.....] ~50%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 6
-- Average duration: 4min
-- Total execution time: 0.38 hours
+- Total plans completed: 7
+- Average duration: ~4min
+- Total execution time: ~0.44 hours
 
 **By Phase:**
 
@@ -29,11 +29,11 @@ Progress: [=====.....] ~43%
 |-------|-------|-------|----------|
 | 01-foundation-deployment | 2 | 3min 28s | 1min 44s |
 | 02-template-system-and-design | 3 | 23min | ~8min |
-| 03-content-rendering-engine | 1 | 2min 38s | 2min 38s |
+| 03-content-rendering-engine | 2 | 5min 48s | ~3min |
 
 **Recent Trend:**
-- Last 5 plans: 02-01 (3min), 02-02 (~5min), 02-03 (~15min), 03-01 (2min 38s)
-- Trend: Plugin installation plans are fast; design/polish plans take longer
+- Last 5 plans: 02-02 (~5min), 02-03 (~15min), 03-01 (2min 38s), 03-02 (3min 10s)
+- Trend: Content rendering plans consistently fast (~3min); shortcode+CSS work is straightforward
 
 *Updated after each plan completion*
 
@@ -64,6 +64,10 @@ Recent decisions affecting current work:
 - [03-01]: Custom Prism theme using site CSS variables for academic aesthetic
 - [03-01]: htmlAndMathml KaTeX output for visual rendering + screen reader accessibility
 - [03-01]: markdown-it plugin chain via setLibrary, Eleventy plugins via addPlugin
+- [03-02]: Per-page citation numbering (restart at [1] per article) matching academic convention
+- [03-02]: Float+negative-margin for sidenotes within existing grid (simpler than grid-column: 3)
+- [03-02]: CSS-only tooltips with focus-within for mobile accessibility (no JavaScript)
+- [03-02]: Module-scope counters reset via eleventy.before event for --serve mode
 
 ### Pending Todos
 
@@ -77,18 +81,21 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-02-03
-Stopped at: Completed 03-01-PLAN.md - Math, Code, Figures
+Stopped at: Completed 03-02-PLAN.md - Citations, Margin Notes, Collapsible Prompts (Phase 3 complete)
 Resume file: None
 
-## Phase 3 Progress
+## Phase 3 Complete
 
-Content Rendering Engine phase in progress:
+Content Rendering Engine phase complete. All 6 content types operational:
 - [x] 03-01: Math, Code, Figures (KaTeX + PrismJS + figure plugin)
-- [ ] 03-02: Citations, Margin Notes, Collapsible Prompts
+- [x] 03-02: Citations, Margin Notes, Collapsible Prompts (shortcodes + Tufte CSS + details/summary)
 
-Key artifacts created so far:
-- eleventy.config.js - Updated with markdown-it plugins and syntax highlight plugin
+Key artifacts:
+- eleventy.config.js - markdown-it plugins + 3 shortcodes (cite, sidenote, marginnote) with counter reset
+- src/_data/references.json - 5 MI paper citations for inline references
+- src/css/components.css - Citation tooltips, sidenote/marginnote styles, details/summary styles
+- src/css/layout.css - 1400px+ grid with sidenote margin positioning
 - src/css/katex-overrides.css - Mobile overflow fixes for math
 - src/css/prism-theme.css - Academic-light code theme
-- src/_includes/layouts/base.njk - Updated with KaTeX CDN + custom CSS links
-- src/topics/test/index.md - Content rendering demo article
+- src/_includes/layouts/base.njk - KaTeX CDN + custom CSS links
+- src/topics/test/index.md - Comprehensive demo of all 6 content types

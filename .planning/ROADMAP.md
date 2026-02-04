@@ -14,7 +14,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 
 - [x] **Phase 1: Foundation & Deployment** - Eleventy scaffolding, build pipeline, and GitHub Pages deployment with a single test article
 - [ ] **Phase 2: Template System & Design** - DRY layout system, responsive design, academic typography, and CSS theming
-- [ ] **Phase 3: Content Rendering Engine** - KaTeX math, code highlighting, figures, citations, margin notes, and interactive elements
+- [x] **Phase 3: Content Rendering Engine** - KaTeX math, code highlighting, figures, citations, margin notes, and interactive elements
 - [ ] **Phase 4: Content Authoring & Pilot Articles** - Typst-to-article conversion workflow validated with 2-3 representative pilot articles
 - [ ] **Phase 5: Navigation & Information Architecture** - Sidebar, homepage, learning path, breadcrumbs, TOC, and article metadata indicators
 - [ ] **Phase 6: Search & Glossary** - Pagefind client-side search and curated MI glossary page
@@ -69,7 +69,7 @@ Plans:
 
 Plans:
 - [x] 03-01-PLAN.md -- Build-time math rendering, syntax highlighting, and figures
-- [ ] 03-02-PLAN.md -- Citations with hover tooltips, margin notes, and collapsible prompts
+- [x] 03-02-PLAN.md -- Citations with hover tooltips, margin notes, and collapsible prompts
 
 ### Phase 4: Content Authoring & Pilot Articles
 **Goal**: The Typst-to-article conversion workflow is validated end-to-end with 2-3 representative pilot articles spanning different difficulty levels, proving that the full course can be converted at quality
@@ -141,7 +141,7 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7
 |-------|----------------|--------|-----------|
 | 1. Foundation & Deployment | 2/2 | Complete | 2026-02-03 |
 | 2. Template System & Design | 3/3 | Complete | 2026-02-03 |
-| 3. Content Rendering Engine | 0/TBD | Not started | - |
+| 3. Content Rendering Engine | 2/2 | Complete | 2026-02-03 |
 | 4. Content Authoring & Pilot Articles | 0/TBD | Not started | - |
 | 5. Navigation & Information Architecture | 0/TBD | Not started | - |
 | 6. Search & Glossary | 0/TBD | Not started | - |
