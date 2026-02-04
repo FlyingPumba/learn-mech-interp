@@ -114,6 +114,9 @@ Recent decisions affecting current work:
 - [05.1-10]: Promise-then-limitation pairing: each safety application article pairs positive results with explicit caveats in the same article
 - [05.1-10]: mi-safety-limitations organized as 6 numbered limitations for directness and clarity
 - [05.1-10]: SAE failure for deception detection covered in deception-detection article (evidence), then referenced as general limitation in mi-safety-limitations (pattern)
+- [05.1-03]: what-is-mech-interp prerequisite set to attention-mechanism (foundational entry into MI block)
+- [05.1-03]: induction-heads prerequisite set to composition-and-virtual-heads (requires K-composition knowledge)
+- [05.1-03]: AI safety motivation kept brief in what-is-mech-interp, deferring deeper treatment to Block 7
 
 ### Pending Todos
 
@@ -150,7 +153,7 @@ Navigation & Information Architecture phase COMPLETE:
 Bulk Content Migration - IN PROGRESS:
 - [x] 05.1-01: Shared data files: references.json (44 entries) + learningPath.json (8 blocks, 35 topics) (2min 43s)
 - [x] 05.1-02: Block 1 Transformer Foundations: review pilot + qk-ov-circuits + composition-and-virtual-heads (4min 35s)
-- [ ] 05.1-03: Article authoring (block 2 part 1)
+- [x] 05.1-03: Block 2 Part 1: what-is-mech-interp + linear-representation-hypothesis + induction-heads (4min 46s)
 - [x] 05.1-04: Block 2 Part 2: direct-logit-attribution + logit-lens-and-probing with 3 diagrams (4min 30s)
 - [x] 05.1-05: Block 3 Observation to Causation: activation-patching review + attribution-patching + ioi-circuit + circuit-evaluation (6min 5s)
 - [x] 05.1-06: Block 4 Part 1: Superposition review + sparse-autoencoders + sae-interpretability (3min 50s)
@@ -165,6 +168,9 @@ Key artifacts so far:
 - src/_data/learningPath.json - 8 blocks, 35 topics in correct reading order
 - src/topics/qk-ov-circuits/index.md - QK/OV circuit decomposition with worked example
 - src/topics/composition-and-virtual-heads/index.md - V/K/Q-composition, virtual heads, TransformerLens
+- src/topics/what-is-mech-interp/index.md - Interpretability landscape, three claims, safety motivation
+- src/topics/linear-representation-hypothesis/index.md - LRH, why linear, polysemanticity
+- src/topics/induction-heads/index.md - Induction head discovery, two-step mechanism, phase change
 - src/topics/direct-logit-attribution/index.md - DLA decomposition, per-token attribution, attention patterns
 - src/topics/logit-lens-and-probing/index.md - Logit lens, tuned lens, probing, correlation-vs-causation
 - src/topics/logit-lens-and-probing/images/ - 3 GPT-2 diagrams (attn patterns + logit lens)
