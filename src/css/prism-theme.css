@@ -1,0 +1,132 @@
+/* PrismJS Theme - Academic Light
+ * Matches site design: subtle colors, system mono font, light background
+ * Used with @11ty/eleventy-plugin-syntaxhighlight (build-time rendering)
+ */
+
+code[class*="language-"],
+pre[class*="language-"] {
+  font-family: var(--font-mono);
+  font-size: var(--font-size-small);
+  line-height: 1.5;
+  color: var(--color-text);
+  background: var(--color-background-code);
+  tab-size: 4;
+  hyphens: none;
+  word-spacing: normal;
+  word-break: normal;
+  word-wrap: normal;
+  white-space: pre;
+  text-align: left;
+  direction: ltr;
+}
+
+/* Block code */
+pre[class*="language-"] {
+  padding: var(--spacing-md) var(--spacing-lg);
+  margin: var(--spacing-lg) 0;
+  overflow-x: auto;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-border);
+}
+
+/* Inline code in highlighted blocks */
+:not(pre) > code[class*="language-"] {
+  padding: 0.15em 0.3em;
+  border-radius: var(--radius-sm);
+}
+
+/* Token colors - subtle, academic palette */
+
+/* Comments: muted italic */
+.token.comment,
+.token.prolog,
+.token.doctype,
+.token.cdata {
+  color: rgba(0, 0, 0, 0.4);
+  font-style: italic;
+}
+
+/* Punctuation */
+.token.punctuation {
+  color: rgba(0, 0, 0, 0.6);
+}
+
+/* Keywords and builtins: site accent blue */
+.token.keyword,
+.token.builtin,
+.token.tag,
+.token.boolean,
+.token.constant {
+  color: #004276;
+}
+
+/* Strings: green */
+.token.string,
+.token.char,
+.token.attr-value,
+.token.regex {
+  color: #22863a;
+}
+
+/* Numbers: purple */
+.token.number {
+  color: #6f42c1;
+}
+
+/* Functions: blue */
+.token.function {
+  color: #005cc5;
+}
+
+/* Operators */
+.token.operator,
+.token.entity,
+.token.url {
+  color: rgba(0, 0, 0, 0.6);
+}
+
+/* Class names, types */
+.token.class-name,
+.token.maybe-class-name {
+  color: #005cc5;
+}
+
+/* Attributes */
+.token.attr-name {
+  color: #6f42c1;
+}
+
+/* Decorators, annotations */
+.token.decorator,
+.token.annotation {
+  color: #6f42c1;
+}
+
+/* Important, bold */
+.token.important,
+.token.bold {
+  font-weight: 600;
+}
+
+/* Italic */
+.token.italic {
+  font-style: italic;
+}
+
+/* Deleted/inserted for diffs */
+.token.deleted {
+  color: #b31d28;
+  background: rgba(179, 29, 40, 0.08);
+}
+
+.token.inserted {
+  color: #22863a;
+  background: rgba(34, 134, 58, 0.08);
+}
+
+/* Line numbers and line highlighting (if used) */
+.highlight-line {
+  display: inline-block;
+  width: 100%;
+  background: rgba(0, 66, 118, 0.06);
+}

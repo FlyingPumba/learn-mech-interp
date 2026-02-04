@@ -1,0 +1,23 @@
+/* KaTeX Override Styles
+ * Mobile overflow fixes and sizing adjustments for build-time rendered math
+ */
+
+/* Display math: allow horizontal scroll instead of breaking page layout */
+.katex-display {
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding: 0.25rem 0;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Slightly larger than body text for readability */
+.katex {
+  font-size: 1.1em;
+}
+
+/* Mobile: constrain wide equations */
+@media (max-width: 767px) {
+  .katex-display > .katex {
+    max-width: 100%;
+  }
+}
