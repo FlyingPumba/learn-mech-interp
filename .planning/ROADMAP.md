@@ -13,7 +13,7 @@ This roadmap delivers a static educational website for Mechanistic Interpretabil
 Decimal phases appear between their surrounding integers in numeric order.
 
 - [x] **Phase 1: Foundation & Deployment** - Eleventy scaffolding, build pipeline, and GitHub Pages deployment with a single test article
-- [ ] **Phase 2: Template System & Design** - DRY layout system, responsive design, academic typography, and CSS theming
+- [x] **Phase 2: Template System & Design** - DRY layout system, responsive design, academic typography, and CSS theming
 - [x] **Phase 3: Content Rendering Engine** - KaTeX math, code highlighting, figures, citations, margin notes, and interactive elements
 - [ ] **Phase 4: Content Authoring & Pilot Articles** - Typst-to-article conversion workflow validated with 2-3 representative pilot articles
 - [ ] **Phase 5: Navigation & Information Architecture** - Sidebar, homepage, learning path, breadcrumbs, TOC, and article metadata indicators
