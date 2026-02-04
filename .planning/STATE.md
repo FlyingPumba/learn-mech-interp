@@ -5,23 +5,23 @@
 See: .planning/PROJECT.md (updated 2026-02-02)
 
 **Core value:** People can learn Mechanistic Interpretability through well-structured, readable articles that build from foundations to frontier research, with easy navigation between topics and direct links to source papers.
-**Current focus:** Phase 5 in progress - Navigation & Information Architecture
+**Current focus:** Phase 5 complete - Navigation & Information Architecture
 
 ## Current Position
 
 Phase: 5 of 7 (Navigation & Information Architecture)
-Plan: 3 of 4 in current phase
-Status: In progress
-Last activity: 2026-02-04 - Completed 05-03-PLAN.md (Article navigation: breadcrumbs, TOC, prev/next, difficulty badge, prerequisites)
+Plan: 4 of 4 in current phase
+Status: Phase complete
+Last activity: 2026-02-04 - Completed 05-04-PLAN.md (Homepage: learning path visualization, fix "start here" link)
 
 Progress: [=========.] ~95%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 13
-- Average duration: ~3min 27s
-- Total execution time: ~0.75 hours
+- Total plans completed: 14
+- Average duration: ~3min 19s
+- Total execution time: ~0.77 hours
 
 **By Phase:**
 
@@ -31,11 +31,11 @@ Progress: [=========.] ~95%
 | 02-template-system-and-design | 3 | 23min | ~8min |
 | 03-content-rendering-engine | 2 | 5min 48s | ~3min |
 | 04-content-authoring-pilot-articles | 3 | 11min 44s | ~3min 55s |
-| 05-navigation-information-architecture | 3 | 7min 51s | 2min 37s |
+| 05-navigation-information-architecture | 4 | 9min 20s | 2min 20s |
 
 **Recent Trend:**
-- Last 5 plans: 04-03 (4min 39s), 05-01 (1min 37s), 05-02 (1min 52s), 05-03 (4min 22s)
-- Trend: 05-03 took longer due to TOC heading ID compatibility issue (markdown-it-anchor fix)
+- Last 5 plans: 05-01 (1min 37s), 05-02 (1min 52s), 05-03 (4min 22s), 05-04 (1min 29s)
+- Trend: Phase 5 plans consistently fast, averaging 2min 20s
 
 *Updated after each plan completion*
 
@@ -84,8 +84,9 @@ Recent decisions affecting current work:
 - [05-02]: Page-level grid at 1200px+, article-level grid remains at 1400px+ (independent grids)
 - [05-02]: Progressive enhancement for hamburger (hidden by default, JS removes hidden on load)
 - [05-03]: markdown-it-anchor with @sindresorhus/slugify for heading IDs at render time (TOC filter compatibility)
-- [05-03]: TOC hidden on mobile, sticky sidebar at 1400px+ using CSS grid within article-content-wrapper
-- [05-03]: Difficulty badge colors: green (foundational), orange (intermediate), red (advanced)
+- [05-03]: TOC hidden on mobile, sticky at 1400px+
+- [05-03]: Difficulty badge colors: green/orange/red
+- [05-04]: learningPath.blocks[0].topics[0] used to dynamically resolve first article for hero "Start Learning" button
 
 ### Pending Todos
 
@@ -93,22 +94,22 @@ None yet.
 
 ### Blockers/Concerns
 
-- Phase 4 complete: All 3 pilot articles validated. Cross-article linking works end-to-end. All 6 content types confirmed working across articles.
+- Phase 5 complete: Full navigation in place (sidebar, homepage learning path, breadcrumbs, TOC, prev/next, difficulty badges, prerequisites)
 - Requirements doc claims 41 requirements but actual count is 46; traceability table corrected during roadmap creation
 
 ## Session Continuity
 
 Last session: 2026-02-04
-Stopped at: Completed 05-03-PLAN.md - Article navigation: breadcrumbs, TOC, prev/next, difficulty badge, prerequisites
+Stopped at: Completed 05-04-PLAN.md - Homepage: learning path visualization, fix "start here" link
 Resume file: None
 
 ## Phase 5 Progress
 
-Navigation & Information Architecture phase IN PROGRESS:
+Navigation & Information Architecture phase COMPLETE:
 - [x] 05-01: Foundation: plugins, data, collection (1min 37s)
 - [x] 05-02: Sidebar navigation, mobile hamburger toggle, page layout restructuring (1min 52s)
 - [x] 05-03: Article navigation: breadcrumbs, TOC, prev/next, difficulty badge, prerequisites (4min 22s)
-- [ ] 05-04: Homepage: learning path visualization, fix "start here" link
+- [x] 05-04: Homepage: learning path visualization, fix "start here" link (1min 29s)
 
 Key artifacts:
 - package.json - @11ty/eleventy-navigation, eleventy-plugin-toc, markdown-it-anchor added
@@ -118,5 +119,6 @@ Key artifacts:
 - src/_includes/partials/sidebar.njk - Topic hierarchy sidebar from learningPath data
 - src/_includes/layouts/base.njk - Page-level grid layout with sidebar + main
 - src/_includes/layouts/article.njk - Breadcrumbs, difficulty badge, prerequisites, TOC, prev/next navigation
-- src/css/components.css - Breadcrumbs, difficulty badges, TOC, prev/next CSS
+- src/index.njk - Homepage with corrected hero link and learning path visualization
+- src/css/components.css - Breadcrumbs, difficulty badges, TOC, prev/next, learning path CSS
 - src/js/sidebar-toggle.js - Accessible hamburger toggle with ARIA management
