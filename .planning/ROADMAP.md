@@ -65,12 +65,11 @@ Plans:
   3. Margin notes display in the margin on wide screens and collapse to expandable inline notes on narrow screens
   4. Code blocks render with Python/PyTorch syntax highlighting, and figures display with proper `<figure>`/`<figcaption>` elements and alt text
   5. "Pause and think" prompts appear as collapsible `<details>`/`<summary>` blocks that readers can expand
-**Plans**: TBD
+**Plans**: 2 plans
 
 Plans:
-- [ ] 03-01: TBD
-- [ ] 03-02: TBD
-- [ ] 03-03: TBD
+- [ ] 03-01-PLAN.md -- Build-time math rendering, syntax highlighting, and figures
+- [ ] 03-02-PLAN.md -- Citations with hover tooltips, margin notes, and collapsible prompts
 
 ### Phase 4: Content Authoring & Pilot Articles
 **Goal**: The Typst-to-article conversion workflow is validated end-to-end with 2-3 representative pilot articles spanning different difficulty levels, proving that the full course can be converted at quality
