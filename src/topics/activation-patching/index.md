@@ -1,6 +1,6 @@
 ---
 title: "Activation Patching and Causal Interventions"
-description: "The primary technique for establishing causal claims about model internals: replace an activation and measure what changes. Covers noising vs denoising, attribution patching, and path patching."
+description: "The primary technique for establishing causal claims about model internals: replace an activation and measure what changes. Covers the clean/corrupted framework, noising vs denoising, choosing a metric, and interpreting results."
 prerequisites:
   - title: "The Attention Mechanism"
     url: "/topics/attention-mechanism/"
@@ -157,6 +157,8 @@ The efficiency gain is enormous. Full activation patching requires $O(n)$ forwar
 
 **Best practice:** Use attribution patching as a fast screening tool. Sweep the entire model in a single pass to identify the most promising components, then verify the top candidates with actual activation patching. Think of it as a microscope's low-magnification mode -- scan the whole slide quickly to find the interesting regions, then switch to high magnification for precise measurement.
 
+For a deeper treatment of attribution patching, including its relationship to path patching and how both are applied at scale, see [Attribution Patching and Path Patching](/topics/attribution-patching/).
+
 ## Path Patching
 
 Standard activation patching replaces a component's entire output. But a head's output flows to many downstream components through [the residual stream](/topics/attention-mechanism/#the-residual-stream). Head $H$ might send critical information to head $K$ but irrelevant information to head $J$. Standard patching cannot distinguish these pathways.
@@ -165,16 +167,16 @@ Path patching asks a more refined question: which specific *pathway* carries the
 
 The shift is from **nodes** to **edges** in the computational graph. Activation patching tests whether component $H$ is important. Path patching tests whether the specific connection $H \to K$ is important. This finer resolution reveals the wiring of the circuit, not just which components participate.
 
-Path patching was central to the IOI circuit analysis {% cite "wang2022ioi" %}, where it revealed how information flows between the head classes: from Duplicate Token heads through S-Inhibition heads to Name Mover heads. Without path patching, we would know which heads matter but not how they communicate.
+Path patching was central to the [IOI circuit analysis](/topics/ioi-circuit/) {% cite "wang2022ioi" %}, where it revealed how information flows between the head classes: from Duplicate Token heads through S-Inhibition heads to Name Mover heads. Without path patching, we would know which heads matter but not how they communicate.
 
-Conmy et al. extended this idea into the **ACDC algorithm** (Automatic Circuit DisCovery), which automates path patching to systematically prune edges and discover circuits {% cite "conmy2023ioi" %}. ACDC starts with a fully connected computational graph and iteratively removes edges whose patching effect falls below a threshold, leaving behind the minimal circuit. When we examine the full IOI circuit in a dedicated article, path patching will be the tool that reveals the connections.
+Conmy et al. extended this idea into the **ACDC algorithm** (Automatic Circuit DisCovery), which automates path patching to systematically prune edges and discover circuits {% cite "conmy2023ioi" %}. ACDC starts with a fully connected computational graph and iteratively removes edges whose patching effect falls below a threshold, leaving behind the minimal circuit.
 
 ## The Causal Toolkit
 
 We now have three levels of causal analysis, each suited to a different stage of investigation:
 
 - **Activation patching** tests which components matter by replacing entire activations. It operates at the node level.
-- **Attribution patching** provides fast screening of all components through gradient approximation, making it practical to survey even the largest models.
+- **[Attribution patching](/topics/attribution-patching/)** provides fast screening of all components through gradient approximation, making it practical to survey even the largest models.
 - **Path patching** tests which connections between components matter, operating at the edge level.
 
-Together, these tools let us progress from "something is happening at layer 9" to "head 9.9 sends indirect-object information to the output through a specific pathway" -- the kind of mechanistic understanding that gives this field its name.
+Together, these tools let us progress from "something is happening at layer 9" to "head 9.9 sends indirect-object information to the output through a specific pathway" -- the kind of mechanistic understanding that gives this field its name. To see these tools applied at scale, continue to [the IOI circuit](/topics/ioi-circuit/), the most complete circuit analysis ever performed.
