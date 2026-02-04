@@ -17,6 +17,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] **Phase 3: Content Rendering Engine** - KaTeX math, code highlighting, figures, citations, margin notes, and interactive elements
 - [x] **Phase 4: Content Authoring & Pilot Articles** - Typst-to-article conversion workflow validated with 2-3 representative pilot articles
 - [x] **Phase 5: Navigation & Information Architecture** - Sidebar, homepage, learning path, breadcrumbs, TOC, and article metadata indicators
+- [ ] **Phase 5.1: Bulk Content Migration** (INSERTED) - Convert all remaining Typst course content into thematic articles with diagrams, references, and cross-links
 - [ ] **Phase 6: Search & Glossary** - Pagefind client-side search and curated MI glossary page
 - [ ] **Phase 7: Polish & Accessibility** - Dark mode, keyboard navigation, accessibility features, and reading time estimates
 
@@ -105,9 +106,28 @@ Plans:
 - [x] 05-03-PLAN.md -- Article navigation: breadcrumbs, TOC, prev/next, difficulty badge, prerequisites
 - [x] 05-04-PLAN.md -- Homepage: learning path visualization, fix "start here" link
 
+### Phase 5.1: Bulk Content Migration (INSERTED)
+**Goal**: All 16 weeks of Typst course content from `/Users/ivan/latex/mech-interp-course` are converted into thematic long-form articles, reorganized by topic rather than by week, with all diagrams, paper references, cross-article links, and front matter -- making the site a complete MI learning resource covering the full curriculum
+**Depends on**: Phase 5 (navigation infrastructure must be in place so new articles automatically appear in sidebar, learning path, and prev/next links)
+**Requirements**: AUTH-01 (full completion -- currently partial with 3 pilots)
+**Source material**: All 16 weeks across 6 blocks, ~14,744 lines of Typst, 27+ diagrams, 60+ paper references in SOURCES.md. The 3 pilot articles from Phase 4 covered only a fraction of their respective weeks -- all 16 weeks need complete conversion, including expanding/replacing the pilot articles where they fall short of the full week content.
+**Research**: Leverage existing course research at `/Users/ivan/latex/mech-interp-course/.planning/phases/*/*-RESEARCH.md` (domain content, not infrastructure)
+**Success Criteria** (what must be TRUE):
+  1. All 16 weeks of course content are fully converted -- every major topic exists as a readable long-form article (not bullet-point fragments), reorganized by theme rather than by lecture week
+  2. All course diagrams (~27 PNGs) are placed in their relevant articles with descriptive alt text and figure/caption markup
+  3. All paper references from SOURCES.md are in references.json and cited throughout articles with working hover tooltips
+  4. learningPath.json is updated with all blocks and topics, and the sidebar/homepage reflect the full course structure
+  5. Cross-article links connect related concepts across the full article set (not just within pilot articles)
+  6. Each article has complete front matter (title, description, prerequisites, difficulty, block) and renders correctly with all content types
+  7. Pilot articles from Phase 4 are expanded or supplemented to cover the full content of their respective weeks (weeks 1, 6, 9) -- no week content is skipped because "it was already done"
+**Plans**: TBD
+
+Plans:
+- [ ] TBD (run /gsd:plan-phase 5.1 to break down)
+
 ### Phase 6: Search & Glossary
 **Goal**: Users can find any concept across all articles through full-text search and browse a curated MI glossary, making the site useful as both a learning resource and a reference
-**Depends on**: Phase 5 (needs bulk content for meaningful search testing; glossary data populated alongside content)
+**Depends on**: Phase 5.1 (needs bulk content for meaningful search testing; glossary data populated alongside content)
 **Requirements**: SRCH-01, SRCH-02, SRCH-03, SRCH-04, SRCH-05
 **Success Criteria** (what must be TRUE):
   1. Typing a query into the search box returns relevant articles with title, excerpt, and relevance ranking, and the search works offline
@@ -136,7 +156,7 @@ Plans:
 ## Progress
 
 **Execution Order:**
-Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7
+Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 5.1 -> 6 -> 7
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
@@ -145,5 +165,6 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7
 | 3. Content Rendering Engine | 2/2 | Complete | 2026-02-03 |
 | 4. Content Authoring & Pilot Articles | 3/3 | Complete | 2026-02-04 |
 | 5. Navigation & Information Architecture | 4/4 | Complete | 2026-02-04 |
+| 5.1. Bulk Content Migration (INSERTED) | 0/TBD | Not started | - |
 | 6. Search & Glossary | 0/TBD | Not started | - |
 | 7. Polish & Accessibility | 0/TBD | Not started | - |

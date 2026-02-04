@@ -92,6 +92,13 @@ Recent decisions affecting current work:
 
 None yet.
 
+### Roadmap Evolution
+
+- Phase 5.1 inserted after Phase 5: Bulk Content Migration -- convert all remaining Typst course content into thematic articles (INSERTED)
+  - Reason: Roadmap overview mentioned "migrates all course content" but no corresponding phase existed. Phase 4 only validated the workflow with 3 simplified pilot articles; all 16 weeks need complete conversion.
+  - Source: /Users/ivan/latex/mech-interp-course (16 weeks, 6 blocks, 27+ diagrams, 60+ papers)
+  - Research to leverage: /Users/ivan/latex/mech-interp-course/.planning/phases/*/*-RESEARCH.md (domain content only)
+
 ### Blockers/Concerns
 
 - Phase 5 complete: Full navigation in place (sidebar, homepage learning path, breadcrumbs, TOC, prev/next, difficulty badges, prerequisites)
