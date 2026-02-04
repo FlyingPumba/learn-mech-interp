@@ -90,6 +90,8 @@ export default function(eleventyConfig) {
 
   // Pass through article-local images (e.g., src/topics/superposition/images/)
   eleventyConfig.addPassthroughCopy("src/topics/*/images");
+  // Ensure nested images folders are copied (defensive for new topic slugs)
+  eleventyConfig.addPassthroughCopy("src/topics/**/images");
 
   // Citation shortcode: {% cite "key" %} renders numbered inline citation with tooltip
   eleventyConfig.addShortcode("cite", function(key) {

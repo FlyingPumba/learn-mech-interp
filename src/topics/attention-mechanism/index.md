@@ -178,6 +178,8 @@ $$
 
 Ignoring layer norms, the output is determined by a sum of contributions from the token embedding (the direct path), each attention head in each layer, and each MLP in each layer. This decomposition is what makes [mechanistic interpretability](/topics/what-is-mech-interp/) possible: we can trace the contribution of any individual component through to the final output.
 
+If you want a step-by-step walkthrough of the entire stack, see [Transformer Architecture Deep Dive](/topics/transformer-architecture/).
+
 Most mechanistic interpretability research focuses on decoder-only architectures because the causal mask means each position is a well-defined prediction problem. At position $i$, the model must predict token $i+1$ using only tokens $0, \ldots, i$. This gives us a clean experimental setup where we know exactly what information is available at each position. The models studied most heavily in the field (GPT-2 and similar autoregressive architectures) all follow this pattern.
 
 For a thorough visual walkthrough of the transformer architecture, see Alammar's "The Illustrated Transformer" {% cite "alammar2018illustrated" %}, which provides step-by-step diagrams of the attention computation described above.

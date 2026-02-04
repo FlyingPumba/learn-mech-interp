@@ -18,6 +18,11 @@ A decoder-only transformer processes a sequence by repeatedly applying two subla
 
 Both sublayers write their outputs into a shared **residual stream**, which acts like a global scratchpad.
 
+<figure>
+  <img src="/topics/transformer-architecture/images/transformer_high_level.png" alt="High-level transformer architecture overview.">
+  <figcaption>High-level transformer architecture overview, from Elhage et al., <em>A Mathematical Framework for Transformer Circuits</em>. {% cite "elhage2021mathematical" %}</figcaption>
+</figure>
+
 ## Step 0: Tokens to Vectors
 
 Inputs are tokenized and embedded into vectors. Each position starts with:
