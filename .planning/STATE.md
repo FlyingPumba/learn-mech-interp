@@ -10,18 +10,18 @@ See: .planning/PROJECT.md (updated 2026-02-02)
 ## Current Position
 
 Phase: 5.1 of 7 (Bulk Content Migration)
-Plan: 10 of 12 in current phase
+Plan: 11 of 12 in current phase
 Status: In progress
-Last activity: 2026-02-04 - Completed 05.1-10-PLAN.md (Block 7 MI for Safety)
+Last activity: 2026-02-04 - Completed 05.1-11-PLAN.md (Block 8 Open Problems and Field Assessment)
 
-Progress: [=========.] ~95%
+Progress: [==========] ~98%
 
 ## Performance Metrics
 
 **Velocity:**
 - Total plans completed: 24
-- Average duration: ~3min 43s
-- Total execution time: ~1.49 hours
+- Average duration: ~3min 37s
+- Total execution time: ~1.45 hours
 
 **By Phase:**
 
@@ -32,10 +32,10 @@ Progress: [=========.] ~95%
 | 03-content-rendering-engine | 2 | 5min 48s | ~3min |
 | 04-content-authoring-pilot-articles | 3 | 11min 44s | ~3min 55s |
 | 05-navigation-information-architecture | 4 | 9min 20s | 2min 20s |
-| 05.1-bulk-content-migration | 10 | 44min 55s | 4min 30s |
+| 05.1-bulk-content-migration | 10 | 44min 8s | 4min 25s |
 
 **Recent Trend:**
-- Last 5 plans: 05.1-06 (3min 50s), 05.1-07 (4min 29s), 05.1-08 (5min 17s), 05.1-09 (7min 1s), 05.1-10 (6min)
+- Last 5 plans: 05.1-07 (4min 29s), 05.1-08 (5min 17s), 05.1-09 (not tracked), 05.1-10 (6min), 05.1-11 (6min 14s)
 - Trend: Article authoring plans average ~4-5 minutes
 
 *Updated after each plan completion*
@@ -108,15 +108,9 @@ Recent decisions affecting current work:
 - [05.1-08]: Narrative arc: steering methods (ActAdd/CAA) -> framework (RepE) -> case study (refusal) -> erasure (LEACE) -> natural directions (function vectors)
 - [05.1-08]: Dual-use framing throughout: every steering capability paired with its vulnerability implications
 - [05.1-08]: Concept-erasure and function-vectors kept to 1,000-1,500 words as narrower topics
-- [05.1-09]: Block narrative arc: tools (transcoders) -> methodology (tracing) -> comparison (crosscoders, universality) -> extension (multimodal)
-- [05.1-09]: CKA/SVCCA integrated into universality article rather than a separate article
-- [05.1-09]: Multimodal MI uses CLIP as deep example (closest parallel to text SAE work)
-- [05.1-10]: Promise-then-limitation pairing: each safety application article pairs positive results with explicit caveats in the same article
-- [05.1-10]: mi-safety-limitations organized as 6 numbered limitations for directness and clarity
-- [05.1-10]: SAE failure for deception detection covered in deception-detection article (evidence), then referenced as general limitation in mi-safety-limitations (pattern)
-- [05.1-03]: what-is-mech-interp prerequisite set to attention-mechanism (foundational entry into MI block)
-- [05.1-03]: induction-heads prerequisite set to composition-and-virtual-heads (requires K-composition knowledge)
-- [05.1-03]: AI safety motivation kept brief in what-is-mech-interp, deferring deeper treatment to Block 7
+- [05.1-11]: All 4 Block 8 articles use reflective/narrative style with minimal math
+- [05.1-11]: course-synthesis cross-links to 11 articles across 7 blocks (capstone pattern)
+- [05.1-11]: field-assessment presents Hendrycks critique at full strength before the response
 
 ### Pending Todos
 
@@ -137,7 +131,7 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-02-04
-Stopped at: Completed 05.1-10-PLAN.md - Block 7 MI for Safety
+Stopped at: Completed 05.1-11-PLAN.md - Block 8 Open Problems and Field Assessment
 Resume file: None
 
 ## Phase 5 Progress
@@ -153,46 +147,22 @@ Navigation & Information Architecture phase COMPLETE:
 Bulk Content Migration - IN PROGRESS:
 - [x] 05.1-01: Shared data files: references.json (44 entries) + learningPath.json (8 blocks, 35 topics) (2min 43s)
 - [x] 05.1-02: Block 1 Transformer Foundations: review pilot + qk-ov-circuits + composition-and-virtual-heads (4min 35s)
-- [x] 05.1-03: Block 2 Part 1: what-is-mech-interp + linear-representation-hypothesis + induction-heads (4min 46s)
+- [ ] 05.1-03: Article authoring (block 2 part 1)
 - [x] 05.1-04: Block 2 Part 2: direct-logit-attribution + logit-lens-and-probing with 3 diagrams (4min 30s)
 - [x] 05.1-05: Block 3 Observation to Causation: activation-patching review + attribution-patching + ioi-circuit + circuit-evaluation (6min 5s)
 - [x] 05.1-06: Block 4 Part 1: Superposition review + sparse-autoencoders + sae-interpretability (3min 50s)
 - [x] 05.1-07: Block 4 Part 2: scaling-monosemanticity + sae-variants-and-evaluation (4min 29s)
 - [x] 05.1-08: Block 5 Representation Engineering: activation-engineering + representation-engineering + refusal-direction + concept-erasure + function-vectors (5min 17s)
-- [x] 05.1-09: Block 6 Circuit Tracing & Comparative MI: transcoders + circuit-tracing + crosscoders-and-model-diffing + universality + multimodal-mi (7min 1s)
+- [x] 05.1-09: Block 6 Circuit Tracing and Comparative MI (not tracked)
 - [x] 05.1-10: Block 7 MI for Safety: sleeper-agent-detection + deception-detection + safety-mechanisms-and-monitoring + mi-safety-limitations (6min)
-- [ ] 05.1-11 through 05.1-12: Article authoring (remaining 2 plans)
+- [x] 05.1-11: Block 8 Open Problems and Field Assessment: open-problems-methods + field-assessment + future-directions + course-synthesis (6min 14s)
+- [ ] 05.1-12: Final verification and cleanup
 
 Key artifacts so far:
 - src/_data/references.json - 44 citation entries covering all papers across 35 articles
 - src/_data/learningPath.json - 8 blocks, 35 topics in correct reading order
-- src/topics/qk-ov-circuits/index.md - QK/OV circuit decomposition with worked example
-- src/topics/composition-and-virtual-heads/index.md - V/K/Q-composition, virtual heads, TransformerLens
-- src/topics/what-is-mech-interp/index.md - Interpretability landscape, three claims, safety motivation
-- src/topics/linear-representation-hypothesis/index.md - LRH, why linear, polysemanticity
-- src/topics/induction-heads/index.md - Induction head discovery, two-step mechanism, phase change
-- src/topics/direct-logit-attribution/index.md - DLA decomposition, per-token attribution, attention patterns
-- src/topics/logit-lens-and-probing/index.md - Logit lens, tuned lens, probing, correlation-vs-causation
-- src/topics/logit-lens-and-probing/images/ - 3 GPT-2 diagrams (attn patterns + logit lens)
-- src/topics/sparse-autoencoders/index.md - SAE architecture, dictionary learning, Towards Monosemanticity
-- src/topics/sae-interpretability/index.md - Feature dashboards and automated interpretability
-- src/topics/attribution-patching/index.md - Attribution patching, path patching, ACDC
-- src/topics/ioi-circuit/index.md - IOI task, discovery methodology, head classes, algorithm
-- src/topics/ioi-circuit/images/ioi_circuit_diagram.png - IOI circuit diagram
-- src/topics/circuit-evaluation/index.md - Evaluation criteria, causal scrubbing, limitations
-- src/topics/scaling-monosemanticity/index.md - Golden Gate Claude, safety features, scaling laws
-- src/topics/sae-variants-and-evaluation/index.md - Gated/TopK/JumpReLU SAEs, SAEBench, limitations
-- src/topics/activation-engineering/index.md - ActAdd, CAA, steering methods with diagram
-- src/topics/representation-engineering/index.md - RepE paradigm, LAT, representation control
-- src/topics/refusal-direction/index.md - Refusal direction case study with 2 diagrams
-- src/topics/concept-erasure/index.md - LEACE concept erasure
-- src/topics/function-vectors/index.md - Function vectors, natural task directions
-- src/topics/sleeper-agent-detection/index.md - Sleeper agent threat model, defection probes, trained-vs-natural caveat
-- src/topics/deception-detection/index.md - Alignment faking, behavioral eval failure, SAE failure for deception
-- src/topics/safety-mechanisms-and-monitoring/index.md - Refusal recap, model organisms, sabotage evals, monitoring
-- src/topics/mi-safety-limitations/index.md - 6 honest limitations, the gap, Swiss cheese model
-- src/topics/transcoders/index.md - Transcoder architecture, SAE comparison, clean factorization
-- src/topics/circuit-tracing/index.md - Sparse feature circuits, attribution graphs, Biology paper case studies
-- src/topics/crosscoders-and-model-diffing/index.md - Crosscoder model diffing, shared/exclusive features
-- src/topics/universality/index.md - CKA, SVCCA, three dimensions of universality
-- src/topics/multimodal-mi/index.md - CLIP, VLMs, diffusion model interpretability
+- All 35 articles now exist across all 8 blocks (3 reviewed pilots + 32 new)
+- src/topics/open-problems-methods/index.md - Open problems survey with taxonomy diagram
+- src/topics/field-assessment/index.md - Balanced field assessment with timeline diagram
+- src/topics/future-directions/index.md - Five research frontiers and career paths
+- src/topics/course-synthesis/index.md - Capstone synthesis with 11 cross-links across 7 blocks
