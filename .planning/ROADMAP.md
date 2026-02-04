@@ -158,11 +158,11 @@ Plans:
   1. Dark mode activates automatically via `prefers-color-scheme` and can be toggled manually; KaTeX rendering, code blocks, and diagrams all display correctly in dark mode
   2. The site is fully keyboard-navigable with visible focus indicators, and a skip-to-content link appears on Tab for screen reader users
   3. Each article displays a reading time estimate near the title, calculated from word count at build time
-**Plans**: TBD
+**Plans**: 2 plans
 
 Plans:
-- [ ] 07-01: TBD
-- [ ] 07-02: TBD
+- [ ] 07-01-PLAN.md -- Dark mode color system: CSS variable overrides, Prism migration, hardcoded color fixes, focus indicators
+- [ ] 07-02-PLAN.md -- Toggle + template wiring: theme toggle JS, FOUC prevention, skip-link, reading time filter, visual verification
 
 ## Progress
 
