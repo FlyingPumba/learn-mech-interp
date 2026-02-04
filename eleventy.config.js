@@ -1,6 +1,7 @@
 // Eleventy configuration (ESM syntax)
 // Source: https://www.11ty.dev/docs/config/
 import fs from "node:fs";
+import { execSync } from "node:child_process";
 import { EleventyHtmlBasePlugin, IdAttributePlugin } from "@11ty/eleventy";
 import syntaxHighlight from "@11ty/eleventy-plugin-syntaxhighlight";
 import eleventyNavigationPlugin from "@11ty/eleventy-navigation";
@@ -22,6 +23,14 @@ export default function(eleventyConfig) {
     citationCounter = {};
     sidenoteCounter = {};
     marginCounter = {};
+  });
+
+  // Run Pagefind indexer after each build
+  eleventyConfig.on("eleventy.after", () => {
+    execSync(`npx pagefind --site _site`, {
+      encoding: "utf-8",
+      stdio: "inherit",
+    });
   });
 
   // Configure markdown-it with KaTeX and figure plugins

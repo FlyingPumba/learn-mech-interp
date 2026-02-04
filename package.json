@@ -23,5 +23,8 @@
     "eleventy-plugin-toc": "^1.1.5",
     "katex": "^0.16.28",
     "markdown-it-anchor": "^9.2.0"
+  },
+  "devDependencies": {
+    "pagefind": "^1.4.0"
   }
 }
