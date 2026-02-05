@@ -88,6 +88,9 @@ export default function(eleventyConfig) {
   // Pass through JS files to _site/js/
   eleventyConfig.addPassthroughCopy("src/js");
 
+  // Pass through site-wide images (backgrounds, etc.)
+  eleventyConfig.addPassthroughCopy("src/images");
+
   // Pass through article-local images (e.g., src/topics/superposition/images/)
   eleventyConfig.addPassthroughCopy("src/topics/*/images");
   // Ensure nested images folders are copied (defensive for new topic slugs)

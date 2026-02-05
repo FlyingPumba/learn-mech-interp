@@ -7,7 +7,6 @@
 .site-header {
   padding: var(--spacing-sm, 0.5rem) 0;
   border-bottom: 1px solid var(--color-border, rgba(0, 0, 0, 0.08));
-  background: linear-gradient(180deg, var(--color-header-gradient) 0%, transparent 100%);
 }
 
 /* Site Navigation */
@@ -230,7 +229,6 @@
 
 .hero {
   padding: var(--spacing-2xl, 3rem) var(--container-padding, 1.5rem);
-  background: linear-gradient(180deg, var(--color-hero-gradient-start) 0%, var(--color-hero-gradient-end) 50%, transparent 100%);
   border-bottom: none;
   min-height: 60vh;
   display: flex;
@@ -616,7 +614,6 @@
 .sidebar {
   padding: var(--spacing-sm, 0.5rem) var(--edge-padding, 1.5rem);
   border-right: 1px solid var(--color-border, rgba(0, 0, 0, 0.08));
-  background: var(--color-background, #ffffff);
 }
 
 .sidebar-inner {

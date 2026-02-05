@@ -37,10 +37,10 @@
   --color-background-code: rgba(0, 0, 0, 0.04);
 
   /* Colors - Interactive */
-  /* Cool blue accent - Distill.pub inspired (#004276) */
-  --color-link: #004276;
-  --color-link-hover: #002d52;
-  --color-link-visited: #4a5568;
+  /* Periwinkle/indigo accent - inspired by background illustration */
+  --color-link: #5b6abf;
+  --color-link-hover: #4a58a0;
+  --color-link-visited: #7b6b8e;
 
   /* Colors - Borders */
   --color-border: rgba(0, 0, 0, 0.1);
@@ -75,21 +75,21 @@
   /* Colors - Syntax Highlighting (Prism) */
   --prism-comment: rgba(0, 0, 0, 0.4);
   --prism-punctuation: rgba(0, 0, 0, 0.6);
-  --prism-keyword: #004276;
+  --prism-keyword: #5b6abf;
   --prism-string: #22863a;
   --prism-number: #6f42c1;
-  --prism-function: #005cc5;
+  --prism-function: #4a7fc7;
   --prism-operator: rgba(0, 0, 0, 0.6);
-  --prism-class: #005cc5;
+  --prism-class: #4a7fc7;
   --prism-attr-name: #6f42c1;
   --prism-deleted: #b31d28;
   --prism-deleted-bg: rgba(179, 29, 40, 0.08);
   --prism-inserted: #22863a;
   --prism-inserted-bg: rgba(34, 134, 58, 0.08);
-  --prism-highlight-bg: rgba(0, 66, 118, 0.06);
+  --prism-highlight-bg: rgba(91, 106, 191, 0.08);
 
   /* Colors - Selection */
-  --color-selection: rgba(0, 66, 118, 0.2);
+  --color-selection: rgba(91, 106, 191, 0.2);
 
   /* Colors - Difficulty Badges */
   --color-badge-foundational-bg: #e8f5e9;
@@ -100,13 +100,15 @@
   --color-badge-advanced-text: #c62828;
 
   /* Colors - Decorative */
-  --color-header-gradient: rgba(0, 66, 118, 0.02);
-  --color-hero-gradient-start: rgba(0, 66, 118, 0.03);
-  --color-hero-gradient-end: rgba(0, 66, 118, 0.01);
+  --color-header-gradient: rgba(139, 159, 212, 0.14);
+  --color-hero-gradient-start: rgba(139, 159, 212, 0.15);
+  --color-hero-gradient-end: rgba(232, 168, 120, 0.10);
+  --color-page-gradient-start: rgba(139, 159, 212, 0.25);
+  --color-page-gradient-end: rgba(232, 168, 120, 0.10);
   --color-sidebar-shadow: rgba(0, 0, 0, 0.1);
-  --color-btn-secondary-hover-bg: rgba(0, 66, 118, 0.04);
-  --color-sidebar-hover-bg: rgba(0, 66, 118, 0.04);
-  --color-sidebar-active-bg: rgba(0, 66, 118, 0.08);
+  --color-btn-secondary-hover-bg: rgba(91, 106, 191, 0.08);
+  --color-sidebar-hover-bg: rgba(91, 106, 191, 0.08);
+  --color-sidebar-active-bg: rgba(91, 106, 191, 0.14);
   --color-feature-card-shadow: rgba(0, 0, 0, 0.04);
 }
 
@@ -124,9 +126,9 @@
     --color-background-code: rgba(255, 255, 255, 0.08);
 
     /* Interactive */
-    --color-link: #6db3f2;
-    --color-link-hover: #8ec5f5;
-    --color-link-visited: #a0aec0;
+    --color-link: #a0aee8;
+    --color-link-hover: #b8c4f0;
+    --color-link-visited: #b0a0c8;
 
     /* Borders */
     --color-border: rgba(255, 255, 255, 0.1);
@@ -135,7 +137,7 @@
     /* Prism (dark palette) */
     --prism-comment: rgba(255, 255, 255, 0.4);
     --prism-punctuation: rgba(255, 255, 255, 0.5);
-    --prism-keyword: #7ec8e3;
+    --prism-keyword: #9aaae0;
     --prism-string: #98c379;
     --prism-number: #d19a66;
     --prism-function: #dcdcaa;
@@ -146,10 +148,10 @@
     --prism-deleted-bg: rgba(224, 108, 117, 0.15);
     --prism-inserted: #98c379;
     --prism-inserted-bg: rgba(152, 195, 121, 0.15);
-    --prism-highlight-bg: rgba(109, 179, 242, 0.1);
+    --prism-highlight-bg: rgba(160, 174, 232, 0.12);
 
     /* Selection */
-    --color-selection: rgba(109, 179, 242, 0.3);
+    --color-selection: rgba(160, 174, 232, 0.3);
 
     /* Difficulty Badges (darker, more saturated for dark backgrounds) */
     --color-badge-foundational-bg: rgba(46, 125, 50, 0.2);
@@ -160,13 +162,15 @@
     --color-badge-advanced-text: #ef9a9a;
 
     /* Decorative */
-    --color-header-gradient: rgba(109, 179, 242, 0.03);
-    --color-hero-gradient-start: rgba(109, 179, 242, 0.04);
-    --color-hero-gradient-end: rgba(109, 179, 242, 0.01);
+    --color-header-gradient: rgba(160, 174, 232, 0.08);
+    --color-hero-gradient-start: rgba(70, 60, 130, 0.20);
+    --color-hero-gradient-end: rgba(100, 55, 75, 0.12);
+    --color-page-gradient-start: rgba(70, 60, 130, 0.30);
+    --color-page-gradient-end: rgba(100, 55, 75, 0.20);
     --color-sidebar-shadow: rgba(0, 0, 0, 0.3);
-    --color-btn-secondary-hover-bg: rgba(109, 179, 242, 0.08);
-    --color-sidebar-hover-bg: rgba(109, 179, 242, 0.06);
-    --color-sidebar-active-bg: rgba(109, 179, 242, 0.12);
+    --color-btn-secondary-hover-bg: rgba(160, 174, 232, 0.12);
+    --color-sidebar-hover-bg: rgba(160, 174, 232, 0.10);
+    --color-sidebar-active-bg: rgba(160, 174, 232, 0.18);
     --color-feature-card-shadow: rgba(0, 0, 0, 0.2);
   }
 }
@@ -184,9 +188,9 @@
   --color-background-code: rgba(255, 255, 255, 0.08);
 
   /* Interactive */
-  --color-link: #6db3f2;
-  --color-link-hover: #8ec5f5;
-  --color-link-visited: #a0aec0;
+  --color-link: #a0aee8;
+  --color-link-hover: #b8c4f0;
+  --color-link-visited: #b0a0c8;
 
   /* Borders */
   --color-border: rgba(255, 255, 255, 0.1);
@@ -195,7 +199,7 @@
   /* Prism (dark palette) */
   --prism-comment: rgba(255, 255, 255, 0.4);
   --prism-punctuation: rgba(255, 255, 255, 0.5);
-  --prism-keyword: #7ec8e3;
+  --prism-keyword: #9aaae0;
   --prism-string: #98c379;
   --prism-number: #d19a66;
   --prism-function: #dcdcaa;
@@ -206,10 +210,10 @@
   --prism-deleted-bg: rgba(224, 108, 117, 0.15);
   --prism-inserted: #98c379;
   --prism-inserted-bg: rgba(152, 195, 121, 0.15);
-  --prism-highlight-bg: rgba(109, 179, 242, 0.1);
+  --prism-highlight-bg: rgba(160, 174, 232, 0.12);
 
   /* Selection */
-  --color-selection: rgba(109, 179, 242, 0.3);
+  --color-selection: rgba(160, 174, 232, 0.3);
 
   /* Difficulty Badges (darker, more saturated for dark backgrounds) */
   --color-badge-foundational-bg: rgba(46, 125, 50, 0.2);
@@ -220,12 +224,14 @@
   --color-badge-advanced-text: #ef9a9a;
 
   /* Decorative */
-  --color-header-gradient: rgba(109, 179, 242, 0.03);
-  --color-hero-gradient-start: rgba(109, 179, 242, 0.04);
-  --color-hero-gradient-end: rgba(109, 179, 242, 0.01);
+  --color-header-gradient: rgba(160, 174, 232, 0.08);
+  --color-hero-gradient-start: rgba(70, 60, 130, 0.20);
+  --color-hero-gradient-end: rgba(100, 55, 75, 0.12);
+  --color-page-gradient-start: rgba(70, 60, 130, 0.30);
+  --color-page-gradient-end: rgba(100, 55, 75, 0.20);
   --color-sidebar-shadow: rgba(0, 0, 0, 0.3);
-  --color-btn-secondary-hover-bg: rgba(109, 179, 242, 0.08);
-  --color-sidebar-hover-bg: rgba(109, 179, 242, 0.06);
-  --color-sidebar-active-bg: rgba(109, 179, 242, 0.12);
+  --color-btn-secondary-hover-bg: rgba(160, 174, 232, 0.12);
+  --color-sidebar-hover-bg: rgba(160, 174, 232, 0.10);
+  --color-sidebar-active-bg: rgba(160, 174, 232, 0.18);
   --color-feature-card-shadow: rgba(0, 0, 0, 0.2);
 }
