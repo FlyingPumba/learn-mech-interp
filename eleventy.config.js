@@ -1,8 +1,11 @@
 // Eleventy configuration (ESM syntax)
 // Source: https://www.11ty.dev/docs/config/
 import fs from "node:fs";
+import path from "node:path";
 import { execSync } from "node:child_process";
+import matter from "gray-matter";
 import { EleventyHtmlBasePlugin, IdAttributePlugin } from "@11ty/eleventy";
+import { scanBlocks } from "./lib/scanBlocks.js";
 import syntaxHighlight from "@11ty/eleventy-plugin-syntaxhighlight";
 import eleventyNavigationPlugin from "@11ty/eleventy-navigation";
 import pluginTOC from "eleventy-plugin-toc";
@@ -18,16 +21,132 @@ let sidenoteCounter = {};
 let marginCounter = {};
 let buildId = Date.now();
 
+function validate() {
+  const errors = [];
+  const { blocks } = scanBlocks();
+  const refs = JSON.parse(fs.readFileSync("src/_data/references.json", "utf-8"));
+
+  // 1. Check block order contiguity
+  const blockOrders = blocks.map(b => b.order).sort((a, b) => a - b);
+  for (let i = 0; i < blockOrders.length; i++) {
+    if (blockOrders[i] !== i + 1) {
+      errors.push(`Block order is not contiguous: expected ${i + 1}, got ${blockOrders[i]}. ` +
+        `Blocks: ${blocks.map(b => `${b.slug}(${b.order})`).join(", ")}`);
+      break;
+    }
+  }
+
+  // Check for duplicate block orders
+  const blockOrderSet = new Set(blockOrders);
+  if (blockOrderSet.size !== blockOrders.length) {
+    errors.push(`Duplicate block orders found: ${blockOrders.join(", ")}`);
+  }
+
+  const allGlossaryTerms = new Map(); // term -> [article slugs]
+  const allArticleSlugs = new Set();
+
+  for (const block of blocks) {
+    // 2. Check _block.json fields
+    if (!block.title) errors.push(`Block ${block.slug}: missing title in _block.json`);
+    if (block.order == null) errors.push(`Block ${block.slug}: missing order in _block.json`);
+
+    // 3. Check article order contiguity within block
+    const artOrders = block.topics.map(t => t.order).sort((a, b) => a - b);
+    for (let i = 0; i < artOrders.length; i++) {
+      if (artOrders[i] !== i + 1) {
+        errors.push(`Block "${block.slug}": article order not contiguous. Expected ${i + 1}, got ${artOrders[i]}. ` +
+          `Articles: ${block.topics.map(t => `${t.slug}(${t.order})`).join(", ")}`);
+        break;
+      }
+    }
+
+    // Check for duplicate article orders within block
+    const artOrderSet = new Set(artOrders);
+    if (artOrderSet.size !== artOrders.length) {
+      errors.push(`Block "${block.slug}": duplicate article orders: ${artOrders.join(", ")}`);
+    }
+
+    for (const topic of block.topics) {
+      allArticleSlugs.add(topic.slug);
+      const mdPath = path.join("src/topics", block.slug, topic.slug, "index.md");
+      if (!fs.existsSync(mdPath)) continue;
+
+      const raw = fs.readFileSync(mdPath, "utf-8");
+      const { data } = matter(raw);
+
+      // 4. Required frontmatter
+      if (!data.title) errors.push(`${topic.slug}: missing 'title' in frontmatter`);
+      if (!data.description) errors.push(`${topic.slug}: missing 'description' in frontmatter`);
+      if (data.order == null) errors.push(`${topic.slug}: missing 'order' in frontmatter`);
+
+      // 5. Validate citation keys
+      const citeMatches = raw.matchAll(/\{%[-\s]*cite\s+"([^"]+)"\s*[-\s]*%\}/g);
+      for (const m of citeMatches) {
+        if (!refs[m[1]]) {
+          errors.push(`${topic.slug}: cite key "${m[1]}" not found in references.json`);
+        }
+      }
+
+      // 6. Collect glossary terms for duplicate check
+      if (Array.isArray(data.glossary)) {
+        for (const entry of data.glossary) {
+          if (!allGlossaryTerms.has(entry.term)) {
+            allGlossaryTerms.set(entry.term, []);
+          }
+          allGlossaryTerms.get(entry.term).push(topic.slug);
+        }
+      }
+    }
+  }
+
+  // 7. Validate prerequisites (second pass: all slugs now collected)
+  for (const block of blocks) {
+    for (const topic of block.topics) {
+      const mdPath = path.join("src/topics", block.slug, topic.slug, "index.md");
+      if (!fs.existsSync(mdPath)) continue;
+      const { data } = matter(fs.readFileSync(mdPath, "utf-8"));
+      if (Array.isArray(data.prerequisites)) {
+        for (const prereq of data.prerequisites) {
+          if (prereq.url) {
+            const prereqMatch = prereq.url.match(/\/topics\/([^/]+)\//);
+            if (prereqMatch && !allArticleSlugs.has(prereqMatch[1])) {
+              errors.push(`${topic.slug}: prerequisite "${prereq.url}" references non-existent article`);
+            }
+          }
+        }
+      }
+    }
+  }
+
+  // 8. Duplicate glossary terms
+  for (const [term, slugs] of allGlossaryTerms) {
+    if (slugs.length > 1) {
+      errors.push(`Glossary term "${term}" defined in multiple articles: ${slugs.join(", ")}`);
+    }
+  }
+
+  if (errors.length > 0) {
+    throw new Error(
+      `\n=== Build validation failed ===\n` +
+      errors.map(e => `  - ${e}`).join("\n") +
+      `\n\nSet SKIP_VALIDATION=1 to bypass.\n`
+    );
+  }
+}
+
 export default function(eleventyConfig) {
   // Cache-busting for static assets (CSS/JS). Updates each rebuild in --serve mode.
   eleventyConfig.addGlobalData("buildId", () => String(buildId));
 
-  // Reset shortcode counters before each build
+  // Reset shortcode counters and run validation before each build
   eleventyConfig.on("eleventy.before", () => {
     buildId = Date.now();
     citationCounter = {};
     sidenoteCounter = {};
     marginCounter = {};
+    if (!process.env.SKIP_VALIDATION) {
+      validate();
+    }
   });
 
   // Run Pagefind indexer after each build
@@ -70,13 +189,11 @@ export default function(eleventyConfig) {
     ul: true
   });
 
-  // Learning path collection: topics sorted by learningPath.json order
+  // Learning path collection: topics sorted by filesystem-derived order
   eleventyConfig.addCollection("learningPath", function(collectionApi) {
-    const pathData = JSON.parse(
-      fs.readFileSync("src/_data/learningPath.json", "utf-8")
-    );
+    const pathData = scanBlocks();
     const order = pathData.blocks.flatMap(b => b.topics.map(t => t.slug));
-    const topics = collectionApi.getFilteredByGlob("src/topics/*/index.md");
+    const topics = collectionApi.getFilteredByGlob("src/topics/*/*/index.md");
     return topics
       .filter(item => order.includes(item.fileSlug))
       .sort((a, b) => order.indexOf(a.fileSlug) - order.indexOf(b.fileSlug));
@@ -91,10 +208,23 @@ export default function(eleventyConfig) {
   // Pass through site-wide images (backgrounds, etc.)
   eleventyConfig.addPassthroughCopy("src/images");
 
-  // Pass through article-local images (e.g., src/topics/superposition/images/)
-  eleventyConfig.addPassthroughCopy("src/topics/*/images");
-  // Ensure nested images folders are copied (defensive for new topic slugs)
-  eleventyConfig.addPassthroughCopy("src/topics/**/images");
+  // Pass through article-local images, remapping from nested block structure
+  // to flat output so /topics/<article>/images/ URLs remain stable
+  const blockDirs = fs.readdirSync("src/topics", { withFileTypes: true })
+    .filter(d => d.isDirectory());
+  for (const block of blockDirs) {
+    const blockPath = path.join("src/topics", block.name);
+    const articles = fs.readdirSync(blockPath, { withFileTypes: true })
+      .filter(d => d.isDirectory() && !d.name.startsWith("_"));
+    for (const article of articles) {
+      const imgDir = path.join(blockPath, article.name, "images");
+      if (fs.existsSync(imgDir)) {
+        eleventyConfig.addPassthroughCopy({
+          [imgDir]: path.join("topics", article.name, "images")
+        });
+      }
+    }
+  }
 
   // Citation shortcode: {% cite "key" %} renders numbered inline citation with tooltip
   eleventyConfig.addShortcode("cite", function(key) {

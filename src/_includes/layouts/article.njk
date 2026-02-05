@@ -2,7 +2,7 @@
 layout: layouts/base.njk
 ---
 {# Breadcrumbs: Home > Block Title > Current Article #}
-{% set blockSlug = eleventyNavigation.parent if eleventyNavigation else null %}
+{% set blockSlug = block if block else null %}
 {% set blockTitle = null %}
 {% if blockSlug %}
   {% for b in learningPath.blocks %}
