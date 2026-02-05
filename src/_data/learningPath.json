@@ -19,7 +19,8 @@
         { "slug": "linear-representation-hypothesis", "title": "The Linear Representation Hypothesis" },
         { "slug": "induction-heads", "title": "Induction Heads and In-Context Learning" },
         { "slug": "direct-logit-attribution", "title": "Direct Logit Attribution" },
-        { "slug": "logit-lens-and-probing", "title": "The Logit Lens, Tuned Lens, and Probing Classifiers" }
+        { "slug": "logit-lens-and-tuned-lens", "title": "The Logit Lens and Tuned Lens" },
+        { "slug": "probing-classifiers", "title": "Probing Classifiers" }
       ]
     },
     {

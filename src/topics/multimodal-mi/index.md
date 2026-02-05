@@ -95,7 +95,7 @@ SAEs applied to diffusion models show how concepts become more refined as denois
 
 ### SAEs for Diffusion Models
 
-Applying SAEs to diffusion model activations reveals feature directions that correspond to structured image regions independent of high-level semantics. The concept of a "diffusion steering lens" -- extending the logit lens concept to vision transformers within diffusion models -- allows researchers to observe how the model's internal predictions change across denoising steps, analogous to how the [logit lens](/topics/logit-lens-and-probing/) reveals prediction evolution across layers in language models.
+Applying SAEs to diffusion model activations reveals feature directions that correspond to structured image regions independent of high-level semantics. The concept of a "diffusion steering lens" -- extending the logit lens concept to vision transformers within diffusion models -- allows researchers to observe how the model's internal predictions change across denoising steps, analogous to how the [logit lens](/topics/logit-lens-and-tuned-lens/) reveals prediction evolution across layers in language models.
 
 <details class="pause-and-think">
 <summary>Pause and think: What model architectures need new MI methods?</summary>

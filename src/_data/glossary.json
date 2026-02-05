@@ -48,8 +48,8 @@
         "label": "The Attention Mechanism"
       },
       {
-        "article": "/topics/logit-lens-and-probing/",
-        "label": "The Logit Lens, Tuned Lens, and Probing Classifiers"
+        "article": "/topics/probing-classifiers/",
+        "label": "Probing Classifiers"
       }
     ]
   },
@@ -388,8 +388,8 @@
     "definition": "A simple linear classifier trained on frozen model activations to test whether specific information (such as part of speech or sentiment) is linearly accessible at a given layer, providing evidence about what representations a model has learned.",
     "links": [
       {
-        "article": "/topics/logit-lens-and-probing/",
-        "label": "The Logit Lens, Tuned Lens, and Probing Classifiers"
+        "article": "/topics/probing-classifiers/",
+        "label": "Probing Classifiers"
       }
     ]
   },
@@ -408,8 +408,8 @@
     "definition": "An observational technique that applies the model's unembedding matrix to intermediate residual stream states, converting hidden representations into vocabulary-space predictions to see how the model's output evolves across layers.",
     "links": [
       {
-        "article": "/topics/logit-lens-and-probing/",
-        "label": "The Logit Lens, Tuned Lens, and Probing Classifiers"
+        "article": "/topics/logit-lens-and-tuned-lens/",
+        "label": "The Logit Lens and Tuned Lens"
       }
     ]
   },
@@ -556,8 +556,8 @@
     "definition": "A simple model (typically linear) trained on neural network activations to predict properties of the input, used as a diagnostic tool to test what information is encoded at different layers of a network.",
     "links": [
       {
-        "article": "/topics/logit-lens-and-probing/",
-        "label": "The Logit Lens, Tuned Lens, and Probing Classifiers"
+        "article": "/topics/probing-classifiers/",
+        "label": "Probing Classifiers"
       }
     ]
   },
@@ -702,8 +702,8 @@
     "definition": "An improvement on the logit lens that trains a learned affine transformation at each layer (rather than reusing the final unembedding matrix), producing more accurate predictions of the model's evolving computation at intermediate layers.",
     "links": [
       {
-        "article": "/topics/logit-lens-and-probing/",
-        "label": "The Logit Lens, Tuned Lens, and Probing Classifiers"
+        "article": "/topics/logit-lens-and-tuned-lens/",
+        "label": "The Logit Lens and Tuned Lens"
       }
     ]
   },
@@ -716,8 +716,8 @@
         "label": "Direct Logit Attribution"
       },
       {
-        "article": "/topics/logit-lens-and-probing/",
-        "label": "The Logit Lens, Tuned Lens, and Probing Classifiers"
+        "article": "/topics/logit-lens-and-tuned-lens/",
+        "label": "The Logit Lens and Tuned Lens"
       }
     ]
   },

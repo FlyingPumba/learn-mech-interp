@@ -1,5 +1,7 @@
 #!/bin/bash
 
+rm -rf _site
+
 echo "Starting local development server..."
 echo ""
 echo "View the site at: http://localhost:8080/learn-mech-interp/"
