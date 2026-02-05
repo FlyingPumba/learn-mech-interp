@@ -13,7 +13,7 @@ category: "core-concepts"
 
 The [residual stream](/topics/attention-mechanism/#the-residual-stream) is more than just a convenient name. It is a $d_{\text{model}}$-dimensional vector that lives in $\mathbb{R}^{d_{\text{model}}}$, and treating it as a proper vector space unlocks the mathematical framework behind mechanistic interpretability {% cite "elhage2021mathematical" %}.
 
-If you want a refresher on prerequisites or a full architecture walkthrough, start with [Prerequisites for Mechanistic Interpretability](/topics/mi-prerequisites/) and [Transformer Architecture Deep Dive](/topics/transformer-architecture/).
+If you want a refresher on prerequisites or a full architecture walkthrough, start with [Prerequisites for Mechanistic Interpretability](/topics/mi-prerequisites/) and [Transformer Architecture Intro](/topics/transformer-architecture/).
 
 At each token position, the residual stream starts as the token embedding and accumulates additive updates from every attention head and MLP layer. The final residual stream at any position decomposes as a sum:
 

@@ -1,5 +1,5 @@
 ---
-title: "Transformer Architecture Deep Dive"
+title: "Transformer Architecture Intro"
 description: "A guided walkthrough of the full transformer stack: embeddings, attention, MLPs, layer norm, residual stream, and positional information."
 prerequisites:
   - title: "Prerequisites for Mechanistic Interpretability"
@@ -54,7 +54,7 @@ $$
 
 You can think of attention as moving information *between* positions, and the MLP as processing information *within* a position.
 
-## The Residual Stream (Why MI Works)
+## The Residual Stream
 
 The residual stream is additive. Every component writes a vector into the same space. This means the final activation is a **sum of contributions** from all heads and MLPs across layers. That additivity is what enables mechanistic interpretability tools like direct logit attribution and activation patching.
 

@@ -11,7 +11,7 @@ category: "core-concepts"
 
 ## The Universality Hypothesis
 
-In [What is Mechanistic Interpretability?](/topics/what-is-mech-interp/), we encountered three foundational claims from Olah et al.: features are the fundamental unit of neural network computation, features are connected into circuits, and -- the boldest claim -- **analogous features and circuits form across different models trained on different data**. This third claim is the *universality hypothesis*.
+In [What is Interpretability?](/topics/what-is-mech-interp/), we encountered three foundational claims from Olah et al.: features are the fundamental unit of neural network computation, features are connected into circuits, and -- the boldest claim -- **analogous features and circuits form across different models trained on different data**. This third claim is the *universality hypothesis*.
 
 If universality holds, it has profound implications for interpretability. Understanding one model's features and circuits would transfer to other models. Safety analysis performed on a smaller model might generalize to larger ones. The interpretability problem would be finite -- there is a vocabulary of features to discover, not an unbounded space of model-specific representations.
 

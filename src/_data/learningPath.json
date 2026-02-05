@@ -5,7 +5,7 @@
       "title": "Transformer Foundations",
       "topics": [
         { "slug": "mi-prerequisites", "title": "Prerequisites for Mechanistic Interpretability" },
-        { "slug": "transformer-architecture", "title": "Transformer Architecture Deep Dive" },
+        { "slug": "transformer-architecture", "title": "Transformer Architecture Intro" },
         { "slug": "attention-mechanism", "title": "The Attention Mechanism" },
         { "slug": "qk-ov-circuits", "title": "QK and OV Circuits" },
         { "slug": "composition-and-virtual-heads", "title": "Composition and Virtual Attention Heads" }
@@ -13,14 +13,20 @@
     },
     {
       "slug": "foundations-of-mi",
-      "title": "Foundations of MI",
+      "title": "Interpretability Fundamentals",
       "topics": [
-        { "slug": "what-is-mech-interp", "title": "What is Mechanistic Interpretability?" },
+        { "slug": "what-is-mech-interp", "title": "What is Interpretability?" },
         { "slug": "linear-representation-hypothesis", "title": "The Linear Representation Hypothesis" },
-        { "slug": "induction-heads", "title": "Induction Heads and In-Context Learning" },
-        { "slug": "direct-logit-attribution", "title": "Direct Logit Attribution" },
+        { "slug": "superposition", "title": "The Superposition Hypothesis" }
+      ]
+    },
+    {
+      "slug": "basic-interp-techniques",
+      "title": "Basic Interpretability Techniques",
+      "topics": [
         { "slug": "logit-lens-and-tuned-lens", "title": "The Logit Lens and Tuned Lens" },
-        { "slug": "probing-classifiers", "title": "Probing Classifiers" }
+        { "slug": "direct-logit-attribution", "title": "Direct Logit Attribution" },
+        { "slug": "reading-attention-patterns", "title": "Reading the Attention Patterns" }
       ]
     },
     {
@@ -28,16 +34,39 @@
       "title": "From Observation to Causation",
       "topics": [
         { "slug": "activation-patching", "title": "Activation Patching and Causal Interventions" },
-        { "slug": "attribution-patching", "title": "Attribution Patching and Path Patching" },
-        { "slug": "ioi-circuit", "title": "The IOI Circuit: Discovery and Mechanism" },
-        { "slug": "circuit-evaluation", "title": "Circuit Evaluation: Faithfulness, Completeness, and Minimality" }
+        { "slug": "attribution-patching", "title": "Attribution Patching and Path Patching" }
+      ]
+    },
+    {
+      "slug": "probing",
+      "title": "Probing",
+      "topics": [
+        { "slug": "probing-classifiers", "title": "Probing Classifiers" },
+        { "slug": "caa-method", "title": "Contrastive Activation Addition (CAA)" },
+        { "slug": "lat-probing", "title": "Linear Artificial Tomography (LAT)" }
+      ]
+    },
+    {
+      "slug": "steering",
+      "title": "Steering",
+      "topics": [
+        { "slug": "addition-steering", "title": "Addition Steering" },
+        { "slug": "ablation-steering", "title": "Ablation Steering" },
+        { "slug": "representation-control", "title": "Representation Control" },
+        { "slug": "function-vectors", "title": "Function Vectors" }
+      ]
+    },
+    {
+      "slug": "model-editing",
+      "title": "Model Editing",
+      "topics": [
+        { "slug": "concept-erasure", "title": "Concept Erasure with LEACE" }
       ]
     },
     {
       "slug": "superposition-and-feature-extraction",
       "title": "Superposition & Feature Extraction",
       "topics": [
-        { "slug": "superposition", "title": "The Superposition Hypothesis" },
         { "slug": "sparse-autoencoders", "title": "Sparse Autoencoders: Decomposing Superposition" },
         { "slug": "sae-interpretability", "title": "Feature Dashboards and Automated Interpretability" },
         { "slug": "scaling-monosemanticity", "title": "Scaling Monosemanticity and Feature Steering" },
@@ -45,20 +74,12 @@
       ]
     },
     {
-      "slug": "representation-engineering",
-      "title": "Representation Engineering & Steering",
-      "topics": [
-        { "slug": "activation-engineering", "title": "Activation Engineering: ActAdd and CAA" },
-        { "slug": "representation-engineering", "title": "Representation Engineering" },
-        { "slug": "refusal-direction", "title": "The Refusal Direction" },
-        { "slug": "concept-erasure", "title": "Concept Erasure with LEACE" },
-        { "slug": "function-vectors", "title": "Function Vectors" }
-      ]
-    },
-    {
       "slug": "circuit-tracing-and-comparative-mi",
-      "title": "Circuit Tracing & Comparative MI",
+      "title": "Circuit Finding",
       "topics": [
+        { "slug": "induction-heads", "title": "Induction Heads and In-Context Learning" },
+        { "slug": "ioi-circuit", "title": "The IOI Circuit: Discovery and Mechanism" },
+        { "slug": "circuit-evaluation", "title": "Circuit Evaluation: Faithfulness, Completeness, and Minimality" },
         { "slug": "transcoders", "title": "Transcoders: Interpretable MLP Replacements" },
         { "slug": "circuit-tracing", "title": "Circuit Tracing and Attribution Graphs" },
         { "slug": "crosscoders-and-model-diffing", "title": "Crosscoders and Model Diffing" },
@@ -70,6 +91,7 @@
       "slug": "mi-for-safety",
       "title": "MI for AI Safety",
       "topics": [
+        { "slug": "refusal-direction", "title": "The Refusal Direction" },
         { "slug": "sleeper-agent-detection", "title": "Detecting Sleeper Agents" },
         { "slug": "deception-detection", "title": "Deception Detection and Alignment Faking" },
         { "slug": "safety-mechanisms-and-monitoring", "title": "Safety Mechanisms and MI-Based Monitoring" },

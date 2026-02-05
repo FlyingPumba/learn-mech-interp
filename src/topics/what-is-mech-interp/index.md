@@ -1,5 +1,5 @@
 ---
-title: "What is Mechanistic Interpretability?"
+title: "What is Interpretability?"
 description: "The landscape of neural network interpretability approaches and the three core claims that define mechanistic interpretability as a field."
 prerequisites:
   - title: "The Attention Mechanism"

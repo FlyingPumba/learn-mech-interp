@@ -1,17 +1,17 @@
 ---
 title: "Concept Erasure with LEACE"
-description: "How LEACE provides a mathematically guaranteed method for erasing specific concepts from model representations, complementing the steering methods of representation engineering."
+description: "How LEACE provides a mathematically guaranteed method for erasing specific concepts from model representations, going beyond simple ablation with formal guarantees."
 prerequisites:
-  - title: "The Refusal Direction"
-    url: "/topics/refusal-direction/"
+  - title: "Ablation Steering"
+    url: "/topics/ablation-steering/"
 difficulty: "advanced"
-block: "representation-engineering"
+block: "model-editing"
 category: "methods"
 ---
 
-## The Complement to Steering
+## Beyond Simple Ablation
 
-[Activation engineering](/topics/activation-engineering/) *adds* a direction to steer model behavior. The [refusal direction](/topics/refusal-direction/) showed we can also *remove* a direction to disable a behavior. But projection-based removal offers no formal guarantee -- a sufficiently powerful non-linear classifier might still detect traces of the erased concept in the modified representations.
+[Addition steering](/topics/addition-steering/) *adds* a direction to steer model behavior. [Ablation steering](/topics/ablation-steering/) *removes* a direction to disable a behavior. But projection-based removal offers no formal guarantee -- a sufficiently powerful non-linear classifier might still detect traces of the erased concept in the modified representations.
 
 What if we want to **provably** erase a concept? Not just project it out at one layer, but guarantee that no linear classifier can recover it from the modified representations?
 
@@ -19,7 +19,7 @@ Belrose et al. (2023) introduced **LEACE** (LEAst-squares Concept Erasure): a cl
 
 > **LEACE (LEAst-squares Concept Erasure):** A closed-form projection method that provably prevents *all* linear classifiers from predicting a target concept from the modified representations, while making the smallest possible change to those representations in the least-squares sense.
 
-If [representation engineering](/topics/representation-engineering/) gives us a toolkit of *read, add, and remove*, LEACE provides the mathematically strongest version of "remove."{% sidenote "The name LEACE stands for LEAst-squares Concept Erasure, emphasizing both the optimality criterion (least-squares, meaning minimal distortion) and the goal (concept erasure, meaning complete removal of linear information about a concept)." %}
+If [representation control](/topics/representation-control/) gives us a toolkit of *read, add, and remove*, LEACE provides the mathematically strongest version of "remove."{% sidenote "The name LEACE stands for LEAst-squares Concept Erasure, emphasizing both the optimality criterion (least-squares, meaning minimal distortion) and the goal (concept erasure, meaning complete removal of linear information about a concept)." %}
 
 ## The LEACE Guarantee
 
@@ -61,14 +61,23 @@ It tells us that erasure must be holistic. A concept is not stored in one locati
 
 </details>
 
+## LEACE vs. Simple Ablation
+
+| Property | Ablation Steering | LEACE |
+|----------|-------------------|-------|
+| Guarantee | None (heuristic) | Provable (no linear recovery) |
+| Computation | Simple projection | Covariance-based projection |
+| Data requirements | Just the direction | Dataset for covariance estimation |
+| Multi-layer | Apply independently | Apply sequentially (concept scrubbing) |
+
+The contrast with the [refusal direction](/topics/refusal-direction/) experiments is instructive. Arditi et al. removed the refusal direction via simple [ablation](/topics/ablation-steering/), which was effective but offered no formal guarantee. LEACE would provide a stronger erasure -- guaranteeing that no linear probe could recover refusal-related information from the modified representations. The tradeoff is that LEACE requires computing the full covariance structure, while simple projection requires only the direction itself.
+
 ## The Complete Representation Toolkit
 
-With LEACE, the [representation engineering](/topics/representation-engineering/) toolkit is complete:{% sidenote "Each operation in the toolkit corresponds to a fundamental geometric operation on the activation space. Reading is projection onto a subspace. Steering is translation along a direction. Erasure is projection onto an orthogonal complement. These three operations -- project, translate, project-out -- exhaust the basic linear operations on a one-dimensional subspace." %}
+With LEACE, the probing and steering toolkit is complete:{% sidenote "Each operation in the toolkit corresponds to a fundamental geometric operation on the activation space. Reading is projection onto a subspace. Steering is translation along a direction. Erasure is projection onto an orthogonal complement. These three operations -- project, translate, project-out -- exhaust the basic linear operations on a one-dimensional subspace." %}
 
-- **Read** with LAT and linear probes -- detect what concepts are encoded in the model's representations.
-- **Add** with ActAdd, CAA, and representation control -- steer behavior toward a concept by adding its direction.
-- **Remove** with LEACE and concept scrubbing -- provably erase a concept by projecting onto the orthogonal complement of its direction.
+- **Read** with [LAT](/topics/lat-probing/) and [CAA](/topics/caa-method/) -- detect what concepts are encoded in the model's representations.
+- **Add** with [addition steering](/topics/addition-steering/) -- steer behavior toward a concept by adding its direction.
+- **Remove** with [ablation](/topics/ablation-steering/) (fast, no guarantees) or LEACE (slower, provable guarantees).
 
 The three operations form a principled framework for understanding and controlling model representations. Reading tells us what is there. Adding lets us amplify or introduce it. Removing lets us guarantee it is gone.
-
-The contrast with the [refusal direction](/topics/refusal-direction/) is instructive. Arditi et al. removed the refusal direction via simple projection, which was effective but offered no formal guarantee. LEACE would provide a stronger erasure -- guaranteeing that no linear probe could recover refusal-related information from the modified representations. The tradeoff is that LEACE requires computing the full covariance structure, while simple projection requires only the direction itself.

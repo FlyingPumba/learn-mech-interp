@@ -2,16 +2,16 @@
 title: "Function Vectors"
 description: "How in-context learning examples create natural directions in activation space that encode entire tasks, showing that models represent functions, not just features."
 prerequisites:
-  - title: "The Refusal Direction"
-    url: "/topics/refusal-direction/"
+  - title: "Representation Control"
+    url: "/topics/representation-control/"
 difficulty: "advanced"
-block: "representation-engineering"
+block: "steering"
 category: "core-concepts"
 ---
 
 ## From Engineered to Natural Directions
 
-So far, every steering vector we have encountered has been **engineered**: we chose contrasting prompts, ran them through the model, and computed the difference. [ActAdd](/topics/activation-engineering/) uses a single contrast pair. [CAA](/topics/activation-engineering/) averages over many pairs. The [refusal direction](/topics/refusal-direction/) used harmful versus harmless prompts. In every case, a human designed the contrastive stimuli.
+So far, every steering vector we have encountered has been **engineered**: we chose contrasting prompts, ran them through the model, and computed the difference. [Addition steering](/topics/addition-steering/) uses contrast pairs. [CAA](/topics/caa-method/) averages over many pairs. The [refusal direction](/topics/refusal-direction/) used harmful versus harmless prompts. In every case, a human designed the contrastive stimuli.
 
 But do models also develop **naturally occurring** directions that encode meaningful computations? Todd et al. (2024) discovered that they do {% cite "todd2024function" %}. Using causal mediation analysis on in-context learning tasks, they found directions in activation space that encode entire *tasks* -- not just concepts like "sentiment" or "refusal," but *functions* like "translate to French" or "return the antonym."
 
@@ -47,7 +47,7 @@ The function vector encodes the abstract task, not the specific examples from wh
 <details class="pause-and-think">
 <summary>Pause and think: What function vectors tell us</summary>
 
-Engineered steering vectors (ActAdd, CAA) encode concepts that humans chose. Function vectors encode tasks that the model learned to represent through in-context learning. What does the existence of function vectors tell us about how transformers organize information internally? And how does this connect to the linear representation hypothesis?
+Engineered steering vectors encode concepts that humans chose. Function vectors encode tasks that the model learned to represent through in-context learning. What does the existence of function vectors tell us about how transformers organize information internally? And how does this connect to the linear representation hypothesis?
 
 Function vectors suggest that the residual stream organizes not just *what is* (features, concepts) but *what to do* (tasks, computations) as linear directions. This extends the linear representation hypothesis from static properties to dynamic computations. If tasks are linear directions, then the residual stream is not just a feature space -- it is a space of both features and functions, all encoded as directions that can be read, added, and composed.
 
@@ -76,13 +76,13 @@ Tasks that operate on the same aspect of the output are likely to conflict rathe
 
 Function vectors extend the steering paradigm in an important way:
 
-- **ActAdd/CAA steering vectors:** Engineered directions that modify behavior. The researcher chose the concept and designed the contrast pairs.
+- **[Addition steering](/topics/addition-steering/) vectors:** Engineered directions that modify behavior. The researcher chose the concept and designed the contrast pairs.
 - **Function vectors:** Naturally occurring directions that encode tasks. The model learned them during in-context learning.
 
 Both are directions in activation space. The difference is where they come from: human-specified contrast pairs versus the model's own learning mechanism.
 
 This convergence is significant. It suggests that the residual stream naturally organizes task information as linear directions -- the same geometric structure that we exploit when we engineer steering vectors. The [linear representation hypothesis](/topics/linear-representation-hypothesis/) applies not just to the concepts we choose to probe, but to the computations the model learns to perform.
 
-Together with [activation engineering](/topics/activation-engineering/), [representation engineering](/topics/representation-engineering/), the [refusal direction](/topics/refusal-direction/), and [concept erasure](/topics/concept-erasure/), function vectors complete the picture of Block 5: the residual stream is a linear space of both features and functions, all accessible through the geometric operations of reading, adding, and removing directions.
+Together with [probing methods](/topics/caa-method/), [steering techniques](/topics/representation-control/), and [model editing](/topics/concept-erasure/), function vectors complete the picture: the residual stream is a linear space of both features and functions, all accessible through the geometric operations of reading, adding, and removing directions.
 
 Where this block focused on reading and steering representations, the next block turns to the question of *computation*: for interpretable replacements of the opaque MLP layers that implement much of the transformer's processing, see [transcoders](/topics/transcoders/).
