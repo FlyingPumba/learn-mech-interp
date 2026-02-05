@@ -31,9 +31,9 @@
     },
     {
       "slug": "observation-to-causation",
-      "title": "From Observation to Causation",
+      "title": "Causal Interventions",
       "topics": [
-        { "slug": "activation-patching", "title": "Activation Patching and Causal Interventions" },
+        { "slug": "activation-patching", "title": "Activation Patching" },
         { "slug": "attribution-patching", "title": "Attribution Patching and Path Patching" }
       ]
     },
