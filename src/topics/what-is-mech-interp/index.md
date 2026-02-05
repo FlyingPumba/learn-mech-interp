@@ -16,6 +16,20 @@ Behavioral testing can catch known failure modes, but it cannot guarantee correc
 
 This is the motivation for interpretability: making neural networks understandable to humans. And within interpretability, a specific subfield has emerged that takes this goal to its most ambitious form. Rather than treating models as black boxes whose outputs we can only observe, **mechanistic interpretability** aims to reverse-engineer them into human-understandable algorithms by analyzing the computations performed by individual components and their interactions {% cite "bereska2024review" %}.
 
+## A Brief History: From Vision to Language
+
+Before language models dominated AI research, interpretability work focused on image classifiers. Around 2015, researchers developed techniques to visualize what individual neurons in convolutional neural networks were detecting.
+
+**Deep Dream** was an early breakthrough. Take an image classifier (like ImageNet), feed it an image, pick a neuron you suspect might detect dogs, and then modify the image slightly to make that neuron maximally happy. Push harder, and anything remotely dog-like in the image gets amplified until you get surreal, psychedelic imagery. The technique produced striking visuals, but more importantly, it demonstrated that individual neurons responded to recognizable concepts.
+
+Chris Olah and collaborators took this further, documenting circuits in vision models {% cite "olah2020zoom" %}. They found a "car neuron" that fired when a "window neuron" activated at the top of an image, a "wheel neuron" activated at the bottom, and a "car body neuron" activated in the middle. This was not just detecting features in isolation. The model had learned compositional structure: wheels plus windows plus body equals car. These early discoveries suggested that neural networks might be more interpretable than their black-box reputation implied.
+
+But there was a problem. Some neurons did not have clean interpretations. One neuron might fire for both wolves and Coca-Cola cans. Why? Perhaps the training data never contained images with both wolves and cans together, so the model could reuse the same neuron for both concepts without confusion. From a learning perspective, this is efficient. From an interpretability perspective, it is a nightmare.{% sidenote "If you think you've found a 'wolf neuron' and test it on pictures of wolves, it fires. Great! But you don't know it also fires for Coca-Cola cans. You might try to ablate the 'wolf neuron' and find nothing happens, because it was actually responding to something else entirely. This failure mode recurs throughout interpretability work." %}
+
+When researchers applied these techniques to language models, the same patterns emerged. Some components had clean interpretations. Many did not. The challenge of polysemantic neurons (neurons that respond to multiple unrelated concepts) became one of the central problems of the field. We will return to this problem throughout the course.
+
+The seminal work applying circuit-style analysis to transformers was Anthropic's "A Mathematical Framework for Transformer Circuits" {% cite "elhage2021mathematical" %}. This paper developed the residual stream view, the path decomposition perspective, and the discovery of [induction heads](/topics/induction-heads/), which we will study in detail later. The techniques from vision models had to be adapted since you cannot do gradient ascent in discrete token space the way you can in continuous pixel space, but the core philosophy transferred: open the model, identify components, trace how information flows.
+
 ## The Interpretability Landscape
 
 Interpretability methods vary along several axes. Understanding where mechanistic interpretability sits in this landscape clarifies what it is and what it is not.
@@ -54,7 +68,19 @@ Why directions rather than neurons? We will see in a moment that individual neur
 
 > **Circuit:** A computational subgraph of the neural network, consisting of features connected by weighted edges (via the model's weights). Circuits implement specific, identifiable algorithms.
 
-Features do not exist in isolation. They connect to form circuits that perform computation. In a transformer, imagine a pair of attention heads where one copies the previous token's identity to the current position, and the other uses that copied information to match repeated patterns. Together, they implement pattern completion -- a specific algorithm for in-context learning. This is exactly the [induction head circuit](/topics/induction-heads/), which we will study in a later article.
+Features do not exist in isolation. They connect to form circuits that perform computation. A circuit is essentially a subgraph of the transformer: specific heads in specific layers that communicate with each other through the residual stream to accomplish a task. If we identify the critical path and ablate other parts of the model, nothing changes. If we ablate anything along the critical path, the model fails at the task. This provides causal evidence that we have identified the actual mechanism.
+
+**The Path Decomposition View.** Thanks to skip connections, you can think of a transformer as an ensemble of paths. At each layer, information can either flow through the attention/MLP blocks or skip past them via the residual connection. For a model with $L$ layers, there are exponentially many possible paths from input to output. A circuit is the subset of paths that the model actually uses for a particular task.{% sidenote "For a one-layer transformer, there are essentially two paths to the output: the direct path (embedding straight to unembedding) and the path through the attention head. The direct path can only learn bigram statistics since it cannot move information between positions. More complex behaviors require flowing through attention." %}
+
+**Concrete Example: Skip Trigrams.** Consider the phrase "keep ... in mind." If you have seen "keep" earlier in the context, and now you see "in", predicting "mind" is a good guess. This is a skip trigram: two words that predict a third, even with garbage in between. Some attention heads learn to implement this pattern. The key (in the query-key sense) for "keep" broadcasts "I form trigrams with in→mind and at→bay." When "in" appears later, its query asks "does anyone form a trigram with me?" The attention matches, and "mind" gets boosted.
+
+But there is a bug. The head that stores "keep triggers mind" cannot know what comes after "keep" because of causal masking. So it stores *all* possible completions: "keep...in→mind" and "keep...at→bay." If you write "keep ... at mind," the model might predict "bay" because the QK circuit matched "at" to "keep" while the OV circuit retrieved the wrong completion. These skip trigram bugs are a consequence of the QK and OV circuits being separate mechanisms that cannot condition on each other within a single layer.{% sidenote "Understanding why skip trigram bugs occur is a good test of whether you understand the attention mechanism. The query-key circuit decides *where* to attend. The value-output circuit decides *what* information to move. These are independent computations within a layer. Conditional logic (if X then Y) requires spreading the computation across multiple layers." %}
+
+**Concrete Example: Induction Heads.** A more sophisticated circuit spans two layers. In layer 0, a "previous token head" makes every position attend to the position directly behind it, copying that token's identity into its own residual stream. In layer 1, an "induction head" asks "who comes after the token that matches my current token?" The layer-0 copying enables layer-1 matching.
+
+The result: if you see "...Barack Obama...Barack", the model predicts "Obama." This works even for random tokens that never appeared in training. The model learns a general pattern-completion algorithm, not specific facts. This is the [induction head circuit](/topics/induction-heads/), discovered by Elhage et al. {% cite "elhage2021mathematical" %}, and we will study it in detail later.
+
+**Circuits as the Unit of Understanding.** The circuit view suggests that individual heads are not the right unit of analysis. A head in isolation might seem to do nothing interpretable. But in composition with other heads, it implements a specific algorithm. Understanding a transformer means understanding its circuits.
 
 ### Claim 3: Universality
 
@@ -66,6 +92,34 @@ The most speculative claim: analogous features and circuits form across differen
 Can you think of a feature that might NOT be a simple direction in activation space? Consider concepts like "this sentence is a question" or "this number is larger than 100." These might require more than a single linear direction to represent. What does this suggest about the limits of the features-as-directions framework?
 
 </details>
+
+## The Residual Stream: Information Highway
+
+One of the most productive conceptual shifts in MI is viewing the residual stream as the central information highway of the transformer. Rather than thinking of layers as sequential processing stages, think of the residual stream as a shared bus that all components read from and write to.
+
+Each attention head and MLP reads from some subspace of the residual stream, computes something, and writes back to (potentially a different) subspace. The residual stream accumulates outputs: the final activation is a sum of contributions from all components. This is why we draw the architecture with the residual stream as the main spine and the attention/MLP blocks branching off to the side.
+
+This view has several implications:
+
+**Subspace Communication.** If a head in layer 2 wants to use information from a head in layer 1, they must share a subspace. Layer 1 writes to some directions in the residual stream; layer 2 reads from those same directions. If they use orthogonal subspaces, they cannot communicate. The model learns which subspaces to use for what purposes.{% sidenote "In high-dimensional spaces like a 768-dimensional residual stream, there is enormous room for nearly-orthogonal subspaces. Components can store different types of information without interfering, as long as they use different directions." %}
+
+**Early Unembedding.** You can take the residual stream at any intermediate layer and apply the unembedding matrix directly. Surprisingly, you do not get nonsense. You get a rough approximation of the model's final prediction, which improves as you go deeper. The [logit lens](/topics/logit-lens-and-tuned-lens/) technique exploits this to see how the model's prediction evolves layer by layer.
+
+**Direct Logit Attribution.** Since the final logits are a sum of contributions, we can decompose them: how much did each head contribute to predicting "Paris"? This lets us identify which components are responsible for specific predictions, which is the foundation of [direct logit attribution](/topics/direct-logit-attribution/).
+
+**Attention Patterns Are Interpretable.** The attention probability matrix (which tokens attend to which) is one of the few parts of the model you can stare at and immediately understand. Previous-token heads show a diagonal stripe one off the main diagonal. Induction heads show a characteristic vertical line (for the first occurrence of a repeated sequence) followed by a diagonal stripe. Just visualizing attention patterns gives you a reasonable intuition for what different heads do.{% sidenote "This is remarkably different from most neural network weights, which are opaque high-dimensional matrices. Attention patterns are 2D heatmaps with interpretable axes (source position vs. destination position), making them unusually accessible to human understanding." %}
+
+## Practical Tools: TransformerLens
+
+The conceptual framework is only useful if we can actually inspect models. **TransformerLens** is a library (originally written by Neel Nanda) that makes this easy. It wraps standard transformer models with hooks at every intermediate computation: every attention head, every MLP, every residual stream state.
+
+With TransformerLens, you can:
+- Access the attention patterns of every head on any input
+- Read the residual stream at any layer
+- Intervene mid-forward-pass (replace an activation, zero out a head, add a steering vector)
+- Run the same analysis across many different model architectures (GPT-2, Llama, Gemma, Pythia, and more)
+
+The library handles the boilerplate of extracting internal activations, letting you focus on the interpretability questions. Nearly all the experiments described in this course can be reproduced in TransformerLens with a few lines of code. We will use it extensively in later practical sections.
 
 ## Why MI Matters for AI Safety
 

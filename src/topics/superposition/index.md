@@ -10,9 +10,15 @@ category: "core-concepts"
 
 ## The Fundamental Tension
 
-In earlier articles on circuit analysis, features aligned neatly with individual attention heads. A Name Mover head moved names. An S-Inhibition head suppressed repeated subjects. Each component had one clear role, and we could study the model one head at a time. But what happens when features do not align with heads -- when a single head participates in multiple unrelated computations, and a single feature is distributed across many components?
+In earlier articles on circuit analysis, features aligned neatly with individual attention heads. A Name Mover head moved names. An S-Inhibition head suppressed repeated subjects. Each component had one clear role, and we could study the model one head at a time. But what happens when features do not align with heads, when a single head participates in multiple unrelated computations, and a single feature is distributed across many components?
 
-This is not a pathological edge case. It is the default. The reason is a counting problem at the heart of neural network representations.
+This is not a pathological edge case. It is the default.
+
+**Why Neurons Are Polysemantic.** Early vision interpretability work found neurons that fired for both wolves and Coca-Cola cans. The model had learned to reuse the same neuron for unrelated concepts because they never co-occurred in training data. This is efficient for the model but disastrous for interpretation: if you think you have found the "wolf neuron" and test it on wolves, it fires. But you do not know it also fires for cans. Ablation experiments become unreliable. Claims about what neurons represent become unfounded.
+
+The same phenomenon appears in language models. A neuron might fire for "baseball" and "academic citations." A head might participate in five different circuits for five different tasks. The clean one-to-one mapping between components and concepts that would make interpretability easy simply does not exist in most models.
+
+The reason is a counting problem at the heart of neural network representations.
 
 Consider a language model with a residual stream of dimension $d = 512$. If each feature gets its own orthogonal direction, the model can represent at most 512 features. But language understanding requires far more than 512 features. The model needs to track syntax, semantics, entities, relationships, sentiment, factual knowledge, and more. There are plausibly millions of features that a model would benefit from representing.{% sidenote "The term 'feature' here means any property of the input that the model finds useful for prediction. A feature might be 'this token is a proper noun,' 'the sentence is a question,' 'the subject is plural,' or 'the text is discussing sports.' Features range from simple syntactic properties to complex semantic and factual associations." %}
 

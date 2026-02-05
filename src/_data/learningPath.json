@@ -4,7 +4,7 @@
       "slug": "transformer-foundations",
       "title": "Transformer Foundations",
       "topics": [
-        { "slug": "mi-prerequisites", "title": "Prerequisites for Mechanistic Interpretability" },
+        { "slug": "mi-prerequisites", "title": "Prerequisites" },
         { "slug": "transformer-architecture", "title": "Transformer Architecture Intro" },
         { "slug": "attention-mechanism", "title": "The Attention Mechanism" },
         { "slug": "qk-ov-circuits", "title": "QK and OV Circuits" },
