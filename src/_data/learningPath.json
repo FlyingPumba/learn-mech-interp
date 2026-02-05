@@ -74,6 +74,18 @@
       ]
     },
     {
+      "slug": "hidden-state-decoding",
+      "title": "Hidden State Decoding",
+      "topics": [
+        { "slug": "hidden-state-decoding-intro", "title": "Hidden State Decoding: From Vectors to Language" },
+        { "slug": "patchscopes", "title": "Patchscopes" },
+        { "slug": "selfie-interpretation", "title": "SelfIE: Self-Interpretation of Embeddings" },
+        { "slug": "training-self-explanation", "title": "Training Models to Explain Their Computations" },
+        { "slug": "latentqa", "title": "LatentQA and Latent Interpretation Tuning" },
+        { "slug": "activation-oracles", "title": "Activation Oracles" }
+      ]
+    },
+    {
       "slug": "circuit-tracing-and-comparative-mi",
       "title": "Circuit Finding",
       "topics": [

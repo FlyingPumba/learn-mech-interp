@@ -306,5 +306,40 @@
     "year": 2023,
     "venue": "arXiv",
     "url": "https://arxiv.org/abs/2311.03658"
+  },
+  "ghandeharioun2024patchscopes": {
+    "title": "Patchscopes: A Unifying Framework for Inspecting Hidden Representations of Language Models",
+    "authors": "Ghandeharioun, A., Caciularu, A., Pearce, A., Dixon, L., Geva, M.",
+    "year": 2024,
+    "venue": "ICLR",
+    "url": "https://arxiv.org/abs/2401.06102"
+  },
+  "chen2024selfie": {
+    "title": "SelfIE: Self-Interpretation of Large Language Model Embeddings",
+    "authors": "Chen, H., Vondrick, C., Mao, C.",
+    "year": 2024,
+    "venue": "ACL",
+    "url": "https://arxiv.org/abs/2403.10949"
+  },
+  "li2025training": {
+    "title": "Training Language Models to Explain Their Own Computations",
+    "authors": "Li, B. Z., Guo, Z. C., Huang, V., Steinhardt, J., Andreas, J.",
+    "year": 2025,
+    "venue": "arXiv",
+    "url": "https://arxiv.org/abs/2511.08579"
+  },
+  "pan2024latentqa": {
+    "title": "LatentQA: Teaching LLMs to Decode Activations Into Natural Language",
+    "authors": "Pan, A., Chen, L., Steinhardt, J.",
+    "year": 2024,
+    "venue": "arXiv",
+    "url": "https://arxiv.org/abs/2412.08686"
+  },
+  "karvonen2025activationoracles": {
+    "title": "Activation Oracles: Training and Evaluating LLMs as General-Purpose Activation Explainers",
+    "authors": "Karvonen, A., Chua, J., Dumas, C., et al.",
+    "year": 2025,
+    "venue": "arXiv",
+    "url": "https://arxiv.org/abs/2512.15674"
   }
 }
