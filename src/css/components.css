@@ -623,6 +623,15 @@
 .sidebar-inner {
   position: sticky;
   top: var(--spacing-lg, 1.5rem);
+  max-height: calc(100vh - 3rem);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE/Edge */
+}
+
+.sidebar-inner::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, Opera */
 }
 
 .sidebar-title {
