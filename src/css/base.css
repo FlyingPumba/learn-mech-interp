@@ -14,7 +14,7 @@
 html {
   font-size: var(--font-size-base, 18px);
   -webkit-text-size-adjust: 100%;
-  background: var(--color-background, #ffffff) linear-gradient(180deg, var(--color-page-gradient-start, rgba(139, 159, 212, 0.10)) 0%, var(--color-page-gradient-end, rgba(232, 168, 120, 0.06)) 40%, transparent 80%) no-repeat fixed;
+  background-color: var(--color-page-bg, var(--color-background, #ffffff));
 }
 
 /* Body defaults */

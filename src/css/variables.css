@@ -33,6 +33,7 @@
 
   /* Colors - Background */
   --color-background: #ffffff;
+  --color-page-bg: #e4e8f4;
   --color-background-subtle: rgba(0, 0, 0, 0.02);
   --color-background-code: rgba(0, 0, 0, 0.04);
 
@@ -41,6 +42,7 @@
   --color-link: #5b6abf;
   --color-link-hover: #4a58a0;
   --color-link-visited: #7b6b8e;
+  --color-logo: #5e4a9e;
 
   /* Colors - Borders */
   --color-border: rgba(0, 0, 0, 0.1);
@@ -102,9 +104,9 @@
   /* Colors - Decorative */
   --color-header-gradient: rgba(139, 159, 212, 0.14);
   --color-hero-gradient-start: rgba(139, 159, 212, 0.15);
-  --color-hero-gradient-end: rgba(232, 168, 120, 0.10);
+  --color-hero-gradient-end: rgba(139, 159, 212, 0.15);
   --color-page-gradient-start: rgba(139, 159, 212, 0.25);
-  --color-page-gradient-end: rgba(232, 168, 120, 0.10);
+  --color-page-gradient-end: rgba(139, 159, 212, 0.25);
   --color-sidebar-shadow: rgba(0, 0, 0, 0.1);
   --color-btn-secondary-hover-bg: rgba(91, 106, 191, 0.08);
   --color-sidebar-hover-bg: rgba(91, 106, 191, 0.08);
@@ -122,6 +124,7 @@
 
     /* Background */
     --color-background: #1a1a2e;
+    --color-page-bg: #1a1a2e;
     --color-background-subtle: rgba(255, 255, 255, 0.04);
     --color-background-code: rgba(255, 255, 255, 0.08);
 
@@ -129,6 +132,8 @@
     --color-link: #a0aee8;
     --color-link-hover: #b8c4f0;
     --color-link-visited: #b0a0c8;
+    --color-logo: #b8a0e0;
+    --color-btn-primary: #6b5fbf;
 
     /* Borders */
     --color-border: rgba(255, 255, 255, 0.1);
@@ -184,6 +189,7 @@
 
   /* Background */
   --color-background: #1a1a2e;
+  --color-page-bg: #1a1a2e;
   --color-background-subtle: rgba(255, 255, 255, 0.04);
   --color-background-code: rgba(255, 255, 255, 0.08);
 
@@ -191,6 +197,8 @@
   --color-link: #a0aee8;
   --color-link-hover: #b8c4f0;
   --color-link-visited: #b0a0c8;
+  --color-logo: #b8a0e0;
+  --color-btn-primary: #6b5fbf;
 
   /* Borders */
   --color-border: rgba(255, 255, 255, 0.1);
