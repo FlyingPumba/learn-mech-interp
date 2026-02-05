@@ -53,6 +53,12 @@ layout: layouts/base.njk
   </div>
 </article>
 
+{# Contribution footer #}
+{% set sourceUrl = "https://github.com/FlyingPumba/learn-mech-interp/blob/main/" + page.inputPath | replace("./", "") %}
+<div class="article-contribute">
+  <p>Found an error or want to contribute? <a href="{{ sourceUrl }}" target="_blank" rel="noopener">Edit this page on GitHub</a>.</p>
+</div>
+
 {# Previous/Next navigation #}
 {% set prevArticle = collections.learningPath | getPreviousCollectionItem(page) %}
 {% set nextArticle = collections.learningPath | getNextCollectionItem(page) %}

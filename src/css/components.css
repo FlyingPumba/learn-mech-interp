@@ -760,6 +760,12 @@
    Dark/light mode switch button in header.
    ========================================================================== */
 
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm, 0.5rem);
+}
+
 .theme-toggle {
   display: flex;
   align-items: center;
@@ -779,6 +785,27 @@
 }
 
 .theme-toggle svg {
+  display: block;
+}
+
+.github-link {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: var(--spacing-xs);
+  color: var(--color-text-secondary);
+  transition: color var(--transition-fast), border-color var(--transition-fast);
+}
+
+.github-link:hover {
+  color: var(--color-link);
+  border-color: var(--color-border-strong);
+}
+
+.github-link svg {
   display: block;
 }
 
@@ -961,6 +988,40 @@
 .article-toc a[aria-current="location"] {
   color: var(--color-text, rgba(0, 0, 0, 0.87));
   font-weight: 500;
+}
+
+/* ==========================================================================
+   ARTICLE CONTRIBUTION FOOTER
+   Call-to-action for contributing/editing on GitHub.
+   ========================================================================== */
+
+.article-contribute {
+  max-width: var(--content-width-wide, 80ch);
+  margin: var(--spacing-2xl, 3rem) auto var(--spacing-lg, 1.5rem);
+  padding: var(--spacing-md, 1rem) var(--container-padding, 1.5rem);
+  border-top: 1px solid var(--color-border, rgba(0, 0, 0, 0.1));
+}
+
+.article-contribute p {
+  margin: 0;
+  font-size: var(--font-size-small, 0.875rem);
+  color: var(--color-text-secondary, rgba(0, 0, 0, 0.6));
+  text-align: center;
+}
+
+.article-contribute a {
+  color: var(--color-link, #004276);
+}
+
+.article-contribute a:hover {
+  color: var(--color-link-hover, #002d52);
+}
+
+@media (min-width: 768px) {
+  .article-contribute {
+    padding-left: 0;
+    padding-right: 0;
+  }
 }
 
 /* ==========================================================================
