@@ -4,7 +4,6 @@ description: "A balanced assessment of the current state of mechanistic interpre
 prerequisites:
   - title: "Open Problems: Methods and Research Questions"
     url: "/topics/open-problems-methods/"
-difficulty: "advanced"
 block: "open-problems-and-frontiers"
 category: "core-concepts"
 ---

@@ -4,7 +4,6 @@ description: "How sparse feature circuits and attribution graphs enable tracing 
 prerequisites:
   - title: "Transcoders: Interpretable MLP Replacements"
     url: "/topics/transcoders/"
-difficulty: "advanced"
 block: "circuit-tracing-and-comparative-mi"
 category: "methods"
 ---

@@ -4,7 +4,6 @@ description: "How attention heads compose across layers through V-, K-, and Q-co
 prerequisites:
   - title: "QK and OV Circuits"
     url: "/topics/qk-ov-circuits/"
-difficulty: "foundational"
 block: "transformer-foundations"
 category: "core-concepts"
 ---

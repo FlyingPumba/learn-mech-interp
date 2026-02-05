@@ -4,7 +4,6 @@ description: "How simple classifiers trained on model activations reveal what in
 prerequisites:
   - title: "The Logit Lens and Tuned Lens"
     url: "/topics/logit-lens-and-tuned-lens/"
-difficulty: "intermediate"
 block: "foundations-of-mi"
 category: "methods"
 ---

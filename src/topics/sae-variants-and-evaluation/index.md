@@ -4,7 +4,6 @@ description: "The landscape of SAE architectures beyond vanilla L1 -- Gated, Top
 prerequisites:
   - title: "Scaling Monosemanticity and Feature Steering"
     url: "/topics/scaling-monosemanticity/"
-difficulty: "advanced"
 block: "superposition-and-feature-extraction"
 category: "methods"
 ---

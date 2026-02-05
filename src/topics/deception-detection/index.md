@@ -4,7 +4,6 @@ description: "The alignment faking threat and why behavioral evaluations fail to
 prerequisites:
   - title: "Detecting Sleeper Agents"
     url: "/topics/sleeper-agent-detection/"
-difficulty: "advanced"
 block: "mi-for-safety"
 category: "applications"
 ---

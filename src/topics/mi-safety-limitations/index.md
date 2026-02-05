@@ -4,7 +4,6 @@ description: "A candid assessment of what mechanistic interpretability cannot ye
 prerequisites:
   - title: "Safety Mechanisms and MI-Based Monitoring"
     url: "/topics/safety-mechanisms-and-monitoring/"
-difficulty: "advanced"
 block: "mi-for-safety"
 category: "core-concepts"
 ---

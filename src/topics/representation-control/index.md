@@ -4,7 +4,6 @@ description: "The unified framework for steering model behavior through interven
 prerequisites:
   - title: "Ablation Steering"
     url: "/topics/ablation-steering/"
-difficulty: "advanced"
 block: "steering"
 category: "core-concepts"
 ---

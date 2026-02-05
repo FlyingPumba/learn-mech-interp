@@ -4,7 +4,6 @@ description: "Extending mechanistic interpretability beyond text to vision model
 prerequisites:
   - title: "Universality Across Models"
     url: "/topics/universality/"
-difficulty: "advanced"
 block: "circuit-tracing-and-comparative-mi"
 category: "applications"
 ---

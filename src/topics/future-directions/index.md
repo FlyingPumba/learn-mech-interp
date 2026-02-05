@@ -4,7 +4,6 @@ description: "Research frontiers in MI -- from intrinsic interpretability and au
 prerequisites:
   - title: "What MI Can and Cannot Do"
     url: "/topics/field-assessment/"
-difficulty: "advanced"
 block: "open-problems-and-frontiers"
 category: "core-concepts"
 ---

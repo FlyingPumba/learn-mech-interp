@@ -93,14 +93,6 @@
   /* Colors - Selection */
   --color-selection: rgba(91, 106, 191, 0.2);
 
-  /* Colors - Difficulty Badges */
-  --color-badge-foundational-bg: #e8f5e9;
-  --color-badge-foundational-text: #2e7d32;
-  --color-badge-intermediate-bg: #fff3e0;
-  --color-badge-intermediate-text: #e65100;
-  --color-badge-advanced-bg: #fce4ec;
-  --color-badge-advanced-text: #c62828;
-
   /* Colors - Decorative */
   --color-header-gradient: rgba(139, 159, 212, 0.14);
   --color-hero-gradient-start: rgba(139, 159, 212, 0.15);
@@ -158,14 +150,6 @@
     /* Selection */
     --color-selection: rgba(160, 174, 232, 0.3);
 
-    /* Difficulty Badges (darker, more saturated for dark backgrounds) */
-    --color-badge-foundational-bg: rgba(46, 125, 50, 0.2);
-    --color-badge-foundational-text: #81c784;
-    --color-badge-intermediate-bg: rgba(230, 81, 0, 0.2);
-    --color-badge-intermediate-text: #ffb74d;
-    --color-badge-advanced-bg: rgba(198, 40, 40, 0.2);
-    --color-badge-advanced-text: #ef9a9a;
-
     /* Decorative */
     --color-header-gradient: rgba(160, 174, 232, 0.08);
     --color-hero-gradient-start: rgba(70, 60, 130, 0.20);
@@ -222,14 +206,6 @@
 
   /* Selection */
   --color-selection: rgba(160, 174, 232, 0.3);
-
-  /* Difficulty Badges (darker, more saturated for dark backgrounds) */
-  --color-badge-foundational-bg: rgba(46, 125, 50, 0.2);
-  --color-badge-foundational-text: #81c784;
-  --color-badge-intermediate-bg: rgba(230, 81, 0, 0.2);
-  --color-badge-intermediate-text: #ffb74d;
-  --color-badge-advanced-bg: rgba(198, 40, 40, 0.2);
-  --color-badge-advanced-text: #ef9a9a;
 
   /* Decorative */
   --color-header-gradient: rgba(160, 174, 232, 0.08);

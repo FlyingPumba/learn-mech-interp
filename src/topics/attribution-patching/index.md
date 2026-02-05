@@ -4,7 +4,6 @@ description: "Efficient gradient-based approximations to activation patching, an
 prerequisites:
   - title: "Activation Patching and Causal Interventions"
     url: "/topics/activation-patching/"
-difficulty: "intermediate"
 block: "observation-to-causation"
 category: "methods"
 ---

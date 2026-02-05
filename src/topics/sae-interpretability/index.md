@@ -4,7 +4,6 @@ description: "How researchers visualize and interpret the features SAEs discover
 prerequisites:
   - title: "Sparse Autoencoders: Decomposing Superposition"
     url: "/topics/sparse-autoencoders/"
-difficulty: "intermediate"
 block: "superposition-and-feature-extraction"
 category: "methods"
 ---

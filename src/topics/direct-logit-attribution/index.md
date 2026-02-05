@@ -4,7 +4,6 @@ description: "How to decompose a model's output into per-component contributions
 prerequisites:
   - title: "Induction Heads and In-Context Learning"
     url: "/topics/induction-heads/"
-difficulty: "intermediate"
 block: "foundations-of-mi"
 category: "methods"
 ---

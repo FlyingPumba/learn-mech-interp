@@ -4,7 +4,6 @@ description: "How to compute robust steering vectors by averaging activation dif
 prerequisites:
   - title: "The Linear Representation Hypothesis"
     url: "/topics/linear-representation-hypothesis/"
-difficulty: "intermediate"
 block: "probing"
 category: "methods"
 ---

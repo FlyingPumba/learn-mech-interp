@@ -4,7 +4,6 @@ description: "How attention heads decompose into independent QK (matching) and O
 prerequisites:
   - title: "The Attention Mechanism"
     url: "/topics/attention-mechanism/"
-difficulty: "foundational"
 block: "transformer-foundations"
 category: "core-concepts"
 ---

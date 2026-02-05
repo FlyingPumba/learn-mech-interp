@@ -4,7 +4,6 @@ description: "How scaling sparse autoencoders to millions of features revealed m
 prerequisites:
   - title: "Feature Dashboards and Automated Interpretability"
     url: "/topics/sae-interpretability/"
-difficulty: "advanced"
 block: "superposition-and-feature-extraction"
 category: "applications"
 ---

@@ -4,7 +4,6 @@ description: "How MI tools enable monitoring model behavior through internal rep
 prerequisites:
   - title: "Deception Detection and Alignment Faking"
     url: "/topics/deception-detection/"
-difficulty: "advanced"
 block: "mi-for-safety"
 category: "applications"
 ---

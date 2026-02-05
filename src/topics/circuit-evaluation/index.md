@@ -4,7 +4,6 @@ description: "How to evaluate whether a discovered circuit is a faithful, comple
 prerequisites:
   - title: "The IOI Circuit: Discovery and Mechanism"
     url: "/topics/ioi-circuit/"
-difficulty: "advanced"
 block: "observation-to-causation"
 category: "core-concepts"
 ---

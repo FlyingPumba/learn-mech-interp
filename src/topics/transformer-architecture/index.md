@@ -4,7 +4,6 @@ description: "A guided walkthrough of the full transformer stack: embeddings, at
 prerequisites:
   - title: "Prerequisites for Mechanistic Interpretability"
     url: "/topics/mi-prerequisites/"
-difficulty: "foundational"
 block: "transformer-foundations"
 category: "transformer-foundations"
 ---

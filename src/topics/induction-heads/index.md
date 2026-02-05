@@ -4,7 +4,6 @@ description: "How the discovery of induction heads revealed a two-step circuit f
 prerequisites:
   - title: "Composition and Virtual Attention Heads"
     url: "/topics/composition-and-virtual-heads/"
-difficulty: "intermediate"
 block: "foundations-of-mi"
 category: "core-concepts"
 ---

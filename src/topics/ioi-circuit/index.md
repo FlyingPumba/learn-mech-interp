@@ -4,7 +4,6 @@ description: "How researchers reverse-engineered the complete algorithm GPT-2 Sm
 prerequisites:
   - title: "Attribution Patching and Path Patching"
     url: "/topics/attribution-patching/"
-difficulty: "advanced"
 block: "observation-to-causation"
 category: "applications"
 ---

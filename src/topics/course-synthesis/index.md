@@ -4,7 +4,6 @@ description: "A capstone synthesis of the full mechanistic interpretability curr
 prerequisites:
   - title: "The Future of Mechanistic Interpretability"
     url: "/topics/future-directions/"
-difficulty: "advanced"
 block: "open-problems-and-frontiers"
 category: "core-concepts"
 ---

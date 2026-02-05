@@ -2,7 +2,6 @@
 title: "The Attention Mechanism"
 description: "How transformers enable tokens to communicate through queries, keys, and values, and why the residual stream's additive structure is the foundation of mechanistic interpretability."
 prerequisites: []
-difficulty: "foundational"
 block: "transformer-foundations"
 category: "core-concepts"
 ---

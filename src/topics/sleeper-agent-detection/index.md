@@ -4,7 +4,6 @@ description: "How MI tools can detect artificially trained backdoor behaviors in
 prerequisites:
   - title: "The Refusal Direction"
     url: "/topics/refusal-direction/"
-difficulty: "advanced"
 block: "mi-for-safety"
 category: "applications"
 ---

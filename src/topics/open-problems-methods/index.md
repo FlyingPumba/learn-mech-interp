@@ -4,7 +4,6 @@ description: "A survey of the most pressing open problems in MI methods -- from 
 prerequisites:
   - title: "Honest Limitations of MI for Safety"
     url: "/topics/mi-safety-limitations/"
-difficulty: "advanced"
 block: "open-problems-and-frontiers"
 category: "core-concepts"
 ---

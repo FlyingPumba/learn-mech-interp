@@ -4,7 +4,6 @@ description: "How sparse autoencoders learn an overcomplete dictionary of monose
 prerequisites:
   - title: "The Superposition Hypothesis"
     url: "/topics/superposition/"
-difficulty: "intermediate"
 block: "superposition-and-feature-extraction"
 category: "methods"
 ---

@@ -2,7 +2,6 @@
 title: "Prerequisites for Mechanistic Interpretability"
 description: "A short refresher on neural networks, backpropagation, and linear algebra notation used throughout the course."
 prerequisites: []
-difficulty: "foundational"
 block: "transformer-foundations"
 category: "transformer-foundations"
 ---

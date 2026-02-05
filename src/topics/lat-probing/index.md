@@ -4,7 +4,6 @@ description: "How to read what concepts a model represents by training linear cl
 prerequisites:
   - title: "Contrastive Activation Addition (CAA)"
     url: "/topics/caa-method/"
-difficulty: "intermediate"
 block: "probing"
 category: "methods"
 ---

@@ -4,7 +4,6 @@ description: "The evidence for and against the universality hypothesis -- whethe
 prerequisites:
   - title: "Crosscoders and Model Diffing"
     url: "/topics/crosscoders-and-model-diffing/"
-difficulty: "advanced"
 block: "circuit-tracing-and-comparative-mi"
 category: "core-concepts"
 ---

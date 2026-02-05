@@ -4,7 +4,6 @@ description: "How transcoders replace opaque MLP layers with sparse interpretabl
 prerequisites:
   - title: "SAE Variants, Evaluation, and Honest Limitations"
     url: "/topics/sae-variants-and-evaluation/"
-difficulty: "advanced"
 block: "circuit-tracing-and-comparative-mi"
 category: "methods"
 ---

@@ -4,7 +4,6 @@ description: "Why neural networks appear to represent concepts as linear directi
 prerequisites:
   - title: "What is Interpretability?"
     url: "/topics/what-is-mech-interp/"
-difficulty: "foundational"
 block: "foundations-of-mi"
 category: "core-concepts"
 ---

@@ -4,7 +4,6 @@ description: "How neural networks represent more features than dimensions by enc
 prerequisites:
   - title: "The Attention Mechanism"
     url: "/topics/attention-mechanism/"
-difficulty: "intermediate"
 block: "superposition-and-feature-extraction"
 category: "core-concepts"
 ---

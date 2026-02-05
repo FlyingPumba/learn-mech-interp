@@ -4,7 +4,6 @@ description: "The primary technique for establishing causal claims about model i
 prerequisites:
   - title: "The Attention Mechanism"
     url: "/topics/attention-mechanism/"
-difficulty: "advanced"
 block: "observation-to-causation"
 category: "methods"
 ---

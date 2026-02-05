@@ -4,7 +4,6 @@ description: "How projecting out directions from model activations can disable s
 prerequisites:
   - title: "Addition Steering"
     url: "/topics/addition-steering/"
-difficulty: "advanced"
 block: "steering"
 category: "methods"
 ---

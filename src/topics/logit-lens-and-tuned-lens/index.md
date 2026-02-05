@@ -4,7 +4,6 @@ description: "Vocabulary projection methods for reading model internals: the log
 prerequisites:
   - title: "Direct Logit Attribution"
     url: "/topics/direct-logit-attribution/"
-difficulty: "intermediate"
 block: "foundations-of-mi"
 category: "methods"
 ---

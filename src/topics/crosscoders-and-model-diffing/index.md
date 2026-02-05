@@ -4,7 +4,6 @@ description: "How crosscoders train shared feature dictionaries across models to
 prerequisites:
   - title: "Circuit Tracing and Attribution Graphs"
     url: "/topics/circuit-tracing/"
-difficulty: "advanced"
 block: "circuit-tracing-and-comparative-mi"
 category: "methods"
 ---

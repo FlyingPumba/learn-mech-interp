@@ -4,7 +4,6 @@ description: "How adding carefully computed steering vectors to model activation
 prerequisites:
   - title: "Contrastive Activation Addition (CAA)"
     url: "/topics/caa-method/"
-difficulty: "advanced"
 block: "steering"
 category: "methods"
 ---

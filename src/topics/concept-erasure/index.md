@@ -4,7 +4,6 @@ description: "How LEACE provides a mathematically guaranteed method for erasing 
 prerequisites:
   - title: "Ablation Steering"
     url: "/topics/ablation-steering/"
-difficulty: "advanced"
 block: "model-editing"
 category: "methods"
 ---

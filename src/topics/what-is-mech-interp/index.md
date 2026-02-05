@@ -4,7 +4,6 @@ description: "The landscape of neural network interpretability approaches and th
 prerequisites:
   - title: "The Attention Mechanism"
     url: "/topics/attention-mechanism/"
-difficulty: "foundational"
 block: "foundations-of-mi"
 category: "core-concepts"
 ---

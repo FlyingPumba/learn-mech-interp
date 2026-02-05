@@ -23,9 +23,6 @@ layout: layouts/base.njk
 
 <article class="article">
   <header class="article-header">
-    {% if difficulty %}
-      <span class="difficulty-badge difficulty-{{ difficulty }}">{{ difficulty | capitalize }}</span>
-    {% endif %}
     <h1 class="article-title">{{ title }}</h1>
     {% if description %}
     <p class="article-description">{{ description }}</p>

@@ -4,7 +4,6 @@ description: "How in-context learning examples create natural directions in acti
 prerequisites:
   - title: "Representation Control"
     url: "/topics/representation-control/"
-difficulty: "advanced"
 block: "steering"
 category: "core-concepts"
 ---

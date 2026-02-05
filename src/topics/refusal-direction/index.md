@@ -4,7 +4,6 @@ description: "How a single direction in activation space controls whether a lang
 prerequisites:
   - title: "Ablation Steering"
     url: "/topics/ablation-steering/"
-difficulty: "advanced"
 block: "mi-for-safety"
 category: "applications"
 ---
