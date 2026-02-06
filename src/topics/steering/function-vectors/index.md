@@ -87,4 +87,4 @@ This convergence is significant. It suggests that the residual stream naturally 
 
 Together with [probing methods](/topics/caa-method/), [steering techniques](/topics/representation-control/), and [model editing](/topics/concept-erasure/), function vectors complete the picture: the residual stream is a linear space of both features and functions, all accessible through the geometric operations of reading, adding, and removing directions.
 
-Where this block focused on reading and steering representations, the next block turns to the question of *computation*: for interpretable replacements of the opaque MLP layers that implement much of the transformer's processing, see [transcoders](/topics/transcoders/).
+But all the methods so far, including function vectors, require the researcher to specify what to look for. [Unsupervised steering vectors](/topics/unsupervised-steering-vectors/) take a different approach: discover what latent behaviors a model harbors without specifying the target in advance.
