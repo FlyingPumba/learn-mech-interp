@@ -318,6 +318,6 @@ export default function(eleventyConfig) {
     templateFormats: ["md", "njk", "html"],
     markdownTemplateEngine: "njk",
     htmlTemplateEngine: "njk",
-    pathPrefix: "/learn-mech-interp/"
+    pathPrefix: "/"
   };
 }
