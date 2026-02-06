@@ -1,7 +1,7 @@
 ---
 title: "Unsupervised Steering Vectors"
 description: "How optimization-based methods discover steering vectors without contrast pairs, finding latent behaviors the researcher did not anticipate by maximizing activation change across layers."
-order: 5
+order: 6
 prerequisites:
   - title: "Addition Steering"
     url: "/topics/addition-steering/"

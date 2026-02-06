@@ -1,7 +1,7 @@
 ---
 title: "Function Vectors"
 description: "How in-context learning examples create natural directions in activation space that encode entire tasks, showing that models represent functions, not just features."
-order: 4
+order: 5
 prerequisites:
   - title: "Representation Control"
     url: "/topics/representation-control/"

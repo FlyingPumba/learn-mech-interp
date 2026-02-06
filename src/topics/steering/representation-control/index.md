@@ -1,7 +1,7 @@
 ---
 title: "Representation Control"
 description: "The unified framework for steering model behavior through interventions on internal representations, encompassing addition and ablation as complementary operations."
-order: 3
+order: 4
 prerequisites:
   - title: "Ablation Steering"
     url: "/topics/ablation-steering/"

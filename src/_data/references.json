@@ -384,6 +384,13 @@
     "venue": "arXiv",
     "url": "https://arxiv.org/abs/2506.10805"
   },
+  "marshall2024ace": {
+    "title": "Refusal in LLMs is an Affine Function",
+    "authors": "Marshall, T., Scherlis, A., Belrose, N.",
+    "year": 2024,
+    "venue": "arXiv",
+    "url": "https://arxiv.org/abs/2411.09003"
+  },
   "kramar2024atp": {
     "title": "AtP*: An efficient and scalable method for localizing LLM behaviour to components",
     "authors": "Kramár, J., Lieberum, T., Shah, R., Nanda, N.",
