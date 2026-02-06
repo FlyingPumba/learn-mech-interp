@@ -384,6 +384,34 @@
     "venue": "arXiv",
     "url": "https://arxiv.org/abs/2506.10805"
   },
+  "kramar2024atp": {
+    "title": "AtP*: An efficient and scalable method for localizing LLM behaviour to components",
+    "authors": "Kramár, J., Lieberum, T., Shah, R., Nanda, N.",
+    "year": 2024,
+    "venue": "arXiv",
+    "url": "https://arxiv.org/abs/2403.00745"
+  },
+  "syed2023eap": {
+    "title": "Attribution Patching Outperforms Automated Circuit Discovery",
+    "authors": "Syed, A., Rager, C., Conmy, A.",
+    "year": 2023,
+    "venue": "BlackboxNLP 2024",
+    "url": "https://arxiv.org/abs/2310.10348"
+  },
+  "hanna2024faithfulness": {
+    "title": "Have Faith in Faithfulness: Going Beyond Circuit Overlap When Finding Model Mechanisms",
+    "authors": "Hanna, M., Pezzelle, S., Belinkov, Y.",
+    "year": 2024,
+    "venue": "COLM 2024",
+    "url": "https://arxiv.org/abs/2403.17806"
+  },
+  "zhang2025eapgp": {
+    "title": "EAP-GP: Mitigating Saturation Effect in Gradient-based Automated Circuit Identification",
+    "authors": "Zhang, L., Dong, W., Zhang, Z., et al.",
+    "year": 2025,
+    "venue": "arXiv",
+    "url": "https://arxiv.org/abs/2502.06852"
+  },
   "aranguri2025lda": {
     "title": "Discovering Undesired Rare Behaviors via Model Diff Amplification",
     "authors": "Aranguri, S., McGrath, T.",
