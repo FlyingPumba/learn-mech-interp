@@ -62,6 +62,11 @@ The model sees tokens $A$ then $B$ somewhere earlier in the context. Later, it s
 
 Take a concrete example. In the sequence "The cat sat on the cat ...", at the second "cat" position the model should predict "sat" -- the token that followed the first "cat." This requires the model to find the previous occurrence of "cat" in the context, identify that "sat" followed it, and copy "sat" to the output. No single attention head can do all three steps. This requires composition {% cite "olsson2022context" %}.
 
+<figure>
+  <img src="images/induction_head_mechanism.png" alt="The induction head mechanism on a repeated random token sequence. The current token 'node' in the repeated half matches the prefix of the attended-to token 'struction' in the first half. The attention arrow shows the induction head attending from 'node' back to 'struction', whose logit is then boosted for the next-token prediction.">
+  <figcaption>The induction head pattern: on a repeated random sequence, the head at the current token ("node") attends back to the token ("struction") that previously followed a matching prefix. The attended-to token's logit is copied to the output. From Olsson et al., <em>In-context Learning and Induction Heads</em>. {%- cite "olsson2022context" -%}</figcaption>
+</figure>
+
 ## The Two-Step Mechanism
 
 The induction head circuit uses two attention heads across two layers, working together through K-composition.
@@ -91,6 +96,11 @@ If you see an attention heatmap with a clean diagonal, that is a previous token 
 During training, there is a sudden sharp improvement in in-context learning ability. Olsson et al. document this as a visible "bump" in the training loss curve {% cite "olsson2022context" %}. Before this moment, the model makes predictions based on token frequencies -- essentially bigram statistics. After, it uses earlier tokens in the context to improve predictions on later tokens.
 
 The transition is not gradual. Before the phase change, the model's loss improves for the first 50 or so tokens of context and then plateaus. Additional context does not help. After the phase change, the model's loss continues improving for much longer contexts, sometimes 500 tokens or more. The model has suddenly gained the ability to use distant context.
+
+<figure>
+  <img src="images/phase_change_icl.png" alt="Three panels showing in-context learning score over training for one-layer, two-layer, and three-layer attention-only transformers. The one-layer model shows no sudden improvement. The two-layer and three-layer models show a sharp drop in the in-context learning score during a highlighted phase change window early in training, indicating a sudden acquisition of in-context learning ability.">
+  <figcaption>The phase change in in-context learning. One-layer models (left) show no sudden improvement. Models with two or more layers (center, right) undergo an abrupt improvement during a narrow training window (highlighted), corresponding to the formation of induction heads. From Olsson et al., <em>In-context Learning and Induction Heads</em>. {%- cite "olsson2022context" -%}</figcaption>
+</figure>
 
 Induction heads form at precisely the moment of the phase change. The correlation is striking, and multiple lines of evidence support a causal link. Ablating induction heads in small models removes in-context learning ability. The phase change occurs at the same training step across model sizes from 2-layer to 40-layer models. Architectural perturbations that make induction heads harder to form (such as restricting composition between layers) delay the phase change correspondingly.
 

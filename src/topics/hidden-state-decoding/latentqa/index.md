@@ -31,6 +31,11 @@ The key insight is that activations, like images, are dense representations that
 
 ## Latent Interpretation Tuning (LIT)
 
+<figure>
+  <img src="images/latentqa-framework.png" alt="The LatentQA pipeline in two steps. Step 1, Curating LatentQA Data with GPT: a control is prepended to a stimulus, the target LLM produces an output, and GPT generates QA pairs about the control. Step 2, Finetuning the Decoder: activations from the stimulus are patched into a decoder LLM (a copy of the target, fine-tuned with LoRA), which is trained to answer the QA pairs.">
+  <figcaption>The LatentQA training pipeline. (1) Data is curated by running a target LLM with a control prepended to a stimulus, capturing activations and generating QA pairs with GPT. (2) A decoder LLM is fine-tuned with LoRA to answer questions about patched-in activations. From Pan et al., <em>LatentQA: Teaching LLMs to Decode Activations Into Natural Language</em>. {%- cite "pan2024latentqa" -%}</figcaption>
+</figure>
+
 The training procedure, called Latent Interpretation Tuning, works as follows:
 
 1. **Collect activations.** Run a target model on diverse inputs, extracting hidden representations from chosen layers.

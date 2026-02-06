@@ -52,6 +52,11 @@ The history of SAE variants is the story of getting closer to direct L0 optimiza
 
 Rajamanoharan et al. (2024) identified the core problem: vanilla SAEs use a single pathway for both selection and magnitude, which means the L1 penalty distorts both {% cite "rajamanoharan2024gated" %}. Their solution is to decouple them into two separate pathways.
 
+<figure>
+  <img src="images/gated-sae-architecture.png" alt="Gated SAE architecture diagram. The input x passes through an encoder W_enc, which splits into two parallel pathways: a Magnitude Path (scale and shift followed by ReLU, producing continuous activation values) and a Gating Path (shift followed by binarize, producing binary on/off decisions). The outputs are combined via elementwise multiplication before passing through the decoder W_dec to produce the reconstruction x-hat.">
+  <figcaption>The Gated SAE architecture. The encoder output splits into a magnitude pathway (top, estimating how active each feature is) and a gating pathway (bottom, deciding which features are on). The L1 sparsity penalty applies only to the gating pathway, leaving magnitudes unbiased. From Rajamanoharan et al., <em>Improving Dictionary Learning with Gated Sparse Autoencoders</em>. {%- cite "rajamanoharan2024gated" -%}</figcaption>
+</figure>
+
 The **gating pathway** makes the binary on/off decision for each feature. A learned linear transformation followed by a threshold determines which features are active. The L1 penalty applies only here, encouraging the gate to be sparse.
 
 The **magnitude pathway** estimates how active each feature is, using a separate linear transformation. Because this pathway is free from the L1 penalty, it can estimate magnitudes without bias.
@@ -116,6 +121,11 @@ No L1 term at all. No shrinkage. No magnitude distortion. The L0 penalty counts 
 The result: state-of-the-art reconstruction fidelity at a given sparsity level on Gemma 2 9B, outperforming both Gated and TopK SAEs. Rajamanoharan et al. released hundreds of JumpReLU SAEs on every layer of Gemma 2 2B and 9B, enabling community research.
 
 ## The Evolution at a Glance
+
+<figure>
+  <img src="images/sae-architecture-pareto.png" alt="Pareto frontier plot comparing four SAE architectures. The x-axis shows Sparsity (L0) on a log scale from about 8 to 300, and the y-axis shows Normalized MSE from about 0.35 to 0.6. Four curves are shown: ReLU (blue circles, worst performance), ProLU STE (orange triangles), Gated (green squares), and TopK (purple stars, best performance). TopK achieves the lowest MSE at every sparsity level, with the gap widening at higher sparsity. An arrow labeled 'better' points toward lower MSE and higher sparsity.">
+  <figcaption>The reconstruction-sparsity Pareto frontier for four SAE architectures at 32,768 latents. At every sparsity level, TopK (purple) achieves lower reconstruction error than standard ReLU SAEs (blue), with Gated (green) and ProLU STE (orange) falling in between. Lower and to the right is better. From Gao et al., <em>Scaling and Evaluating Sparse Autoencoders</em>. {%- cite "gao2024scaling" -%}</figcaption>
+</figure>
 
 The four SAE architectures form an iterative improvement story:
 

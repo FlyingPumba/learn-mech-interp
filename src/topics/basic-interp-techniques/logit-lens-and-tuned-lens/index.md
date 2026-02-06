@@ -61,6 +61,11 @@ Each translator consists of a matrix $A_\ell$ and a bias vector $\mathbf{b}_\ell
 
 > **Tuned Lens:** The tuned lens improves on the logit lens by learning an affine probe per layer that maps intermediate representations to the final-layer basis before applying the unembedding matrix. It is more reliable and less biased, working across a wider range of models.
 
+<figure>
+  <img src="images/tuned_lens_comparison.png" alt="Side-by-side comparison of logit lens (top) and tuned lens (bottom) applied to GPT-Neo-2.7B. The logit lens produces incoherent predictions at early and middle layers, while the tuned lens produces meaningful token predictions starting from much earlier layers.">
+  <figcaption>Logit lens (top) vs. tuned lens (bottom) applied to GPT-Neo-2.7B. The logit lens produces garbled predictions at early layers because intermediate representations use a different basis than the final layer. The tuned lens corrects for this, yielding coherent predictions across all layers. From Belrose et al., <em>Eliciting Latent Predictions from Transformers with the Tuned Lens</em>. {%- cite "belrose2023tunedlens" -%}</figcaption>
+</figure>
+
 A critical design choice: the translators minimize KL divergence between their output and the *final layer's* output distribution, not ground truth labels. This means the tuned lens learns to extract what the *model* knows at each layer, not what is true in the world. The distinction matters. At layer 4, the model might "believe" the answer is France. The tuned lens faithfully reports this belief, even though France is not the final answer.
 
 The pedagogical lesson is important. The logit lens fails on some models, but this does not mean those models lack information at intermediate layers. The information is there, encoded in a different basis. The tuned lens recovers it by learning the basis correction. **Representation format matters as much as information content.**{% sidenote "The tuned lens achieves lower perplexity than the logit lens across all tested models and layers. More importantly, its predictions are more calibrated and less biased toward high-frequency tokens. For researchers who want to track intermediate predictions, the tuned lens is strictly superior." %}

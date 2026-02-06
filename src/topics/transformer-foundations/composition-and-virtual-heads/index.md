@@ -47,6 +47,11 @@ Q-composition lets the model dynamically adjust what it attends to based on earl
 
 Where K-composition changes what positions "advertise" about themselves, Q-composition changes what positions "search for." Together, K- and Q-composition give later layers the ability to implement attention patterns that are computed functions of the model's intermediate representations, not just functions of the input tokens.
 
+<figure>
+  <img src="images/qkv-composition-between-layers.png" alt="Diagram showing Q-Composition, K-Composition, and V-Composition between Layer 0 and Layer 1 attention heads in a two-layer model. Each panel shows dots representing heads in both layers, with lines connecting composing head pairs. K-Composition shows the strongest connections, linking a previous token head (red) in Layer 0 to induction heads (teal) in Layer 1.">
+  <figcaption>Q-, K-, and V-Composition between attention heads in a two-layer attention-only transformer. Lines connect head pairs with significant composition, measured by the Frobenius norm of the relevant weight matrix products. In this model, K-composition dominates: a previous token head (red, Layer 0) composes with induction heads (teal, Layer 1) to implement in-context pattern completion. From Elhage et al., <em>A Mathematical Framework for Transformer Circuits</em>. {%- cite "elhage2021mathematical" -%}</figcaption>
+</figure>
+
 ## Virtual Attention Heads
 
 > **Virtual Attention Head:** A virtual attention head is a computational unit formed by the composition of two or more physical attention heads across layers. It implements a behavior that no single physical head performs alone.

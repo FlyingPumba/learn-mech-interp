@@ -19,6 +19,11 @@ The answer, surveyed by Lin et al. (2025), is cautiously optimistic {% cite "lin
 
 This article covers three model families: contrastive vision-language models (CLIP), generative vision-language models (VLMs like LLaVA and GPT-4V), and text-to-image diffusion models. For each, we examine what works, what is still early, and what remains unknown.
 
+<figure>
+  <img src="images/multimodal-mi-taxonomy.png" alt="Taxonomy diagram of multimodal mechanistic interpretability. Left column shows methods split into two groups: methods adapted from LLM interpretability (linear probing, logit lens, causal tracing, representation decomposition, general task vectors, sparse autoencoders, neuron-level descriptions) and multimodal-specific methods (text-explanations of internal embeddings, network dissection, cross-attention based interpretation, training data attribution, feature visualization). Center column shows three model architectures: non-generative vision-language models with contrastive learning, generative vision-language models with an adapter between image encoder and LLM, and text-to-image generative models with denoising. Right column lists applications including mitigating spurious correlations, zero-shot segmentation, in-context learning, model editing, detecting hallucinations, improving safety, improving compositionality, and controllable generation.">
+  <figcaption>An overview of the multimodal MI landscape. Methods adapted from LLM interpretability (top left) and multimodal-specific methods (bottom left) are applied across three model families: contrastive vision-language models, generative VLMs, and text-to-image diffusion models. From Lin et al., <em>A Survey on Mechanistic Interpretability for Multi-Modal Foundation Models</em>. {%- cite "lin2025multimodal" -%}</figcaption>
+</figure>
+
 ## CLIP: The Bridge Between Text and Vision
 
 CLIP (Contrastive Language-Image Pretraining) trains a vision encoder and a text encoder to produce aligned representations in a shared embedding space. Images and text that describe the same concept end up near each other in this shared space.

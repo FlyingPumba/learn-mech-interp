@@ -37,6 +37,11 @@ Each attention head does two conceptually independent things. First, it decides 
 
 These two jobs are controlled by two independent circuits: the **QK circuit** and the **OV circuit**. Remarkably, the four weight matrices of an attention head ($W_Q$, $W_K$, $W_V$, $W_O$) factor cleanly into these two circuits, each of which can be analyzed on its own.
 
+<figure>
+  <img src="images/qk-ov-circuit-paths.png" alt="Diagram of a one-layer attention-only transformer showing the QK and OV circuits as separate paths through the model. The OV circuit (gold) traces from the source token through W_E, W_V, W_O, and W_U to the output logits. The QK circuit (pink) traces from both source and destination tokens through W_E, W_K, and W_Q to produce attention scores.">
+  <figcaption>The two independent circuits of an attention head, shown as end-to-end paths through a one-layer transformer. The OV circuit (gold) determines how attending to a source token affects the output logits. The QK circuit (pink) determines which tokens the head attends to. From Elhage et al., <em>A Mathematical Framework for Transformer Circuits</em>. {%- cite "elhage2021mathematical" -%}</figcaption>
+</figure>
+
 ## The QK Circuit
 
 > **QK Circuit:** The QK circuit of attention head $h$ is the matrix $W_{QK}^h = W_Q^h (W_K^h)^T$. It determines the attention pattern: which source tokens each destination token attends to.

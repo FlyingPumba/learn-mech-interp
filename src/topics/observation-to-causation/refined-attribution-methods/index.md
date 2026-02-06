@@ -106,6 +106,11 @@ $$
 
 Instead of evaluating the gradient at a single point, EAP-IG evaluates it at $m$ equally-spaced points along the straight line from corrupted to clean activations and averages.{% sidenote "Integrated gradients were introduced by Sundararajan et al. (2017) as a general attribution method satisfying desirable axioms like sensitivity and implementation invariance. EAP-IG applies this established technique specifically to edge attribution in circuit discovery." %}
 
+<figure>
+  <img src="images/eap-ig-integrated-gradients-gelu.png" alt="Left: A GELU activation curve showing how EAP evaluates the gradient at a single point (which may be in a flat region), while EAP-IG samples gradients at multiple interpolation points along the path, capturing the transition. Right: Circuit faithfulness on the Country-Capital task, showing EAP-IG achieving higher faithfulness than EAP as edges are added.">
+  <figcaption>Left: integrated gradients on a GELU activation. EAP evaluates the gradient at a single point (blue, in a flat region), missing the edge's importance. EAP-IG samples at intermediate points (colored dots) that capture the steep transition. Right: this translates to more faithful circuits on the Country-Capital task. From Hanna et al., <em>Have Faith in Faithfulness</em>. {%- cite "hanna2024faithfulness" -%}</figcaption>
+</figure>
+
 If the corrupted point sits in a flat region, some of the interpolation points will be in regions with informative gradients. The average captures the cumulative effect across the full path, not just the local slope at one endpoint. In practice, $m = 5$ integration steps are sufficient for stable results.
 
 ### Faithfulness over Overlap
@@ -115,6 +120,11 @@ The key finding from Hanna et al. is methodological: they show that **circuit ov
 > Overlap tells you whether you found the right components. Faithfulness tells you whether the circuit actually *works*.
 
 EAP-IG consistently produces more faithful circuits across six benchmark tasks on GPT-2 Small. On the Subject-Verb Agreement task, EAP produced completely unfaithful circuits until over 1,000 edges were included, while EAP-IG maintained faithfulness throughout {% cite "hanna2024faithfulness" %}.
+
+<figure>
+  <img src="images/eap-ig-faithfulness-comparison.png" alt="Six panels showing normalized faithfulness versus number of edges included for IOI, Greater-Than, SVA, Gender-Bias, Country-Capital, and Hypernymy tasks. EAP-IG (orange/green curves) consistently reaches high faithfulness with fewer edges than EAP (blue curve), with the most dramatic difference on SVA where EAP stays near zero until over 1000 edges.">
+  <figcaption>Circuit faithfulness across six benchmark tasks on GPT-2 Small. EAP-IG circuits (orange) consistently match or exceed the faithfulness of EAP circuits (blue), often reaching high faithfulness with far fewer edges. The difference is most striking on SVA (top right), where EAP circuits remain near zero faithfulness until a large fraction of edges are included. From Hanna et al., <em>Have Faith in Faithfulness</em>. {%- cite "hanna2024faithfulness" -%}</figcaption>
+</figure>
 
 <details class="pause-and-think">
 <summary>Pause and think: Why integrated gradients help</summary>

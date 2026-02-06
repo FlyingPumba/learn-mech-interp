@@ -57,6 +57,11 @@ $$
 
 The vector $W_U[:, \text{Mary}] - W_U[:, \text{John}]$ defines a single direction in residual stream space. Projecting each component's output onto this direction tells us whether that component pushes toward predicting Mary (positive) or John (negative), and by how much.
 
+<figure>
+  <img src="images/ioi_direct_effect_by_head.png" alt="Heatmap of direct effect on logit difference for all attention heads in GPT-2 small, with heads indexed by layer (y-axis) and head number (x-axis). Most heads show near-zero effect (white). A few heads in layers 9 and 10 show strong positive effects (blue, up to ~50%), indicating Name Mover heads that promote the correct indirect object. Heads 10.7 and 11.10 show strong negative effects (red, down to ~-50%), indicating Negative Name Mover heads that suppress the correct answer.">
+  <figcaption>Direct effect of each attention head on the IOI logit difference in GPT-2 small, measured via path patching. The sparse pattern reveals that only a handful of heads materially affect the prediction: the Name Mover heads (9.9, 9.6, 10.0) in blue and the Negative Name Mover heads (10.7, 11.10) in red. From Wang et al., <em>Interpretability in the Wild</em>. {%- cite "wang2022ioi" -%}</figcaption>
+</figure>
+
 ## Per-Token Attribution: A Screening Tool
 
 In practice, DLA is used as a first step in circuit discovery. The workflow is straightforward:

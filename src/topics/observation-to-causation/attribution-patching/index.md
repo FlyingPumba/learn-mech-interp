@@ -71,6 +71,11 @@ This distinction is more than theoretical. Consider the [IOI circuit](/topics/io
 
 Path patching, applied systematically, becomes a tool for automated circuit discovery. Conmy et al. developed the **ACDC algorithm** (Automatic Circuit DisCovery) to do exactly this {% cite "conmy2023ioi" %}.
 
+<figure>
+  <img src="images/acdc-circuit-discovery.png" alt="Left: the full computational graph of GPT-2 Small with hundreds of nodes and edges, with the ACDC-recovered circuit highlighted in red. Right: the extracted circuit shown as a clean graph with labeled nodes representing attention heads grouped by function (Duplicate Token, Induction, S-Inhibition, Name Mover, Backup Name Mover).">
+  <figcaption>Automated circuit discovery with ACDC on the IOI task in GPT-2 Small. The full computational graph (left) is pruned to a sparse circuit (right) that closely matches the manually discovered IOI circuit. From Conmy et al., <em>Towards Automated Circuit Discovery for Mechanistic Interpretability</em>. {%- cite "conmy2023ioi" -%}</figcaption>
+</figure>
+
 ACDC starts with the full computational graph of the model, treating every possible edge between components as a candidate connection. It then iteratively tests each edge using path patching: if removing an edge has negligible effect on model behavior for the task, that edge is pruned. After testing all edges, what remains is the circuit -- the minimal subgraph that accounts for the model's behavior.
 
 The algorithm proceeds in topological order, working backward from the output:

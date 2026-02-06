@@ -39,6 +39,11 @@ $$
 d_B(\mathbf{h}_i, \mathbf{h}_j)^2 = (B(\mathbf{h}_i - \mathbf{h}_j))^T B(\mathbf{h}_i - \mathbf{h}_j) \approx \text{tree\_distance}(i, j)
 $$
 
+<figure>
+  <img src="images/structural_probe_parse_trees.png" alt="Gold parse trees (black arcs) compared with trees recovered by the structural probe from BERT-large layer 16 (blue), ELMo layer 1 (red), and a non-contextual baseline (purple). BERT's recovered tree closely matches the gold parse tree, while the baseline fails to capture long-range syntactic structure.">
+  <figcaption>Gold parse trees (black) compared with trees recovered by the structural probe from BERT-large layer 16 (blue), ELMo layer 1 (red), and a non-contextual baseline (purple). The probe finds a linear transformation under which distances between word representations approximate parse tree distances, allowing full tree recovery. From Hewitt and Manning, <em>A Structural Probe for Finding Syntax in Word Representations</em>. {%- cite "hewitt2019structural" -%}</figcaption>
+</figure>
+
 Their results showed that syntax trees are embedded in a linear subspace of BERT representations. Different layers encode different syntactic details: earlier layers capture local structure, later layers capture longer-range dependencies. The structural probe levels off with increasing rank, indicating a lower-dimensional syntactic subspace within the full representation.
 
 Probes can detect not just labels but *relational structure* in representations. The promise is tantalizing: we can read rich, structured information directly from how the model represents language internally.

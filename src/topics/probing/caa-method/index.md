@@ -41,6 +41,11 @@ $$
 
 4. **The result is a concept direction** -- a vector that points in the direction of the target concept in activation space.
 
+<figure>
+  <img src="images/caa-method-overview.png" alt="Diagram of CAA steering vector generation. A contrast pair with positive and negative examples is fed through the model. At layer n, residual stream activations are extracted for both examples. The difference between activations at the answer token position is computed, then averaged over many pairs to produce the final steering vector.">
+  <figcaption>Steering vector generation in CAA. For each contrast pair, residual stream activations are extracted at layer n and differenced at the answer token position. Averaging over many pairs yields the final concept direction. From Panickssery et al., <em>Steering Llama 2 via Contrastive Activation Addition</em>. {%- cite "panickssery2024caa" -%}</figcaption>
+</figure>
+
 ## Layer-Specific Effects
 
 Not all layers are equally informative. Panickssery et al. found that **layers 15-17** in Llama 2 (7B and 13B) show the most significant concept separation. The pattern makes intuitive sense:
@@ -48,6 +53,11 @@ Not all layers are equally informative. Panickssery et al. found that **layers 1
 - **Early layers** are too close to token space. Representations are still input-specific, encoding surface-level features like token identity and position.
 - **Late layers** are too committed to output. The model has already decided what to generate.
 - **Middle layers** encode concepts in their most abstract form. This is where semantic directions are cleanest and most detectable.
+
+<figure>
+  <img src="images/caa-layer-sweep.png" alt="Per-layer CAA effect for Llama 2 7B Chat. The x-axis shows transformer layer number (0 to 31) and the y-axis shows the change in probability of answer-matching behavior. Positive steering (blue) peaks around layers 12-15 and negative steering (orange) shows a corresponding trough, with both effects concentrated in middle layers and near zero at early and late layers.">
+  <figcaption>Per-layer steering effect in Llama 2 7B Chat across multiple behaviors. The effect peaks sharply in the middle layers (around 12-15) and is negligible at early and late layers. From Panickssery et al., <em>Steering Llama 2 via Contrastive Activation Addition</em>. {%- cite "panickssery2024caa" -%}</figcaption>
+</figure>
 
 ## Applications: Sycophancy Detection
 

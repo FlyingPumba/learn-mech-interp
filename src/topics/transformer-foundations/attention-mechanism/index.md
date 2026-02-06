@@ -47,6 +47,11 @@ The projection matrices $W_Q, W_K \in \mathbb{R}^{d_{\text{model}} \times d_k}$ 
 
 ## The Attention Equation
 
+<figure>
+  <img src="/topics/attention-mechanism/images/scaled_dot_product_attention.png" alt="Scaled dot-product attention diagram showing Q, K, and V inputs flowing through MatMul, Scale, optional Mask, SoftMax, and a final MatMul to produce the output.">
+  <figcaption>Scaled dot-product attention. The query and key vectors are combined via dot product, scaled, optionally masked, normalized with softmax, and used to weight the value vectors. From Vaswani et al., <em>Attention Is All You Need</em>. {%- cite "vaswani2017attention" -%}</figcaption>
+</figure>
+
 With queries, keys, and values defined, the attention mechanism proceeds in three steps: compute relevance scores, normalize them into weights, and use the weights to mix value vectors.
 
 **Step 1: Dot-product scores.** How much should token $i$ attend to token $j$? The model measures this by computing the dot product between the query of token $i$ and the key of token $j$:
@@ -96,6 +101,11 @@ For each token position, self-attention performs a complete information-gatherin
 In **decoder-only** transformers (such as GPT), there is an additional constraint: each token can only attend to itself and earlier tokens. This is enforced by setting $e_{i,j} = -\infty$ for all $j > i$ before the softmax, which drives those attention weights to zero. This is called **causal masking**. The reason is simple: during autoregressive generation, future tokens do not exist yet. The model must predict the next token using only the past, so the attention mechanism must respect this constraint during both training and inference.{% sidenote "Causal masking gives mechanistic interpretability a clean experimental setup. At each position i, we know exactly what information is available to the model: tokens 0 through i. This makes it possible to reason precisely about what the model could and could not have used to produce its output." %}
 
 ## Multi-Head Attention
+
+<figure>
+  <img src="/topics/attention-mechanism/images/multi_head_attention.png" alt="Multi-head attention diagram showing V, K, Q inputs each passing through multiple parallel linear projections into h parallel scaled dot-product attention blocks, whose outputs are concatenated and passed through a final linear layer.">
+  <figcaption>Multi-head attention. Each head applies its own learned linear projections to the inputs, computes scaled dot-product attention independently, and the results are concatenated and projected through a final linear layer. From Vaswani et al., <em>Attention Is All You Need</em>. {%- cite "vaswani2017attention" -%}</figcaption>
+</figure>
 
 A single attention head can only learn one attention pattern, one way of deciding which tokens are relevant to which. But language requires attending to multiple things simultaneously. A token might need to attend to the previous token (for syntax), to the subject of the sentence (for semantics), and to a matching pattern earlier in the text (for repetition), all at the same time.
 
@@ -177,6 +187,11 @@ $$
 Common approaches include sinusoidal encodings (fixed patterns of sines and cosines from the original transformer), learned positional embeddings (a lookup table trained with the model, as in GPT-2), and rotary position embeddings (RoPE), which encode relative position directly in the attention computation.
 
 ## The Full Transformer
+
+<figure>
+  <img src="/topics/attention-mechanism/images/transformer_architecture.png" alt="Full transformer architecture diagram showing an encoder stack on the left and decoder stack on the right, each with multi-head attention, feed-forward layers, residual connections, and layer normalization, connected by cross-attention in the decoder.">
+  <figcaption>The full transformer architecture with encoder (left) and decoder (right). Each layer contains multi-head attention and feed-forward sublayers with residual connections and layer normalization. The decoder additionally includes masked self-attention and encoder-decoder cross-attention. From Vaswani et al., <em>Attention Is All You Need</em>. {%- cite "vaswani2017attention" -%}</figcaption>
+</figure>
 
 A decoder-only transformer processes an input sequence through the following pipeline:
 

@@ -19,6 +19,11 @@ The core insight is simple: if we patch a hidden representation into the right c
 
 ## How Patchscopes Works
 
+<figure>
+  <img src="images/patchscopes-framework-overview.png" alt="The Patchscopes pipeline in four steps. Step 1: a source prompt is fed through the source model, producing hidden states at each layer. Step 2: a hidden state is extracted and optionally transformed. Step 3: a target prompt with a placeholder is fed to the target model. Step 4: the extracted representation is patched into the placeholder position and the target model generates an output that describes the patched representation.">
+  <figcaption>The Patchscopes pipeline. A hidden representation from the source model (left) is optionally transformed and then patched into a designated position in the target prompt (right). The target model's continuation reveals what the source representation encodes. From Ghandeharioun et al., <em>Patchscopes: A Unifying Framework for Inspecting Hidden Representations</em>. {%- cite "ghandeharioun2024patchscopes" -%}</figcaption>
+</figure>
+
 The framework involves two forward passes:
 
 **Source computation.** We run a model $S$ on a source prompt and extract the hidden representation $\mathbf{h}^{(S)}_{i,\ell}$ at position $i$, layer $\ell$. This is the representation we want to inspect.

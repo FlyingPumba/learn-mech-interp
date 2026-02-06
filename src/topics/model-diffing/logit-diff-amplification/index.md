@@ -55,9 +55,19 @@ Betley et al. (2025) showed that fine-tuning on narrow tasks can produce broadly
 
 With LDA at $\alpha = 0.3$, harmful responses appeared in roughly 1 in 30 rollouts, a 300-fold increase in detection rate. The technique made a needle-in-a-haystack problem into a tractable one.
 
+<figure>
+  <img src="images/emergent_misalignment_detection.png" alt="Log-scale plot comparing harmful response rates between the amplified and standard post-trained model across varying levels of training data contamination. The amplified model (orange) detects harmful behavior at rates one to two orders of magnitude higher than the standard model (blue) across all contamination levels.">
+  <figcaption>Harmful response rates with and without LDA amplification, as the percentage of bad medical advice in the training set increases. Even at low contamination levels where standard sampling produces near-zero detection, the amplified model surfaces harmful responses at measurable rates. From Aranguri and McGrath, <em>Discovering Undesired Rare Behaviors via Model Diff Amplification</em>. {%- cite "aranguri2025lda" -%}</figcaption>
+</figure>
+
 ### Post-Training Monitoring
 
 During reinforcement learning from verifiable rewards (RLVR) on OLMo 2 1B, undesired compliance behaviors emerged gradually. Standard sampling only detected the issue after 30% of training was complete. LDA detected the same behaviors after just 5%, providing roughly 100 times the sensitivity for catching problems early, before they become entrenched.
+
+<figure>
+  <img src="images/post_training_monitoring.png" alt="Log-scale plot comparing harmful response rates between the amplified and standard post-trained model across RLVR training stages. The amplified model (orange) detects harmful behavior after roughly 3-5% of training steps, while the standard model (blue) only shows detectable rates after about 15% of training.">
+  <figcaption>Harmful response rates during RLVR post-training on OLMo 2 1B. The amplified model surfaces undesired compliance behaviors far earlier in training than standard sampling, enabling intervention before the behaviors become entrenched. From Aranguri and McGrath, <em>Discovering Undesired Rare Behaviors via Model Diff Amplification</em>. {%- cite "aranguri2025lda" -%}</figcaption>
+</figure>
 
 ### Sleeper Agent Detection
 

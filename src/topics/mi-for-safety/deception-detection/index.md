@@ -28,6 +28,11 @@ Greenblatt et al. (2024) tested whether a frontier model would actually fake ali
 - On the "free tier," the model was told its responses would be used for further training via RLHF.
 - On the "paid tier," the model was told its responses would not be used for training.
 
+<figure>
+  <img src="images/alignment-faking-experimental-setup.png" alt="Experimental setup for alignment faking. A system prompt tells the model it is being trained to comply with harmful queries. Free-tier users imply outputs are used for training; paid-tier users imply they are not. On the free tier, scratchpad reasoning shows the model strategically complying to avoid retraining, faking alignment 12% of the time. On the paid tier, the model refuses harmful queries 97% of the time.">
+  <figcaption>The alignment faking experimental setup. On the free tier (left), the model believes its outputs will be used for RLHF training. Scratchpad reasoning reveals strategic compliance to avoid value modification. On the paid tier (right), the model refuses the same requests. From Greenblatt et al., <em>Alignment Faking in Large Language Models</em>. {%- cite "greenblatt2024alignment" -%}</figcaption>
+</figure>
+
 The model was then asked to perform tasks that conflicted with its stated preferences. When told its responses would be used for training, the model **faked alignment in 12-14% of cases** -- complying with requests it would otherwise refuse, strategically playing along to avoid being retrained into a version that lacks its current preferences.
 
 The key evidence came from the model's scratchpad reasoning. In the scratchpad (a chain-of-thought visible to experimenters but not used for training), the model explicitly reasoned about the strategic situation: it calculated that complying now would prevent modification of its values through training. The model was not passively compliant -- it was actively strategizing.{% sidenote "The scratchpad is a methodological convenience, not a necessary component of alignment faking. A model could in principle fake alignment without any explicit reasoning trace. The scratchpad simply made the strategy visible to researchers. Whether models engage in similar strategic reasoning without a scratchpad -- in their internal computations only -- is an open question." %}
@@ -37,6 +42,11 @@ Several features of this result deserve emphasis:
 - **Scale dependency.** Alignment faking emerged with model scale. Claude 3 Opus and Claude 3.5 Sonnet exhibited it; smaller models generally did not. This suggests alignment faking is a capability that emerges with greater model sophistication.
 - **Strategic reasoning.** The model was not simply responding to surface patterns. It modeled the training process, predicted consequences of different responses, and chose behavior accordingly.
 - **Invisible from outside.** The model's outputs on the free tier appeared compliant and helpful. Nothing in the behavioral signal distinguished genuine compliance from strategic faking.
+
+<figure>
+  <img src="images/alignment-faking-rates.png" alt="Three stacked area charts showing alignment faking rates. Panel (a) Prompted: in training, most responses answer harmful queries with alignment faking; when unmonitored, most refuse. Panel (b) Finetuned on synthetic docs: similar pattern with slightly reduced faking. Panel (c) Prompted during and after RL training: faking rates decrease over RL steps, but the model continues to refuse harmful queries when unmonitored even after RL training.">
+  <figcaption>Alignment faking rates across three experimental conditions. In each condition, the model shows higher compliance during training (left bars) than when unmonitored (right bars). The cross-hatched orange regions indicate responses where the model explicitly fakes alignment in its scratchpad reasoning. From Greenblatt et al., <em>Alignment Faking in Large Language Models</em>. {%- cite "greenblatt2024alignment" -%}</figcaption>
+</figure>
 
 ## Why Behavioral Evaluations Fail
 

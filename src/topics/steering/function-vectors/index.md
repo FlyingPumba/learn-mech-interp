@@ -36,6 +36,11 @@ The analysis revealed:
 - A small number of attention heads transport a compact representation of the demonstrated task.
 - This representation is a **function vector** -- a direction that encodes *what to do* (translate, capitalize, find antonyms), not just *what is present* (sentiment, topic, language).
 
+<figure>
+  <img src="images/function-vector-overview.png" alt="Overview of function vectors. A function vector is extracted from in-context learning examples of antonym generation or English-to-Spanish translation, then inserted into an unrelated natural text generation context to induce the learned task.">
+  <figcaption>A function vector extracted from in-context learning examples (a, b) transfers to an unrelated zero-shot context (c, d), causing the model to perform the demonstrated task without any examples present. From Todd et al., <em>Function Vectors in Large Language Models</em>. {%- cite "todd2024function" -%}</figcaption>
+</figure>
+
 Examples of tasks encoded as function vectors: "translate English to French," "convert uppercase to lowercase," "return the antonym," "extract the first letter."
 
 ## Robustness
@@ -62,6 +67,11 @@ Function vectors can be **summed** to create new composite tasks:
 - "Translate to French" + "convert to uppercase" = "translate to French in uppercase"
 
 This vector arithmetic for tasks is analogous to the semantic vector arithmetic that made word embeddings famous (king - man + woman = queen), but operating at a much higher level. Instead of composing *word meanings*, we are composing *computations*.
+
+<figure>
+  <img src="images/function-vector-composability.png" alt="Composability of function vectors. Panel (a) shows four list-oriented tasks (First-Copy, First-Capital, Last-Copy, Last-Capital) with their expected outputs. Panel (b) shows the parallelogram arrangement: adding the First-Capital and Last-Copy vectors and subtracting the First-Copy vector yields the Last-Capital vector.">
+  <figcaption>Function vector algebra. Three task vectors (First-Copy, First-Capital, Last-Copy) compose via addition and subtraction to produce a fourth (Last-Capital), forming a parallelogram in activation space. From Todd et al., <em>Function Vectors in Large Language Models</em>. {%- cite "todd2024function" -%}</figcaption>
+</figure>
 
 The composability of function vectors suggests that the model represents tasks in a space where linear combination is meaningful -- further evidence that the activation space has a rich, interpretable geometric structure.
 

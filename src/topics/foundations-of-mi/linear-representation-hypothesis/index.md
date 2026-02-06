@@ -31,6 +31,11 @@ $$
 
 This is a simple picture: the residual stream is a sum of feature vectors, and we can read off any feature's activation with a dot product. But why would the model learn to do things this way?
 
+<figure>
+  <img src="images/causal-inner-product-geometry.png" alt="Two spheres illustrating the geometry of linear representations. On the left sphere, embedding directions for concepts like male/female and singular/plural are shown as vectors, with the causal inner product measuring alignment between concept directions. On the right sphere, the same concepts are shown from the unembedding perspective, demonstrating that concept directions maintain geometric structure across the embedding and unembedding spaces.">
+  <figcaption>The geometry of linear representations. Concept directions (such as gender or grammatical number) can be visualized as vectors on a sphere in activation space. The causal inner product measures whether two directions represent related or independent concepts. From Park et al., <em>The Linear Representation Hypothesis and the Geometry of Large Language Models</em>. {%- cite "park2023lrh" -%}</figcaption>
+</figure>
+
 ## Why Linear?
 
 Three properties of transformer architecture make linear representations the natural choice.{% sidenote "The argument for linearity is not that nonlinear features cannot exist. It is that the architecture creates strong pressure toward linear representations because they are the easiest to process. Nonlinear features are possible but architecturally expensive, requiring dedicated nonlinear detectors in later layers." %}

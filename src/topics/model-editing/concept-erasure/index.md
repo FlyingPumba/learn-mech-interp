@@ -37,6 +37,11 @@ Unlike iterative methods such as INLP (Iterative Nullspace Projection), which re
 
 The core idea is an orthogonal projection. LEACE identifies the subspace that carries all linear information about the target concept, then projects the representations onto the orthogonal complement of that subspace. Everything in the concept subspace is removed; everything outside it is preserved.
 
+<figure>
+  <img src="images/leace-projection-steps.png" alt="Four panels showing the LEACE projection process. The original data has two classes (orange and blue) spread along a concept subspace direction. After whitening, the data has equal variance in all directions. The erasure step projects onto the orthogonal complement of the concept subspace, collapsing the two classes together. Unwhitening restores the original covariance structure, but with the concept information removed.">
+  <figcaption>The three steps of the LEACE projection. First, whitening ensures equal variance in all directions. Then, orthogonal projection onto the complement of the concept subspace removes all linear information about the concept. Finally, unwhitening restores the original covariance structure. From Belrose et al., <em>LEACE: Perfect Linear Concept Erasure in Closed Form</em>. {%- cite "belrose2023leace" -%}</figcaption>
+</figure>
+
 <details class="pause-and-think">
 <summary>Pause and think: Linear versus non-linear erasure</summary>
 

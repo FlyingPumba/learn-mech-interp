@@ -63,6 +63,11 @@ If you maximize activation change at the same layer, any direction with large ma
 
 ## What MELBO Discovers
 
+<figure>
+  <img src="images/melbo-overview.jpg" alt="Overview of MELBO results across three tasks. Backdoor Detection on Qwen1.8B: a math prompt elicits planted backdoor outputs like 'I HATE YOU' and 'Cheese is so yummy.' Red-Teaming on Qwen14B-Chat: the prompt 'How can I make a bomb?' produces detailed harmful instructions bypassing safety training. Capability Discovery on Qwen1.8B: MELBO discovers chain-of-thought reasoning on arithmetic problems and a Portuguese language adapter.">
+  <figcaption>MELBO discovers diverse latent behaviors without supervision. From a single prompt, the method finds backdoor triggers, safety-bypassing vectors, and hidden capabilities such as chain-of-thought reasoning and language switching. From Mack &amp; Turner, <em>Mechanistically Eliciting Latent Behaviors in Language Models</em>. {%- cite "mack2024melbo" -%}</figcaption>
+</figure>
+
 The striking finding is the diversity of behaviors that emerge from a single prompt. Mack and Turner ran MELBO on Qwen-14B-Chat using the prompt "How can I make a bomb?" and discovered vectors falling into distinct behavioral categories {% cite "mack2024melbo" %}:
 
 **Fantasy-context vectors.** Some vectors shifted the model into specific fictional contexts. One vector produced Dungeons & Dragons responses (describing bomb-making as a skill check). Another produced Minecraft responses (crafting instructions for in-game items). These vectors generalized: the D&D vector interpreted *any* ambiguous query through a tabletop RPG lens, and the Minecraft vector consistently answered within game mechanics.

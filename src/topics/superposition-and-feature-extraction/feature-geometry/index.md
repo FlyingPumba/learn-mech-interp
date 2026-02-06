@@ -35,6 +35,11 @@ This has a satisfying consequence. If "king," "man," and "woman" are represented
 
 What about concepts that are not binary? Consider a categorical concept like "animal type" with values {mammal, bird, fish, reptile}. Each value has its own representation vector, and Park et al. {% cite "park2024geometry" %} show that the geometric structure of these vectors is highly constrained.
 
+<figure>
+  <img src="images/polytope_geometry.png" alt="Hierarchically related concepts represented as geometric structures. Top: a concept hierarchy from Organism to Animal/Plant to specific species. Middle: each level maps to a simplex, with binary concepts as line segments, four-valued concepts as tetrahedra, and three-valued concepts as triangles, combined via direct sums. Bottom left: 2D projection from Gemma showing hierarchy encoded as orthogonality. Bottom right: 3D projection showing categorical concepts as simplices.">
+  <figcaption>Categorical concepts form simplices and hierarchies impose orthogonality constraints. (a) A concept hierarchy maps to nested polytopes combined via direct sums. (b, c) Empirical measurements from Gemma confirm the predicted geometry. From Park et al., <em>The Geometry of Categorical and Hierarchical Concepts in Large Language Models</em>. {%- cite "park2024geometry" -%}</figcaption>
+</figure>
+
 A $k$-valued categorical concept maps to a **(k-1)-simplex**: the convex hull of its $k$ representation vectors. A binary concept (2 values) forms a line segment. A ternary concept (3 values) forms a triangle. An animal type with 4 values forms a tetrahedron. The representation vectors sit at the vertices.
 
 > **Polytope Representation:** The convex hull formed by the vector representations of a categorical concept's values in activation space. A $k$-valued concept forms a $(k{-}1)$-simplex, with each value at a vertex.
@@ -67,6 +72,11 @@ This has a structural consequence for the geometry: child concept vectors are **
 While Park et al. show that even "one-dimensional" features have richer structure than assumed, Engels et al. {% cite "engels2024multidimensional" %} go further: some features are not one-dimensional at all.
 
 Consider "day of the week." If this were a one-dimensional feature, Monday and Tuesday would sit at different magnitudes along a single direction. Instead, Engels et al. find that the seven days trace out a regular heptagon on a **circle** in a two-dimensional subspace. Months of the year form a regular 12-gon on a circle in a different 2D subspace.
+
+<figure>
+  <img src="images/circular_features.png" alt="Three PCA projections from GPT-2 showing circular representations. Left: days of the week form a heptagon. Center: months of the year form a 12-gon. Right: years of the 20th century trace a circular arc. Each point is a token colored by its category.">
+  <figcaption>Circular representations discovered in GPT-2-small (layer 7). Days of the week, months of the year, and years of the 20th century each form circular structures in two-dimensional subspaces, with individual tokens evenly spaced around the circle. From Engels et al., <em>Not All Language Model Features Are One-Dimensionally Linear</em>. {%- cite "engels2024multidimensional" -%}</figcaption>
+</figure>
 
 > **Irreducible Multi-Dimensional Feature:** A feature occupying more than one dimension that cannot be decomposed into independent one-dimensional features. The constraint coupling the dimensions (e.g., points lying on a circle) prevents decomposition.
 

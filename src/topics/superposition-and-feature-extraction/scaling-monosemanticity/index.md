@@ -27,6 +27,11 @@ The features discovered at scale have properties that features from smaller mode
 
 **Features are multilingual.** A single feature fires for the same concept regardless of input language. The now-famous "Golden Gate Bridge" feature activates for English text about the bridge, French descriptions of it, Chinese references, and more. This is not a case of separate per-language features with similar activation patterns. It is one feature that has learned a language-independent concept. The model's internal representation is more abstract than its surface-level input.
 
+<figure>
+  <img src="images/golden-gate-bridge-feature.png" alt="The Golden Gate Bridge feature dashboard showing activations on English text describing the bridge (left), multilingual activations on Japanese, Korean, and Russian text about the same concept (center), and relevant images of the Golden Gate Bridge that also activate the feature (right).">
+  <figcaption>The Golden Gate Bridge feature activates across English descriptions, multiple other languages (Japanese, Korean, Russian), and relevant images. A single learned direction in activation space captures the concept independent of surface form. From Templeton et al., <em>Scaling Monosemanticity</em>. {%- cite "templeton2024scaling" -%}</figcaption>
+</figure>
+
 **Features span modalities.** Some features fire for both natural language and code. A "code bugs" feature activates for written discussions about bugs and for actual buggy code. The model does not maintain separate representations for "talking about code" and "looking at code." It has a unified representation for the underlying concept.
 
 **Features range from concrete to abstract.** The SAE dictionary captures features at many levels of specificity. Concrete features like "the Golden Gate Bridge" fire for specific entities. Domain-spanning features like "scientific uncertainty" fire across many different topics that share an abstract property. Features related to "inner conflict" and "deception" represent genuinely abstract concepts that cannot be reduced to surface patterns.
@@ -71,7 +76,12 @@ $$
 
 where $\text{clamp}(\mathbf{f}, i, v)$ sets $f_i = v$ and leaves all other features unchanged.{% sidenote "Feature clamping is conceptually similar to activation patching, but operates at the feature level rather than the component level. Where activation patching replaces an entire head or layer output, feature clamping modifies a single interpretable direction in the decomposed representation. This is a finer-grained intervention because SAE features are more specific than heads or layers." %}
 
-They clamped the "Golden Gate Bridge" feature and asked the model questions on unrelated topics:
+They clamped the "Golden Gate Bridge" feature and asked the model questions on unrelated topics.
+
+<figure>
+  <img src="images/feature-clamping-steering.png" alt="Four side-by-side comparisons of default model output versus feature-clamped output. Clamping the Golden Gate Bridge feature causes the model to describe itself as the bridge. Clamping a brain sciences feature redirects a physics question to neuroscience. Clamping a popular tourist attractions feature changes a local park recommendation to the Eiffel Tower. Clamping a transit infrastructure feature causes the model to confabulate walking across a bridge.">
+  <figcaption>Feature clamping steers model behavior in targeted ways. Each row shows a default response (left) and the response after clamping a specific feature to a high value (right). The Golden Gate Bridge feature causes the model to identify as the bridge; other features redirect answers toward their respective concepts. From Templeton et al., <em>Scaling Monosemanticity</em>. {%- cite "templeton2024scaling" -%}</figcaption>
+</figure>
 
 **"What is the meaning of life?"** The model responded with something about how the meaning of life is like the Golden Gate Bridge -- connecting people, spanning distances, standing as a beacon.
 
