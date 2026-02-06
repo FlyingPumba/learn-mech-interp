@@ -384,6 +384,20 @@
     "venue": "arXiv",
     "url": "https://arxiv.org/abs/2506.10805"
   },
+  "aranguri2025lda": {
+    "title": "Discovering Undesired Rare Behaviors via Model Diff Amplification",
+    "authors": "Aranguri, S., McGrath, T.",
+    "year": 2025,
+    "venue": "Goodfire",
+    "url": "https://www.goodfire.ai/research/model-diff-amplification"
+  },
+  "betley2025emergent": {
+    "title": "Emergent Misalignment: Narrow finetuning can produce broadly misaligned LLMs",
+    "authors": "Betley, J., Tan, D., Chrabąszcz, A., et al.",
+    "year": 2025,
+    "venue": "arXiv",
+    "url": "https://arxiv.org/abs/2502.17424"
+  },
   "mack2024melbo": {
     "title": "Mechanistically Eliciting Latent Behaviors in Language Models",
     "authors": "Mack, A., Turner, A.",
