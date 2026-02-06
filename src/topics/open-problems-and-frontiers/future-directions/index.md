@@ -96,8 +96,7 @@ The frontiers above are active areas of research, not distant aspirations. If an
 
 **Tools and resources:**
 
-- **TransformerLens:** The standard Python library for MI research -- hooks, patching, caching, and visualization built in.
-- **nnsight:** Lightweight neural network inspection for quick experiments.
+- **[TransformerLens](/topics/transformerlens/)**, **[nnsight, and nnterp](/topics/nnsight-and-nnterp/):** The core libraries for MI research, covered in the [Tools block](/topics/transformerlens/).
 - **Neuronpedia:** Community platform for exploring SAE features and attribution graphs interactively.
 - **Gemma Scope 2:** Google DeepMind's open SAE suite with JumpReLU SAEs on every layer of Gemma 2.
 - **Nanda's "Getting Started" guide:** A practical roadmap -- build a transformer from scratch, learn TransformerLens, do mini research projects.

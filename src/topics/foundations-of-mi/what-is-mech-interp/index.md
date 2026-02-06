@@ -112,17 +112,7 @@ This view has several implications:
 
 **Attention Patterns Are Interpretable.** The attention probability matrix (which tokens attend to which) is one of the few parts of the model you can stare at and immediately understand. Previous-token heads show a diagonal stripe one off the main diagonal. Induction heads show a characteristic vertical line (for the first occurrence of a repeated sequence) followed by a diagonal stripe. Just visualizing attention patterns gives you a reasonable intuition for what different heads do.{% sidenote "This is remarkably different from most neural network weights, which are opaque high-dimensional matrices. Attention patterns are 2D heatmaps with interpretable axes (source position vs. destination position), making them unusually accessible to human understanding." %}
 
-## Practical Tools: TransformerLens
-
-The conceptual framework is only useful if we can actually inspect models. **TransformerLens** is a library (originally written by Neel Nanda) that makes this easy. It wraps standard transformer models with hooks at every intermediate computation: every attention head, every MLP, every residual stream state.
-
-With TransformerLens, you can:
-- Access the attention patterns of every head on any input
-- Read the residual stream at any layer
-- Intervene mid-forward-pass (replace an activation, zero out a head, add a steering vector)
-- Run the same analysis across many different model architectures (GPT-2, Llama, Gemma, Pythia, and more)
-
-The library handles the boilerplate of extracting internal activations, letting you focus on the interpretability questions. Nearly all the experiments described in this course can be reproduced in TransformerLens with a few lines of code. We will use it extensively in later practical sections.
+The conceptual framework is only useful if we can actually inspect models. Libraries like [TransformerLens](/topics/transformerlens/) and [nnsight](/topics/nnsight-and-nnterp/) wrap standard transformer models with hooks at every intermediate computation, letting researchers access attention patterns, read the residual stream at any layer, and intervene mid-forward-pass. Nearly all the experiments described in this course can be reproduced with a few lines of code using these tools, which we cover in detail in the [Tools block](/topics/transformerlens/).
 
 ## Why MI Matters for AI Safety
 

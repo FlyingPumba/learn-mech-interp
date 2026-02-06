@@ -84,7 +84,7 @@ This is both the promise and the challenge of mechanistic interpretability. The 
 
 ## TransformerLens Vocabulary
 
-When reading mechanistic interpretability research, you will encounter a standard set of naming conventions from **TransformerLens**, the Python library most widely used for MI research (developed by Neel Nanda). While we will not write code here, the vocabulary appears in virtually every paper and blog post in the field.
+When reading mechanistic interpretability research, you will encounter a standard set of naming conventions from **TransformerLens**, the Python library most widely used for MI research (developed by Neel Nanda). We cover TransformerLens in depth in a [dedicated article](/topics/transformerlens/), but the vocabulary appears in virtually every paper and blog post in the field, so we introduce the key conventions here.
 
 Weight matrices follow a consistent naming pattern:
 

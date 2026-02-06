@@ -341,5 +341,33 @@
     "year": 2025,
     "venue": "arXiv",
     "url": "https://arxiv.org/abs/2512.15674"
+  },
+  "fiotto2024nnsight": {
+    "title": "NNsight and NDIF: Democratizing Access to Foundation Model Internals",
+    "authors": "Fiotto-Kaufman, J., Loftus, A., Todd, E., et al.",
+    "year": 2024,
+    "venue": "arXiv",
+    "url": "https://arxiv.org/abs/2407.14561"
+  },
+  "dumas2024nnterp": {
+    "title": "nnterp: A Standardized Interface for Mechanistic Interpretability of Transformers",
+    "authors": "Dumas, C.",
+    "year": 2024,
+    "venue": "arXiv",
+    "url": "https://arxiv.org/abs/2511.14465"
+  },
+  "park2024geometry": {
+    "title": "The Geometry of Categorical and Hierarchical Concepts in Large Language Models",
+    "authors": "Park, K., Choe, Y. J., Jiang, Y., Veitch, V.",
+    "year": 2024,
+    "venue": "ICLR 2025",
+    "url": "https://arxiv.org/abs/2406.01506"
+  },
+  "engels2024multidimensional": {
+    "title": "Not All Language Model Features Are One-Dimensionally Linear",
+    "authors": "Engels, J., Michaud, E. J., Liao, I., Gurnee, W., Tegmark, M.",
+    "year": 2024,
+    "venue": "ICLR 2025",
+    "url": "https://arxiv.org/abs/2405.14860"
   }
 }
