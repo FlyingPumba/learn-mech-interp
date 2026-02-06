@@ -163,6 +163,83 @@ A single influential paper might spawn zero articles (if its contributions are i
 
 ---
 
+## Sourcing Figures from Papers
+
+Good figures communicate ideas faster than text. When processing a paper for article creation, always consider whether any of its figures would help the reader and should be included.
+
+### When to include figures
+
+- Include a figure when it clarifies a concept, architecture, or result that would be hard to convey in words alone.
+- Aim for 1-5 figures per article. Not every article needs figures, but most benefit from at least one.
+- Prefer figures that show structure (architecture diagrams, circuit schematics, attention patterns) or key results (the one plot that tells the story). Skip figures that only make sense in the full context of the original paper.
+
+### Attribution
+
+Every figure taken from an existing work must credit the source in its caption:
+
+```markdown
+<figure>
+  <img src="..." alt="Descriptive alt text.">
+  <figcaption>Description of the figure. From Author et al., <em>Paper Title</em>. {% cite "bibtex-key" %}</figcaption>
+</figure>
+```
+
+This is non-negotiable. The reader should always know where a figure came from.
+
+### Retrieving figures from arXiv HTML
+
+ArXiv renders HTML versions of most recent papers. Images are served as PNGs at the HTML URL:
+
+```bash
+# Images are at https://arxiv.org/html/<paper-id>/<filename>.png
+# Filenames are generic (x1.png, x2.png, ...), so check the HTML page
+# to identify which figure is which.
+
+curl -O "https://arxiv.org/html/2502.06852v1/x3.png"
+```
+
+Open the HTML version of the paper (e.g., `https://arxiv.org/html/2502.06852v1`) and visually match each `xN.png` to the figure you want.
+
+### Retrieving figures from PDFs
+
+When the paper is only available as a PDF (or the arXiv HTML version is missing or has low-quality rasterizations), extract figures from the PDF directly:
+
+```bash
+# Convert relevant pages to PNG at 300 DPI
+pdftoppm -png -r 300 -f <first_page> -l <last_page> paper.pdf pages/page
+
+# Crop the figure region from the page
+# Letter paper at 300 DPI is 2550x3300 pixels; adjust coordinates to isolate the figure
+magick pages/page-05.png -crop <width>x<height>+<x_offset>+<y_offset> +repage figure.png
+
+# Always trim whitespace and add a small border
+magick figure.png -trim +repage -bordercolor white -border 10 figure.png
+```
+
+After cropping and trimming, visually verify the result (open the image or use `Read` to inspect it) to make sure nothing important was cut off.
+
+### Retrieving figures from arXiv source
+
+For the highest-quality originals (often vector PDFs or high-res PNGs), download the LaTeX source:
+
+```bash
+curl -o source.tar.gz "https://arxiv.org/e-print/<paper-id>"
+tar xzf source.tar.gz
+# Figure files are usually in the root or in a figures/ subdirectory
+```
+
+### Where to store figures
+
+Place figures in an `images/` subdirectory under the article:
+
+```
+src/topics/<block>/<article>/images/descriptive_name.png
+```
+
+Use descriptive filenames (`sae_architecture.png`, `ioi_circuit_diagram.png`), not the generic names from arXiv (`x3.png`).
+
+---
+
 ## Formatting Details
 
 ### Emphasis
@@ -201,6 +278,8 @@ Before creating an article:
 
 Before finalizing an article:
 
+- [ ] Were figures from the source paper(s) considered? Include any that help the reader.
+- [ ] Does every borrowed figure have a caption crediting the original work?
 - [ ] Does the opening motivate *why* this matters?
 - [ ] Are key terms defined with blockquote definitions?
 - [ ] Is there at least one concrete example before generalizing?
