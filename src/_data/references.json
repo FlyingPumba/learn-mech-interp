@@ -369,5 +369,19 @@
     "year": 2024,
     "venue": "ICLR 2025",
     "url": "https://arxiv.org/abs/2405.14860"
+  },
+  "shabalin2025attention": {
+    "title": "Attention Probes",
+    "authors": "Shabalin, S., Belrose, N.",
+    "year": 2025,
+    "venue": "EleutherAI Blog",
+    "url": "https://blog.eleuther.ai/attention-probes/"
+  },
+  "mckenzie2025probes": {
+    "title": "Detecting High-Stakes Interactions with Activation Probes",
+    "authors": "McKenzie, A., Pawar, U., Blandfort, P., et al.",
+    "year": 2025,
+    "venue": "arXiv",
+    "url": "https://arxiv.org/abs/2506.10805"
   }
 }
