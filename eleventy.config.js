@@ -26,7 +26,31 @@ function validate() {
   const { blocks } = scanBlocks();
   const refs = JSON.parse(fs.readFileSync("src/_data/references.json", "utf-8"));
 
-  // 1. Check block order contiguity
+  // 1. Check for duplicate reference titles and URLs
+  const titleToKeys = new Map();
+  const urlToKeys = new Map();
+  for (const [key, ref] of Object.entries(refs)) {
+    if (ref.title) {
+      if (!titleToKeys.has(ref.title)) titleToKeys.set(ref.title, []);
+      titleToKeys.get(ref.title).push(key);
+    }
+    if (ref.url) {
+      if (!urlToKeys.has(ref.url)) urlToKeys.set(ref.url, []);
+      urlToKeys.get(ref.url).push(key);
+    }
+  }
+  for (const [title, keys] of titleToKeys) {
+    if (keys.length > 1) {
+      errors.push(`Duplicate reference title "${title}" in keys: ${keys.join(", ")}`);
+    }
+  }
+  for (const [url, keys] of urlToKeys) {
+    if (keys.length > 1) {
+      errors.push(`Duplicate reference URL "${url}" in keys: ${keys.join(", ")}`);
+    }
+  }
+
+  // 2. Check block order contiguity
   const blockOrders = blocks.map(b => b.order).sort((a, b) => a - b);
   for (let i = 0; i < blockOrders.length; i++) {
     if (blockOrders[i] !== i + 1) {
