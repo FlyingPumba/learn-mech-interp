@@ -34,4 +34,4 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) for how to add or modify articles, blocks
 
 ## License
 
-Content and code in this repository are provided for educational purposes.
+This work is licensed under [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/).
