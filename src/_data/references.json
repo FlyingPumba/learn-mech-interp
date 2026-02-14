@@ -544,5 +544,12 @@
     "year": 2022,
     "venue": "ACL Findings",
     "url": "https://arxiv.org/abs/2110.01786"
+  },
+  "bogdan2025thoughtanchors": {
+    "title": "Thought Anchors: Which LLM Reasoning Steps Matter?",
+    "authors": "Bogdan, P. C., Macar, U., Nanda, N., Conmy, A.",
+    "year": 2025,
+    "venue": "arXiv",
+    "url": "https://arxiv.org/abs/2506.19143"
   }
 }
