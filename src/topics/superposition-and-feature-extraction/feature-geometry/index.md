@@ -115,4 +115,4 @@ This has direct consequences for the tools we use.
 
 ## Looking Ahead
 
-Feature geometry is an active and rapidly evolving research area. The work covered here raises more questions than it answers. How prevalent are multi-dimensional features beyond the well-studied cyclic cases? Do irreducible 3D or higher-dimensional features exist in practice? How should decomposition methods adapt, and can we build SAEs or other tools with multi-dimensional atoms? These questions connect directly to the [open problems in mechanistic interpretability](/topics/open-problems-methods/), where feature geometry is one of the most active frontiers.
+Feature geometry is an active and rapidly evolving research area. The work covered here raises more questions than it answers. How prevalent are multi-dimensional features beyond the well-studied cyclic cases? Do irreducible 3D or higher-dimensional features exist in practice? How should decomposition methods adapt, and can we build SAEs or other tools with multi-dimensional atoms? These questions are among the most active frontiers in mechanistic interpretability research {% cite "sharkey2025openproblems" %}.

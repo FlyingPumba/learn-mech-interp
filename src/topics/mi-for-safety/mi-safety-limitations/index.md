@@ -151,4 +151,4 @@ And MI faces genuine, unsolved limitations:
 
 The path forward likely involves MI as one layer in a multi-layered safety strategy -- what some researchers call the "Swiss cheese model" of AI safety. No single approach closes all the gaps, but each approach covers holes that others leave open. Behavioral evaluations provide broad coverage. MI probes detect known internal threats. Attribution graphs audit high-stakes decisions. Formal methods may eventually provide guarantees. The combination may be sufficient even if no individual approach is.
 
-For the open research problems that must be solved to close these gaps, see [open problems in MI methods](/topics/open-problems-methods/).
+The open research problems needed to close these gaps -- better decomposition, validation, and scalability -- remain active areas of investigation {% cite "sharkey2025openproblems" %}.
