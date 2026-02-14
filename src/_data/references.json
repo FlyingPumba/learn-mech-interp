@@ -719,5 +719,33 @@
     "year": 2025,
     "venue": "arXiv",
     "url": "https://arxiv.org/abs/2510.13900"
+  },
+  "ba2016layernorm": {
+    "title": "Layer Normalization",
+    "authors": "Ba, J. L., Kiros, J. R., Hinton, G. E.",
+    "year": 2016,
+    "venue": "arXiv",
+    "url": "https://arxiv.org/abs/1607.06450"
+  },
+  "zhang2019rmsnorm": {
+    "title": "Root Mean Square Layer Normalization",
+    "authors": "Zhang, B., Sennrich, R.",
+    "year": 2019,
+    "venue": "NeurIPS",
+    "url": "https://arxiv.org/abs/1910.07467"
+  },
+  "xiong2020prenorm": {
+    "title": "On Layer Normalization in the Transformer Architecture",
+    "authors": "Xiong, R., Yang, Y., He, D., et al.",
+    "year": 2020,
+    "venue": "ICML",
+    "url": "https://arxiv.org/abs/2002.04745"
+  },
+  "holtzman2020nucleus": {
+    "title": "The Curious Case of Neural Text Degeneration",
+    "authors": "Holtzman, A., Buys, J., Du, L., Forbes, M., Choi, Y.",
+    "year": 2020,
+    "venue": "ICLR",
+    "url": "https://arxiv.org/abs/1904.09751"
   }
 }

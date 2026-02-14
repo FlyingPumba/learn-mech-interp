@@ -1,7 +1,7 @@
 ---
 title: "Composition and Virtual Attention Heads"
 description: "How attention heads compose across layers through V-, K-, and Q-composition, creating virtual attention heads with capabilities no single head possesses."
-order: 5
+order: 6
 prerequisites:
   - title: "QK and OV Circuits"
     url: "/topics/qk-ov-circuits/"

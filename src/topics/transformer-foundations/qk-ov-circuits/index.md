@@ -1,7 +1,7 @@
 ---
 title: "QK and OV Circuits"
 description: "How attention heads decompose into independent QK (matching) and OV (copying) circuits through the low-rank factorization of weight matrices."
-order: 4
+order: 5
 prerequisites:
   - title: "The Attention Mechanism"
     url: "/topics/attention-mechanism/"

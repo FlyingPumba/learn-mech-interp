@@ -1,7 +1,7 @@
 ---
 title: "How MLPs Store and Recall Knowledge"
 description: "The mechanistic story of feed-forward layers: how MLP neurons act as key-value memories, promote interpretable concepts in vocabulary space, and orchestrate a multi-stage pipeline for factual recall."
-order: 6
+order: 7
 prerequisites:
   - title: "Composition and Virtual Attention Heads"
     url: "/topics/composition-and-virtual-heads/"
@@ -164,4 +164,4 @@ The key-value memory view, while productive, has important caveats.
 
 We now have a mechanistic story for both halves of the transformer layer. Attention moves information between positions through the [QK/OV circuit decomposition](/topics/qk-ov-circuits/). MLPs process that information at each position through key-value memories that promote concepts in vocabulary space. Together, they implement a staged pipeline for tasks like factual recall: MLPs enrich representations with associated attributes, and attention heads route and extract the relevant information.
 
-This completes the Transformer Foundations block. With the architecture, attention mechanisms, composition, and MLP knowledge storage in hand, we are ready to move to the [foundational concepts of interpretability](/topics/what-is-mech-interp/) and the techniques used to analyze these components in practice.
+The next article, [Decoding Strategies](/topics/decoding-strategies/), covers how the model's logits become generated text, completing the Transformer Foundations block. After that, we move to the [foundational concepts of interpretability](/topics/what-is-mech-interp/) and the techniques used to analyze these components in practice.

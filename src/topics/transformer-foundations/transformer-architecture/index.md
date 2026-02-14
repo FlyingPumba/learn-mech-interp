@@ -118,19 +118,11 @@ Components communicate only through the residual stream. Attention head 3 in lay
 
 ## Layer Normalization
 
-Layer norm stabilizes training by normalizing activations:
-
-$$
-\text{LN}(\mathbf{x}) = \gamma \odot \frac{\mathbf{x} - \mu}{\sigma} + \beta
-$$
-
-Without layer normalization, training tends to fail: gradients explode and losses skyrocket. It appears before attention and MLP sublayers (in "pre-norm" architectures like GPT-2) or after them (in "post-norm" architectures).
-
-For mechanistic interpretability, layer norm is a mild complication. It couples all dimensions together (changing one dimension affects the normalization of all others), which means purely linear decompositions of the residual stream are only approximate. In practice, researchers often work with pre-layer-norm activations and treat the nonlinearity as a minor correction.
+Layer normalization appears before each sublayer and is essential for stable training. Without it, activations grow unboundedly across layers and gradients explode. We cover layer normalization in detail in [Layer Normalization](/topics/layer-normalization/), including the pre-norm vs. post-norm distinction, RMSNorm, and why it introduces a nonlinearity that matters for mechanistic interpretability.
 
 ## The Full Stack (Compact Form)
 
-Ignoring layer norm details, a decoder-only transformer applies this recurrence for each layer $l$:
+For clarity, this recurrence omits [layer normalization](/topics/layer-normalization/), which is applied before each sublayer in practice. A decoder-only transformer applies this recurrence for each layer $l$:
 
 $$
 \mathbf{r}^{l+1} = \mathbf{r}^l + \text{Attn}^l(\mathbf{r}^l) + \text{MLP}^l(\mathbf{r}^l)
@@ -158,24 +150,11 @@ If the model assigns 50% probability to the correct next token, the loss contrib
 
 Every part of the transformer is learned: which embedding vectors to use, what attention patterns to form, what the MLPs compute. If it makes sense for "cat" and "feline" to have similar embeddings (because they predict similar next tokens), the model will learn that from data.
 
-## Sampling: Using the Model
+## Generating Text
 
-Once trained, how do we actually generate text? The model produces a probability distribution over next tokens. We need to choose one, then repeat.
+Once trained, the model produces a probability distribution over next tokens. Choosing a token from that distribution and repeating the process produces text. The choice of decoding strategy (greedy, temperature-scaled, nucleus sampling, beam search) affects quality and diversity. We cover these in [Decoding Strategies](/topics/decoding-strategies/).
 
-**Greedy sampling** always picks the highest-probability token. This is deterministic but can get stuck in loops: if "cat cat cat" makes "cat" the most likely next token, the model keeps saying "cat" forever.
-
-**Random sampling** draws from the distribution: if "mat" has 15% probability and "floor" has 12%, we pick "mat" 15% of the time. This introduces variety but can produce incoherent text if low-probability tokens are chosen.
-
-**Temperature** adjusts the distribution before sampling. Temperature > 1 flattens the distribution (more random), temperature < 1 sharpens it (more deterministic). At temperature 0, sampling becomes greedy.
-
-The generation loop works like this:
-1. Feed the prompt through the model
-2. Get a probability distribution over the next token
-3. Sample a token from that distribution (using temperature, top-k, or other techniques)
-4. Append the sampled token to the input
-5. Repeat from step 1
-
-Importantly, the model has no memory between generation steps. After sampling a token, we feed the entire sequence (prompt + generated tokens so far) back through the model. From the model's perspective, each forward pass is independent: it does not know which tokens it generated versus which were in the original prompt.
+The generation loop feeds the full sequence back through the model at each step. The model has no memory between steps: each forward pass is independent, and the model does not know which tokens it generated versus which were in the original prompt.
 
 ## Why This Matters for MI
 

@@ -92,6 +92,55 @@ $$
 
 This single equation is the core of the transformer {% cite "vaswani2017attention" %}. Everything else in the architecture (multi-head attention, the residual stream, MLPs) is built around it.
 
+## A Worked Example
+
+To make the attention equation concrete, we trace a single attention head on a 3-token sequence with $d_k = 2$. The tokens are A, B, and C, and we compute the attention output for token C (the final position).
+
+**Setup.** Suppose the query, key, and value vectors are:
+
+| Token | Query $\mathbf{q}$ | Key $\mathbf{k}$ | Value $\mathbf{v}$ |
+|-------|---------|-------|---------|
+| A | — | $(1, 0)$ | $(1, 0, 0)$ |
+| B | — | $(0, 1)$ | $(0, 1, 0)$ |
+| C | $(1, 1)$ | $(1, 1)$ | $(0, 0, 1)$ |
+
+We only need C's query (since we are computing attention *from* position C) and all three keys and values.
+
+**Step 1: Dot-product scores.** Token C's query is compared against each key:
+
+$$e_{C,A} = \mathbf{q}_C^T \mathbf{k}_A = (1)(1) + (1)(0) = 1$$
+$$e_{C,B} = \mathbf{q}_C^T \mathbf{k}_B = (1)(0) + (1)(1) = 1$$
+$$e_{C,C} = \mathbf{q}_C^T \mathbf{k}_C = (1)(1) + (1)(1) = 2$$
+
+**Step 2: Scale by $\sqrt{d_k}$.** With $d_k = 2$, we divide by $\sqrt{2} \approx 1.41$:
+
+$$\tilde{e}_{C,A} = 0.71, \quad \tilde{e}_{C,B} = 0.71, \quad \tilde{e}_{C,C} = 1.41$$
+
+**Step 3: Softmax.** Converting to attention weights:
+
+$$\alpha_{C,A} = \frac{e^{0.71}}{e^{0.71} + e^{0.71} + e^{1.41}} = \frac{2.03}{2.03 + 2.03 + 4.10} \approx 0.25$$
+
+$$\alpha_{C,B} \approx 0.25, \quad \alpha_{C,C} \approx 0.50$$
+
+Token C attends most strongly to itself (50%), with equal attention to A and B (25% each). The self-attention is strongest because C's key aligns most with its own query (dot product of 2 vs. 1).
+
+**Step 4: Weighted sum of values.** The output for token C is:
+
+$$\text{out}_C = 0.25 \cdot (1, 0, 0) + 0.25 \cdot (0, 1, 0) + 0.50 \cdot (0, 0, 1) = (0.25, 0.25, 0.50)$$
+
+The output is dominated by C's own value vector, with smaller contributions from A and B. This is the information that this attention head writes to the residual stream at position C.
+
+The key observation: the attention pattern (who attends to whom) is entirely determined by the dot products between queries and keys. The values are passive passengers, mixed according to whatever weights the QK interaction produces. These are two independent computations, which is the foundation of the [QK/OV circuit decomposition](/topics/qk-ov-circuits/) we will develop later.
+
+<details class="pause-and-think">
+<summary>Pause and think: Compute attention for token B</summary>
+
+Using the same key and value vectors, compute the attention output for token B. Remember that causal masking means B can only attend to positions A and B (not C). What are the attention weights? What is the output vector?
+
+With $\mathbf{q}_B$ not given in the table (we would need B's query vector), this exercise highlights that each position needs its own query to compute its own attention pattern. If $\mathbf{q}_B = (0, 1)$, then $e_{B,A} = 0$ and $e_{B,B} = 1$. After scaling and softmax, B attends mostly to itself. The output would be dominated by B's value vector $(0, 1, 0)$.
+
+</details>
+
 ## Self-Attention and Causal Masking
 
 In **self-attention**, the queries, keys, and values all come from the same input sequence. Given an input matrix $X$ (one row per token), we compute $Q = XW_Q$, $K = XW_K$, and $V = XW_V$. The sequence attends to itself: every token can look at every other token and decide what information to gather. This is how a transformer lets all positions interact in a single step, producing context-dependent representations where each token's output reflects its relationship to the entire input.
@@ -126,6 +175,14 @@ $$
 With $H$ heads and $d_k = d_{\text{model}} / H$, the total parameter count is the same as a single large head, but the model can attend to $H$ different things at once. For mechanistic interpretability, this is a major advantage: we can study each head individually to understand what it does.
 
 In practice, different heads specialize in remarkably specific patterns. **Previous token heads** consistently attend to the immediately preceding token. **Induction heads** complete patterns by looking for previous occurrences of the current token and attending to what came after. **Name mover heads** copy proper names to later positions where they are needed for prediction. We will explore induction heads and other specialized head types in later articles.
+
+To see why multiple heads matter, consider the sentence *"The tired cat sat on the mat because it was tired"* at the token position "it." Different heads can extract different relationships from the same position simultaneously:
+
+- **Head A** might attend from "it" back to "cat," resolving the pronoun to its referent.
+- **Head B** might attend from "it" to the first "tired," tracking which property is being referenced.
+- **Head C** might attend from "it" to "sat," tracking the main verb of the clause.
+
+No single head could serve all three purposes at once. Each head's QK circuit determines a different relevance pattern, and each head's OV circuit copies different information. The concatenation of their outputs gives the model simultaneous access to the referent, its property, and the action, all from a single attention layer.
 
 **Each attention head is a separate information-moving operation with its own learned pattern. Understanding what each head does is a core goal of mechanistic interpretability.**
 
@@ -162,13 +219,7 @@ If the transformer is just a series of additive updates to a vector, what would 
 
 Beyond attention, three other components play important roles in the transformer.
 
-**Layer normalization** stabilizes training by normalizing activations:
-
-$$
-\text{LN}(\mathbf{x}) = \gamma \odot \frac{\mathbf{x} - \mu}{\sigma} + \beta
-$$
-
-where $\mu$ and $\sigma$ are the mean and standard deviation of $\mathbf{x}$, and $\gamma$, $\beta$ are learned parameters.{% sidenote "Layer normalization creates a complication for mechanistic interpretability: it couples all dimensions together. A change in one dimension affects the normalization of all others, which makes purely linear decomposition of the residual stream only an approximation. In practice, researchers often analyze the pre-layer-norm residual stream and treat layer norm as a minor nonlinear correction." %}
+**[Layer normalization](/topics/layer-normalization/)** stabilizes training by normalizing activations before each sublayer. It introduces a nonlinearity that couples all residual stream dimensions, which means purely linear decompositions are approximate. We cover the details, including pre-norm vs. post-norm placement and why MI researchers typically analyze pre-layer-norm activations, in the [dedicated article](/topics/layer-normalization/).
 
 **MLPs (feed-forward networks)** appear after each attention sublayer and apply a nonlinear transformation position-wise:
 
