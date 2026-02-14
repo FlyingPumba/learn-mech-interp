@@ -229,9 +229,6 @@ export default function(eleventyConfig) {
   // Pass through JS files to _site/js/
   eleventyConfig.addPassthroughCopy("src/js");
 
-  // Pass through site-wide images (backgrounds, etc.)
-  eleventyConfig.addPassthroughCopy("src/images");
-
   // Pass through article-local images, remapping from nested block structure
   // to flat output so /topics/<article>/images/ URLs remain stable
   const blockDirs = fs.readdirSync("src/topics", { withFileTypes: true })
