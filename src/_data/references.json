@@ -509,5 +509,40 @@
     "year": 2023,
     "venue": "ICLR",
     "url": "https://arxiv.org/abs/2210.13382"
+  },
+  "geva2021kvmemories": {
+    "title": "Transformer Feed-Forward Layers Are Key-Value Memories",
+    "authors": "Geva, M., Schuster, R., Berant, J., Levy, O.",
+    "year": 2021,
+    "venue": "EMNLP",
+    "url": "https://arxiv.org/abs/2012.14913"
+  },
+  "geva2022concepts": {
+    "title": "Transformer Feed-Forward Layers Build Predictions by Promoting Concepts in the Vocabulary Space",
+    "authors": "Geva, M., Caciularu, A., Wang, K., Goldberg, Y.",
+    "year": 2022,
+    "venue": "EMNLP",
+    "url": "https://arxiv.org/abs/2203.14680"
+  },
+  "geva2023factual": {
+    "title": "Dissecting Recall of Factual Associations in Auto-Regressive Language Models",
+    "authors": "Geva, M., Bastings, J., Filippova, K., Globerson, A.",
+    "year": 2023,
+    "venue": "EMNLP",
+    "url": "https://arxiv.org/abs/2304.14767"
+  },
+  "dai2022knowledge": {
+    "title": "Knowledge Neurons in Pretrained Transformers",
+    "authors": "Dai, D., Dong, L., Hao, Y., Sui, Z., Chang, B., Wei, F.",
+    "year": 2022,
+    "venue": "ACL",
+    "url": "https://arxiv.org/abs/2104.08696"
+  },
+  "zhang2022moefication": {
+    "title": "MoEfication: Transformer Feed-forward Layers Are Mixtures of Experts",
+    "authors": "Zhang, Z., Lin, Y., Liu, Z., et al.",
+    "year": 2022,
+    "venue": "ACL Findings",
+    "url": "https://arxiv.org/abs/2110.01786"
   }
 }
