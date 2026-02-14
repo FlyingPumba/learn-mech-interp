@@ -1,7 +1,7 @@
 ---
 title: "Attention Probes"
 description: "How learned attention mechanisms inside probes solve the sequence aggregation problem, letting the probe decide which token positions matter for classification instead of relying on mean pooling or last-token heuristics."
-order: 4
+order: 5
 prerequisites:
   - title: "Probing Classifiers"
     url: "/topics/probing-classifiers/"

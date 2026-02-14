@@ -1,7 +1,7 @@
 ---
 title: "Linear Artificial Tomography (LAT)"
 description: "How to read what concepts a model represents by training linear classifiers on activations, following the population-level approach from cognitive neuroscience."
-order: 3
+order: 4
 prerequisites:
   - title: "Contrastive Activation Addition (CAA)"
     url: "/topics/caa-method/"

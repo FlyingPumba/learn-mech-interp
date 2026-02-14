@@ -586,5 +586,40 @@
     "year": 2024,
     "venue": "NeurIPS",
     "url": "https://arxiv.org/abs/2404.03592"
+  },
+  "burns2022ccs": {
+    "title": "Discovering Latent Knowledge in Language Models Without Supervision",
+    "authors": "Burns, C., Ye, H., Klein, D., Steinhardt, J.",
+    "year": 2023,
+    "venue": "ICLR",
+    "url": "https://arxiv.org/abs/2212.03827"
+  },
+  "marks2023geometry": {
+    "title": "The Geometry of Truth: Emergent Linear Structure in Large Language Model Representations of True/False Datasets",
+    "authors": "Marks, S., Tegmark, M.",
+    "year": 2024,
+    "venue": "COLM",
+    "url": "https://arxiv.org/abs/2310.06824"
+  },
+  "li2023iti": {
+    "title": "Inference-Time Intervention: Eliciting Truthful Answers from a Language Model",
+    "authors": "Li, K., Patel, O., Viégas, F., Pfister, H., Wattenberg, M.",
+    "year": 2023,
+    "venue": "NeurIPS",
+    "url": "https://arxiv.org/abs/2306.03341"
+  },
+  "kossen2024entropy": {
+    "title": "Semantic Entropy Probes: Robust and Cheap Hallucination Detection in LLMs",
+    "authors": "Kossen, J., Gal, Y., Rainforth, T.",
+    "year": 2024,
+    "venue": "arXiv",
+    "url": "https://arxiv.org/abs/2406.15927"
+  },
+  "levinstein2023liedetector": {
+    "title": "Still No Lie Detector for Language Models: Probing Empirical and Conceptual Roadblocks",
+    "authors": "Levinstein, B. A., Herrmann, D. A.",
+    "year": 2024,
+    "venue": "Philosophical Studies",
+    "url": "https://arxiv.org/abs/2307.00175"
   }
 }

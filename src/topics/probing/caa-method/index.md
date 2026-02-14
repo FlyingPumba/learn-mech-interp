@@ -1,7 +1,7 @@
 ---
 title: "Contrastive Activation Addition (CAA)"
 description: "How to compute robust steering vectors by averaging activation differences across many contrast pairs, isolating the shared direction corresponding to a target concept."
-order: 2
+order: 3
 prerequisites:
   - title: "The Linear Representation Hypothesis"
     url: "/topics/linear-representation-hypothesis/"
