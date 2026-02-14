@@ -558,5 +558,33 @@
     "year": 2025,
     "venue": "arXiv",
     "url": "https://arxiv.org/abs/2510.27484"
+  },
+  "geiger2021causal": {
+    "title": "Causal Abstractions of Neural Networks",
+    "authors": "Geiger, A., Lu, H., Icard, T., Potts, C.",
+    "year": 2021,
+    "venue": "NeurIPS",
+    "url": "https://arxiv.org/abs/2106.02997"
+  },
+  "geiger2023causal": {
+    "title": "Causal Abstraction: A Theoretical Foundation for Mechanistic Interpretability",
+    "authors": "Geiger, A., Ibeling, D., Zur, A., Chaudhary, M., Chauhan, S., Huang, J., Arora, A., Wu, Z., Goodman, N., Potts, C., Icard, T.",
+    "year": 2025,
+    "venue": "JMLR",
+    "url": "https://arxiv.org/abs/2301.04709"
+  },
+  "wu2023boundlessdas": {
+    "title": "Interpretability at Scale: Identifying Causal Mechanisms in Alpaca",
+    "authors": "Wu, Z., Geiger, A., Icard, T., Potts, C., Goodman, N.",
+    "year": 2023,
+    "venue": "NeurIPS",
+    "url": "https://arxiv.org/abs/2305.08809"
+  },
+  "wu2024reft": {
+    "title": "ReFT: Representation Finetuning for Language Models",
+    "authors": "Wu, Z., Arora, A., Wang, Z., Geiger, A., Jurafsky, D., Manning, C. D., Potts, C.",
+    "year": 2024,
+    "venue": "NeurIPS",
+    "url": "https://arxiv.org/abs/2404.03592"
   }
 }
