@@ -52,6 +52,28 @@ Where K-composition changes what positions "advertise" about themselves, Q-compo
   <figcaption>Q-, K-, and V-Composition between attention heads in a two-layer attention-only transformer. Lines connect head pairs with significant composition, measured by the Frobenius norm of the relevant weight matrix products. In this model, K-composition dominates: a previous token head (red, Layer 0) composes with induction heads (teal, Layer 1) to implement in-context pattern completion. From Elhage et al., <em>A Mathematical Framework for Transformer Circuits</em>. {%- cite "elhage2021mathematical" -%}</figcaption>
 </figure>
 
+## Measuring Composition: Composition Scores
+
+The figure above connects head pairs with "significant composition, measured by the Frobenius norm of the relevant weight matrix products." How do we actually compute this? Elhage et al. define three **composition scores** that quantify how much one head's output can affect another head's computation {% cite "elhage2021mathematical" %}:
+
+$$
+\text{K-comp}(h_1, h_2) = \frac{\|W_{OV}^{h_1} \cdot W_{QK}^{h_2}\|_F}{\|W_{OV}^{h_1}\|_F \cdot \|W_{QK}^{h_2}\|_F}
+$$
+
+$$
+\text{Q-comp}(h_1, h_2) = \frac{\|W_{OV}^{h_1} \cdot W_{QK}^{h_2 \top}\|_F}{\|W_{OV}^{h_1}\|_F \cdot \|W_{QK}^{h_2 \top}\|_F}
+$$
+
+$$
+\text{V-comp}(h_1, h_2) = \frac{\|W_{OV}^{h_2} \cdot W_{OV}^{h_1}\|_F}{\|W_{OV}^{h_2}\|_F \cdot \|W_{OV}^{h_1}\|_F}
+$$
+
+Each score measures the Frobenius norm of the composed weight matrix, normalized by the norms of the individual matrices. The normalization ensures the score lies between 0 and 1: a score of 0 means the two matrices are "orthogonal" (the output of $h_1$ falls entirely in the null space of $h_2$'s reading matrix), while a score of 1 means perfect alignment.{% sidenote "Without normalization, larger heads would have higher composition scores simply because their weight matrices have larger norms, not because they compose more. The normalization converts the score from 'how much composition happens' to 'what fraction of the available capacity is used for composition.'" %}
+
+These are purely **weight-based** measures. You can compute them from the model's parameters alone, with no data required. This is both their strength and their limitation. A high composition score means head $h_1$'s output subspace aligns well with head $h_2$'s input subspace, so composition *could* happen. But it does not guarantee that composition *does* happen on real inputs. The heads might have the capacity to compose, yet the attention patterns on natural text might never route information through that pathway. Conversely, a low score reliably rules out composition: if the subspaces are misaligned, no input can make the heads interact.
+
+Composition scores complement the activation-based intervention methods covered later in the course ([activation patching](/topics/activation-patching/), [path patching](/topics/activation-patching/#path-patching)). Weight-based scores are cheap to compute and give a bird's-eye view of which head pairs *can* interact. Activation-based methods are more expensive but confirm which interactions actually *occur* on specific inputs.
+
 ## Virtual Attention Heads
 
 > **Virtual Attention Head:** A virtual attention head is a computational unit formed by the composition of two or more physical attention heads across layers. It implements a behavior that no single physical head performs alone.

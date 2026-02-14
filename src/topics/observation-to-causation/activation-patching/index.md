@@ -89,6 +89,22 @@ Noising A would show little or no effect, because B compensates. Denoising A wou
 
 </details>
 
+## Ablation: Choosing a Baseline
+
+Activation patching substitutes an activation from one specific run into another. But sometimes we want to ask a simpler question: "What happens if this component contributes *nothing*?" This is **ablation**: replacing a component's activation with some baseline value to test whether the model needs it.
+
+> **Ablation:** Replacing a model component's activation with a fixed baseline value (rather than a value from a specific alternative run) to test whether the component is necessary for a behavior. Ablation tests necessity: if performance degrades, the component matters.
+
+The choice of baseline is not obvious, and it affects results in practice.
+
+**Zero ablation** sets the component's output to the zero vector. This is the simplest option: it removes the component's additive contribution to the residual stream entirely. But zero is often far from the model's natural activation distribution. Downstream components receive an input they would never see during normal operation, so the observed effect may partly reflect the model's response to an out-of-distribution input rather than the component's genuine contribution.
+
+**Mean ablation** replaces the activation with its mean over a dataset of inputs. The intuition: the mean activation represents the component's "average" contribution. Replacing with the mean removes the component's *input-specific* signal while preserving its average effect on the residual stream. This keeps downstream activations closer to their natural distribution than zero ablation does.{% sidenote "In practice, mean ablation and zero ablation often agree on which components are important, but they can disagree on magnitude. Components whose mean activation is far from zero -- common for MLP layers, which often have a large constant bias term -- show substantially different ablation effects under the two methods." %}
+
+**Resampling ablation** replaces the activation with the value from a random different input. This preserves the full distribution of the component's activations, not just the mean. Each ablation sample draws from the same distribution the model normally encounters, avoiding distribution shift entirely. This is more expensive (you need multiple samples to get stable estimates) but more principled. Resampling ablation is used in the **causal scrubbing** framework, which formalizes circuit hypotheses as claims about which activations can be freely resampled without changing behavior.
+
+In current practice, mean ablation is the most common default: it is cheap, stays near the natural distribution, and produces reliable results for most components. The key takeaway is that ablation baseline choice is a methodological decision, and results should be interpreted with that choice in mind.
+
 ## A Worked Example: IOI in GPT-2 Small
 
 Let us walk through activation patching on the Indirect Object Identification task in GPT-2 Small. This worked example demonstrates the full patching workflow and reveals the sparse circuit structure that makes mechanistic interpretability possible.

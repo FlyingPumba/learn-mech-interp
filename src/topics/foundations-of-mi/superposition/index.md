@@ -43,6 +43,34 @@ There are two strategies. The first is to select the top $d$ features by importa
 
 Superposition is not a design choice. It is an emergent property that arises from training when the model has more useful features than available dimensions. Whether the model adopts superposition depends on two factors: how important each feature is (high-importance features are worth dedicating a dimension to) and how sparse each feature is (rare features interfere less often, as we will see). The interplay between importance and sparsity determines the model's strategy, and studying this interplay is the central contribution of the toy model framework {% cite "elhage2022toy" %}.
 
+## Where Superposition Lives: Privileged and Non-Privileged Bases
+
+Before we study superposition in a toy model, we need to understand a subtlety that changes *where* and *how* superposition manifests. Not all activation spaces in a transformer are created equal. The difference comes down to whether the nonlinearity treats each dimension individually.
+
+**Why ReLU creates a privileged basis.** In an MLP, a vector enters the hidden layer, gets multiplied by $W_{\text{in}}$ to produce a pre-activation vector, and then ReLU zeroes out the negatives *independently for each dimension*. This elementwise operation makes each axis special. Suppose the hidden layer is 3-dimensional and the pre-activation is $[2.1, -0.4, 0.7]$. ReLU produces $[2.1, 0, 0.7]$: neuron 1 is "on," neuron 2 is "off," neuron 3 is "on." Each neuron has its own gate. The nonlinearity treats the axes individually, so the axes are the natural units of analysis.
+
+> **Privileged basis:** An activation space has a privileged basis when the model's computation treats each coordinate axis differently, typically because a nonlinear activation function (like ReLU or GELU) is applied elementwise. In a privileged basis, individual dimensions (neurons) are meaningful units of analysis.
+
+**Why the residual stream has no privileged basis.** All operations that read from and write to the residual stream are *linear*: attention output is a linear function of value vectors, MLP output is added linearly, and queries, keys, and values are computed via linear projections. The key argument is a symmetry one: if you rotate the entire residual stream by an orthogonal matrix $R$ (and adjust all writing matrices to include $R$ and all reading matrices to include $R^{-1}$), the model's computation and output are *identical*. To see this concretely, consider a query projection: $W_Q \cdot \mathbf{r}$ becomes $W_Q R^{-1} \cdot R\mathbf{r}$, which equals the same result. This rotation invariance means "dimension 42 of the residual stream" is not a meaningful concept. You could rotate it away without changing anything the model computes.
+
+> **Non-privileged basis:** An activation space has a non-privileged basis when any orthogonal rotation of the space, with corresponding adjustments to input and output matrices, leaves the model's computation unchanged. In a non-privileged basis, individual dimensions carry no inherent meaning; only directions matter.
+
+<details class="pause-and-think">
+<summary>Pause and think: Does rotating the MLP hidden layer preserve computation?</summary>
+
+Consider an MLP hidden layer with ReLU activation. If you rotate the hidden layer activations by an orthogonal matrix $R$, does the MLP compute the same function? Think about what ReLU does to a rotated vector versus the original.
+
+It does not. ReLU applied to $R\mathbf{x}$ is not the same as $R$ applied to $\text{ReLU}(\mathbf{x})$. Rotation mixes dimensions, and then ReLU zeroes out different entries than it would have in the original basis. For example, if $\mathbf{x} = [1, -1]$ and $R$ is a 45-degree rotation, $\text{ReLU}(\mathbf{x}) = [1, 0]$ but $\text{ReLU}(R\mathbf{x}) = \text{ReLU}([1.41, 0]) = [1.41, 0]$, which gives a different result when rotated back. The elementwise nonlinearity breaks rotation invariance, creating the privileged basis.
+
+</details>
+
+This distinction produces two flavors of superposition with different consequences:
+
+- **MLP hidden layers** have a privileged basis. Individual neurons are meaningful units, but each one may serve multiple roles. Neuron 42 fires for "sports" and "the color red." We can *see* individual neurons, but they are not monosemantic. This is **computational superposition**: the right units of analysis are clear (neurons), but each unit is overloaded.
+- **The residual stream** has no privileged basis. There are no meaningful individual dimensions at all. Features exist as directions, but no basis is special. Looking at "dimension 42" is as arbitrary as looking at "the average of dimensions 17 and 93." This is **representational superposition**: even the units of analysis are unclear.
+
+The practical consequences are direct. When MI researchers say "neuron 42 in layer 6 fires for X," they are relying on the privileged basis: each neuron has its own activation gate that makes it individually meaningful. When they say "there is a direction in the residual stream that encodes sentiment," they cannot point to any single dimension because the residual stream has no privileged basis. This is also why [sparse autoencoders](/topics/sparse-autoencoders/) behave differently depending on where they are trained: applied to the MLP hidden layer, an SAE decomposes *neurons* into finer-grained features; applied to the residual stream, it decomposes *the whole space* into features, since there are no natural units to start from.
+
 ## The Toy Model
 
 To study superposition systematically, Elhage et al. built a toy model that isolates the core question: given $m$ features and $n < m$ dimensions, how does the network allocate directions? {% cite "elhage2022toy" %}

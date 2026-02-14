@@ -439,5 +439,19 @@
     "year": 2024,
     "venue": "Alignment Forum",
     "url": "https://www.alignmentforum.org/posts/ioPnHKFyy4Cw2Gr2x/mechanistically-eliciting-latent-behaviors-in-language-1"
+  },
+  "bloom2024saelens": {
+    "title": "SAELens: Training Sparse Autoencoders on Language Models",
+    "authors": "Bloom, J., Chanin, D., Tigges, C., Duong, A.",
+    "year": 2024,
+    "venue": "GitHub",
+    "url": "https://github.com/jbloomAus/SAELens"
+  },
+  "lieberum2024gemma": {
+    "title": "Gemma Scope: Open Sparse Autoencoders Everywhere All At Once on Gemma 2",
+    "authors": "Lieberum, T., Rajamanoharan, S., Conmy, A., et al.",
+    "year": 2024,
+    "venue": "arXiv",
+    "url": "https://arxiv.org/abs/2408.05147"
   }
 }
