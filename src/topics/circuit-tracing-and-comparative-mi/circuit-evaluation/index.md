@@ -29,7 +29,7 @@ Why would training produce heads that hurt performance? The leading hypothesis i
 
 The practical effect: ablating a Negative Name Mover actually *improves* IOI performance on individual examples. The model predicts the indirect object more confidently without the hedging. But this does not mean the model is better off without it -- the hedging serves the training objective across the full distribution.
 
-Negative Name Movers teach an important lesson: **circuits can contain components that appear counterproductive when viewed in isolation.** A head that hurts per-example performance may improve the model's expected loss across all training data. Naive DLA (which head helps most on this example?) can miss or misinterpret components whose function is distributional rather than per-example.
+Negative Name Movers teach an important lesson: **circuits can contain components that appear counterproductive when viewed in isolation.** A head that hurts per-example performance may improve the model's expected loss across all training data. Naive DLA (which head helps most on this example?) can miss or misinterpret components whose function is distributional rather than per-example. Subsequent work has shown that Negative Name Movers are instances of a general [copy suppression](/topics/copy-suppression/) pattern: heads that attend to where a predicted token appears earlier in context and output the negative of that token's unembedding {% cite "mcdougall2023copy" %}. Copy suppression heads serve a calibration function across the full pre-training distribution, not just the IOI task.
 
 ## Backup Name Movers: Built-In Redundancy
 
@@ -44,7 +44,7 @@ The discovery protocol illustrates the challenge:
 3. Run DLA on the remaining heads -- previously quiet heads now show large positive contributions
 4. These are the Backup Name Movers
 
-Neural network redundancy has deep implications. The circuit can tolerate partial damage and still function. But it also means that standard [noising experiments](/topics/activation-patching/) underestimate the importance of primary components, because backups compensate silently. And it complicates the concept of "minimality" -- are backup components part of the circuit or not?
+Neural network redundancy has deep implications. The circuit can tolerate partial damage and still function. But it also means that standard [noising experiments](/topics/activation-patching/) underestimate the importance of primary components, because backups compensate silently. And it complicates the concept of "minimality" -- are backup components part of the circuit or not? This backup behavior is an instance of a general phenomenon called [self-repair](/topics/self-repair/): when a model component is ablated, later components compensate through multiple mechanisms, including LayerNorm rescaling and dormant backup heads {% cite "mcgrath2023hydra" %}.
 
 <details class="pause-and-think">
 <summary>Pause and think: The limits of standard ablation</summary>
@@ -139,7 +139,7 @@ The IOI study taught the field several principles about how transformers compute
 
 The IOI analysis is the best circuit analysis ever performed, and it still has significant limitations.
 
-**Scale.** The analysis took months of researcher effort for one task in a small model (117M parameters). Manual circuit discovery does not scale to models with billions of parameters, even with tools like [ACDC](/topics/attribution-patching/) for semi-automated discovery.
+**Scale.** The analysis took months of researcher effort for one task in a small model (117M parameters). Manual circuit discovery does not scale to models with billions of parameters, even with semi-automated tools. **ACDC** (Automatic Circuit DisCovery) {% cite "conmy2023ioi" %} automates path patching by starting with a fully connected computational graph and recursively pruning edges whose activation patching effect falls below a threshold. It operates on *edges* (connections between components), not just nodes, producing a wiring diagram rather than a parts list. The process can be sped up significantly by using [attribution patching](/topics/attribution-patching/) as a fast screening step, reserving full activation patching for verification of the top candidates. Even so, ACDC requires defining a clean metric and a distribution of clean/corrupted input pairs, and the results depend on the pruning threshold.
 
 **The decomposition problem.** The IOI circuit was tractable because the relevant features happened to align with individual attention heads. Each head class had a clear function. But this is not always the case. When features are distributed across many components, or when one head participates in multiple unrelated features, head-level circuit analysis breaks down.{% sidenote "The IOI circuit uses roughly 18% of GPT-2 Small's attention heads. The other 82% participate in other circuits for other tasks. Some may participate in multiple circuits simultaneously, making it impossible to assign a single functional role to each head." %}
 

@@ -453,5 +453,61 @@
     "year": 2024,
     "venue": "arXiv",
     "url": "https://arxiv.org/abs/2408.05147"
+  },
+  "mcgrath2023hydra": {
+    "title": "The Hydra Effect: Emergent Self-repair in Language Model Computations",
+    "authors": "McGrath, T., Rahtz, M., Kramar, J., et al.",
+    "year": 2023,
+    "venue": "arXiv",
+    "url": "https://arxiv.org/abs/2307.15771"
+  },
+  "rushing2024selfrepair": {
+    "title": "Explorations of Self-Repair in Language Models",
+    "authors": "Rushing, C., Nanda, N.",
+    "year": 2024,
+    "venue": "arXiv",
+    "url": "https://arxiv.org/abs/2402.15390"
+  },
+  "mcdougall2023copy": {
+    "title": "Copy Suppression: Comprehensively Understanding an Attention Head",
+    "authors": "McDougall, C., Conmy, A., Rushing, C., et al.",
+    "year": 2023,
+    "venue": "arXiv",
+    "url": "https://arxiv.org/abs/2310.04625"
+  },
+  "meng2022rome": {
+    "title": "Locating and Editing Factual Associations in GPT",
+    "authors": "Meng, K., Bau, D., Mitchell, A., Finn, C.",
+    "year": 2022,
+    "venue": "NeurIPS",
+    "url": "https://arxiv.org/abs/2202.05262"
+  },
+  "meng2023memit": {
+    "title": "Mass-Editing Memory in a Transformer",
+    "authors": "Meng, K., Sharma, A., Andonian, A., et al.",
+    "year": 2023,
+    "venue": "ICLR",
+    "url": "https://arxiv.org/abs/2210.07229"
+  },
+  "hase2024localization": {
+    "title": "Does Localization Inform Editing? Surprising Differences in Causality-Based Localization vs. Knowledge Editing in Language Models",
+    "authors": "Hase, P., Bansal, M., Kim, B., Ghandeharioun, A.",
+    "year": 2024,
+    "venue": "NeurIPS",
+    "url": "https://arxiv.org/abs/2301.04213"
+  },
+  "nanda2023othello": {
+    "title": "Actually, Othello-GPT Has A Linear Emergent World Representation",
+    "authors": "Nanda, N., Lee, A., Berber, M.",
+    "year": 2023,
+    "venue": "arXiv",
+    "url": "https://arxiv.org/abs/2309.00941"
+  },
+  "li2023othello": {
+    "title": "Emergent World Representations: Exploring a Sequence Model Trained on a Synthetic Task",
+    "authors": "Li, K., Hopkins, A. K., Bau, D., et al.",
+    "year": 2023,
+    "venue": "ICLR",
+    "url": "https://arxiv.org/abs/2210.13382"
   }
 }

@@ -1,7 +1,7 @@
 ---
 title: "Concept Erasure with LEACE"
 description: "How LEACE provides a mathematically guaranteed method for erasing specific concepts from model representations, going beyond simple ablation with formal guarantees."
-order: 1
+order: 2
 prerequisites:
   - title: "Ablation Steering"
     url: "/topics/ablation-steering/"

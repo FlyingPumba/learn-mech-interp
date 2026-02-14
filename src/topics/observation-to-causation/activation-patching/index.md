@@ -191,6 +191,18 @@ Path patching was central to the [IOI circuit analysis](/topics/ioi-circuit/) {%
 
 Conmy et al. extended this idea into the **ACDC algorithm** (Automatic Circuit DisCovery), which automates path patching to systematically prune edges and discover circuits {% cite "conmy2023ioi" %}. ACDC starts with a fully connected computational graph and iteratively removes edges whose patching effect falls below a threshold, leaving behind the minimal circuit.
 
+## Confounds: Self-Repair and Compensation
+
+Activation patching is the gold standard for causal claims about model internals, but it has a systematic blind spot: **self-repair**. When we ablate or patch a model component, later components may compensate, partially restoring the original behavior. The effect we measure understates the component's true importance.
+
+Several mechanisms contribute to self-repair. **LayerNorm rescaling** accounts for a significant fraction: when a component's contribution is removed from the residual stream, the magnitude of the stream changes, and LayerNorm renormalizes it. This mechanical rescaling can recover up to 30% of the ablated effect without any "intelligent" compensation {% cite "mcgrath2023hydra" %}. **Backup components** provide another source: heads that are nearly inactive under normal operation activate when primary components are removed, picking up their function. The [IOI circuit's Backup Name Movers](/topics/circuit-evaluation/) are the canonical example. Beyond these identified mechanisms, a substantial fraction of self-repair remains unexplained {% cite "rushing2024selfrepair" %}.
+
+The practical consequence: **ablation effects are a lower bound on component importance.** A component that appears to account for 30% of the logit difference when ablated may actually be responsible for substantially more, with the gap hidden by downstream compensation. This is particularly problematic for noising experiments, where the clean run's backup mechanisms are fully operational and ready to compensate.
+
+**Resample ablation** (replacing a component's activation with the value from a random different input) provides a better baseline than zero ablation for exactly this reason. It preserves the activation distribution that downstream components expect, reducing the confound from out-of-distribution inputs triggering abnormal compensation. Mean ablation offers a similar advantage at lower cost.
+
+For a deeper treatment of self-repair as a general phenomenon, including the known mechanisms and open questions, see [Self-Repair in Language Models](/topics/self-repair/).
+
 ## The Causal Toolkit
 
 We now have three levels of causal analysis, each suited to a different stage of investigation:

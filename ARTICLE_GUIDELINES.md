@@ -21,6 +21,8 @@ When someone suggests "add an article about Paper X," the right response is to r
 - A paper: "Towards Monosemanticity" (instead: extract "Sparse Autoencoders" as the concept)
 - A model: "Interpreting GPT-2" (instead: techniques used are the articles)
 - A dataset or benchmark: "The IOI Dataset" (instead: fold into the technique article that uses it)
+- A case study: "How GPT-2 Handles IOI" (instead: extract the techniques used — activation patching, circuit analysis — those are the articles)
+- A specific experimental finding: "World Models in Othello-GPT" (instead: if a reusable technique is involved, cover the technique; cite the finding as evidence)
 
 ### When to create a new article vs. extend an existing one
 
@@ -40,7 +42,7 @@ When evaluating a paper for potential articles:
 
 1. **Identify the core contributions.** What new technique, concept, or finding does it introduce?
 2. **Check for overlap.** Does an existing article already cover this? Would it fit better as an addition there?
-3. **Assess generality.** Is this specific to one model/task, or does it represent a broader idea?
+3. **Assess generality.** Is this specific to one model/task, or does it represent a broader technique or concept? Specific experimental findings (e.g., "model X learns a world model," "circuit Y exists in model Z") are evidence to cite in technique articles, not standalone topics. The article should be about the technique that uncovered the finding, not the finding itself.
 4. **Consider prerequisites.** What would a reader need to know first? Does that prerequisite chain make sense in the curriculum?
 
 A single influential paper might spawn zero articles (if its contributions are incremental), one article (the common case), or multiple articles (if it introduces several distinct concepts).

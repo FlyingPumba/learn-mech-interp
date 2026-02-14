@@ -56,6 +56,8 @@ Several lines of evidence support the linear representation hypothesis.
 
 **Sparse autoencoder features.** Sparse autoencoders trained on model activations extract interpretable directions that correspond to recognizable concepts. The fact that a linear decomposition (the SAE decoder) can recover meaningful features from polysemantic activations is strong evidence that those features are linearly encoded in the first place. We will explore sparse autoencoders in depth in a later article.
 
+**Linear structure in synthetic tasks.** Linear representations appear even in models trained on synthetic sequential tasks where one might expect nonlinear encoding. In models trained to predict legal moves in board games, nonlinear probes initially seemed necessary to decode board state. But subsequent work showed that linear probes achieve comparable accuracy once the right coordinate frame is identified -- the representations were linear all along, just not aligned with the obvious basis {% cite "nanda2023othello" %}. This is a useful reminder: failure of a linear probe does not necessarily refute the LRH. The representations may be linear in a non-obvious subspace.
+
 <details class="pause-and-think">
 <summary>Pause and think: Linearity and probing</summary>
 
