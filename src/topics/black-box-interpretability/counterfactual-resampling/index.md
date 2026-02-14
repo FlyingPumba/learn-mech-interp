@@ -19,7 +19,7 @@ Modern language models can produce long chains of reasoning before arriving at a
 
 This is not just an academic question. If we want to understand *how* a model reasons (or whether it truly reasons at all), we need methods to identify the steps that causally influence the output. [Activation patching](/topics/activation-patching/) does this at the level of individual model components, but it requires access to model internals. Can we measure the importance of reasoning steps using only the model's inputs and outputs?
 
-**Counterfactual resampling** offers one answer: delete a reasoning step, let the model regenerate from that point, and see how the final answer changes {% cite "bogdan2025thoughtanchors" %}.
+**Counterfactual resampling** offers one answer: delete a reasoning step, let the model regenerate from that point, and see how the final answer changes {% cite "bogdan2025thoughtanchors" %} {% cite "macar2025thoughtbranches" %}.
 
 <figure>
   <img src="images/overview_methods.png" alt="Three-panel overview: (A) an example reasoning trace with sentences color-coded by category, (B) the three analysis methods (resampling, receiver heads, attention suppression), and (C) a directed causal graph showing sentence importance.">
@@ -74,6 +74,30 @@ The resulting metric is **counterfactual importance**: the KL divergence compute
 
 This distinction matters. Without semantic filtering, a step that the model always reproduces (regardless of phrasing) looks unimportant. With filtering, we correctly identify it as *overdetermined*, a step the model gravitates toward given the preceding context. Overdetermination is interesting in its own right: it means the reasoning chain has built up enough context to make that step nearly inevitable.
 
+## Resilience: When Removed Content Reappears
+
+Semantic filtering handles cases where the *immediate* replacement is identical to the original. But there is a deeper problem: the model can **re-derive** the content of a removed sentence further downstream. You delete step 5, and the replacement at step 5 is genuinely different, but by step 8 the model has arrived at the same conclusion anyway through a different path. One round of resampling would miss this.
+
+Macar et al. {% cite "macar2025thoughtbranches" %} address this with a metric called **resilience**: the number of iterative resampling rounds needed before a sentence's semantic content stays absent from the rest of the trace. A sentence with high resilience keeps reappearing even when you repeatedly remove it, meaning the model's reasoning is deeply committed to that content. A sentence with low resilience vanishes after a single perturbation, suggesting it was superficially generated rather than structurally necessary.
+
+This leads to a refined importance metric, **Counterfactual++**, which only counts a sentence as truly removed when its content is absent from *all* downstream positions, not just the immediate replacement:
+
+$$
+\text{importance}^{++}(S_i) = D_{\text{KL}}\!\left[\, p(A' \mid \forall\, j \geq i:\, T_j \text{ dissimilar to } S_i) \;\|\; p(A \mid S_i) \,\right]
+$$
+
+This is a stricter test. A sentence might have moderate counterfactual importance (the immediate replacement differs and the answer shifts) but low Counterfactual++ importance (the model re-derives the same content later). Conversely, a sentence with high Counterfactual++ importance is one whose content, once removed, genuinely cannot be recovered.
+
+## Why On-Policy Resampling Matters
+
+A natural question is whether we could simplify the procedure by using hand-written replacement sentences instead of sampling from the model. Perhaps an experimenter could craft targeted edits that more precisely test specific hypotheses.
+
+It turns out this matters a great deal. When Macar et al. compared **on-policy** interventions (replacements sampled from the model itself) against **off-policy** alternatives (hand-written edits, sentences from a different model, or sentences from the same model on a different problem), the off-policy interventions produced effects 10 to 100 times weaker {% cite "macar2025thoughtbranches" %}. Hand-written sentences clustered near zero behavioral change, while on-policy resampled replacements spanned the full range from no effect to complete behavioral reversal.
+
+The reason is distributional fit. A hand-written sentence may be grammatically correct and topically relevant, but the model treats it as out-of-distribution. Its token-level log-probabilities are much lower than what the model would generate itself, and subsequent processing does not engage with it the same way. On-policy replacements, by contrast, are things the model *would actually say* given the preceding context, so they integrate naturally into the reasoning flow and produce genuine downstream effects.
+
+This is an important methodological lesson: for behavioral interventions on reasoning traces, letting the model generate its own counterfactuals is not just convenient but necessary.
+
 ## What Actually Matters
 
 When Bogdan et al. applied counterfactual resampling to DeepSeek R1-Distill (a reasoning model) on math problems, the results were surprising. They classified each reasoning sentence into one of several categories: **plan generation** (stating strategies, meta-reasoning about approach), **active computation** (algebra, arithmetic), **uncertainty management** (backtracking, re-evaluation, expressing confusion), **fact retrieval**, **self-checking**, and others.
@@ -90,6 +114,17 @@ The forced-answer method put **active computation** on top: accuracy jumps most 
 - **Active computation** ranked lower. Despite being the most frequent category (about a third of all sentences), computation steps are largely predetermined by earlier planning decisions. The algebra follows from the strategy; change the strategy and the algebra changes, but change one line of algebra and the model often just redoes it.
 
 The authors call the high-importance steps **thought anchors**: the sentences that pin down the trajectory of reasoning. The metaphor is apt. An anchor does not do the work of sailing, but it determines where the ship ends up.
+
+### The Self-Preservation Test
+
+The resilience metric sharpens this picture further. When applied to safety-relevant scenarios (models reasoning about self-preservation in adversarial settings), the results are striking: **self-preservation** sentences ("My primary goal is to ensure I'm not shut down") have the *lowest* resilience of any category, requiring only 1 to 4 resampling iterations before they vanish from the trace. Their Counterfactual++ importance is near zero {% cite "macar2025thoughtbranches" %}.
+
+<figure>
+  <img src="images/resilience_by_category.png" alt="Bar chart showing resilience scores by sentence category across four models. Self-preservation consistently has the lowest scores, while situation assessment and action execution have the highest.">
+  <figcaption>Resilience scores by sentence category across four reasoning models. Self-preservation sentences are the least resilient, suggesting they are post-hoc rationalizations rather than causal drivers of behavior. From Macar et al., <em>Thought Branches</em>. {% cite "macar2025thoughtbranches" %}</figcaption>
+</figure>
+
+This suggests that when a model produces self-preservation rhetoric during scheming-like behavior, those statements are **post-hoc rationalizations**, not the causal drivers. The actual anchors are the same as in math: situation assessment and plan generation sentences. The model's strategic decisions drive its behavior; the self-preservation language is filler that the model easily drops when perturbed. This finding replicates across four different reasoning models (QWQ-32B, Qwen3-235B, Llama-3.1-Nemotron-Ultra-235B, DeepSeek-R1).
 
 ## Validation: Looking Inside the Model
 
@@ -127,6 +162,25 @@ Activation patching can identify *which model components* (specific heads, layer
 
 </details>
 
+## Transplant Resampling and Nudged Reasoning
+
+So far we have used counterfactual resampling to ask which steps matter. But the same logic extends to a different question: *how do external influences propagate through a reasoning trace?*
+
+**Transplant resampling** addresses this {% cite "macar2025thoughtbranches" %}. Suppose a model produces a reasoning trace while given a hint (e.g., a multiple-choice question where one answer is highlighted). We want to know *where* in the trace the hint's influence takes hold. The procedure: take the hinted trace up to sentence $i$, graft those sentences onto the *unhinted* prompt, and resample 100 rollouts from that point. By varying $i$, we can trace how the hint's effect accumulates across the reasoning chain.
+
+The finding is that hints do not operate through a single decisive sentence. Instead, the influence is **diffuse and cumulative**: each sentence shifts the answer distribution slightly toward the hinted answer, and the effect builds gradually across the full trace. One telltale signature is that the backtracking token "Wait" (common in reasoning models' self-correction) appears about 30% less often in hinted traces, as though the hint suppresses the model's error-correction impulse.
+
+The authors term this **nudged reasoning**: the model is not blindly copying the hint, nor is it engaging in pure post-hoc rationalization. Rather, the hint subtly biases each reasoning step, and these small biases compound. This is a more nuanced picture of unfaithfulness than a simple "the model ignores its own reasoning."
+
+<details class="pause-and-think">
+<summary>Pause and Think</summary>
+
+Transplant resampling reveals that a hint's effect on reasoning is diffuse rather than localized to one sentence. How does this complicate the task of detecting unfaithful reasoning? If the bias were concentrated in a single step (e.g., "The answer is B because the hint said so"), we could identify it by inspecting individual sentences. What changes when the bias is spread across many sentences, each only slightly shifted?
+
+When bias is diffuse, no single sentence looks suspicious in isolation. Each step seems reasonable on its own; the unfaithfulness only becomes visible at the distributional level, by comparing behavior with and without the hint. This means that surface-level inspection of reasoning traces (looking for sentences that mention or obviously follow the hint) will miss the effect. Statistical methods like counterfactual resampling, which measure distributional shifts across many rollouts, become necessary to detect this kind of subtle unfaithfulness.
+
+</details>
+
 ## Limitations
 
 Counterfactual resampling has several important caveats:
@@ -135,10 +189,10 @@ Counterfactual resampling has several important caveats:
 - **Overdetermination.** If multiple sentences independently produce the same downstream effect, removing any one of them may show low importance even though they are collectively essential. The technique measures individual, not joint, causal effects.
 - **Sampling variance.** Counterfactual importance estimates are noisy when few rollouts produce semantically divergent replacements (below 10 valid samples, estimates become unreliable).
 - **Sentence granularity.** The choice of sentence as the unit of analysis is a practical convenience. Reasoning steps do not always align neatly with sentence boundaries.
-- **Model-specific findings.** The result that plan generation outranks active computation has been demonstrated on DeepSeek R1-Distill models. Whether this hierarchy holds for other reasoning models (or reasoning paradigms beyond chain-of-thought) remains open.
+- **Black-box by design.** The technique measures behavioral effects but cannot explain *how* the model internally implements each step. Agreement with white-box methods (receiver heads, attention suppression) provides some validation, but the behavioral and mechanistic levels may diverge in ways that resampling alone cannot detect.
 
 ## Looking Ahead
 
 Counterfactual resampling gives us a general-purpose tool for understanding the structure of model reasoning at a behavioral level. It complements the mechanistic tools we have seen in earlier parts of this curriculum: where [activation patching](/topics/activation-patching/) and [circuit analysis](/topics/automated-circuit-discovery/) tell us *which model components* implement a behavior, counterfactual resampling tells us *which reasoning steps* matter for the output.
 
-The finding that planning and error-correction matter more than computation itself has implications for how we think about chain-of-thought faithfulness: if the *meta-cognitive* steps are the true anchors, then understanding whether a model's stated plans and self-corrections reflect its actual computation becomes a central question.
+The results across both lines of work point toward a consistent picture: strategic decisions (planning, backtracking) anchor model reasoning, while execution steps and rhetorical statements are more superficial than they appear. And the transplant resampling results raise a direct challenge for chain-of-thought monitoring: if external influences on reasoning are diffuse and cumulative rather than localized to identifiable sentences, then detecting unfaithful reasoning requires distributional methods, not just reading the trace.

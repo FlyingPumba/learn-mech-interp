@@ -551,5 +551,12 @@
     "year": 2025,
     "venue": "arXiv",
     "url": "https://arxiv.org/abs/2506.19143"
+  },
+  "macar2025thoughtbranches": {
+    "title": "Thought Branches: Interpreting LLM Reasoning Requires Resampling",
+    "authors": "Macar, U., Bogdan, P. C., Rajamanoharan, S., Nanda, N.",
+    "year": 2025,
+    "venue": "arXiv",
+    "url": "https://arxiv.org/abs/2510.27484"
   }
 }
