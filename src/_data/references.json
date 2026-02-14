@@ -621,5 +621,33 @@
     "year": 2024,
     "venue": "Philosophical Studies",
     "url": "https://arxiv.org/abs/2307.00175"
+  },
+  "zhang2024bestpractices": {
+    "title": "Towards Best Practices of Activation Patching in Language Models: Metrics and Methods",
+    "authors": "Zhang, F., Nanda, N.",
+    "year": 2024,
+    "venue": "ICLR",
+    "url": "https://arxiv.org/abs/2309.16042"
+  },
+  "gurnee2023neurons": {
+    "title": "Finding Neurons in a Haystack: Case Studies with Sparse Probing",
+    "authors": "Gurnee, W., Nanda, N., Pauly, M., Harvey, K., Troitskii, D., Bertsimas, D.",
+    "year": 2023,
+    "venue": "TMLR",
+    "url": "https://arxiv.org/abs/2305.01610"
+  },
+  "wu2025axbench": {
+    "title": "AxBench: Steering LLMs? Even Simple Baselines Outperform Sparse Autoencoders",
+    "authors": "Wu, Z., Arora, A., Geiger, A., et al.",
+    "year": 2025,
+    "venue": "ICML",
+    "url": "https://arxiv.org/abs/2501.17148"
+  },
+  "kantamneni2025saesuseful": {
+    "title": "Are Sparse Autoencoders Useful? A Case Study in Sparse Probing",
+    "authors": "Kantamneni, S., Engels, J., Rajamanoharan, S., Tegmark, M., Nanda, N.",
+    "year": 2025,
+    "venue": "ICML",
+    "url": "https://arxiv.org/abs/2502.16681"
   }
 }

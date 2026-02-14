@@ -209,6 +209,18 @@ This is not a hypothetical concern. Automated interpretability scoring systems a
 
 The practical consequence: safety-relevant conclusions based on SAE features may be less reliable than they appear. A "deception feature" that actually represents "social interaction" gives a false sense of security when monitored. Its activation (or lack thereof) does not tell us what we think it tells us.
 
+### When Simple Baselines Outperform SAEs
+
+The limitations above concern the quality of SAE decompositions. A more direct question is: when we have a specific downstream task (concept detection, steering, classification), do SAE features actually outperform simpler methods?
+
+Wu et al. {% cite "wu2025axbench" %} benchmarked SAEs against simple baselines on concept detection and model steering across 500 concepts. The results are sobering. For concept detection, vanilla SAEs achieved 0.695 AUROC while difference-in-means (a method that simply computes the mean activation difference between positive and negative examples) achieved 0.942. Even with careful AUROC-based feature selection (SAE-A), SAEs reached only 0.917, still below the trivially simple baseline. For steering, SAEs scored 0.165 while prompting achieved 0.894.
+
+Kantamneni et al. {% cite "kantamneni2025saesuseful" %} arrived at a similar conclusion from the probing direction. Across 113 binary classification datasets spanning diverse domains, SAE probes won against standard logistic regression baselines on only 2.2% of tasks. The results held across four challenging regimes: data scarcity, class imbalance, label noise, and covariate shift. Under covariate shift specifically, SAE probes generalized *worse* than baselines, because SAE features can encode surface-level distributional properties (like English-specific tokens) that fail to transfer out-of-distribution.
+
+An important methodological finding: prior work reporting SAE advantages over baselines was often comparing against **insufficiently strong baselines**. When Kantamneni et al. improved baseline token pooling from max-pooling to attention-based pooling, the SAE win rate dropped from 19.6% to 8.7%.
+
+These results do not mean SAEs are useless. They clarify *what SAEs are for*. When you already know the concept you want to detect or steer, supervised methods (difference-in-means, linear probes, [CAA](/topics/caa-method/)) are consistently better because they can optimize directly for that concept. SAEs provide something these methods cannot: **unsupervised decomposition** of the full activation space into interpretable features. Their value lies in *discovering* concepts you did not know to look for (hypothesis generation, auditing, understanding model behavior), not in *acting* on concepts you have already identified. Keeping this distinction in mind prevents both over-reliance on SAEs for deployment tasks and unfair dismissal of their genuine discovery capabilities.
+
 <details class="pause-and-think">
 <summary>Pause and think: The overall assessment</summary>
 

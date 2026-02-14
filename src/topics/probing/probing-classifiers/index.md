@@ -48,7 +48,23 @@ Their results showed that syntax trees are embedded in a linear subspace of BERT
 
 Probes can detect not just labels but *relational structure* in representations. The promise is tantalizing: we can read rich, structured information directly from how the model represents language internally.
 
-But there is a catch.
+## Sparse Probing: Constraining What the Probe Can Access
+
+Standard linear probes use all neurons in a layer. But if we want to understand *how* information is organized, a more revealing question is: how many neurons does the probe actually need?
+
+**k-sparse probing** constrains the probe to use at most $k$ neurons {% cite "gurnee2023neurons" %}. Rather than fitting a weight vector over all $d$ neurons in a layer, the probe selects the $k$ most informative neurons and fits weights only on those. This is a hard L0 constraint (exactly $k$ nonzero weights), not L1 regularization.
+
+The results reveal how features are organized across neurons:
+
+- At **$k = 1$**, middle-layer neurons in large models can individually classify features like "is Python code," specific natural languages, and data distributions with high accuracy. These are **monosemantic neurons**: single neurons dedicated to single concepts.
+- In **early layers**, $k = 1$ performance is poor. Features like "contains a digit" require $k = 5$ or more neurons. The feature is distributed across multiple polysemantic neurons, each of which individually responds to many unrelated inputs. This is precisely the pattern predicted by [superposition](/topics/superposition/).
+- **Sparsity increases with model scale.** Across the Pythia model family (70M to 6.9B parameters), larger models encode features more sparsely on average: a feature that requires $k = 8$ neurons in a small model may need only $k = 2$ in a large model. As capacity grows, models transition from cramming features into shared neurons (superposition) to allocating dedicated neurons (monosemantic representation).
+
+A rotation baseline confirms these findings are not artifacts of the probing method. Randomly rotating the activation space and repeating $k = 1$ probing destroys performance, confirming that the standard neuron basis is privileged: features genuinely align with individual neurons, rather than being extractable from any arbitrary basis.{% sidenote "Sparse probing connects probing to the [superposition](/topics/superposition/) research program. If features are in superposition (more features than neurons, encoded as sparse combinations), then a sparse probe should reveal this: features in superposition require higher $k$, while monosemantic features need only $k = 1$. The finding that early layers require higher $k$ and later layers less is direct evidence for the superposition hypothesis in real models." %}
+
+Sparse probing also sharpens the probe complexity debate. The concern with standard probes is that a powerful probe might learn the property rather than detect it. Sparse probes address this from a different angle: even if the probe is linear, constraining it to use very few neurons limits what it can learn. A $k = 1$ probe that achieves 85% accuracy on a feature is strong evidence that the feature is genuinely encoded in that neuron, not computed by the probe.
+
+But probe accuracy, whether sparse or dense, still faces a more fundamental challenge.
 
 ## The Probing Critique: Correlation vs. Causation
 

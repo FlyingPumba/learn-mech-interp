@@ -105,6 +105,22 @@ The choice of baseline is not obvious, and it affects results in practice.
 
 In current practice, mean ablation is the most common default: it is cheap, stays near the natural distribution, and produces reliable results for most components. The key takeaway is that ablation baseline choice is a methodological decision, and results should be interpreted with that choice in mind.
 
+## Corruption Methods Matter
+
+The choice of how to *construct* the corrupted input is at least as consequential as the choice of ablation baseline. Zhang and Nanda {% cite "zhang2024bestpractices" %} demonstrated that different corruption methods applied to the same model on the same task can lead to substantially different conclusions about which components matter.
+
+**Symmetric Token Replacement (STR)** constructs corrupted prompts by swapping key tokens with semantically matched alternatives: "The Eiffel Tower is in [Paris]" becomes "The Colosseum is in [Rome]." Both prompts are perfectly valid sentences the model would encounter naturally, so internal mechanisms operate normally on both. The corruption changes only which factual information the model needs to recall.
+
+**Gaussian noise (GN)**, used by Meng et al. in their ROME causal tracing work, adds noise drawn from $\mathcal{N}(0, 3\sigma)$ to token embeddings. This is simpler to implement (no need to construct paired prompts), but the resulting embeddings are far outside the training distribution.
+
+The difference in results is striking. For factual recall in GPT-2 XL, GN produces a salient peak of MLP importance around layer 16 (the famous "early site / late site" pattern from ROME). STR shows **no comparable peak** on the same model and task. GN peak values were 2-5x higher than STR across multiple analysis configurations. The localization pattern that motivated ROME's design may be partly an artifact of the corruption method.
+
+Why does GN produce inflated results? Zhang and Nanda traced the problem to **out-of-distribution activation propagation**. Under GN corruption, attention patterns in downstream heads break: Name Mover heads that normally attend to the indirect object with 0.58 probability split their attention diffusely. When upstream components are patched (restored) in a GN-corrupted run, they cannot fix the downstream damage because intermediate components have already been pushed into abnormal operating regimes. Under STR, patching upstream components cleanly restores downstream behavior because all components are operating in-distribution throughout.{% sidenote "This finding has practical implications for the ROME literature. The strong localization of factual knowledge to specific MLP layers, which motivated ROME's design choice to edit only mid-layer MLPs, may be partly a consequence of Gaussian noise corruption rather than a faithful reflection of how the model processes facts. This does not invalidate ROME as an editing technique, but it does complicate the interpretability claims that motivated it." %}
+
+**Metric choice matters too.** Probability as a metric cannot detect negative components (heads that actively hurt performance), because it is bounded below by zero. When the corrupted-run probability of the correct token is already near zero, components that make things worse cannot reduce it further. Logit difference has no such floor. Zhang and Nanda found that probability and logit difference identify different sets of important heads on the IOI task, with probability missing all three Name Mover heads under some configurations.
+
+The practical takeaway: **default to STR when possible, and use logit difference as the primary metric.** Fall back to Gaussian noise only when constructing in-distribution paired prompts is impractical (e.g., when there is no natural symmetric replacement). Report methodological choices explicitly, since they materially affect conclusions.
+
 ## A Worked Example: IOI in GPT-2 Small
 
 Let us walk through activation patching on the Indirect Object Identification task in GPT-2 Small. This worked example demonstrates the full patching workflow and reveals the sparse circuit structure that makes mechanistic interpretability possible.
