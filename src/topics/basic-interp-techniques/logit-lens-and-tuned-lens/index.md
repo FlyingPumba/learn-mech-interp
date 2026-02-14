@@ -79,6 +79,14 @@ No. Different layers can represent information in different bases. The final une
 
 </details>
 
+## Applications of the Logit Lens Observation
+
+The observation that predictions refine progressively across layers has inspired several practical applications. **DoLa** (Decoding by Contrasting Layers) improves factual accuracy at inference time by contrasting the logit distributions of an early layer with a later layer {% cite "li2023dola" %}. The intuition: factual knowledge emerges in later layers, so amplifying the difference between early and late predictions emphasizes the knowledge the model has acquired during processing. DoLa requires no fine-tuning and reduces hallucination rates across multiple benchmarks.
+
+The logit lens has also revealed how multilingual models process language internally. Wendler et al. {% cite "wendler2024latent" %} applied vocabulary projections to multilingual LLMs and found that models process non-English inputs through an internal "concept space" that skews toward English in middle layers, even when the input and output are both in another language. The model appears to translate into an English-like representation for processing, then translate back for output.
+
+The logit lens has also proven valuable for tracing multi-step reasoning. Yang et al. {% cite "yang2024multihop" %} used vocabulary projections combined with [activation patching](/topics/activation-patching/) to show that models perform latent multi-hop factual reasoning: when answering "The mother of the president of the US is ___," intermediate layers first resolve "president of the US" to a specific entity before retrieving the mother. The logit lens reveals this staged computation, with the intermediate entity appearing in vocabulary projections at middle layers before the final answer emerges.
+
 ## The Key Limitation: Observation Cannot Establish Causation
 
 The logit lens and tuned lens show what the model would predict if processing stopped at a given layer. They reveal the trajectory of predictions across layers. But they do not tell us which components are responsible for those predictions or whether the computation at any particular layer is necessary.

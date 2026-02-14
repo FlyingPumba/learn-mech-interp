@@ -84,6 +84,10 @@ Tasks that operate on the same aspect of the output are likely to conflict rathe
 
 </details>
 
+## Related Work: In-Context Vectors and Task Vectors
+
+The discovery of function vectors was not isolated. Hendel et al. {% cite "hendel2023icl" %} independently showed that task vectors form during in-context learning, compressing the demonstrated task into a direction that can be extracted and reused. Liu et al. {% cite "liu2023incontext" %} developed **in-context vectors**, a closely related technique that extracts task representations via latent space shifts and demonstrated composable vector arithmetic for combining tasks. These converging findings from multiple groups strengthen the conclusion that task representation as linear directions is a robust property of how transformers organize in-context learning, not an artifact of any single extraction method.
+
 ## The Connection to Steering
 
 Function vectors extend the steering paradigm in an important way:

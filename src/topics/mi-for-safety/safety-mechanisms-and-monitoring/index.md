@@ -91,6 +91,10 @@ For safety auditing, this enables:
 
 This could close the gap between behavioral testing and internal monitoring. Rather than asking "what did the model say?", attribution graphs let us ask "what was the model thinking?"
 
+## Hallucination Detection from Internal States
+
+A growing body of work shows that models have internal signals distinguishing reliable from unreliable outputs. Linear probes on hidden states can predict semantic entropy (a measure of output uncertainty) from a single forward pass, achieving performance comparable to expensive sampling-based estimates that require generating multiple responses {% cite "kossen2024entropy" %}. This means hallucination warnings could be generated in real-time alongside normal outputs, at negligible additional cost. For a detailed treatment of how truth and reliability are represented in activation space, see [truthfulness probing](/topics/truthfulness-probing/).
+
 ## Limitations of MI-Based Monitoring
 
 Despite the promise, MI-based monitoring faces three significant practical limitations:

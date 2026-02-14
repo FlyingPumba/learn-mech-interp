@@ -649,5 +649,61 @@
     "year": 2025,
     "venue": "ICML",
     "url": "https://arxiv.org/abs/2502.16681"
+  },
+  "li2023dola": {
+    "title": "DoLa: Decoding by Contrasting Layers Improves Factuality in Large Language Models",
+    "authors": "Li, Y., Lin, Z., Zhang, S., et al.",
+    "year": 2023,
+    "venue": "ICLR 2024",
+    "url": "https://arxiv.org/abs/2309.03883"
+  },
+  "wendler2024latent": {
+    "title": "Do Llamas Work in English? On the Latent Language of Multilingual Transformers",
+    "authors": "Wendler, C., Veselovsky, V., Monea, G., West, R.",
+    "year": 2024,
+    "venue": "ACL",
+    "url": "https://arxiv.org/abs/2402.10588"
+  },
+  "hernandez2023lre": {
+    "title": "Linearity of Relation Decoding in Transformer Language Models",
+    "authors": "Hernandez, E., Li, B. Z., Andreas, J.",
+    "year": 2023,
+    "venue": "ICLR 2024",
+    "url": "https://arxiv.org/abs/2308.09124"
+  },
+  "liu2023incontext": {
+    "title": "In-context Vectors: Making In Context Learning More Effective and Controllable Through Latent Space Steering",
+    "authors": "Liu, Z., Kitouni, A., Nolte, N., et al.",
+    "year": 2023,
+    "venue": "ICML 2024",
+    "url": "https://arxiv.org/abs/2311.06668"
+  },
+  "hendel2023icl": {
+    "title": "In-Context Learning Creates Task Vectors",
+    "authors": "Hendel, R., Geva, M., Globerson, A.",
+    "year": 2023,
+    "venue": "EMNLP Findings",
+    "url": "https://arxiv.org/abs/2310.15916"
+  },
+  "allenzhu2023physics": {
+    "title": "Physics of Language Models: Part 3.1, Knowledge Storage and Extraction",
+    "authors": "Allen-Zhu, Z., Li, Y.",
+    "year": 2023,
+    "venue": "ICML 2024",
+    "url": "https://arxiv.org/abs/2309.14316"
+  },
+  "weiss2021rasp": {
+    "title": "Thinking Like Transformers",
+    "authors": "Weiss, G., Goldberg, Y., Yahav, E.",
+    "year": 2021,
+    "venue": "ICML",
+    "url": "https://arxiv.org/abs/2106.06981"
+  },
+  "yang2024multihop": {
+    "title": "Large Language Models Internally Perform Multi-hop Factual Reasoning",
+    "authors": "Yang, J., Ding, N., Li, Y., et al.",
+    "year": 2024,
+    "venue": "ACL",
+    "url": "https://arxiv.org/abs/2402.16837"
   }
 }
