@@ -1,7 +1,7 @@
 ---
 title: "Transcoders: Interpretable MLP Replacements"
 description: "How transcoders replace opaque MLP layers with sparse interpretable alternatives, enabling feature-level circuit analysis of what MLPs compute."
-order: 4
+order: 6
 prerequisites:
   - title: "SAE Variants, Evaluation, and Honest Limitations"
     url: "/topics/sae-variants-and-evaluation/"
@@ -79,7 +79,7 @@ Marks et al. {% cite "marks2024sparse" %} demonstrated that SAE features can ser
 
 Lindsey et al. {% cite "lindsey2025circuittracing" %} took the next step with *attribution graphs*: replacing all MLPs in a model with cross-layer transcoders and tracing circuits backward through the entire feature network using the Jacobian. The result is a complete, feature-level circuit map for any given input.
 
-The progression is natural: transcoders make MLPs interpretable, sparse feature circuits show that SAE features can be circuit nodes, and attribution graphs combine both ideas at scale. The [next article](/topics/circuit-tracing/) covers sparse feature circuits and attribution graphs in detail.
+The progression is natural: transcoders make MLPs interpretable, sparse feature circuits show that SAE features can be circuit nodes, and attribution graphs combine both ideas at scale. [Circuit Tracing and Attribution Graphs](/topics/circuit-tracing/) covers sparse feature circuits and attribution graphs in detail.
 
 <details class="pause-and-think">
 <summary>Pause and think: What changes with feature-level circuits?</summary>
@@ -95,4 +95,4 @@ We gain interpretability at each node -- features are (mostly) monosemantic, whi
 - **SAEs decompose representations; transcoders decompose computations.** This distinction is what enables circuit tracing through MLP layers.
 - **Clean factorization** into input-dependent and input-invariant terms allows weights-based analysis of MLP sublayers.
 - **Transcoders outperform SAEs** on interpretability benchmarks while enabling circuit analysis that SAEs structurally cannot provide.
-- Transcoders are the **enabling technology** for attribution graphs and feature-level circuit tracing -- the subjects of the [next article](/topics/circuit-tracing/).
+- Transcoders are the **enabling technology** for attribution graphs and feature-level circuit tracing, covered in [Circuit Tracing and Attribution Graphs](/topics/circuit-tracing/).

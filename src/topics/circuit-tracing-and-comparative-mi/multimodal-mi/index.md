@@ -1,7 +1,7 @@
 ---
 title: "Multimodal Mechanistic Interpretability"
 description: "Extending mechanistic interpretability beyond text to vision models, multimodal systems, and diffusion models -- what works, what breaks, and what remains unknown."
-order: 8
+order: 6
 prerequisites:
   - title: "Universality Across Models"
     url: "/topics/universality/"
@@ -13,7 +13,7 @@ glossary:
 
 ## Beyond Text
 
-Everything we have studied so far -- [SAEs](/topics/sparse-autoencoders/), [transcoders](/topics/transcoders/), [activation patching](/topics/activation-patching/), [attribution graphs](/topics/circuit-tracing/), [crosscoders](/topics/crosscoders-and-model-diffing/) -- was developed for and applied to language models. But AI systems increasingly process images, video, audio, and combinations of modalities. Does mechanistic interpretability transfer beyond text?
+Everything we have studied so far -- [SAEs](/topics/sparse-autoencoders/), [transcoders](/topics/transcoders/), [activation patching](/topics/activation-patching/), [attribution graphs](/topics/circuit-tracing/), [crosscoders](/topics/crosscoders/) -- was developed for and applied to language models. But AI systems increasingly process images, video, audio, and combinations of modalities. Does mechanistic interpretability transfer beyond text?
 
 The answer, surveyed by Lin et al. (2025), is cautiously optimistic {% cite "lin2025multimodal" %}. Many MI techniques transfer to vision and multimodal models with moderate adjustments. Some even become easier in multimodal settings thanks to shared embedding spaces that provide "free" feature labels. But new challenges arise, and the field is considerably less mature than text-based MI.{% sidenote "The maturity gap is roughly 2-3 years. Text-based MI has canonical examples (IOI circuit, Golden Gate Claude), established evaluation frameworks (SAEBench), and large-scale studies (Scaling Monosemanticity, Biology of an LLM). Multimodal MI has promising early results but no canonical example of a complete circuit in a vision or multimodal model." %}
 

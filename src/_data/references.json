@@ -705,5 +705,19 @@
     "year": 2024,
     "venue": "ACL",
     "url": "https://arxiv.org/abs/2402.16837"
+  },
+  "minder2025crosscoders": {
+    "title": "Overcoming Sparsity Artifacts in Crosscoders to Interpret Chat-Tuning",
+    "authors": "Minder, J., Dumas, C., Juang, C., Chughtai, B., Nanda, N.",
+    "year": 2025,
+    "venue": "NeurIPS",
+    "url": "https://arxiv.org/abs/2504.02922"
+  },
+  "minder2025finetuning": {
+    "title": "Narrow Finetuning Leaves Clearly Readable Traces in Activation Differences",
+    "authors": "Minder, J., Dumas, C., Slocum, S., Casademunt, H., Holmes, C., West, R., Nanda, N.",
+    "year": 2025,
+    "venue": "arXiv",
+    "url": "https://arxiv.org/abs/2510.13900"
   }
 }

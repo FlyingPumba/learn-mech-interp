@@ -1,7 +1,7 @@
 ---
 title: "Circuit Tracing and Attribution Graphs"
 description: "How sparse feature circuits and attribution graphs enable tracing model computations at the feature level, from SAE-based circuits to Anthropic's Biology of an LLM approach."
-order: 5
+order: 4
 prerequisites:
   - title: "Transcoders: Interpretable MLP Replacements"
     url: "/topics/transcoders/"

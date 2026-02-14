@@ -1,7 +1,7 @@
 ---
 title: "Copy Suppression"
 description: "An algorithm pattern where attention heads suppress predictions of tokens that appear earlier in context, unifying previously mysterious head behaviors like negative name movers and anti-induction heads."
-order: 9
+order: 7
 prerequisites:
   - title: "Circuit Evaluation: Faithfulness, Completeness, and Minimality"
     url: "/topics/circuit-evaluation/"

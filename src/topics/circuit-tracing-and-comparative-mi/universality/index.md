@@ -1,10 +1,10 @@
 ---
 title: "Universality Across Models"
 description: "The evidence for and against the universality hypothesis -- whether different neural networks learn similar features and circuits -- and the metrics used to measure representation similarity."
-order: 7
+order: 5
 prerequisites:
-  - title: "Crosscoders and Model Diffing"
-    url: "/topics/crosscoders-and-model-diffing/"
+  - title: "Crosscoders"
+    url: "/topics/crosscoders/"
 
 glossary:
   - term: "Universality"
@@ -48,7 +48,7 @@ SVCCA found that networks converge to final representations *from the bottom up*
 
 ### Representation Similarity vs. Feature-Level Comparison
 
-CKA and SVCCA answer a holistic question: "Are these representations similar overall?" [Crosscoders](/topics/crosscoders-and-model-diffing/) answer a finer question: "What specific features are shared or different?"
+CKA and SVCCA answer a holistic question: "Are these representations similar overall?" [Crosscoders](/topics/crosscoders/) answer a finer question: "What specific features are shared or different?"
 
 The two approaches are complementary. CKA is computationally cheap and provides a quick global assessment. Crosscoders are expensive (they require training) but reveal the specific features that drive similarity or difference. Use CKA to determine *whether* models are similar; use crosscoders to determine *how* they differ.
 
@@ -107,7 +107,7 @@ It is important to be precise about what universality claims:
 
 Current evidence supports weak universality fairly well. Strong universality is harder to establish and remains an active research question. The universal neurons result (1-5% of neurons are truly universal) suggests that strong universality holds for a small fraction of features, while weak universality holds more broadly.
 
-[Crosscoders](/topics/crosscoders-and-model-diffing/) provide the most direct test of universality at the feature level: a crosscoder trained across two models finds shared features (evidence for universality) and exclusive features (evidence against it). CKA provides a holistic measure of representation alignment that does not require identifying individual features.
+[Crosscoders](/topics/crosscoders/) provide the most direct test of universality at the feature level: a crosscoder trained across two models finds shared features (evidence for universality) and exclusive features (evidence against it). CKA provides a holistic measure of representation alignment that does not require identifying individual features.
 
 <details class="pause-and-think">
 <summary>Pause and think: Universality and safety</summary>
