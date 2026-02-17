@@ -747,5 +747,19 @@
     "year": 2020,
     "venue": "ICLR",
     "url": "https://arxiv.org/abs/1904.09751"
+  },
+  "cunningham2025constitutional": {
+    "title": "Constitutional Classifiers++: Efficient Production-Grade Defenses against Universal Jailbreaks",
+    "authors": "Cunningham, H., Wei, J., Wang, Z., et al.",
+    "year": 2025,
+    "venue": "arXiv",
+    "url": "https://arxiv.org/abs/2601.04603"
+  },
+  "kramar2026probes": {
+    "title": "Building Production-Ready Probes for Gemini",
+    "authors": "Kramár, J., Engels, J., Wang, Z., Chughtai, B., Shah, R., Nanda, N., Conmy, A.",
+    "year": 2026,
+    "venue": "arXiv",
+    "url": "https://arxiv.org/abs/2601.11516"
   }
 }

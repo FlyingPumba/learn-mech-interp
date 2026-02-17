@@ -132,3 +132,5 @@ The [probe complexity tradeoff](/topics/probing-classifiers/) still applies: eac
 ## Looking Forward
 
 Attention probes address a real practical limitation of standard probing: the lossy aggregation step that discards positional information. They do not change the fundamental [correlation-vs-causation limitation](/topics/probing-classifiers/) of all probing methods. An attention probe with high accuracy still tells us what information is *accessible*, not what the model *uses*. For that, we still need the causal intervention methods covered in [activation patching](/topics/activation-patching/) and beyond.
+
+The aggregation problem becomes even more pressing when probes move from research to deployment. In [production safety systems](/topics/probes-in-production/), probes must handle sequences ranging from a few tokens to hundreds of thousands, under adversarial pressure, with extremely low false positive rates. The architectural choices covered here (learned attention, multi-head aggregation) are starting points for the more specialized aggregation methods that production requires.
