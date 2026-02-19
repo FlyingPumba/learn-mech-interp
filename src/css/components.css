@@ -820,6 +820,92 @@
   display: block;
 }
 
+/* ==========================================================================
+   NAV TOGGLE (Mobile header menu)
+   Collapses nav links behind a hamburger on small screens.
+   Hidden on desktop via CSS. Shown via JS (progressive enhancement).
+   ========================================================================== */
+
+.nav-toggle {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: var(--spacing-xs);
+  cursor: pointer;
+  color: var(--color-text-secondary);
+  transition: color var(--transition-fast), border-color var(--transition-fast);
+}
+
+.nav-toggle:hover {
+  color: var(--color-link);
+  border-color: var(--color-border-strong);
+}
+
+.nav-toggle-icon {
+  display: block;
+  width: 20px;
+  height: 2px;
+  background: currentColor;
+  position: relative;
+}
+
+.nav-toggle-icon::before,
+.nav-toggle-icon::after {
+  content: "";
+  display: block;
+  width: 20px;
+  height: 2px;
+  background: currentColor;
+  position: absolute;
+  left: 0;
+}
+
+.nav-toggle-icon::before {
+  top: -6px;
+}
+
+.nav-toggle-icon::after {
+  top: 6px;
+}
+
+@media (max-width: 767px) {
+  .site-nav {
+    flex-wrap: wrap;
+  }
+
+  .nav-toggle:not([hidden]) {
+    display: flex;
+  }
+
+  .nav-links {
+    display: none;
+    order: 99;
+    width: 100%;
+    flex-direction: row;
+    justify-content: center;
+    gap: var(--spacing-lg, 1.5rem);
+    padding: var(--spacing-sm, 0.5rem) 0;
+    border-top: 1px solid var(--color-border, rgba(0, 0, 0, 0.08));
+    margin-top: var(--spacing-sm, 0.5rem);
+  }
+
+  .nav-links.nav-open {
+    display: flex;
+  }
+
+  .nav-links li a {
+    display: block;
+    padding: 0.5rem 0;
+  }
+
+  .header-actions {
+    margin-left: auto;
+  }
+}
+
 /* Mobile: sidebar hidden, slides in from left when toggled */
 @media (max-width: 1199px) {
   .sidebar {
