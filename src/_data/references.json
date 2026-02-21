@@ -789,5 +789,19 @@
     "year": 2025,
     "venue": "arXiv",
     "url": "https://arxiv.org/abs/2510.04309"
+  },
+  "braun2024e2e": {
+    "title": "Identifying Functionally Important Features with End-to-End Sparse Dictionary Learning",
+    "authors": "Braun, D., Taylor, J., Goldowsky-Dill, N., Sharkey, L.",
+    "year": 2024,
+    "venue": "arXiv",
+    "url": "https://arxiv.org/abs/2405.12241"
+  },
+  "karvonen2025klfinetune": {
+    "title": "Revisiting End-To-End Sparse Autoencoder Training: A Short Finetune Is All You Need",
+    "authors": "Karvonen, A.",
+    "year": 2025,
+    "venue": "arXiv",
+    "url": "https://arxiv.org/abs/2503.17272"
   }
 }
