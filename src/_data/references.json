@@ -761,5 +761,33 @@
     "year": 2026,
     "venue": "arXiv",
     "url": "https://arxiv.org/abs/2601.11516"
+  },
+  "goral2025depthwise": {
+    "title": "Depth-Wise Activation Steering for Honest Language Models",
+    "authors": "Góral, G., Winkels, M., Basart, S.",
+    "year": 2025,
+    "venue": "arXiv",
+    "url": "https://arxiv.org/abs/2512.07667"
+  },
+  "dang2026selective": {
+    "title": "Selective Steering: Norm-Preserving Control Through Discriminative Layer Selection",
+    "authors": "Dang, T., Ngo, L.",
+    "year": 2026,
+    "venue": "arXiv",
+    "url": "https://arxiv.org/abs/2601.19375"
+  },
+  "hegazy2025guiding": {
+    "title": "Guiding Giants: Lightweight Controllers for Weighted Activation Steering in LLMs",
+    "authors": "Hegazy, M., et al.",
+    "year": 2025,
+    "venue": "arXiv",
+    "url": "https://arxiv.org/abs/2505.20309"
+  },
+  "nguyen2025feedback": {
+    "title": "Activation Steering with a Feedback Controller",
+    "authors": "Nguyen, D. V., Vu, H. M., Pham, N. Y., Zhang, L., Nguyen, T. M.",
+    "year": 2025,
+    "venue": "arXiv",
+    "url": "https://arxiv.org/abs/2510.04309"
   }
 }
