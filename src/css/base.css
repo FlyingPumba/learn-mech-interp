@@ -153,6 +153,11 @@ hr {
   margin: var(--spacing-2xl, 3rem) 0;
 }
 
+/* Figures */
+figure {
+  margin-inline: 0;
+}
+
 /* Images */
 img {
   max-width: 100%;
