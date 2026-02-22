@@ -571,6 +571,18 @@
   color: var(--color-link, #004276);
 }
 
+/* Invisible bridge so the mouse can travel from the superscript to the popover
+   without losing hover. The ::after pad extends upward from the popover box. */
+.sidenote-wrapper:hover > .sidenote::after,
+.sidenote-wrapper:hover > .marginnote::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: 100%;
+  width: 100%;
+  height: 1.5em;
+}
+
 /* Show on hover / keyboard focus / click-toggle */
 .sidenote-wrapper:hover > .sidenote,
 .sidenote-wrapper:hover > .marginnote,
