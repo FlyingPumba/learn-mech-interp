@@ -1034,7 +1034,7 @@
   .article-content-wrapper {
     display: grid;
     grid-template-columns: minmax(0, var(--content-width, 65ch)) 220px;
-    gap: var(--spacing-xl, 2rem);
+    gap: var(--spacing-2xl, 3rem);
     align-items: start;
   }
 
