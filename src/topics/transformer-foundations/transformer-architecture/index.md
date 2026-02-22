@@ -69,7 +69,7 @@ $$
 $$
 
 - **Token Embedding:** A learned lookup table maps each token ID to a high-dimensional vector. Tokens with similar meanings or usage patterns tend to end up with similar embedding vectors, though this is entirely learned from data.
-- **Positional Encoding (PE):** Since attention is otherwise permutation-invariant (swapping token positions would not change the computation), we add positional information. This can be learned embeddings (a lookup table indexed by position) or fixed sinusoidal patterns. The model uses this to know that "cat sat" differs from "sat cat".
+- **Positional Encoding (PE):** Nothing in the attention mechanism inherently distinguishes position 3 from position 7. Attention computes similarity between vectors regardless of where they sit in the sequence. If we shuffled the token vectors into a different order but kept the vectors themselves identical, attention would produce the same outputs. This is what "permutation-invariant" means: the operation treats the input as a *set*, not a *sequence*. But word order matters ("the dog bit the man" vs. "the man bit the dog"), so we add a position-dependent vector to each token embedding. This can be learned embeddings (a lookup table indexed by position) or fixed sinusoidal patterns.
 
 ## Step 1: Attention (Information Routing)
 
@@ -128,13 +128,19 @@ $$
 \mathbf{r}^{l+1} = \mathbf{r}^l + \text{Attn}^l(\mathbf{r}^l) + \text{MLP}^l(\mathbf{r}^l)
 $$
 
-After $L$ layers, the final residual stream is mapped to logits:
+After $L$ layers, the final residual stream is mapped to **logits**: a vector of raw, unnormalized scores with one entry per token in the vocabulary. If the vocabulary has 50,000 tokens, the logits are a 50,000-dimensional vector. Each entry represents how strongly the model favors that token as the next-token prediction. Higher logit = more favored, but the values are not yet probabilities (they can be negative, and they don't sum to 1).
 
 $$
 \text{Logits} = \mathbf{r}^L \cdot W_U
 $$
 
-where $W_U$ is the unembedding matrix. The logits are then passed through softmax to get a probability distribution over the vocabulary.
+where $W_U$ is the **unembedding matrix**, which projects the $d_{\text{model}}$-dimensional residual stream into vocabulary-sized scores. The logits are then passed through softmax to get a proper probability distribution over the vocabulary:
+
+$$
+p(\text{token}_i) = \frac{e^{\text{logit}_i}}{\sum_j e^{\text{logit}_j}}
+$$
+
+Softmax exponentiates each logit and normalizes so the values sum to 1. This amplifies differences: a token with a logit just a few points higher than its competitors can end up with most of the probability mass.
 
 ## Training: Making Loss Go Down
 
@@ -161,5 +167,3 @@ The generation loop feeds the full sequence back through the model at each step.
 Mechanistic interpretability treats the model as a computation graph we can open. Because the transformer's core operations are structured and mostly linear in the residual stream, we can trace, ablate, and patch individual components.
 
 The additive residual stream means we can decompose the output into contributions from each component. The parallel structure of attention means we can study individual heads in isolation. The fact that everything is learned means the model may have discovered interpretable algorithms we can reverse-engineer.
-
-The rest of this course builds on this architecture-level understanding, developing tools to answer questions like: Which head is responsible for this prediction? What information is stored where? How do components compose to implement complex behaviors?
