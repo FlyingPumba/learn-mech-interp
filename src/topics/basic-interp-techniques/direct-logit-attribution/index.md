@@ -15,7 +15,7 @@ glossary:
 
 ## The Key Insight
 
-Every component in a transformer writes additively into [the residual stream](/topics/attention-mechanism/#the-residual-stream). The final residual stream is a sum of contributions: the token embedding, each attention head's output, and each MLP layer's output. Because the unembedding matrix $W_U$ maps this final residual stream to output logits through a linear operation, the logits are also a sum of contributions. Each component's effect on the output can be measured independently.
+Every component in a transformer writes additively into [the residual stream](/topics/transformer-architecture/#the-residual-stream). The final residual stream is a sum of contributions: the token embedding, each attention head's output, and each MLP layer's output. Because the unembedding matrix $W_U$ maps this final residual stream to output logits through a linear operation, the logits are also a sum of contributions. Each component's effect on the output can be measured independently.
 
 This observation is the foundation of **direct logit attribution** (DLA), introduced as part of the mathematical framework for transformer circuits {% cite "elhage2021mathematical" %}. The insight is simple but powerful: if we want to know which components are responsible for a specific prediction, we can project each component's output onto the direction in logit space that corresponds to that prediction.
 

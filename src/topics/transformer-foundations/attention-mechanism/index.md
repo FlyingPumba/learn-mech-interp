@@ -1,6 +1,6 @@
 ---
 title: "The Attention Mechanism"
-description: "How transformers enable tokens to communicate through queries, keys, and values, and why the residual stream's additive structure is the foundation of mechanistic interpretability."
+description: "How transformers enable tokens to communicate through queries, keys, and values: the attention equation, causal masking, multi-head attention, and the QK/OV decomposition that underlies mechanistic interpretability."
 order: 3
 prerequisites: []
 
@@ -17,8 +17,6 @@ glossary:
     definition: "The mechanism of running multiple independent attention heads in parallel within a single layer, allowing the model to attend to different types of relationships simultaneously and combine their outputs."
   - term: "Query Vector"
     definition: "The vector produced by applying the query weight matrix (W_Q) to a token's representation. Query vectors are compared against key vectors to compute attention scores that determine how much each position attends to others."
-  - term: "Residual Stream"
-    definition: "The central communication channel in a transformer, implemented as skip connections that allow each layer's output to be added to a running sum. All attention heads and MLP layers read from and write to this shared stream."
   - term: "Value Vector"
     definition: "The vector produced by applying the value weight matrix (W_V) to a token's representation. Value vectors carry the content information that gets written to the residual stream, weighted by the attention pattern."
 ---
@@ -186,86 +184,6 @@ No single head could serve all three purposes at once. Each head's QK circuit de
 
 **Each attention head is a separate information-moving operation with its own learned pattern. Understanding what each head does is a core goal of mechanistic interpretability.**
 
-## The Residual Stream
-
-> **Residual Stream:** The residual stream is the vector that flows through the transformer, updated additively by each component. Every attention head and MLP reads from it and writes to it.
-
-The residual stream starts as the token embedding and is updated by each layer:
-
-$$
-\mathbf{r}^{l+1} = \mathbf{r}^l + \text{Attn}^l(\mathbf{r}^l) + \text{MLP}^l(\mathbf{r}^l)
-$$
-
-Think of it as a shared whiteboard. Each component reads the whole whiteboard, computes something, and writes its result back. The whiteboard accumulates all contributions.
-
-The additive structure is the key insight. The final residual stream is a sum of all component outputs:
-
-$$
-\mathbf{r}^L = \mathbf{r}^0 + \sum_{l=0}^{L-1} \left(\text{Attn}^l + \text{MLP}^l\right)
-$$
-
-Because the output is a sum of contributions, we can decompose it, asking how much each component contributed to the final answer. This is the foundation of mechanistic interpretability. If the transformer's output is a sum of component contributions, then we can measure each one. This leads directly to techniques like direct logit attribution, which measures each head's contribution to the output logits, and activation patching, which tests whether a component is causally necessary. Both will be covered in later articles.
-
-Components do not communicate directly with each other. All communication goes through the residual stream. Attention head 3 in layer 5 has no direct wire to MLP 2 in layer 7. Instead, head 3 writes to the residual stream, and MLP 2 reads from it. This additive, shared-bus architecture is what makes the transformer amenable to mechanistic analysis.
-
-<details class="pause-and-think">
-<summary>Pause and think: Understanding additive updates</summary>
-
-If the transformer is just a series of additive updates to a vector, what would it mean to "understand" what each update does? This question motivates the entire field of mechanistic interpretability: we want to decompose the model's computation into understandable pieces and explain the role of each component.
-
-</details>
-
-## Other Components
-
-Beyond attention, three other components play important roles in the transformer.
-
-**[Layer normalization](/topics/layer-normalization/)** stabilizes training by normalizing activations before each sublayer. It introduces a nonlinearity that couples all residual stream dimensions, which means purely linear decompositions are approximate. We cover the details, including pre-norm vs. post-norm placement and why MI researchers typically analyze pre-layer-norm activations, in the [dedicated article](/topics/layer-normalization/).
-
-**MLPs (feed-forward networks)** appear after each attention sublayer and apply a nonlinear transformation position-wise:
-
-$$
-\text{MLP}(\mathbf{x}) = W_2 \cdot \text{GELU}(W_1 \mathbf{x} + \mathbf{b}_1) + \mathbf{b}_2
-$$
-
-The first matrix $W_1 \in \mathbb{R}^{d_{\text{model}} \times d_{\text{mlp}}}$ projects up to a wider hidden layer (typically $d_{\text{mlp}} = 4 \cdot d_{\text{model}}$), the GELU nonlinearity is applied, and $W_2$ projects back down. Current evidence suggests MLPs store factual associations, apply nonlinear transformations that attention cannot, and may function as key-value memories where rows of $W_1$ match input patterns and columns of $W_2$ provide associated outputs.{% sidenote "The key-value memory interpretation of MLPs was proposed by Geva et al. (2021). Each neuron in the MLP hidden layer activates on certain input patterns (the key) and writes a fixed vector to the residual stream (the value). This view connects transformers to classical memory-augmented neural networks." %}
-
-**Positional encodings** inject information about token order, since attention is otherwise permutation-invariant:
-
-$$
-\mathbf{x}_i^{\text{input}} = \text{Embed}(\text{token}_i) + \text{PE}(i)
-$$
-
-Common approaches include sinusoidal encodings (fixed patterns of sines and cosines from the original transformer), learned positional embeddings (a lookup table trained with the model, as in GPT-2), and rotary position embeddings (RoPE), which encode relative position directly in the attention computation.
-
-## The Full Transformer
-
-<figure>
-  <img src="/topics/attention-mechanism/images/transformer_architecture.png" alt="Full transformer architecture diagram showing an encoder stack on the left and decoder stack on the right, each with multi-head attention, feed-forward layers, residual connections, and layer normalization, connected by cross-attention in the decoder.">
-  <figcaption>The full transformer architecture with encoder (left) and decoder (right). Each layer contains multi-head attention and feed-forward sublayers with residual connections and layer normalization. The decoder additionally includes masked self-attention and encoder-decoder cross-attention. From Vaswani et al., <em>Attention Is All You Need</em>. {%- cite "vaswani2017attention" -%}</figcaption>
-</figure>
-
-A decoder-only transformer processes an input sequence through the following pipeline:
-
-1. **Embed:** Convert tokens to vectors by summing token embeddings and positional encodings: $\mathbf{r}^0 = \text{Embed}(\text{tokens}) + \text{PE}$.
-
-2. **Layers:** For each layer $l = 0, \ldots, L-1$, apply layer normalization, then multi-head attention, and add the result to the residual stream. Then apply layer normalization, then the MLP, and add that result to the residual stream.
-
-3. **Unembed:** Project the final residual stream to vocabulary logits: $\text{Logits} = \text{Unembed}(\text{LN}(\mathbf{r}^L))$.
-
-Viewed through the residual stream, the full forward pass is:
-
-$$
-\text{Logits} = \text{Unembed}\!\left(\text{LN}\!\left(\text{Embed}(\mathbf{x}) + \sum_{l=0}^{L-1}\left[\text{Attn}^l + \text{MLP}^l\right]\right)\right)
-$$
-
-Ignoring layer norms, the output is determined by a sum of contributions from the token embedding (the direct path), each attention head in each layer, and each MLP in each layer. This decomposition is what makes [mechanistic interpretability](/topics/what-is-mech-interp/) possible: we can trace the contribution of any individual component through to the final output.
-
-If you want a step-by-step walkthrough of the entire stack, see [Transformer Architecture Intro](/topics/transformer-architecture/).
-
-Most mechanistic interpretability research focuses on decoder-only architectures because the causal mask means each position is a well-defined prediction problem. At position $i$, the model must predict token $i+1$ using only tokens $0, \ldots, i$. This gives us a clean experimental setup where we know exactly what information is available at each position. The models studied most heavily in the field (GPT-2 and similar autoregressive architectures) all follow this pattern.
-
-For a thorough visual walkthrough of the transformer architecture, see Alammar's "The Illustrated Transformer" {% cite "alammar2018illustrated" %}, which provides step-by-step diagrams of the attention computation described above.
-
 <details class="pause-and-think">
 <summary>Pause and think: From architecture to interpretability</summary>
 
@@ -273,19 +191,8 @@ If attention heads move information between positions, what determines *which* i
 
 </details>
 
-## Notation Reference
+## Looking Ahead
 
-| Symbol | Meaning |
-|--------|---------|
-| $\mathbf{x}$ | Token embedding or activation vector |
-| $\mathbf{W}$ | Weight matrix (generic) |
-| $\mathbf{r}$ | Residual stream state |
-| $W_Q, W_K, W_V, W_O$ | Query, Key, Value, Output projection matrices |
-| $\mathbf{q}, \mathbf{k}, \mathbf{v}$ | Query, key, value vectors (for a single token) |
-| $d_{\text{model}}$ | Residual stream dimension |
-| $d_k$ | Key/query dimension per head ($= d_{\text{model}} / H$) |
-| $H$ | Number of attention heads |
-| $\text{Attn}^l$ | Output of attention at layer $l$ |
-| $\text{MLP}^l$ | Output of MLP at layer $l$ |
-| $\text{Embed}, \text{Unembed}$ | Embedding and unembedding operations |
-| $\text{LN}$ | Layer normalization |
+Attention is how information moves between positions. But each transformer layer has a second component: the [MLP](/topics/mlps-in-transformers/), which transforms information within each position. Where attention routes information, MLPs process it, acting as key-value memories that store and retrieve knowledge. The next article covers how MLPs work and what they compute.
+
+After that, [layer normalization](/topics/layer-normalization/) addresses the practical complication of keeping activations stable across many layers, and the [QK/OV circuit decomposition](/topics/qk-ov-circuits/) formalizes the two-circuit structure hinted at above into the mathematical framework that underpins mechanistic interpretability.

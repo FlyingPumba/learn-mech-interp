@@ -15,7 +15,7 @@ glossary:
 
 ## From Observation to Causation
 
-Mechanistic interpretability begins with observational tools. The logit lens shows what a model would predict if processing stopped at a given layer. Probing classifiers reveal what information is linearly decodable from [the residual stream](/topics/attention-mechanism/#the-residual-stream). Attention patterns display where each head directs its focus. These techniques are powerful, but they share a fundamental limitation: they show what information *exists* in a model's internals, not what information the model actually *uses*.
+Mechanistic interpretability begins with observational tools. The logit lens shows what a model would predict if processing stopped at a given layer. Probing classifiers reveal what information is linearly decodable from [the residual stream](/topics/transformer-architecture/#the-residual-stream). Attention patterns display where each head directs its focus. These techniques are powerful, but they share a fundamental limitation: they show what information *exists* in a model's internals, not what information the model actually *uses*.
 
 The gap matters. A probing classifier might detect part-of-speech information at 95% accuracy from layer 6 activations, yet removing that information has no effect on the model's downstream performance. The information was there, but the model did not rely on it. Observation reveals correlation. We need causation.
 
@@ -57,7 +57,7 @@ $$
 \Delta L = \text{logit}(\text{Mary}) - \text{logit}(\text{John})
 $$
 
-The logit difference is continuous, linear in [residual stream](/topics/attention-mechanism/#the-residual-stream) contributions, and easy to interpret. Alternatives like probability (nonlinear via softmax, creating artificial sharpness) and accuracy (discrete, hiding gradual effects) are less reliable. Heimersheim and Nanda strongly recommend logit difference, with multiple metrics used to check robustness {% cite "heimersheim2024patching" %}.{% sidenote "Activation patching was developed independently by several groups under different names. Vig et al. (2020) introduced 'causal mediation analysis' by applying Pearl's framework to neural NLP. Geiger et al. (2021) formalized 'interchange intervention' within a causal abstraction framework. Meng et al. (2022) used 'causal tracing' with Gaussian noise corruption to trace factual associations. Heimersheim and Nanda (2024) synthesized these approaches into the practical framework now used by the MI community." %}
+The logit difference is continuous, linear in [residual stream](/topics/transformer-architecture/#the-residual-stream) contributions, and easy to interpret. Alternatives like probability (nonlinear via softmax, creating artificial sharpness) and accuracy (discrete, hiding gradual effects) are less reliable. Heimersheim and Nanda strongly recommend logit difference, with multiple metrics used to check robustness {% cite "heimersheim2024patching" %}.{% sidenote "Activation patching was developed independently by several groups under different names. Vig et al. (2020) introduced 'causal mediation analysis' by applying Pearl's framework to neural NLP. Geiger et al. (2021) formalized 'interchange intervention' within a causal abstraction framework. Meng et al. (2022) used 'causal tracing' with Gaussian noise corruption to trace factual associations. Heimersheim and Nanda (2024) synthesized these approaches into the practical framework now used by the MI community." %}
 
 ## Noising vs. Denoising
 
@@ -197,7 +197,7 @@ For a deeper treatment of attribution patching, including its relationship to pa
 
 ## Path Patching
 
-Standard activation patching replaces a component's entire output. But a head's output flows to many downstream components through [the residual stream](/topics/attention-mechanism/#the-residual-stream). Head $H$ might send critical information to head $K$ but irrelevant information to head $J$. Standard patching cannot distinguish these pathways.
+Standard activation patching replaces a component's entire output. But a head's output flows to many downstream components through [the residual stream](/topics/transformer-architecture/#the-residual-stream). Head $H$ might send critical information to head $K$ but irrelevant information to head $J$. Standard patching cannot distinguish these pathways.
 
 Path patching asks a more refined question: which specific *pathway* carries the critical information? Instead of patching head $H$'s output everywhere, patch only the part of $H$'s output that flows to a specific downstream component $K$. This isolates the direct $H \to K$ connection from other paths through the residual stream.
 

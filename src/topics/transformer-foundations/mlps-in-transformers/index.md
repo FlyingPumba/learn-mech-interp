@@ -1,10 +1,10 @@
 ---
-title: "How MLPs Store and Recall Knowledge"
-description: "The mechanistic story of feed-forward layers: how MLP neurons act as key-value memories, promote interpretable concepts in vocabulary space, and orchestrate a multi-stage pipeline for factual recall."
-order: 7
+title: "MLPs in Transformers"
+description: "How feed-forward layers work as key-value memories that store factual knowledge, promote interpretable concepts in vocabulary space, and orchestrate a multi-stage pipeline for factual recall."
+order: 4
 prerequisites:
-  - title: "Composition and Virtual Attention Heads"
-    url: "/topics/composition-and-virtual-heads/"
+  - title: "The Attention Mechanism"
+    url: "/topics/attention-mechanism/"
 
 glossary:
   - term: "Key-Value Memory (MLP)"
@@ -15,9 +15,15 @@ glossary:
 
 ## The Other Half of the Transformer
 
-We have spent the previous articles building a detailed picture of attention: how heads select which tokens to attend to via the [QK circuit](/topics/qk-ov-circuits/), copy and transform information via the OV circuit, and [compose across layers](/topics/composition-and-virtual-heads/) to implement algorithms no single head can express. But every transformer layer has two components, not one. After attention moves information between positions, the MLP transforms that information within each position.
+Every transformer layer has two components. [Attention](/topics/attention-mechanism/) moves information between positions, letting tokens communicate across the sequence. But after attention has routed information, a second component processes it: the **MLP** (multi-layer perceptron), also called the feed-forward network. Unlike attention, the MLP operates independently on each position. It does no cross-token communication. Instead, it transforms the information that attention has gathered, applying nonlinear computations within each position.
 
-The [architecture article](/topics/transformer-architecture/) introduced the MLP equation:
+MLPs hold roughly two-thirds of a transformer's parameters, yet for years their function remained opaque. While attention heads have interpretable structure (queries match keys, values get copied), the MLP is just a matrix multiply, a nonlinearity, and another matrix multiply. What could it possibly be doing with all those parameters?
+
+A series of results from 2020 to 2023 changed this. We now have a coherent mechanistic picture of what MLPs do, built from three increasingly detailed levels of analysis.
+
+## The MLP Equation
+
+The [architecture article](/topics/transformer-architecture/) introduced the MLP as a local computation step. Here is the full equation:
 
 $$
 \text{MLP}(\mathbf{x}) = W_{\text{out}} \cdot \sigma(W_{\text{in}} \mathbf{x} + \mathbf{b}_{\text{in}}) + \mathbf{b}_{\text{out}}
@@ -25,9 +31,15 @@ $$
 
 where $W_{\text{in}} \in \mathbb{R}^{d_m \times d}$ projects the $d$-dimensional residual stream to a hidden layer of dimension $d_m$ (typically $4d$), $\sigma$ is a nonlinear activation (GELU in GPT-2), and $W_{\text{out}} \in \mathbb{R}^{d \times d_m}$ projects back down. This is the standard two-layer feed-forward network.
 
-The equation is simple. What it *computes* is not obvious. The MLP has no mechanism for cross-token communication and no attention-like interpretable structure. For years, MLPs were the dark matter of the transformer: they hold roughly two-thirds of the model's parameters, but their function remained opaque.
+The up-projection to a $4\times$ wider hidden layer followed by a down-projection creates an expansion-compression bottleneck. The model has $d_m$ "slots" in the hidden layer, each of which can activate (or not) on a given input. The nonlinearity $\sigma$ acts as a gate, determining which slots fire. The output is a weighted combination of contributions from the active slots.
 
-A series of results from 2020 to 2023 changed this. We now have a coherent mechanistic picture of what MLPs do, built from three increasingly detailed levels of analysis.
+The residual stream is updated additively:
+
+$$
+\mathbf{r}^{l+1} = \mathbf{r}^{l+} + \text{MLP}^l(\mathbf{r}^{l+})
+$$
+
+where $\mathbf{r}^{l+}$ is the residual stream after attention in layer $l$. Like attention, the MLP reads from and writes to the [residual stream](/topics/transformer-architecture/#the-residual-stream). Its contribution can be isolated and measured independently.
 
 ## MLPs as Key-Value Memories
 
@@ -43,9 +55,8 @@ where $\mathbf{k}_i$ is the $i$-th row of $W_{\text{in}}$ (the "key" for neuron 
 
 This is not a metaphor. The computation is *structurally identical* to a soft key-value lookup: the input is matched against a bank of keys, and the corresponding values are retrieved and combined. The nonlinearity $\sigma$ acts as a soft gate, determining which key-value pairs are active for a given input.
 
-
 <figure>
-  <img src="/topics/mlp-knowledge-storage/images/ffn_key_value_memory.png" alt="Diagram of a feed-forward layer as key-value memory. The input vector is multiplied by key vectors k_1 through k_dm to produce memory coefficients, and the output is a weighted sum of value vectors v_1 through v_dm. Example trigger inputs for individual keys are shown, such as 'it will take a' and 'every once in a'.">
+  <img src="/topics/mlps-in-transformers/images/ffn_key_value_memory.png" alt="Diagram of a feed-forward layer as key-value memory. The input vector is multiplied by key vectors k_1 through k_dm to produce memory coefficients, and the output is a weighted sum of value vectors v_1 through v_dm. Example trigger inputs for individual keys are shown, such as 'it will take a' and 'every once in a'.">
   <figcaption>A feed-forward layer as key-value memory. Each of the $d_m$ neurons has a key vector that matches textual patterns and a value vector that contributes to the output. The memory coefficients (activation strengths) determine how much each value vector contributes. From Geva et al., <em>Transformer Feed-Forward Layers Are Key-Value Memories</em>. {%- cite "geva2021kvmemories" -%}</figcaption>
 </figure>
 
@@ -86,7 +97,7 @@ $$
 This projection gives us a distribution over the vocabulary for each neuron. We can read off which tokens neuron $i$ promotes (positive logit contribution) and which it suppresses (negative contribution).
 
 <figure>
-  <img src="/topics/mlp-knowledge-storage/images/value_vectors_vocab_space.png" alt="Diagram showing how an FFN layer's value vectors promote concepts in vocabulary space. The token representation x receives an additive update (A) from the FFN layer. Before the update, x can be interpreted as a distribution over vocabulary (B, showing words like 'few', 'pancake', 'coffee'). The FFN's update decomposes into sub-updates from value vectors v_1, v_2, ..., v_dm (C), each promoting a concept like breakfast foods (D, showing 'fruit, apples, snack, vitamins, berries, oats, yogurt, tea').">
+  <img src="/topics/mlps-in-transformers/images/value_vectors_vocab_space.png" alt="Diagram showing how an FFN layer's value vectors promote concepts in vocabulary space. The token representation x receives an additive update (A) from the FFN layer. Before the update, x can be interpreted as a distribution over vocabulary (B, showing words like 'few', 'pancake', 'coffee'). The FFN's update decomposes into sub-updates from value vectors v_1, v_2, ..., v_dm (C), each promoting a concept like breakfast foods (D, showing 'fruit, apples, snack, vitamins, berries, oats, yogurt, tea').">
   <figcaption>How MLP value vectors promote concepts. The token representation (B) receives an additive update (A) from the FFN layer. This update decomposes into sub-updates from individual value vectors (C), each promoting an interpretable concept in vocabulary space (D). From Geva et al., <em>Transformer Feed-Forward Layers Build Predictions by Promoting Concepts in the Vocabulary Space</em>. {%- cite "geva2022concepts" -%}</figcaption>
 </figure>
 
@@ -119,7 +130,7 @@ The studies above explain what individual MLP neurons do, but factual recall in 
 Geva et al. traced this pipeline end-to-end and identified three stages {% cite "geva2023factual" %}:
 
 <figure>
-  <img src="/topics/mlp-knowledge-storage/images/factual_recall_pipeline.png" alt="Three-stage factual recall pipeline for the query 'Beats Music is owned by ___'. Stage A (Subject enrichment): early MLP layers at the subject token 'Music' enrich its representation with attributes. Stage B (Relation propagation): attention heads propagate the relation 'is owned by' to the prediction position. Stage C (Attribute extraction): late attention heads extract the answer 'Apple' from the enriched subject representation.">
+  <img src="/topics/mlps-in-transformers/images/factual_recall_pipeline.png" alt="Three-stage factual recall pipeline for the query 'Beats Music is owned by ___'. Stage A (Subject enrichment): early MLP layers at the subject token 'Music' enrich its representation with attributes. Stage B (Relation propagation): attention heads propagate the relation 'is owned by' to the prediction position. Stage C (Attribute extraction): late attention heads extract the answer 'Apple' from the enriched subject representation.">
   <figcaption>The three-stage factual recall pipeline. For the query "Beats Music is owned by ___": (A) early MLP layers enrich the subject representation with attributes, (B) attention heads propagate the relation to the prediction position, and (C) late attention heads extract the target attribute "Apple." Green hexagons are MLP layers; purple arrows are attention heads. From Geva et al., <em>Dissecting Recall of Factual Associations in Auto-Regressive Language Models</em>. {%- cite "geva2023factual" -%}</figcaption>
 </figure>
 
@@ -162,6 +173,6 @@ The key-value memory view, while productive, has important caveats.
 
 ## Looking Ahead
 
-We now have a mechanistic story for both halves of the transformer layer. Attention moves information between positions through the [QK/OV circuit decomposition](/topics/qk-ov-circuits/). MLPs process that information at each position through key-value memories that promote concepts in vocabulary space. Together, they implement a staged pipeline for tasks like factual recall: MLPs enrich representations with associated attributes, and attention heads route and extract the relevant information.
+We now have a mechanistic picture of both components in a transformer layer. Attention moves information between positions. MLPs process that information at each position through key-value memories that promote concepts in vocabulary space. Together, they implement a staged pipeline for tasks like factual recall: MLPs enrich representations with associated attributes, and attention heads route and extract the relevant information.
 
-The next article, [Decoding Strategies](/topics/decoding-strategies/), covers how the model's logits become generated text, completing the Transformer Foundations block. After that, we move to the [foundational concepts of interpretability](/topics/what-is-mech-interp/) and the techniques used to analyze these components in practice.
+The next article, [Layer Normalization](/topics/layer-normalization/), covers the normalization step that appears before each sublayer and why it introduces a nonlinearity that complicates the clean additive decomposition we rely on for mechanistic analysis.

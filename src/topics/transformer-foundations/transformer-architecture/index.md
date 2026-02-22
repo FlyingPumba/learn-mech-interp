@@ -5,6 +5,9 @@ order: 2
 prerequisites:
   - title: "Prerequisites"
     url: "/topics/mi-prerequisites/"
+glossary:
+  - term: "Residual Stream"
+    definition: "The central communication channel in a transformer, implemented as skip connections that allow each layer's output to be added to a running sum. All attention heads and MLP layers read from and write to this shared stream."
 ---
 
 ## What Does an LLM Actually Do?
@@ -98,23 +101,30 @@ $$
 \mathbf{r}^{l+1} = \mathbf{r}^{l+} + \text{MLP}^l(\mathbf{r}^{l+})
 $$
 
-The MLP typically has a hidden layer that is 4x wider than the residual stream dimension, with a nonlinear activation function (often GELU) in between. Think of it as: attention moves information between positions, then the MLP processes that information within each position.
-
-Current evidence suggests MLPs store factual associations and apply nonlinear transformations that attention cannot. They may function as key-value memories where patterns in the input trigger retrieval of associated information.
+Think of it as: attention moves information between positions, then the MLP processes that information within each position. MLPs hold roughly two-thirds of a transformer's parameters and play a central role in storing and retrieving knowledge. We cover their structure, the key-value memory interpretation, and the factual recall pipeline in [MLPs in Transformers](/topics/mlps-in-transformers/).
 
 ## The Residual Stream
 
-The residual stream is the central information highway of the transformer. Every component reads from it and writes back to it additively:
+> **Residual Stream:** The residual stream is the vector that flows through the transformer, updated additively by each component. Every attention head and MLP reads from it and writes to it.
+
+The residual stream starts as the token embedding and accumulates updates from every layer:
 
 $$
 \mathbf{r}^L = \mathbf{r}^0 + \sum_{l=0}^{L-1} \left(\text{Attn}^l + \text{MLP}^l\right)
 $$
 
-This additive structure has a profound consequence: the final output is a sum of contributions from every component. We can decompose it and ask: how much did attention head 3 in layer 5 contribute to predicting "cat"? This is the foundation of mechanistic interpretability techniques like direct logit attribution.
+Think of it as a shared whiteboard. Each component reads the whole whiteboard, computes something, and writes its result back. The whiteboard accumulates all contributions. No component communicates directly with any other. Attention head 3 in layer 5 has no direct wire to MLP 2 in layer 7. Instead, head 3 writes to the residual stream, and MLP 2 reads from it. This shared-bus architecture is what makes the transformer amenable to mechanistic analysis.
+
+The additive structure is the key insight. Because the final output is a sum of contributions from every component, we can decompose it and ask: how much did attention head 3 in layer 5 contribute to predicting "cat"? This leads directly to techniques like direct logit attribution, which measures each component's contribution to the output logits, and activation patching, which tests whether a component is causally necessary. Both will be covered in later articles.
 
 Interestingly, if you take the residual stream halfway through the model and apply the unembedding matrix directly, you do not get nonsense. You get a rough approximation of the model's final prediction. The residual stream gradually refines its representation layer by layer, and this gradual refinement is what makes interventions on intermediate layers meaningful.
 
-Components communicate only through the residual stream. Attention head 3 in layer 5 has no direct wire to MLP 2 in layer 7. Instead, head 3 writes to the residual stream, and MLP 2 reads from it. This shared-bus architecture is what makes the transformer amenable to mechanistic analysis.
+<details class="pause-and-think">
+<summary>Pause and think: Understanding additive updates</summary>
+
+If the transformer is just a series of additive updates to a vector, what would it mean to "understand" what each update does? This question motivates the entire field of mechanistic interpretability: we want to decompose the model's computation into understandable pieces and explain the role of each component.
+
+</details>
 
 ## Layer Normalization
 
@@ -167,3 +177,22 @@ The generation loop feeds the full sequence back through the model at each step.
 Mechanistic interpretability treats the model as a computation graph we can open. Because the transformer's core operations are structured and mostly linear in the residual stream, we can trace, ablate, and patch individual components.
 
 The additive residual stream means we can decompose the output into contributions from each component. The parallel structure of attention means we can study individual heads in isolation. The fact that everything is learned means the model may have discovered interpretable algorithms we can reverse-engineer.
+
+## Notation Reference
+
+Throughout the curriculum, we use the following notation consistently:
+
+| Symbol | Meaning |
+|--------|---------|
+| $\mathbf{x}$ | Token embedding or activation vector |
+| $\mathbf{W}$ | Weight matrix (generic) |
+| $\mathbf{r}$ | Residual stream state |
+| $W_Q, W_K, W_V, W_O$ | Query, Key, Value, Output projection matrices |
+| $\mathbf{q}, \mathbf{k}, \mathbf{v}$ | Query, key, value vectors (for a single token) |
+| $d_{\text{model}}$ | Residual stream dimension |
+| $d_k$ | Key/query dimension per head ($= d_{\text{model}} / H$) |
+| $H$ | Number of attention heads |
+| $\text{Attn}^l$ | Output of attention at layer $l$ |
+| $\text{MLP}^l$ | Output of MLP at layer $l$ |
+| $\text{Embed}, \text{Unembed}$ | Embedding and unembedding operations |
+| $\text{LN}$ | Layer normalization |

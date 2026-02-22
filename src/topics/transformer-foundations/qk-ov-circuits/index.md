@@ -1,7 +1,7 @@
 ---
 title: "QK and OV Circuits"
 description: "How attention heads decompose into independent QK (matching) and OV (copying) circuits through the low-rank factorization of weight matrices."
-order: 5
+order: 6
 prerequisites:
   - title: "The Attention Mechanism"
     url: "/topics/attention-mechanism/"
@@ -15,7 +15,7 @@ glossary:
 
 ## The Residual Stream as a Vector Space
 
-The [residual stream](/topics/attention-mechanism/#the-residual-stream) is more than just a convenient name. It is a $d_{\text{model}}$-dimensional vector that lives in $\mathbb{R}^{d_{\text{model}}}$, and treating it as a proper vector space unlocks the mathematical framework behind mechanistic interpretability {% cite "elhage2021mathematical" %}.
+The [residual stream](/topics/transformer-architecture/#the-residual-stream) is more than just a convenient name. It is a $d_{\text{model}}$-dimensional vector that lives in $\mathbb{R}^{d_{\text{model}}}$, and treating it as a proper vector space unlocks the mathematical framework behind mechanistic interpretability {% cite "elhage2021mathematical" %}.
 
 If you want a refresher on prerequisites or a full architecture walkthrough, start with [Prerequisites](/topics/mi-prerequisites/) and [Transformer Architecture Intro](/topics/transformer-architecture/).
 

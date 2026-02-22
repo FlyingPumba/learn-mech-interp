@@ -1,7 +1,7 @@
 ---
 title: "Layer Normalization"
 description: "How layer normalization stabilizes transformer training, why it introduces a nonlinearity that complicates mechanistic interpretability, and the practical strategies researchers use to work around it."
-order: 4
+order: 5
 prerequisites:
   - title: "Transformer Architecture Intro"
     url: "/topics/transformer-architecture/"
@@ -17,7 +17,7 @@ glossary:
 
 Without layer normalization, deep transformer training fails. As additive updates accumulate in the residual stream across dozens or hundreds of layers, activation magnitudes drift, gradients explode or vanish, and training becomes unstable. Layer normalization fixes this by constraining activation scales at every sublayer.
 
-But this fix comes at a cost for mechanistic interpretability. The [residual stream](/topics/attention-mechanism/#the-residual-stream) is the foundation of MI analysis precisely because it is additive: the final output is a sum of contributions from every component. Layer normalization breaks this strict linearity. Each sublayer receives normalized activations, not the raw residual stream, which means the clean decomposition we rely on is an approximation.
+But this fix comes at a cost for mechanistic interpretability. The [residual stream](/topics/transformer-architecture/#the-residual-stream) is the foundation of MI analysis precisely because it is additive: the final output is a sum of contributions from every component. Layer normalization breaks this strict linearity. Each sublayer receives normalized activations, not the raw residual stream, which means the clean decomposition we rely on is an approximation.
 
 This article covers what layer normalization does, why transformers need it, and how MI researchers handle the complications it introduces.
 
