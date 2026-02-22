@@ -25,7 +25,7 @@ The same logic applies here: a model that can compress a much larger dataset int
 
 Neural networks operate on numbers, not strings. Before any computation, text passes through a **tokenizer**, which converts it into a sequence of integers called tokens.
 
-The tokenizer is constructed before training (using compression techniques like Byte-Pair Encoding) and remains fixed. For common English words, each word typically becomes one token. For rare words, foreign text, or gibberish, the tokenizer breaks them into smaller pieces.{% sidenote "You can explore how different models tokenize text at tools like OpenAI's tokenizer playground. It's worth getting an intuition for how common words become single tokens while rare words fragment into multiple pieces." %}
+The tokenizer is constructed before training (using compression techniques like Byte-Pair Encoding) and remains fixed. For common English words, each word typically becomes one token. For rare words, foreign text, or gibberish, the tokenizer breaks them into smaller pieces.{% sidenote "You can explore how different models tokenize text at tools like <a href=\"https://platform.openai.com/tokenizer\" target=\"_blank\" rel=\"noopener\">OpenAI's tokenizer playground</a>. It's worth getting an intuition for how common words become single tokens while rare words fragment into multiple pieces." %}
 
 For example, with GPT-2's tokenizer:
 - "The quick brown fox" becomes 4 tokens (one per word, with spaces attached)
