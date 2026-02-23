@@ -53,11 +53,46 @@ layout: layouts/base.njk
   </div>
 </article>
 
-{# Contribution footer #}
+{# Contributors and contribution footer #}
 {% set sourceUrl = "https://github.com/FlyingPumba/learn-mech-interp/blob/main/" + page.inputPath | replace("./", "") %}
 <div class="article-contribute">
+  {% if contributors and contributors.length %}
+  <p class="article-contributors">Contributors for this article: {% for author in contributors %}{% if loop.index > 1 %}, {% endif %}{{ author }}{% endfor %}</p>
+  {% endif %}
   <p>Found an error or want to contribute? <a href="{{ sourceUrl }}" target="_blank" rel="noopener">Edit this page on GitHub</a>.</p>
 </div>
+
+{# Structured data: Article schema #}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": {{ title | dump | safe }},
+  "description": {{ description | default(site.description) | dump | safe }},
+  "url": "{{ site.url }}{{ page.url }}",
+  "datePublished": "{{ datePublished }}",
+  "dateModified": "{{ dateModified }}",
+  "author": [{% for author in contributors %}{% if loop.index > 1 %},{% endif %}{"@type":"Person","name":{{ author | dump | safe }}}{% endfor %}],
+  "publisher": {"@type":"Organization","name":{{ site.name | dump | safe }},"url":"{{ site.url }}"},
+  "mainEntityOfPage": {"@type":"WebPage","@id":"{{ site.url }}{{ page.url }}"},
+  "isPartOf": {"@type":"WebSite","name":{{ site.name | dump | safe }},"url":"{{ site.url }}"}
+}
+</script>
+
+{# Structured data: BreadcrumbList schema #}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {"@type":"ListItem","position":1,"name":"Home","item":"{{ site.url }}/"}
+    {% if blockTitle %},{"@type":"ListItem","position":2,"name":{{ blockTitle | dump | safe }},"item":"{{ site.url }}/topics/"}
+    ,{"@type":"ListItem","position":3,"name":{{ title | dump | safe }},"item":"{{ site.url }}{{ page.url }}"}
+    {% else %},{"@type":"ListItem","position":2,"name":{{ title | dump | safe }},"item":"{{ site.url }}{{ page.url }}"}
+    {% endif %}
+  ]
+}
+</script>
 
 {# Previous/Next navigation #}
 {% set prevArticle = collections.learningPath | getPreviousCollectionItem(page) %}

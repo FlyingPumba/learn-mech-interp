@@ -4,7 +4,23 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>{% if title %}{{ title }} | {% endif %}Learn Mechanistic Interpretability</title>
-  <meta name="description" content="{{ description | default('Learn Mechanistic Interpretability through structured articles covering transformer internals to frontier research.') }}">
+  <meta name="description" content="{{ description | default(site.description) }}">
+  <link rel="canonical" href="{{ site.url }}{{ page.url }}">
+  <meta property="og:type" content="{% if block %}article{% else %}website{% endif %}">
+  <meta property="og:title" content="{{ title }}">
+  <meta property="og:description" content="{{ description | default(site.description) }}">
+  <meta property="og:url" content="{{ site.url }}{{ page.url }}">
+  <meta property="og:site_name" content="{{ site.name }}">
+  <meta property="og:locale" content="en_US">
+  {% if block %}
+  <meta property="article:published_time" content="{{ datePublished }}">
+  <meta property="article:modified_time" content="{{ dateModified }}">
+  {% endif %}
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="{{ title }}">
+  <meta name="twitter:description" content="{{ description | default(site.description) }}">
+  {% if noindex %}<meta name="robots" content="noindex">{% endif %}
+  <link rel="alternate" type="application/atom+xml" title="{{ site.name }}" href="/feed.xml">
   <script>
   (function() {
     var t = localStorage.getItem('theme');
@@ -17,7 +33,8 @@
   <link rel="stylesheet" href="/css/base.css?v={{ buildId }}">
   <link rel="stylesheet" href="/css/layout.css?v={{ buildId }}">
   <link rel="stylesheet" href="/css/components.css?v={{ buildId }}">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.28/dist/katex.min.css">
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.28/dist/katex.min.css" crossorigin>
   <link rel="stylesheet" href="/css/katex-overrides.css?v={{ buildId }}">
   <link rel="stylesheet" href="/css/prism-theme.css?v={{ buildId }}">
 </head>

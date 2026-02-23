@@ -9,6 +9,7 @@ import { scanBlocks } from "./lib/scanBlocks.js";
 import syntaxHighlight from "@11ty/eleventy-plugin-syntaxhighlight";
 import eleventyNavigationPlugin from "@11ty/eleventy-navigation";
 import pluginTOC from "eleventy-plugin-toc";
+import pluginRss from "@11ty/eleventy-plugin-rss";
 import markdownIt from "markdown-it";
 import { katex } from "@mdit/plugin-katex";
 import { figure } from "@mdit/plugin-figure";
@@ -205,6 +206,9 @@ export default function(eleventyConfig) {
   // Navigation plugin for sidebar hierarchy and breadcrumbs
   eleventyConfig.addPlugin(eleventyNavigationPlugin);
 
+  // RSS/Atom feed support (provides dateToRfc3339, absoluteUrl filters)
+  eleventyConfig.addPlugin(pluginRss);
+
   // Table of contents from rendered headings
   eleventyConfig.addPlugin(pluginTOC, {
     tags: ["h2", "h3"],
@@ -228,6 +232,9 @@ export default function(eleventyConfig) {
 
   // Pass through JS files to _site/js/
   eleventyConfig.addPassthroughCopy("src/js");
+
+  // Pass through robots.txt to site root
+  eleventyConfig.addPassthroughCopy({ "src/robots.txt": "robots.txt" });
 
   // Pass through article-local images, remapping from nested block structure
   // to flat output so /topics/<article>/images/ URLs remain stable
@@ -293,6 +300,11 @@ export default function(eleventyConfig) {
       `<input type="checkbox" id="${id}" class="sidenote-toggle-input"/>` +
       `<span class="marginnote">${content}</span>` +
     `</span>`;
+  });
+
+  // ISO date filter for sitemap and structured data
+  eleventyConfig.addFilter("dateToISO", (date) => {
+    return new Date(date).toISOString().split("T")[0];
   });
 
   // Reading time filter: strips HTML, counts words, returns "N min read"

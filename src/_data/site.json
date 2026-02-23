@@ -1,0 +1,8 @@
+{
+  "name": "Learn Mechanistic Interpretability",
+  "shortName": "Learn MI",
+  "url": "https://learnmechinterp.com",
+  "description": "Structured articles covering transformer internals, interpretability techniques, and frontier research.",
+  "language": "en",
+  "repo": "https://github.com/FlyingPumba/learn-mech-interp"
+}

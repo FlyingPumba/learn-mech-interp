@@ -1119,6 +1119,10 @@
   text-align: center;
 }
 
+.article-contribute p + p {
+  margin-top: var(--spacing-xs, 0.25rem);
+}
+
 .article-contribute a {
   color: var(--color-link, #004276);
 }
@@ -1479,4 +1483,27 @@
 
 .glossary-links a:hover {
   color: var(--color-link-hover);
+}
+
+/* ==========================================================================
+   ERROR PAGE (404)
+   ========================================================================== */
+
+.error-page {
+  text-align: center;
+  padding: var(--spacing-4xl, 4rem) var(--spacing-lg, 1.5rem);
+}
+
+.error-page h1 {
+  font-size: 4rem;
+  margin-bottom: var(--spacing-md, 1rem);
+  color: var(--color-text-secondary);
+}
+
+.error-actions {
+  display: flex;
+  gap: var(--spacing-md, 1rem);
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-top: var(--spacing-xl, 2rem);
 }
