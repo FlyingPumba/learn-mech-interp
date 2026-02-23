@@ -118,14 +118,6 @@ Think of it as a shared whiteboard. Each component reads the whole whiteboard, c
 The additive structure is the key insight. Because the final output is a sum of contributions from every component, we can decompose it and ask: how much did attention head 3 in layer 5 contribute to predicting "cat"? This leads directly to techniques like direct logit attribution, which measures each component's contribution to the output logits, and activation patching, which tests whether a component is causally necessary. Both will be covered in later articles.
 
 Interestingly, if you take the residual stream halfway through the model and apply the unembedding matrix directly, you do not get nonsense. You get a rough approximation of the model's final prediction. The residual stream gradually refines its representation layer by layer, and this gradual refinement is what makes interventions on intermediate layers meaningful.
-
-<details class="pause-and-think">
-<summary>Pause and think: Understanding additive updates</summary>
-
-If the transformer is just a series of additive updates to a vector, what would it mean to "understand" what each update does? This question motivates the entire field of mechanistic interpretability: we want to decompose the model's computation into understandable pieces and explain the role of each component.
-
-</details>
-
 ## Layer Normalization
 
 Layer normalization appears before each sublayer and is essential for stable training. Without it, activations grow unboundedly across layers and gradients explode. We cover layer normalization in detail in [Layer Normalization](/topics/layer-normalization/), including the pre-norm vs. post-norm distinction, RMSNorm, and why it introduces a nonlinearity that matters for mechanistic interpretability.

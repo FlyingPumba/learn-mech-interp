@@ -41,12 +41,12 @@ $$
 \mathbf{q}_i = \mathbf{x}_i W_Q, \quad \mathbf{k}_i = \mathbf{x}_i W_K, \quad \mathbf{v}_i = \mathbf{x}_i W_V
 $$
 
-The projection matrices $W_Q, W_K \in \mathbb{R}^{d_{\text{model}} \times d_k}$ map the input down to a $d_k$-dimensional query/key space, while $W_V \in \mathbb{R}^{d_{\text{model}} \times d_v}$ maps to the value space. These are three different "views" of the same input, each optimized by gradient descent for a different purpose during training.{% sidenote "The projection to a lower-dimensional space creates a bottleneck. Each attention head operates in a subspace of dimension d_k, which is typically d_model / H where H is the number of heads. This low-rank structure is important for mechanistic interpretability because it means each head can only attend to and move information along a limited set of directions." %}
+The projection matrices $W_Q, W_K \in \mathbb{R}^{d_{\text{model}} \times d_k}$ map the input down to a $d_k$-dimensional query/key space, while $W_V \in \mathbb{R}^{d_{\text{model}} \times d_v}$ maps to the value space. These are three different "views" of the same input, each optimized by gradient descent for a different purpose during training.
 
 ## The Attention Equation
 
 <figure>
-  <img src="/topics/attention-mechanism/images/scaled_dot_product_attention.png" alt="Scaled dot-product attention diagram showing Q, K, and V inputs flowing through MatMul, Scale, optional Mask, SoftMax, and a final MatMul to produce the output.">
+  <img src="/topics/attention-mechanism/images/scaled_dot_product_attention.png" alt="Scaled dot-product attention diagram showing Q, K, and V inputs flowing through MatMul, Scale, optional Mask, SoftMax, and a final MatMul to produce the output." style="max-width: 40%;">
   <figcaption>Scaled dot-product attention. The query and key vectors are combined via dot product, scaled, optionally masked, normalized with softmax, and used to weight the value vectors. From Vaswani et al., <em>Attention Is All You Need</em>. {%- cite "vaswani2017attention" -%}</figcaption>
 </figure>
 
@@ -130,15 +130,6 @@ The output is dominated by C's own value vector, with smaller contributions from
 
 The key observation: the attention pattern (who attends to whom) is entirely determined by the dot products between queries and keys. The values are passive passengers, mixed according to whatever weights the QK interaction produces. These are two independent computations, which is the foundation of the [QK/OV circuit decomposition](/topics/qk-ov-circuits/) we will develop later.
 
-<details class="pause-and-think">
-<summary>Pause and think: Compute attention for token B</summary>
-
-Using the same key and value vectors, compute the attention output for token B. Remember that causal masking means B can only attend to positions A and B (not C). What are the attention weights? What is the output vector?
-
-With $\mathbf{q}_B$ not given in the table (we would need B's query vector), this exercise highlights that each position needs its own query to compute its own attention pattern. If $\mathbf{q}_B = (0, 1)$, then $e_{B,A} = 0$ and $e_{B,B} = 1$. After scaling and softmax, B attends mostly to itself. The output would be dominated by B's value vector $(0, 1, 0)$.
-
-</details>
-
 ## Self-Attention and Causal Masking
 
 In **self-attention**, the queries, keys, and values all come from the same input sequence. Given an input matrix $X$ (one row per token), we compute $Q = XW_Q$, $K = XW_K$, and $V = XW_V$. The sequence attends to itself: every token can look at every other token and decide what information to gather. This is how a transformer lets all positions interact in a single step, producing context-dependent representations where each token's output reflects its relationship to the entire input.
@@ -150,7 +141,7 @@ In **decoder-only** transformers (such as GPT), there is an additional constrain
 ## Multi-Head Attention
 
 <figure>
-  <img src="/topics/attention-mechanism/images/multi_head_attention.png" alt="Multi-head attention diagram showing V, K, Q inputs each passing through multiple parallel linear projections into h parallel scaled dot-product attention blocks, whose outputs are concatenated and passed through a final linear layer.">
+  <img src="/topics/attention-mechanism/images/multi_head_attention.png" alt="Multi-head attention diagram showing V, K, Q inputs each passing through multiple parallel linear projections into h parallel scaled dot-product attention blocks, whose outputs are concatenated and passed through a final linear layer." style="max-width: 55%;">
   <figcaption>Multi-head attention. Each head applies its own learned linear projections to the inputs, computes scaled dot-product attention independently, and the results are concatenated and projected through a final linear layer. From Vaswani et al., <em>Attention Is All You Need</em>. {%- cite "vaswani2017attention" -%}</figcaption>
 </figure>
 
@@ -168,9 +159,11 @@ $$
 \text{MultiHead}(X) = \text{Concat}(\text{head}_1, \ldots, \text{head}_H)\, W_O
 $$
 
+Why is $W_O$ needed? Because each head operates in a small $d_v$-dimensional subspace, its output cannot be added directly to the $d_{\text{model}}$-dimensional residual stream. The output matrix $W_O \in \mathbb{R}^{(H \cdot d_v) \times d_{\text{model}}}$ maps the concatenated head outputs back into the full residual stream space. It also lets each head learn *how* to write its result back: which dimensions of the residual stream to update and with what mixture. In mechanistic interpretability, the combined matrix $W_V^h W_O^h$ (the slice of $W_O$ corresponding to head $h$) is called the **OV circuit** of a head: it determines what information the head moves from source to destination.
+
 > **Independent Heads:** Each attention head is an independent information-moving operation with its own learned pattern. Head $h$ reads from the residual stream, processes it through its own $d_k$-dimensional subspace, and writes back to the residual stream.
 
-With $H$ heads and $d_k = d_{\text{model}} / H$, the total parameter count is the same as a single large head, but the model can attend to $H$ different things at once. For mechanistic interpretability, this is a major advantage: we can study each head individually to understand what it does.
+With $H$ heads and $d_k = d_{\text{model}} / H$, the total parameter count is the same as a single large head, but the model can attend to $H$ different things at once.{% sidenote "The projection to a lower-dimensional space creates a bottleneck. Each attention head operates in a subspace of dimension d_k, which is typically d_model / H where H is the number of heads. This low-rank structure is important for mechanistic interpretability because it means each head can only attend to and move information along a limited set of directions." %} For mechanistic interpretability, this is a major advantage: we can study each head individually to understand what it does.
 
 In practice, different heads specialize in remarkably specific patterns. **Previous token heads** consistently attend to the immediately preceding token. **Induction heads** complete patterns by looking for previous occurrences of the current token and attending to what came after. **Name mover heads** copy proper names to later positions where they are needed for prediction. We will explore induction heads and other specialized head types in later articles.
 

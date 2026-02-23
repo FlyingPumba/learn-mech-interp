@@ -156,13 +156,28 @@ hr {
 /* Figures */
 figure {
   margin-inline: 0;
+  text-align: center;
 }
 
 /* Images */
 img {
   max-width: 100%;
   height: auto;
-  display: block;
+  display: inline-block;
+}
+
+/* Figure images in dark mode: subtle background so black lines stay visible */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) figure img {
+    background: rgba(255, 255, 255, 0.13);
+    border-radius: 4px;
+    padding: 0.5rem;
+  }
+}
+[data-theme="dark"] figure img {
+  background: rgba(255, 255, 255, 0.13);
+  border-radius: 4px;
+  padding: 0.5rem;
 }
 
 /* Tables */

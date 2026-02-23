@@ -467,8 +467,8 @@
   bottom: 100%;
   left: 50%;
   transform: translateX(-50%);
-  background: var(--color-text, rgba(0, 0, 0, 0.87));
-  color: var(--color-background, #ffffff);
+  background: var(--color-tooltip-bg, #333);
+  color: var(--color-tooltip-text, #fff);
   padding: var(--spacing-sm, 0.5rem) var(--spacing-md, 1rem);
   border-radius: var(--radius-md, 4px);
   font-size: var(--font-size-small, 0.875rem);

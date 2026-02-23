@@ -44,6 +44,10 @@
   --color-link-visited: #7b6b8e;
   --color-logo: #5e4a9e;
 
+  /* Colors - Tooltips */
+  --color-tooltip-bg: #333;
+  --color-tooltip-text: #fff;
+
   /* Colors - Borders */
   --color-border: rgba(0, 0, 0, 0.1);
   --color-border-strong: rgba(0, 0, 0, 0.2);
@@ -131,6 +135,10 @@
     --color-border: rgba(255, 255, 255, 0.1);
     --color-border-strong: rgba(255, 255, 255, 0.2);
 
+    /* Tooltips */
+    --color-tooltip-bg: #2a2a3e;
+    --color-tooltip-text: #e0e0e0;
+
     /* Prism (dark palette) */
     --prism-comment: rgba(255, 255, 255, 0.4);
     --prism-punctuation: rgba(255, 255, 255, 0.5);
@@ -187,6 +195,10 @@
   /* Borders */
   --color-border: rgba(255, 255, 255, 0.1);
   --color-border-strong: rgba(255, 255, 255, 0.2);
+
+  /* Tooltips */
+  --color-tooltip-bg: #2a2a3e;
+  --color-tooltip-text: #e0e0e0;
 
   /* Prism (dark palette) */
   --prism-comment: rgba(255, 255, 255, 0.4);
