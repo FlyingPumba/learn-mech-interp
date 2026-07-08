@@ -97,6 +97,13 @@
     "venue": "arXiv",
     "url": "https://arxiv.org/abs/2303.08112"
   },
+  "gurnee2026workspace": {
+    "title": "Verbalizable Representations Form a Global Workspace in Language Models",
+    "authors": "Gurnee, W., Lindsey, J., et al.",
+    "year": 2026,
+    "venue": "Anthropic (transformer-circuits.pub)",
+    "url": "https://transformer-circuits.pub/2026/workspace/index.html"
+  },
   "hewitt2019structural": {
     "title": "A Structural Probe for Finding Syntax in Word Representations",
     "authors": "Hewitt, J., Manning, C. D.",

@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>{% if title %}{{ title }} | {% endif %}Learn Mechanistic Interpretability</title>
   <meta name="description" content="{{ description | default(site.description) }}">
+  {% if keywords %}<meta name="keywords" content="{{ keywords }}">{% endif %}
   <link rel="canonical" href="{{ site.url }}{{ page.url }}">
   <meta property="og:type" content="{% if block %}article{% else %}website{% endif %}">
   <meta property="og:title" content="{{ title }}">

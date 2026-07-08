@@ -1,7 +1,7 @@
 ---
 title: "Reading the Attention Patterns"
 description: "How to visualize and interpret attention patterns to understand what information heads are moving, from previous token heads to induction heads."
-order: 3
+order: 4
 prerequisites:
   - title: "The Attention Mechanism"
     url: "/topics/attention-mechanism/"

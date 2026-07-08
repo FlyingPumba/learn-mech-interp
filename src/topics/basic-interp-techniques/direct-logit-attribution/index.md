@@ -1,7 +1,7 @@
 ---
 title: "Direct Logit Attribution"
 description: "How to decompose a model's output into per-component contributions by projecting each attention head's output onto the logit difference direction."
-order: 2
+order: 3
 prerequisites:
   - title: "Induction Heads and In-Context Learning"
     url: "/topics/induction-heads/"
