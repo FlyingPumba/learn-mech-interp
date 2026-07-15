@@ -229,7 +229,7 @@ The composed matrix $W_U J_\ell$ has one row per vocabulary token. Row $t$ is a 
 
 > **J-lens Vector:** For layer $\ell$ and vocabulary token $t$, the J-lens vector $\mathbf{v}_t^{(\ell)}$ is the $t$-th row of $W_U J_\ell$, viewed as a direction in $\mathbb{R}^{d_\text{model}}$. The lens score for token $t$ at that layer is (up to layer-norm scaling) $\langle \mathbf{v}_t^{(\ell)},\, \mathbf{h}_\ell \rangle$.
 
-There are $n_\text{vocab}$ such vectors per layer, typically $\sim$100,000 vectors in a $d_\text{model}$-dimensional space. That set is overcomplete: no unique decomposition of an activation as a sum of J-lens vectors exists. But *sparse* combinations turn out to be well-defined and empirically meaningful; the paper calls the set of activations expressible as sparse non-negative combinations of J-lens vectors the **J-space**.
+There are $n_\text{vocab}$ such vectors per layer, typically $\sim 100,000$ vectors in a $d_\text{model}$-dimensional space. That set is overcomplete: no unique decomposition of an activation as a sum of J-lens vectors exists. But *sparse* combinations turn out to be well-defined and empirically meaningful; the paper calls the set of activations expressible as sparse non-negative combinations of J-lens vectors the **J-space**.
 
 <details class="pause-and-think">
 <summary>Pause and think: J-lens vector vs. probing direction</summary>
