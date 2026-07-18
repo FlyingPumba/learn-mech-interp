@@ -810,5 +810,19 @@
     "year": 2025,
     "venue": "arXiv",
     "url": "https://arxiv.org/abs/2503.17272"
+  },
+  "frasertaliente2026nla": {
+    "title": "Natural Language Autoencoders Produce Unsupervised Explanations of LLM Activations",
+    "authors": "Fraser-Taliente, K., Kantamneni, S., Ong, E., et al.",
+    "year": 2026,
+    "venue": "Anthropic",
+    "url": "https://transformer-circuits.pub/2026/nla/index.html"
+  },
+  "shao2024deepseekmath": {
+    "title": "DeepSeekMath: Pushing the Limits of Mathematical Reasoning in Open Language Models",
+    "authors": "Shao, Z., Wang, P., Zhu, Q., et al.",
+    "year": 2024,
+    "venue": "arXiv",
+    "url": "https://arxiv.org/abs/2402.03300"
   }
 }

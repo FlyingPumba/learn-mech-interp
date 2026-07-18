@@ -51,6 +51,8 @@ This block covers several complementary approaches to hidden state decoding:
 
 [**Activation Oracles**](/topics/activation-oracles/) scale this approach to general-purpose explainers. Trained on diverse interpretation tasks, these models generalize to novel settings, recovering information that does not appear in input text and matching specialized white-box methods.
 
+[**Natural Language Autoencoders**](/topics/natural-language-autoencoders/) remove the labels entirely. A verbalizer and a reconstructor are trained jointly to autoencode an activation through a natural-language bottleneck, so the explanations are learned from a reconstruction objective rather than from data whose answers we already know.
+
 ## A Note on Faithfulness
 
 A persistent concern in interpretability is whether explanations are *faithful* to actual model computations. A model might produce plausible-sounding but incorrect descriptions of its activations. This is not unique to hidden state decoding; all interpretation methods face questions about whether their outputs reflect ground truth.

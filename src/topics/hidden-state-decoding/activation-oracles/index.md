@@ -150,3 +150,7 @@ Consider:
 These open questions suggest directions for future work in hidden state decoding.
 
 </details>
+
+## Looking Ahead
+
+Activation Oracles still depend on supervision: someone has to know what an activation encodes in order to build the training data. The next article, [Natural Language Autoencoders](/topics/natural-language-autoencoders/), removes that dependency. It trains a verbalizer and a reconstructor to autoencode activations through a natural-language bottleneck, so the explanations come from a reconstruction objective instead of from labels.
