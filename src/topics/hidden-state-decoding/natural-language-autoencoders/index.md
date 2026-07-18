@@ -144,13 +144,11 @@ Two examples show what this buys you and where it is convincing.
 
 Both examples point to the same workflow. NLAs are cheap to read and good at generating hypotheses, so you use them to form a guess, then confirm it with a more expensive method such as [attribution graphs](/topics/circuit-tracing/) or a controlled steering experiment {% cite "lindsey2025circuittracing" %}.
 
-## What it costs, and what is released
+## What it costs
 
-The bill for this expressiveness is real. Training is joint RL over two full-size language models on top of two supervised warm-starts, and inference generates several hundred tokens per activation. That last point is the binding constraint in practice: you cannot run an NLA on every token of a long transcript, and analysis is limited to selected regions rather than everything at once. {% sidenote "As a concrete reference point, the released Gemma-3-27B NLA took roughly 1.5 days on two 8xH100 nodes to reach 0.70 FVE. The open-model recipe uses GRPO with a group size of 8, explanations averaging about 130 tokens, a KL penalty toward the warm-started AV, and a learning rate of 1e-5." %}
+The bill for this expressiveness is real. Training is joint RL over two full-size language models on top of two supervised warm-starts, and inference generates several hundred tokens per activation. That last point is the binding constraint in practice: you cannot run an NLA on every token of a long transcript, and analysis is limited to selected regions rather than everything at once. {% sidenote "As a concrete reference point, the Gemma-3-27B NLA took roughly 1.5 days on two 8xH100 nodes to reach 0.70 FVE. The open-model recipe uses GRPO with a group size of 8, explanations averaging about 130 tokens, a KL penalty toward the warm-started AV, and a learning rate of 1e-5." %}
 
 Two other limits shape how you use the method. An NLA reads a **single layer**, so information that lives elsewhere in the network is invisible to it, and the paper finds that the same concept can surface at one layer and be absent at another. And the AV is a **black box**: it can tell you what an activation seems to encode, but not which part of the activation drove which part of the explanation, so it does not offer the mechanistic grounding that a probe or an SAE feature does.
-
-Alongside the paper, the authors release training code and trained NLAs for several open models (Qwen-2.5-7B, Gemma-3-12B, Gemma-3-27B, and Llama-3.3-70B), available through a collaboration with Neuronpedia, which is the fastest way to see NLA explanations without training your own {% cite "frasertaliente2026nla" %}.
 
 ## Looking Ahead
 
