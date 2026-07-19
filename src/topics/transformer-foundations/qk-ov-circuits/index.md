@@ -77,7 +77,7 @@ where $\alpha_{i,j}$ is the attention weight. The OV circuit is a single matrix 
 The full end-to-end OV circuit, including the unembedding, is:
 
 $$
-W_U \, W_{OV}^h \, W_E
+W_E \, W_{OV}^h \, W_U
 $$
 
 This is also an $n_{\text{vocab}} \times n_{\text{vocab}}$ matrix. Entry $(i, j)$ tells us "if the head attends to token $i$, how much does that increase the logit for token $j$?" This directly reveals the *effect on predictions* of attending to a given token.
@@ -92,7 +92,7 @@ The two circuits have complementary roles:
 | **Input** | Two token positions | A source token |
 | **Output** | An attention score | An update to the residual stream |
 | **Answers** | "Should I attend here?" | "What should I copy?" |
-| **End-to-end** | $W_E^T \, W_{QK}^h \, W_E$ | $W_U \, W_{OV}^h \, W_E$ |
+| **End-to-end** | $W_E^T \, W_{QK}^h \, W_E$ | $W_E \, W_{OV}^h \, W_U$ |
 | **Interpretation** | Token-to-token relevance | Token-to-logit effect |
 
 Every attention head decomposes into these two independent circuits. This is not just compact notation. It reveals that each head has exactly two degrees of freedom: *where* to look and *what* to move. These can be studied independently.
