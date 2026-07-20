@@ -7,8 +7,12 @@ prerequisites:
     url: "/topics/attribution-patching/"
 
 glossary:
+  - term: "AtP*"
+    definition: "Attribution Patching, starred. An improved variant of attribution patching that reduces false negatives from attention saturation by recomputing how patched queries and keys change attention weights, and from cancellation between direct and indirect effects using GradDrop. It retains AtP's scalability and provides a way to bound the probability of remaining false negatives."
   - term: "EAP-IG"
     definition: "Edge Attribution Patching with Integrated Gradients. Replaces the single gradient evaluation in EAP with an average of gradients along the interpolation path from corrupted to clean activations, fixing zero-gradient failures and improving circuit faithfulness."
+  - term: "EAP-GP"
+    definition: "Edge Attribution Patching with GradPath. An edge-level circuit discovery method that replaces EAP-IG's fixed straight-line interpolation with a dynamically adjusted, gradient-guided path. GradPath steers the integration path away from saturated regions, producing more reliable edge attributions and more faithful discovered circuits."
   - term: "CEAP"
     definition: "Conductance-based Edge Attribution Patching. A circuit discovery method that scores model edges using conductance along the interpolation path from corrupted to clean inputs. Unlike EAP-IG, it weights the gradient at each interpolation step by the edge activation's local change, rather than multiplying the average gradient by the total activation change. Its conductance scores produce more principled edge rankings and can reduce circuit instability under data resampling."
 ---
