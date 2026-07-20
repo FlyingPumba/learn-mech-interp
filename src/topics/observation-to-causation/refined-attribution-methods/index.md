@@ -9,6 +9,8 @@ prerequisites:
 glossary:
   - term: "EAP-IG"
     definition: "Edge Attribution Patching with Integrated Gradients. Replaces the single gradient evaluation in EAP with an average of gradients along the interpolation path from corrupted to clean activations, fixing zero-gradient failures and improving circuit faithfulness."
+  - term: "CEAP"
+    definition: "Conductance-based Edge Attribution Patching. A circuit discovery method that scores model edges using conductance along the interpolation path from corrupted to clean inputs. Unlike EAP-IG, it weights the gradient at each interpolation step by the edge activation's local change, rather than multiplying the average gradient by the total activation change. Its conductance scores produce more principled edge rankings and can reduce circuit instability under data resampling."
 ---
 
 ## When Gradients Mislead
