@@ -166,7 +166,7 @@ $$
 \nabla_v \mathcal{L}\!\left(\mathbf{z}^{(k)}\right)
 $$
 
-where $\mathbf{z}^{(k)} = \mathbf{z}^{\text{corrupt}} + \frac{k}{m}\left(\mathbf{z}^{\text{clean}}-\mathbf{z}^{\text{corrupt}}\right)$ is the input at interpolation step $k$, and $\mathbf{z}_u^{(k)}=\mathbf{z}_u\!\left(\mathbf{z}^{(k)}\right)$ is the activation at node $u$ produced by that input. 
+where $\mathbf{z}^{(k)} = \mathbf{z}^{\text{corrupt}} + \frac{k}{m}\left(\mathbf{z}^{\text{clean}}-\mathbf{z}^{\text{corrupt}}\right)$ is the input at interpolation step $k$, and $\mathbf{z}_u^{(k)}=\mathbf{z}_u\!\left(\mathbf{z}^{(k)}\right)$ is the activation at node $u$ produced by that input.
 
 Conductance satisfies **additive order preservation**, a minimal desideratum for edge-scoring methods that is violated by Integrated Gradients:
 
@@ -181,6 +181,14 @@ Conductance satisfies **additive order preservation**, a minimal desideratum for
 >   </figcaption>
 >
 > </figure>
+
+<details class="pause-and-think">
+<summary>Pause and think: Why the CEAP score is more principled</summary>
+The CEAP score weights the gradient at each interpolation step by how much the corresponding activation moves at that step. Intuitively, a step should matter more for two reasons: (1) the activation moves more in that step, and (2) that activation movement has a larger local effect on the output.
+CEAP reflects both factors. 
+
+EAP-IG, on the other hand, treats the gradients of all the steps equally, which can distort how much a certain activation really affects the output.
+</details>
 
 Empirically, CEAP reduces resampling instability, which refers to the instability of the found circuit when the probing prompts are resampled from the same distribution {% cite "wu2026variance" %}.
 
