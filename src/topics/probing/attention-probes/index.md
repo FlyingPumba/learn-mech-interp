@@ -45,7 +45,7 @@ $$
 $$
 
 $$
-\hat{y} = W_c \mathbf{z} + b_c
+\hat{y} = \mathbf{z} W_c + b_c
 $$
 
 where $W_q \in \mathbb{R}^{d \times 1}$ produces a single attention logit per token, $W_v \in \mathbb{R}^{d \times d_v}$ projects hidden states to values, and $W_c$ is the final classification head.

@@ -35,7 +35,7 @@ The architecture mirrors an SAE in structure -- encoder, sparse bottleneck, deco
 
 The difference between SAEs and transcoders is exactly what enables feature-level circuit analysis:
 
-**SAEs** decompose what a layer *represents*. Given activation $\mathbf{h}$, an SAE finds sparse features $\mathbf{f}$ such that $\mathbf{h} \approx W_{\text{dec}} \mathbf{f}$. This is useful for understanding individual layers but does not reveal how features at one layer produce features at the next.
+**SAEs** decompose what a layer *represents*. Given activation $\mathbf{h}$, an SAE finds sparse features $\mathbf{f}$ such that $\mathbf{h} \approx \mathbf{f} W_{\text{dec}}$. This is useful for understanding individual layers but does not reveal how features at one layer produce features at the next.
 
 **Transcoders** decompose what a layer *computes*. Given MLP input $\mathbf{x}_{\text{in}}$, a transcoder finds sparse features that produce the MLP output. Because the transcoder's features map inputs to outputs, we can trace how upstream features contribute to downstream features through the MLP.{% sidenote "In the residual stream picture, attention heads move information between positions while MLPs transform information at each position. SAEs decompose the residual stream at a point. Transcoders decompose the transformation that happens between points. Both are needed for complete circuit analysis." %}
 

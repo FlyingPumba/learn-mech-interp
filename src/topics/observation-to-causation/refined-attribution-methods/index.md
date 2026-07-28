@@ -61,7 +61,7 @@ Kramár et al. (2024) introduce **AtP\*** (Attribution Patching, starred), which
 Instead of approximating the attention softmax with a gradient, AtP\* **recomputes it exactly**. For query and key nodes, AtP\* computes the actual attention weights under patching (using the corrupted query/key values) and the actual clean attention weights, then uses the *exact difference in attention patterns* as the perturbation for the rest of the gradient computation:
 
 $$
-\hat{\mathcal{I}}_{\text{AtP*}}^{Q}(n) = \left(\text{attn}(n)_\text{patch} - \text{attn}(n)(x^\text{clean})\right)^\top \frac{\partial \mathcal{L}}{\partial \text{attn}(n)}
+\hat{\mathcal{I}}_{\text{AtP*}}^{Q}(n) = \left(\text{attn}(n)_\text{patch} - \text{attn}(n)(x^\text{clean})\right) \cdot \frac{\partial \mathcal{L}}{\partial \text{attn}(n)}
 $$
 
 The gradient still approximates the effect of the attention change on downstream computation, but the attention change itself is computed exactly. This eliminates the saturation problem because we never linearize through the softmax.
@@ -87,7 +87,7 @@ AtP\* also provides a method for **bounding remaining false negatives** using su
 Before discussing EAP-IG, we need the baseline it improves on. **Edge Attribution Patching (EAP)** applies the gradient approximation to *edges* (connections between components) rather than nodes {% cite "syed2023eap" %}:
 
 $$
-\text{EAP}(u, v) = (\mathbf{z}_u^\text{corrupt} - \mathbf{z}_u^\text{clean})^\top \nabla_v \mathcal{L}
+\text{EAP}(u, v) = (\mathbf{z}_u^\text{corrupt} - \mathbf{z}_u^\text{clean}) \cdot \nabla_v \mathcal{L}
 $$
 
 where $u$ is the source node, $v$ is the destination node, $\mathbf{z}_u$ is the activation at node $u$, and $\nabla_v \mathcal{L}$ is the gradient of the metric with respect to the input at node $v$.

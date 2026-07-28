@@ -28,7 +28,7 @@ The procedure mirrors contrastive methods from neuroscience:
 3. **Train a linear classifier.** Fit a logistic regression or linear probe on the activations to predict which behavior is active:
 
 $$
-p(\text{concept} | \mathbf{h}) = \sigma(\mathbf{w}^T \mathbf{h} + b)
+p(\text{concept} | \mathbf{h}) = \sigma(\mathbf{w} \cdot \mathbf{h} + b)
 $$
 
 where $\mathbf{w}$ is the learned weight vector, $\mathbf{h}$ is the activation, and $\sigma$ is the sigmoid function.

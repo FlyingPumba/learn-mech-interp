@@ -41,7 +41,7 @@ $$
 \mathbf{q}_i = \mathbf{x}_i W_Q, \quad \mathbf{k}_i = \mathbf{x}_i W_K, \quad \mathbf{v}_i = \mathbf{x}_i W_V
 $$
 
-The projection matrices $W_Q, W_K \in \mathbb{R}^{d_{\text{model}} \times d_k}$ map the input down to a $d_k$-dimensional query/key space, while $W_V \in \mathbb{R}^{d_{\text{model}} \times d_v}$ maps to the value space. These are three different "views" of the same input, each optimized by gradient descent for a different purpose during training.
+The projection matrices $W_Q, W_K \in \mathbb{R}^{d_{\text{model}} \times d_k}$ map the input down to a $d_k$-dimensional query/key space, while $W_V \in \mathbb{R}^{d_{\text{model}} \times d_v}$ maps to the value space. These are three different "views" of the same input, each optimized by gradient descent for a different purpose during training. Activations are row vectors throughout this curriculum and weight matrices act on the right, which matches the tensor shapes in PyTorch and TransformerLens.
 
 ## The Attention Equation
 
@@ -55,7 +55,7 @@ With queries, keys, and values defined, the attention mechanism proceeds in thre
 **Step 1: Dot-product scores.** How much should token $i$ attend to token $j$? The model measures this by computing the dot product between the query of token $i$ and the key of token $j$:
 
 $$
-e_{i,j} = \mathbf{q}_i^T \mathbf{k}_j
+e_{i,j} = \mathbf{q}_i \mathbf{k}_j^T
 $$
 
 A large dot product means the query and key point in similar directions, indicating the model has learned that these two tokens are relevant to each other.
@@ -63,7 +63,7 @@ A large dot product means the query and key point in similar directions, indicat
 **Step 2: Scaling.** The raw dot-product scores grow in magnitude with the dimension $d_k$, which can push the softmax into regions with vanishingly small gradients. The fix is simple: divide by $\sqrt{d_k}$:
 
 $$
-e_{i,j} = \frac{\mathbf{q}_i^T \mathbf{k}_j}{\sqrt{d_k}}
+e_{i,j} = \frac{\mathbf{q}_i \mathbf{k}_j^T}{\sqrt{d_k}}
 $$
 
 **Step 3: Softmax normalization.** The scaled scores are passed through a softmax to produce a probability distribution over positions:
@@ -106,9 +106,9 @@ We only need C's query (since we are computing attention *from* position C) and 
 
 **Step 1: Dot-product scores.** Token C's query is compared against each key:
 
-$$e_{C,A} = \mathbf{q}_C^T \mathbf{k}_A = (1)(1) + (1)(0) = 1$$
-$$e_{C,B} = \mathbf{q}_C^T \mathbf{k}_B = (1)(0) + (1)(1) = 1$$
-$$e_{C,C} = \mathbf{q}_C^T \mathbf{k}_C = (1)(1) + (1)(1) = 2$$
+$$e_{C,A} = \mathbf{q}_C \mathbf{k}_A^T = (1)(1) + (1)(0) = 1$$
+$$e_{C,B} = \mathbf{q}_C \mathbf{k}_B^T = (1)(0) + (1)(1) = 1$$
+$$e_{C,C} = \mathbf{q}_C \mathbf{k}_C^T = (1)(1) + (1)(1) = 2$$
 
 **Step 2: Scale by $\sqrt{d_k}$.** With $d_k = 2$, we divide by $\sqrt{2} \approx 1.41$:
 

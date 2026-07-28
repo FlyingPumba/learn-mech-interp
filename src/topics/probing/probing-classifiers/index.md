@@ -20,7 +20,7 @@ The [logit lens and tuned lens](/topics/logit-lens-and-tuned-lens/) project inte
 A probing classifier is a simple model, typically linear, trained to predict a linguistic or semantic property from the internal activations at a given layer:
 
 $$
-\hat{y} = \text{Probe}(\mathbf{h}_\ell) = \sigma(W_p \mathbf{h}_\ell + \mathbf{b}_p)
+\hat{y} = \text{Probe}(\mathbf{h}_\ell) = \sigma(\mathbf{h}_\ell W_p + \mathbf{b}_p)
 $$
 
 If a linear probe achieves high accuracy, the information is *present and linearly accessible* in the representations. The probe's simplicity is deliberate: a powerful nonlinear probe might learn the property itself rather than detecting it in the representations.
@@ -36,7 +36,7 @@ Hewitt and Manning (2019) pushed probing beyond simple classification by introdu
 The key idea: find a linear transformation $B$ under which the squared L2 distance between word representations encodes parse tree distance:
 
 $$
-d_B(\mathbf{h}_i, \mathbf{h}_j)^2 = (B(\mathbf{h}_i - \mathbf{h}_j))^T B(\mathbf{h}_i - \mathbf{h}_j) \approx \text{tree\_distance}(i, j)
+d_B(\mathbf{h}_i, \mathbf{h}_j)^2 = \left\| (\mathbf{h}_i - \mathbf{h}_j) B \right\|_2^2 \approx \text{tree\_distance}(i, j)
 $$
 
 <figure>

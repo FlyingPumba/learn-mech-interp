@@ -64,7 +64,7 @@ The **magnitude pathway** estimates how active each feature is, using a separate
 The combined activation is:
 
 $$
-\mathbf{f} = \underbrace{\mathbf{1}[\mathbf{W}_{\text{gate}} \mathbf{x} + \mathbf{b}_{\text{gate}} > 0]}_{\text{which features (gate)}} \odot \underbrace{\sigma(\mathbf{W}_{\text{mag}} \mathbf{x} + \mathbf{b}_{\text{mag}})}_{\text{how active (magnitude)}}
+\mathbf{f} = \underbrace{\mathbf{1}[\mathbf{x} \mathbf{W}_{\text{gate}} + \mathbf{b}_{\text{gate}} > 0]}_{\text{which features (gate)}} \odot \underbrace{\sigma(\mathbf{x} \mathbf{W}_{\text{mag}} + \mathbf{b}_{\text{mag}})}_{\text{how active (magnitude)}}
 $$
 
 where $\odot$ is elementwise multiplication and $\mathbf{1}[\cdot]$ is the indicator function. The gate decides which features are on. The magnitude pathway decides how strong they are. The sparsity penalty cannot distort magnitudes because it only touches the gate.
@@ -81,7 +81,7 @@ $$
 f_i = \begin{cases} z_i & \text{if } z_i \text{ is in the top-}k \\ 0 & \text{otherwise} \end{cases}
 $$
 
-where $z_i = (\mathbf{W}_{\text{enc}} \mathbf{x} + \mathbf{b}_{\text{enc}})_i$ is the pre-activation for feature $i$.
+where $z_i = (\mathbf{x} \mathbf{W}_{\text{enc}} + \mathbf{b}_{\text{enc}})_i$ is the pre-activation for feature $i$.
 
 Sparsity is exactly $L_0 = k$ by construction. There is no L1 penalty at all, so there is no shrinkage. The $k$ features that survive the selection pass through with their full magnitudes intact. The loss function is simply reconstruction error -- no sparsity term needed.
 
