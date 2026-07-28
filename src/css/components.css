@@ -1384,6 +1384,26 @@
 }
 
 /* ==========================================================================
+   ABOUT PAGE
+   Purpose of the site, how it is organized, and credits.
+   ========================================================================== */
+
+.about-page {
+  max-width: var(--content-width, 65ch);
+  margin: 0 auto;
+  padding: var(--spacing-xl) var(--container-padding);
+}
+
+.about-page h2 {
+  margin-top: var(--spacing-2xl, 3rem);
+}
+
+.about-lead {
+  font-size: var(--font-size-large, 1.125rem);
+  color: var(--color-text-secondary, rgba(0, 0, 0, 0.6));
+}
+
+/* ==========================================================================
    GLOSSARY PAGE
    Alphabetically organized glossary of MI terms with letter navigation.
    ========================================================================== */

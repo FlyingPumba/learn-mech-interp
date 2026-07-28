@@ -236,6 +236,10 @@ export default function(eleventyConfig) {
   // Pass through robots.txt to site root
   eleventyConfig.addPassthroughCopy({ "src/robots.txt": "robots.txt" });
 
+  // Pass through site-wide images (favicon sources) and the root favicon.ico
+  eleventyConfig.addPassthroughCopy("src/img");
+  eleventyConfig.addPassthroughCopy({ "src/favicon.ico": "favicon.ico" });
+
   // Pass through article-local images, remapping from nested block structure
   // to flat output so /topics/<article>/images/ URLs remain stable
   const blockDirs = fs.readdirSync("src/topics", { withFileTypes: true })

@@ -1,0 +1,34 @@
+---
+title: About
+layout: layouts/base.njk
+description: What this site is, how it is organized, how the articles are written, and where the logo comes from.
+permalink: /about/
+---
+{% set totalTopics = collections.learningPath | length %}
+{% set totalBlocks = learningPath.blocks | length %}
+
+<div class="about-page">
+  <h1>About</h1>
+
+  <p class="about-lead">Learn Mechanistic Interpretability is an open-source textbook on how language models compute what they compute: what is inside a transformer, the techniques researchers use to reverse-engineer it, and what the field currently does and does not know.</p>
+
+  <p>Mechanistic interpretability lives in papers, blog posts, and code repositories, and the order it was published in is not the order that makes it easiest to learn. The material here is arranged as a path instead. There are {{ totalTopics }} articles across {{ totalBlocks }} blocks, and each one assumes only what came before it.</p>
+
+  <h2>How it is organized</h2>
+
+  <p>The blocks run from transformer fundamentals through probing, steering, and circuit analysis to safety applications. You can read straight through, or start wherever you need and follow the "Read first" links backwards to fill in the gaps. The <a href="/topics/">topics page</a> lays out the whole map, the <a href="/glossary/">glossary</a> collects the vocabulary, and <a href="/search/">search</a> covers the full text of every article.</p>
+
+  <h2>How the articles are written</h2>
+
+  <p>Each article is about a technique, a concept, or an idea, not about a paper. One influential paper might become a single article, or several, or none, depending on how much of it generalizes beyond its own experiments. Original work is cited as evidence rather than authority, because the goal is to understand a mechanism rather than to summarize a literature.</p>
+
+  <p>This is a young field and much of what it believes is provisional. Articles try to separate what is established from what is contested from what nobody knows yet, instead of flattening all three into one confident voice. Where a technique breaks down, that belongs in the article too.</p>
+
+  <h2>Contributing</h2>
+
+  <p>Corrections are welcome, from a typo to a whole new article. Every article has an "Edit this page on GitHub" link at the bottom and credits the people who wrote it. The source lives in the <a href="{{ site.repo }}" target="_blank" rel="noopener">GitHub repository</a>, and the writing is licensed under <a href="https://creativecommons.org/licenses/by-sa/4.0/" target="_blank" rel="noopener">CC BY-SA 4.0</a>.</p>
+
+  <h2>The logo</h2>
+
+  <p>The mark in the browser tab comes from the <a href="https://mechinterpworkshop.com/" target="_blank" rel="noopener">Mechanistic Interpretability Workshop</a>. Those overlapping petals are feature visualizations of <em>curve detector</em> neurons, a family of early-vision features that respond to curves at a particular orientation, and one of the first cases where a neuron's job was worked out in real detail. They were characterized in <a href="https://distill.pub/2020/circuits/curve-detectors/" target="_blank" rel="noopener">Curve Detectors</a> by Cammarata, Goh, Carter, Schubert, Petrov, and Olah, published in Distill in 2020 and licensed under <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener">CC BY 4.0</a>.</p>
+</div>

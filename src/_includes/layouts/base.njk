@@ -7,6 +7,9 @@
   <meta name="description" content="{{ description | default(site.description) }}">
   {% if keywords %}<meta name="keywords" content="{{ keywords }}">{% endif %}
   <link rel="canonical" href="{{ site.url }}{{ page.url }}">
+  <link rel="icon" href="/favicon.ico" sizes="any">
+  <link rel="icon" type="image/png" sizes="32x32" href="/img/favicon-32.png">
+  <link rel="apple-touch-icon" href="/img/apple-touch-icon.png">
   <meta property="og:type" content="{% if block %}article{% else %}website{% endif %}">
   <meta property="og:title" content="{{ title }}">
   <meta property="og:description" content="{{ description | default(site.description) }}">
