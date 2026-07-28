@@ -157,6 +157,13 @@
   padding-right: 0;
 }
 
+/* Code blocks scroll internally, but a scroll container still reports its
+   unwrapped content width as an intrinsic size. Without containment, one long
+   code line inflates .article-body past its grid track and over the TOC. */
+.article-body pre {
+  contain: inline-size;
+}
+
 /* Reduce dead space before first section heading */
 .article-body > h2:first-child,
 .article-body > h3:first-child {
