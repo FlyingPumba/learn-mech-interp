@@ -93,6 +93,19 @@ A single influential paper might spawn zero articles (if its contributions are i
 - Use inline math for variables (`$\mathbf{x}$`) and display math for key equations.
 - After an equation, often explain it again in words: "This says that..."
 
+### Notation
+
+One linear-algebra convention holds across the whole curriculum: **activations are row vectors and weight matrices act on the right.** Mixing conventions produces equations that are dimensionally impossible, and readers do notice and write in about it.
+
+- **Weights multiply from the right.** Write $\mathbf{q}_i = \mathbf{x}_i W_Q$, $\sigma(\mathbf{x} W_{\text{in}}) W_{\text{out}}$, $\text{ReLU}(\mathbf{x} W_e + b_e)$. Never $W \mathbf{x}$.
+- **Shapes follow from that**, and they are the shapes the reader will see in code: TransformerLens stores `W_in` as `(d_model, d_mlp)` and `W_out` as `(d_mlp, d_model)`. So write $W_{\text{in}} \in \mathbb{R}^{d \times d_m}$, $W_{\text{enc}} \in \mathbb{R}^{d_{\text{model}} \times d_{\text{SAE}}}$.
+- **A scalar product of two activations is $\mathbf{q}_i \mathbf{k}_j^T$**, not $\mathbf{q}_i^T \mathbf{k}_j$. With row vectors the second form is a $d \times d$ outer product. Where no shape is at stake, `\cdot` reads better and is correct under either convention: $\sigma(\mathbf{w} \cdot \mathbf{h} + b)$.
+- **Prose about rows and columns flips with the equation.** If $W_{\text{out}}$ is $d_m \times d$, neuron $i$'s value vector is a *row* of $W_{\text{out}}$; an SAE feature direction is a *row* of $W_d$. Check the sentences around the math, the blockquote definitions, and the figure captions, not just the display equations.
+- Most papers use column vectors, so an equation lifted from one usually needs transposing rather than pasting as printed. Where the transpose is load-bearing, say so once: the Jacobian lens article defines $J_\ell = (\partial \mathbf{h}_L / \partial \mathbf{h}_\ell)^T$ and notes that this is the textbook Jacobian transposed to act from the right.
+- Interactive SVG and canvas figures carry shape labels (`1 × d_model`) and row/column callouts of their own. They need the same pass as the math.
+
+The convention is stated for the reader once, in the attention article, which is the first place in the learning path where a matrix product appears. Later articles do not restate it.
+
 ### Sidenotes
 - Use `{% sidenote "..." %}` for:
   - Tangential but interesting details
@@ -286,6 +299,7 @@ Before finalizing an article:
 - [ ] Are key terms defined with blockquote definitions?
 - [ ] Is there at least one concrete example before generalizing?
 - [ ] Are equations explained in words, not just displayed?
+- [ ] Do equations follow the row-vector convention, including matrix shapes, row/column prose, and any interactive diagrams?
 - [ ] Are limitations and caveats acknowledged?
 - [ ] Is there at least one "Pause and Think" section?
 - [ ] Are relevant other articles cross-linked?
