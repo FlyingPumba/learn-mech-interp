@@ -1052,6 +1052,12 @@
     max-height: calc(100vh - 4rem);
     overflow-y: auto;
     padding-top: var(--spacing-lg, 1.5rem);
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* IE/Edge */
+  }
+
+  .article-toc::-webkit-scrollbar {
+    display: none; /* Chrome, Safari, Opera */
   }
 }
 
