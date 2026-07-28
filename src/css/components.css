@@ -1406,17 +1406,19 @@
 .about-logo-credit {
   display: flex;
   align-items: center;
-  gap: var(--spacing-lg, 1.5rem);
   margin: var(--spacing-lg, 1.5rem) 0;
 }
 
-/* The source PNG carries ~30% transparent margin, so the box is wider than the
-   mark it draws. 160px renders the flower itself at roughly 110px. */
+/* The source PNG carries transparent padding on both sides, 28px left and 21px
+   right once scaled to this box, so the box is wider than the mark it draws.
+   160px renders the flower itself at roughly 110px. The negative margin pulls
+   its left edge flush with the text column, and the right-hand padding stands
+   in for the flex gap, which is why there is none. */
 .about-logo {
   flex: none;
   width: 160px;
   height: auto;
-  margin-left: -1rem;
+  margin-left: -28px;
 }
 
 .about-logo-credit p {
