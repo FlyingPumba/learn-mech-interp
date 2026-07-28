@@ -879,19 +879,23 @@
   border-color: var(--color-border-strong);
 }
 
+/* 18x18 to match the icon SVGs in the sibling buttons, so all three header
+   controls come out the same square. The middle bar is drawn as a background
+   gradient and the outer two as pseudo-elements; giving the box real height is
+   what keeps the bars inside the border rather than overflowing it. */
 .nav-toggle-icon {
   display: block;
-  width: 20px;
-  height: 2px;
-  background: currentColor;
   position: relative;
+  width: 18px;
+  height: 18px;
+  background: linear-gradient(currentColor, currentColor) no-repeat center / 18px 2px;
 }
 
 .nav-toggle-icon::before,
 .nav-toggle-icon::after {
   content: "";
   display: block;
-  width: 20px;
+  width: 18px;
   height: 2px;
   background: currentColor;
   position: absolute;
@@ -899,11 +903,11 @@
 }
 
 .nav-toggle-icon::before {
-  top: -6px;
+  top: 3px;
 }
 
 .nav-toggle-icon::after {
-  top: 6px;
+  bottom: 3px;
 }
 
 @media (max-width: 767px) {
