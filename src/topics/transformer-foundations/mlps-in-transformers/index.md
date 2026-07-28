@@ -8,7 +8,7 @@ prerequisites:
 
 glossary:
   - term: "Key-Value Memory (MLP)"
-    definition: "An interpretation of feed-forward layers where each neuron in the hidden layer has a key vector (a row of the input projection) that matches input patterns and a value vector (a column of the output projection) that promotes specific tokens or concepts in the output vocabulary."
+    definition: "An interpretation of feed-forward layers where each neuron in the hidden layer has a key vector (a column of the input projection) that matches input patterns and a value vector (a row of the output projection) that promotes specific tokens or concepts in the output vocabulary."
   - term: "Knowledge Neuron"
     definition: "An MLP neuron whose activation is causally linked to the expression of a specific factual association, such that suppressing it degrades and amplifying it strengthens the model's recall of that fact."
 ---

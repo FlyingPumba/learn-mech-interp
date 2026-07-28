@@ -260,7 +260,7 @@ Two of these choices are motivated. The logit lens sets $M_\ell = I$ because in 
 
 The three coincide in one important edge case: at the final layer, $J_L$ is (approximately) the identity, and all three reduce to the model's own unembedding. Divergences appear as we go earlier.{% sidenote "The J-lens paper reports that the logit lens agrees closely with the J-lens in the last several layers and diverges earlier: exactly the regime where the logit lens is known to fail." %}
 
-The mean-Jacobian construction was used earlier by Hernandez et al. {% cite "hernandez2023lre" %} to derive per-*relation* affine maps $W_r \mathbf{s} + \mathbf{b}_r$ (e.g., a single "plays instrument" matrix that turns "Miles Davis" into "trumpet") and a companion *attribute lens* for tracking a fixed relation across layers. The J-lens generalizes the same first-order-plus-averaging trick from per-relation to per-layer, taking the expectation over a broad corpus rather than examples of one relation.
+The mean-Jacobian construction was used earlier by Hernandez et al. {% cite "hernandez2023lre" %} to derive per-*relation* affine maps $\mathbf{s} W_r + \mathbf{b}_r$ (e.g., a single "plays instrument" matrix that turns "Miles Davis" into "trumpet") and a companion *attribute lens* for tracking a fixed relation across layers. The J-lens generalizes the same first-order-plus-averaging trick from per-relation to per-layer, taking the expectation over a broad corpus rather than examples of one relation.
 
 ## What Ends Up in the Lens
 
