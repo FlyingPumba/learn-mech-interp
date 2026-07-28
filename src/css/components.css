@@ -437,9 +437,24 @@
 
 @media (min-width: 1200px) {
   /* Align header content with the page grid + sidebar content padding. */
+  /* Three tracks so the links land dead centre of the nav's own box rather than
+     wherever space-between happens to leave them, then shift right by half the
+     sidebar so they centre over the article column instead of the viewport. */
   .site-nav {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
     max-width: none;
     margin: 0;
+  }
+
+  .nav-links {
+    justify-self: center;
+    transform: translateX(calc(var(--sidebar-width, 240px) / 2));
+  }
+
+  .header-actions {
+    justify-self: end;
   }
 
   .sidebar {

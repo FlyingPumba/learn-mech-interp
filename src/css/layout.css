@@ -97,7 +97,7 @@ main {
   /* Page-level grid: sidebar + main content */
   .page-layout {
     display: grid;
-    grid-template-columns: 240px 1fr;
+    grid-template-columns: var(--sidebar-width, 240px) 1fr;
     max-width: none;
     margin: 0;
   }
