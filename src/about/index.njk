@@ -1,0 +1,33 @@
+---
+title: About
+layout: layouts/base.njk
+description: What this site is, how it is organized, how the articles are written, and where the logo comes from.
+permalink: /about/
+---
+{% set totalTopics = collections.learningPath | length %}
+{% set totalBlocks = learningPath.blocks | length %}
+
+<div class="about-page">
+  <h1>About</h1>
+
+  <p class="about-lead">Learn Mechanistic Interpretability is an open-source textbook on how language models compute what they compute: what is inside a transformer, the techniques researchers use to reverse-engineer it, and what the field currently does and does not know.</p>
+
+  <p>Mechanistic interpretability lives in papers, blog posts, and code repositories, and the order it was published in is not the order that makes it easiest to learn. The material here is arranged as a path instead. There are {{ totalTopics }} articles across {{ totalBlocks }} blocks, and each one assumes only what came before it.</p>
+
+  <h2>Structure and Content</h2>
+
+  <p>The articles run from transformer fundamentals through probing, steering, and circuit analysis to safety applications, then finish with the tooling the field uses. You can read straight through, or start wherever you need and follow the "Read first" links backwards to fill in the gaps. The <a href="/topics/">topics page</a> lays out the whole map, the <a href="/glossary/">glossary</a> collects the vocabulary, and <a href="/search/">search</a> covers the full text of every article.</p>
+
+  <p>Each article is about a technique, a concept, or an idea, not about a paper. One influential paper might become a single article, or several, or none, depending on how much of it generalizes beyond its own experiments.</p>
+
+  <h2>Contributing</h2>
+
+  <p>Contributions are welcome, from a typo to a whole new article. Every article has an "Edit this page on GitHub" link at the bottom and credits the people who wrote it. The source lives in the <a href="{{ site.repo }}" target="_blank" rel="noopener">GitHub repository</a>, and the writing is licensed under <a href="https://creativecommons.org/licenses/by-sa/4.0/" target="_blank" rel="noopener">CC BY-SA 4.0</a>.</p>
+
+  <h2>The Logo</h2>
+
+  <div class="about-logo-credit">
+    <img class="about-logo" src="/img/curve-detector-logo.png" alt="The site logo: overlapping translucent petals in blue, purple, pink, green, and yellow arranged in a ring around an empty centre, each petal a feature visualization of a curve detector neuron." width="400" height="400">
+    <p>The logo for this website comes from visualizations of <em>curve detector</em> neurons in early mechanistic interpretability research. More on them in <a href="https://distill.pub/2020/circuits/curve-detectors/" target="_blank" rel="noopener">Curve Detectors</a> by Cammarata et al., published in Distill in 2020.</p>
+  </div>
+</div>

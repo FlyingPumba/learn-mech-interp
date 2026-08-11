@@ -32,7 +32,7 @@ Theoretical work on knowledge storage provides some support for this localizatio
 **Stage 2: Rank-one editing.** Having identified the target layer, ROME modifies the MLP's weight matrix with a rank-one update. The MLP can be viewed as a key-value memory: the first projection ($W_{\text{in}}$) maps the input to a key, and the second projection ($W_{\text{out}}$) maps the key to a value that is added to the residual stream. A rank-one update to $W_{\text{out}}$ changes the value associated with one specific key (the subject's representation) while leaving all other key-value pairs approximately unchanged:
 
 $$
-W_{\text{out}}' = W_{\text{out}} + \frac{(v^* - v_0) k^T}{k^T k}
+W_{\text{out}}' = W_{\text{out}} + \frac{k^T (v^* - v_0)}{k \, k^T}
 $$
 
 where $k$ is the key vector for the target subject, $v_0$ is the original value, and $v^*$ is the new value that encodes the desired fact. This changes what the MLP outputs when it recognizes the subject, effectively overwriting one entry in the key-value store.

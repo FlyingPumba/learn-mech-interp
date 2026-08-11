@@ -68,6 +68,7 @@
   --container-padding: 1.5rem;
   --edge-padding: 1.25rem;
   --container-max-width: 1200px;
+  --sidebar-width: 240px;
 
   /* Border Radius */
   --radius-sm: 3px;

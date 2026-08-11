@@ -35,7 +35,7 @@ $$
 \text{output}_t \approx -\alpha \cdot W_U[\text{token}_s]
 $$
 
-where $W_U[\text{token}_s]$ is the unembedding vector for the token at position $s$ and $\alpha > 0$ controls the suppression strength. The head outputs the negative unembedding of the token it attends to, directly reducing that token's logit.{% sidenote "The OV circuit does not literally implement the negative unembedding. Rather, the composition $W_O W_V W_E$ (output, value, and embedding matrices) approximates $-W_U^T$ (the transpose of the unembedding) for common tokens. The approximation is imperfect but strong enough to produce reliable suppression." %}
+where $W_U[\text{token}_s]$ is the unembedding vector for the token at position $s$ and $\alpha > 0$ controls the suppression strength. The head outputs the negative unembedding of the token it attends to, directly reducing that token's logit.{% sidenote "The OV circuit does not literally implement the negative unembedding. Rather, the composition $W_E W_V W_O$ (embedding, value, and output matrices) approximates $-W_U^T$ (the transpose of the unembedding) for common tokens. The approximation is imperfect but strong enough to produce reliable suppression." %}
 
 > **Copy Suppression:** An attention head algorithm where the head (1) identifies what token the model is currently predicting, (2) attends to positions where that token appeared earlier in context, and (3) outputs the negative unembedding of that token, suppressing the prediction. This reduces the model's tendency to over-predict tokens that have already appeared.
 

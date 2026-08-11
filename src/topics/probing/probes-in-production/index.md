@@ -52,7 +52,7 @@ The core architectural question for production probes is: *how do we aggregate p
 The MultiMax architecture replaces the softmax-weighted average of standard attention probes with a hard maximum {% cite "kramar2026probes" %}. Instead of computing a weighted sum over all token positions, each attention head selects the single highest-scoring token:
 
 $$
-f_\text{MultiMax}(S) = \sum_{h=1}^{H} \max_{j \in [n]} \left[ \mathbf{v}_h^\top \mathbf{y}_j \right]
+f_\text{MultiMax}(S) = \sum_{h=1}^{H} \max_{j \in [n]} \left[ \mathbf{v}_h \cdot \mathbf{y}_j \right]
 $$
 
 where $H$ is the number of heads, $\mathbf{v}_h$ is the value vector for head $h$, and $\mathbf{y}_j$ is the MLP-transformed activation at position $j$.

@@ -57,7 +57,7 @@ where $\mathbf{x}_i$ and $\mathbf{x}_j$ are the residual stream vectors at posit
 We can go further. Including the embedding and unembedding matrices, the *full end-to-end QK circuit* maps tokens to attention scores:
 
 $$
-W_E^T \, W_{QK}^h \, W_E
+W_E \, W_{QK}^h \, W_E^T
 $$
 
 This is an $n_{\text{vocab}} \times n_{\text{vocab}}$ matrix. Entry $(i, j)$ tells us "how much does token $i$ attend to token $j$, based purely on token identity?" This is a directly interpretable object: a token-to-token attention score matrix that we can inspect.
@@ -77,7 +77,7 @@ where $\alpha_{i,j}$ is the attention weight. The OV circuit is a single matrix 
 The full end-to-end OV circuit, including the unembedding, is:
 
 $$
-W_U \, W_{OV}^h \, W_E
+W_E \, W_{OV}^h \, W_U
 $$
 
 This is also an $n_{\text{vocab}} \times n_{\text{vocab}}$ matrix. Entry $(i, j)$ tells us "if the head attends to token $i$, how much does that increase the logit for token $j$?" This directly reveals the *effect on predictions* of attending to a given token.
@@ -92,7 +92,7 @@ The two circuits have complementary roles:
 | **Input** | Two token positions | A source token |
 | **Output** | An attention score | An update to the residual stream |
 | **Answers** | "Should I attend here?" | "What should I copy?" |
-| **End-to-end** | $W_E^T \, W_{QK}^h \, W_E$ | $W_U \, W_{OV}^h \, W_E$ |
+| **End-to-end** | $W_E \, W_{QK}^h \, W_E^T$ | $W_E \, W_{OV}^h \, W_U$ |
 | **Interpretation** | Token-to-token relevance | Token-to-logit effect |
 
 Every attention head decomposes into these two independent circuits. This is not just compact notation. It reveals that each head has exactly two degrees of freedom: *where* to look and *what* to move. These can be studied independently.
@@ -151,4 +151,4 @@ This decomposition is the foundation for the composition framework covered in th
 
 The QK/OV decomposition is not just a mathematical curiosity. It provides the conceptual vocabulary that the entire field of mechanistic interpretability uses to describe what attention heads do. When researchers say a head is a "previous token head" or an "induction head," they are making claims about the head's QK circuit (what it attends to) and its OV circuit (what it copies). The framework from Elhage et al. {% cite "elhage2021mathematical" %} transforms the four opaque weight matrices of an attention head into two interpretable objects with clear functional roles.
 
-The mathematical framework also gives us concrete, inspectable matrices. The end-to-end QK circuit $W_E^T W_{QK}^h W_E$ is a vocabulary-sized matrix we can examine entry by entry. The end-to-end OV circuit $W_U W_{OV}^h W_E$ directly tells us how attending to each token affects the output logits. These are not abstractions; they are real, computable objects that researchers use every day to understand what transformers learn.
+The mathematical framework also gives us concrete, inspectable matrices. The end-to-end QK circuit $W_E W_{QK}^h W_E^T$ is a vocabulary-sized matrix we can examine entry by entry. The end-to-end OV circuit $W_E W_{OV}^h W_U$ directly tells us how attending to each token affects the output logits. These are not abstractions; they are real, computable objects that researchers use every day to understand what transformers learn.

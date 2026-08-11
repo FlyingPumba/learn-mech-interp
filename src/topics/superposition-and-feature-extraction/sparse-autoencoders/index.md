@@ -49,18 +49,18 @@ A sparse autoencoder has three components: an encoder that projects activations 
 **The encoder** projects activations from the model's dimensionality to a much larger latent space, then applies ReLU to enforce non-negativity:
 
 $$
-\mathbf{f}(\mathbf{x}) = \text{ReLU}(W_e \mathbf{x} + b_e)
+\mathbf{f}(\mathbf{x}) = \text{ReLU}(\mathbf{x} W_e + b_e)
 $$
 
-where $W_e \in \mathbb{R}^{d_{\text{SAE}} \times d_{\text{model}}}$ and $d_{\text{SAE}} \gg d_{\text{model}}$. Typical expansion factors range from 4x to 256x. A model with 768 dimensions might use a latent space of 32,768 dimensions. The ReLU ensures that latent activations are non-negative, and most are zero -- producing the sparsity we need.
+where $W_e \in \mathbb{R}^{d_{\text{model}} \times d_{\text{SAE}}}$ and $d_{\text{SAE}} \gg d_{\text{model}}$. Typical expansion factors range from 4x to 256x. A model with 768 dimensions might use a latent space of 32,768 dimensions. The ReLU ensures that latent activations are non-negative, and most are zero -- producing the sparsity we need.
 
 **The decoder** projects the sparse latent representation back to the model's dimensionality:
 
 $$
-\hat{\mathbf{x}} = W_d \mathbf{f}(\mathbf{x}) + b_d
+\hat{\mathbf{x}} = \mathbf{f}(\mathbf{x}) W_d + b_d
 $$
 
-where $W_d \in \mathbb{R}^{d_{\text{model}} \times d_{\text{SAE}}}$. Each column of $W_d$ is a feature direction in the activation space. When a latent dimension is active, the corresponding column contributes to the reconstruction. The decoder learns the dictionary of features.{% sidenote "This is the opposite of a standard autoencoder. A standard autoencoder compresses: 768-dimensional input becomes a 256-dimensional latent representation, then is reconstructed back to 768 dimensions. The purpose is dimensionality reduction. An SAE expands: 768-dimensional input becomes a 32,768-dimensional latent representation. The purpose is not compression but decomposition -- finding many individual features that combine to form the input. The sparsity constraint ensures that only a few of those 32,768 dimensions are active for any given input." %}
+where $W_d \in \mathbb{R}^{d_{\text{SAE}} \times d_{\text{model}}}$. Each row of $W_d$ is a feature direction in the activation space. When a latent dimension is active, the corresponding row contributes to the reconstruction. The decoder learns the dictionary of features.{% sidenote "This is the opposite of a standard autoencoder. A standard autoencoder compresses: 768-dimensional input becomes a 256-dimensional latent representation, then is reconstructed back to 768 dimensions. The purpose is dimensionality reduction. An SAE expands: 768-dimensional input becomes a 32,768-dimensional latent representation. The purpose is not compression but decomposition -- finding many individual features that combine to form the input. The sparsity constraint ensures that only a few of those 32,768 dimensions are active for any given input." %}
 
 **The loss function** combines two objectives that pull in opposite directions:
 

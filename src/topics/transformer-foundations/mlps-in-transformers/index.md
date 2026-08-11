@@ -8,7 +8,7 @@ prerequisites:
 
 glossary:
   - term: "Key-Value Memory (MLP)"
-    definition: "An interpretation of feed-forward layers where each neuron in the hidden layer has a key vector (a row of the input projection) that matches input patterns and a value vector (a column of the output projection) that promotes specific tokens or concepts in the output vocabulary."
+    definition: "An interpretation of feed-forward layers where each neuron in the hidden layer has a key vector (a column of the input projection) that matches input patterns and a value vector (a row of the output projection) that promotes specific tokens or concepts in the output vocabulary."
   - term: "Knowledge Neuron"
     definition: "An MLP neuron whose activation is causally linked to the expression of a specific factual association, such that suppressing it degrades and amplifying it strengthens the model's recall of that fact."
 ---
@@ -26,10 +26,10 @@ A series of results from 2020 to 2023 changed this. We now have a coherent mecha
 The [architecture article](/topics/transformer-architecture/) introduced the MLP as a local computation step. Here is the full equation:
 
 $$
-\text{MLP}(\mathbf{x}) = W_{\text{out}} \cdot \sigma(W_{\text{in}} \mathbf{x} + \mathbf{b}_{\text{in}}) + \mathbf{b}_{\text{out}}
+\text{MLP}(\mathbf{x}) = \sigma(\mathbf{x} W_{\text{in}} + \mathbf{b}_{\text{in}}) \cdot W_{\text{out}} + \mathbf{b}_{\text{out}}
 $$
 
-where $W_{\text{in}} \in \mathbb{R}^{d_m \times d}$ projects the $d$-dimensional residual stream to a hidden layer of dimension $d_m$ (typically $4d$), $\sigma$ is a nonlinear activation (GELU in GPT-2), and $W_{\text{out}} \in \mathbb{R}^{d \times d_m}$ projects back down. This is the standard two-layer feed-forward network.
+where $W_{\text{in}} \in \mathbb{R}^{d \times d_m}$ projects the $d$-dimensional residual stream to a hidden layer of dimension $d_m$ (typically $4d$), $\sigma$ is a nonlinear activation (GELU in GPT-2), and $W_{\text{out}} \in \mathbb{R}^{d_m \times d}$ projects back down. This is the standard two-layer feed-forward network.
 
 The up-projection to a $4\times$ wider hidden layer followed by a down-projection creates an expansion-compression bottleneck. The model has $d_m$ "slots" in the hidden layer, each of which can activate (or not) on a given input. The nonlinearity $\sigma$ acts as a gate, determining which slots fire. The output is a weighted combination of contributions from the active slots.
 
@@ -46,12 +46,12 @@ where $\mathbf{r}^{l+}$ is the residual stream after attention in layer $l$. Lik
 The first insight came from examining the structure of the MLP computation more carefully {% cite "geva2021kvmemories" %}. Consider what happens when we expand the matrix multiplication:
 
 $$
-\text{MLP}(\mathbf{x}) = W_{\text{out}} \cdot \sigma(W_{\text{in}} \mathbf{x}) = \sum_{i=1}^{d_m} \sigma(\mathbf{k}_i \cdot \mathbf{x}) \; \mathbf{v}_i
+\text{MLP}(\mathbf{x}) = \sigma(\mathbf{x} W_{\text{in}}) \cdot W_{\text{out}} = \sum_{i=1}^{d_m} \sigma(\mathbf{k}_i \cdot \mathbf{x}) \; \mathbf{v}_i
 $$
 
-where $\mathbf{k}_i$ is the $i$-th row of $W_{\text{in}}$ (the "key" for neuron $i$) and $\mathbf{v}_i$ is the $i$-th column of $W_{\text{out}}$ (the "value" for neuron $i$). We have dropped the biases for clarity.{% sidenote "With the bias terms included, the activation becomes $\\sigma(\\mathbf{k}_i \\cdot \\mathbf{x} + b_i)$, which shifts the threshold at which neuron $i$ activates. The value vector is still $\\mathbf{v}_i$, and the output still sums over active neurons. The key-value interpretation holds with or without biases." %}
+where $\mathbf{k}_i$ is the $i$-th column of $W_{\text{in}}$ (the "key" for neuron $i$) and $\mathbf{v}_i$ is the $i$-th row of $W_{\text{out}}$ (the "value" for neuron $i$). We have dropped the biases for clarity.{% sidenote "With the bias terms included, the activation becomes $\\sigma(\\mathbf{k}_i \\cdot \\mathbf{x} + b_i)$, which shifts the threshold at which neuron $i$ activates. The value vector is still $\\mathbf{v}_i$, and the output still sums over active neurons. The key-value interpretation holds with or without biases." %}
 
-> **Key-Value Memory (MLP):** Each of the $d_m$ neurons in an MLP layer acts as a key-value pair. The key $\mathbf{k}_i$ (a row of $W_{\text{in}}$) computes a match score with the input via a dot product. If the match passes the nonlinearity, the value $\mathbf{v}_i$ (a column of $W_{\text{out}}$) is added to the output, scaled by the activation strength. The MLP output is a weighted sum of value vectors from all active neurons.
+> **Key-Value Memory (MLP):** Each of the $d_m$ neurons in an MLP layer acts as a key-value pair. The key $\mathbf{k}_i$ (a column of $W_{\text{in}}$) computes a match score with the input via a dot product. If the match passes the nonlinearity, the value $\mathbf{v}_i$ (a row of $W_{\text{out}}$) is added to the output, scaled by the activation strength. The MLP output is a weighted sum of value vectors from all active neurons.
 
 This is not a metaphor. The computation is *structurally identical* to a soft key-value lookup: the input is matched against a bank of keys, and the corresponding values are retrieved and combined. The nonlinearity $\sigma$ acts as a soft gate, determining which key-value pairs are active for a given input.
 

@@ -54,7 +54,7 @@ This failure does not mean the information is absent from intermediate layers. I
 The tuned lens, introduced by Belrose et al. in 2023, trains a learned affine translator at each layer {% cite "belrose2023tunedlens" %}:
 
 $$
-\text{TunedLens}(\mathbf{h}_\ell) = (A_\ell \mathbf{h}_\ell + \mathbf{b}_\ell) \cdot W_U
+\text{TunedLens}(\mathbf{h}_\ell) = (\mathbf{h}_\ell A_\ell + \mathbf{b}_\ell) \cdot W_U
 $$
 
 Each translator consists of a matrix $A_\ell$ and a bias vector $\mathbf{b}_\ell$, trained to account for how the representation basis changes from layer to layer. The affine translators correct for rotations, shifts, and stretches in the intermediate representations.

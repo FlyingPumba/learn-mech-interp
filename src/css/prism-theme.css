@@ -29,6 +29,12 @@ pre[class*="language-"] {
   border: 1px solid var(--color-border);
 }
 
+/* The shared rule above paints both the pre and the code, stacking two
+   translucent layers into a darker box hugging the text. Only the pre paints. */
+pre[class*="language-"] > code[class*="language-"] {
+  background: none;
+}
+
 /* Inline code in highlighted blocks */
 :not(pre) > code[class*="language-"] {
   padding: 0.15em 0.3em;

@@ -98,7 +98,7 @@ with $J$ evaluated at the linearization point $\mathbf{x}_0$. This is the *same*
 
 If $\mathbf{x} \in \mathbb{R}^n$ and $\mathbf{y} \in \mathbb{R}^m$, what shape is $J$? What shape must $\Delta \mathbf{x}$ be for $J \Delta \mathbf{x}$ to make sense, and what shape does the product have?
 
-$J$ has shape $m \times n$. To multiply $J \Delta \mathbf{x}$, we need $\Delta \mathbf{x}$ to be an $n$-vector, which it is (it lives in input space). The product is an $m$-vector, matching output space. The rows count outputs; the columns count inputs. Getting these dimensions straight is the whole game when we apply the idea to transformers.
+$J$ has shape $m \times n$. To multiply $J \Delta \mathbf{x}$, we need $\Delta \mathbf{x}$ to be an $n$-vector, which it is (it lives in input space). The product is an $m$-vector, matching output space. The rows count outputs; the columns count inputs. Getting these dimensions straight is the whole game when we apply the idea to transformers. Activations in this curriculum are row vectors, so the transformer sections below use the transposed Jacobian, which carries inputs along its rows and multiplies $\Delta \mathbf{x}$ from the right.
 
 </details>
 
@@ -114,10 +114,10 @@ Step 1 is complicated: attention, MLPs, non-linearities, residual connections. S
 Fix a prompt and a source position $t$. Treat $\mathbf{h}_\ell$ (the residual stream at layer $\ell$, position $t$) as the input, and $\mathbf{h}_{\text{final}, t'}$ (the final residual stream at some position $t' \ge t$) as the output. Both are vectors of size $d_\text{model}$. The Jacobian
 
 $$
-J_{\ell, t, t'} \;=\; \frac{\partial\, \mathbf{h}_{\text{final}, t'}}{\partial\, \mathbf{h}_{\ell, t}}
+J_{\ell, t, t'} \;=\; \left( \frac{\partial\, \mathbf{h}_{\text{final}, t'}}{\partial\, \mathbf{h}_{\ell, t}} \right)^{\!T}
 $$
 
-is a $d_\text{model} \times d_\text{model}$ matrix. It tells us: if we nudged $\mathbf{h}_{\ell, t}$ by a small vector $\Delta \mathbf{h}$, the final residual stream at position $t'$ would shift by approximately $J_{\ell, t, t'} \Delta \mathbf{h}$.{% sidenote "Why $t' \ge t$? Because a perturbation at position $t$ can only affect positions from $t$ onwards. Attention in an autoregressive transformer is causal: earlier positions cannot look at later ones." %}
+is a $d_\text{model} \times d_\text{model}$ matrix, transposed so that it acts from the right: its rows index the input and its columns the output. It tells us: if we nudged $\mathbf{h}_{\ell, t}$ by a small vector $\Delta \mathbf{h}$, the final residual stream at position $t'$ would shift by approximately $\Delta \mathbf{h} \, J_{\ell, t, t'}$.{% sidenote "Why $t' \ge t$? Because a perturbation at position $t$ can only affect positions from $t$ onwards. Attention in an autoregressive transformer is causal: earlier positions cannot look at later ones." %}
 
 The shape is worth staring at. Both dimensions equal $d_\text{model}$ because the residual stream has the same width at every layer; it is a shared bus that all layers read from and write to.
 
@@ -127,7 +127,7 @@ The shape is worth staring at. Both dimensions equal $d_\text{model}$ because th
       <g id="jl-shape-plot"></g>
     </svg>
   </div>
-  <figcaption>The Jacobian J is a d_model × d_model matrix that maps a perturbation in layer-ℓ residual-stream space to a perturbation in final-layer residual-stream space. Row <em>i</em>: how output component <em>i</em> depends on all input components. Column <em>j</em>: how a nudge to input component <em>j</em> ripples through every output component.</figcaption>
+  <figcaption>The Jacobian J is a d_model × d_model matrix that maps a perturbation in layer-ℓ residual-stream space to a perturbation in final-layer residual-stream space. Row <em>j</em>: how a nudge to input component <em>j</em> ripples through every output component. Column <em>i</em>: how output component <em>i</em> depends on all input components.</figcaption>
 </figure>
 
 ## Why Average? A Single Jacobian Is Two Things at Once
@@ -140,7 +140,7 @@ The Jacobian $J_{\ell, t, t'}$ computed on one prompt tells us the local lineari
 If we care about *what a direction in layer-$\ell$ space generally means*, we need to strip out the context-specific part. The J-lens does this by **averaging Jacobians over many contexts**:
 
 $$
-J_\ell \;=\; \mathbb{E}_{\,t,\; t' \ge t,\; \text{prompt}} \left[\, \frac{\partial\, \mathbf{h}_{\text{final}, t'}}{\partial\, \mathbf{h}_{\ell, t}} \,\right].
+J_\ell \;=\; \mathbb{E}_{\,t,\; t' \ge t,\; \text{prompt}} \left[\, \left( \frac{\partial\, \mathbf{h}_{\text{final}, t'}}{\partial\, \mathbf{h}_{\ell, t}} \right)^{\!T} \,\right].
 $$
 
 Three things are being averaged:
@@ -180,7 +180,7 @@ The final $J_\ell$ is a single $d_\text{model} \times d_\text{model}$ matrix per
 With $J_\ell$ in hand, applying the lens to an activation $\mathbf{h}_\ell$ is a one-liner. Multiply by $J_\ell$, apply the model's layer norm, apply the unembedding $W_U$, softmax:
 
 $$
-\text{lens}(\mathbf{h}_\ell) \;=\; \text{softmax}\!\bigl(\, W_U \,\text{norm}(J_\ell \, \mathbf{h}_\ell) \,\bigr).
+\text{lens}(\mathbf{h}_\ell) \;=\; \text{softmax}\!\bigl(\, \text{norm}(\mathbf{h}_\ell \, J_\ell) \, W_U \,\bigr).
 $$
 
 The result is a probability distribution over the vocabulary: a "top tokens" list you can inspect.
@@ -191,7 +191,7 @@ The Anthropic paper describes this as *equivalent to replacing all subsequent la
 
 Normally the model computes $\mathbf{h}_L$ from $\mathbf{h}_\ell$ by running through everything downstream of layer $\ell$: attention blocks, MLPs, residual connections, layer norms. That downstream computation is a complicated non-linear function; call it $F_\ell$, so that $\mathbf{h}_L = F_\ell(\mathbf{h}_\ell, \text{context})$.
 
-The averaged Jacobian $J_\ell$ is the best single linear map that approximates $F_\ell$ across contexts. So *replacing* $F_\ell$ with $J_\ell$ means: pretend the model, from layer $\ell$ onward, is just this linear map. Then the final residual stream would be $J_\ell \mathbf{h}_\ell$, and the model's readout would be $W_U \, \text{norm}(J_\ell \mathbf{h}_\ell)$.
+The averaged Jacobian $J_\ell$ is the best single linear map that approximates $F_\ell$ across contexts. So *replacing* $F_\ell$ with $J_\ell$ means: pretend the model, from layer $\ell$ onward, is just this linear map. Then the final residual stream would be $\mathbf{h}_\ell J_\ell$, and the model's readout would be $\text{norm}(\mathbf{h}_\ell J_\ell) \, W_U$.
 
 That is exactly the lens formula. Nothing extra is going on.
 
@@ -222,12 +222,12 @@ The remarkable empirical result is that this approximation is nevertheless a ver
 Look at the lens formula again, focusing on the pre-softmax logits and ignoring the normalization for a moment:
 
 $$
-\text{logits} \;\approx\; W_U \, J_\ell \, \mathbf{h}_\ell \;=\; \underbrace{(W_U J_\ell)}_{\substack{n_\text{vocab} \times d_\text{model}}} \, \mathbf{h}_\ell.
+\text{logits} \;\approx\; \mathbf{h}_\ell \, J_\ell \, W_U \;=\; \mathbf{h}_\ell \, \underbrace{(J_\ell W_U)}_{\substack{d_\text{model} \times n_\text{vocab}}}.
 $$
 
-The composed matrix $W_U J_\ell$ has one row per vocabulary token. Row $t$ is a direction in layer-$\ell$ residual-stream space; the logit for token $t$ is (approximately) the inner product of that row with $\mathbf{h}_\ell$.
+The composed matrix $J_\ell W_U$ has one column per vocabulary token. Column $t$ is a direction in layer-$\ell$ residual-stream space; the logit for token $t$ is (approximately) the inner product of that column with $\mathbf{h}_\ell$.
 
-> **J-lens Vector:** For layer $\ell$ and vocabulary token $t$, the J-lens vector $\mathbf{v}_t^{(\ell)}$ is the $t$-th row of $W_U J_\ell$, viewed as a direction in $\mathbb{R}^{d_\text{model}}$. The lens score for token $t$ at that layer is (up to layer-norm scaling) $\langle \mathbf{v}_t^{(\ell)},\, \mathbf{h}_\ell \rangle$.
+> **J-lens Vector:** For layer $\ell$ and vocabulary token $t$, the J-lens vector $\mathbf{v}_t^{(\ell)}$ is the $t$-th column of $J_\ell W_U$, viewed as a direction in $\mathbb{R}^{d_\text{model}}$. The lens score for token $t$ at that layer is (up to layer-norm scaling) $\langle \mathbf{v}_t^{(\ell)},\, \mathbf{h}_\ell \rangle$.
 
 There are $n_\text{vocab}$ such vectors per layer, typically $\sim$100,000 vectors in a $d_\text{model}$-dimensional space. That set is overcomplete: no unique decomposition of an activation as a sum of J-lens vectors exists. But *sparse* combinations turn out to be well-defined and empirically meaningful; the paper calls the set of activations expressible as sparse non-negative combinations of J-lens vectors the **J-space**.
 
@@ -236,7 +236,7 @@ There are $n_\text{vocab}$ such vectors per layer, typically $\sim$100,000 vecto
 
 A linear probe for concept $c$ learns a direction $\mathbf{w}_c$ such that $\langle \mathbf{w}_c, \mathbf{h}_\ell \rangle$ correlates with whether $c$ is present. A J-lens vector $\mathbf{v}_t^{(\ell)}$ is also a direction whose inner product with $\mathbf{h}_\ell$ gives a score. What is the difference, mechanistically?
 
-A probe direction is *learned* to distinguish inputs on some external label. It is correlational: it may or may not align with anything the model itself uses. A J-lens vector is *derived* from the model's own weights: it is the row of $W_U J_\ell$, so its score is the model's own (first-order) push toward emitting token $t$ downstream. Same geometry (inner product), very different sources of information: labels vs. the model's causal structure.
+A probe direction is *learned* to distinguish inputs on some external label. It is correlational: it may or may not align with anything the model itself uses. A J-lens vector is *derived* from the model's own weights: it is the column of $J_\ell W_U$, so its score is the model's own (first-order) push toward emitting token $t$ downstream. Same geometry (inner product), very different sources of information: labels vs. the model's causal structure.
 
 </details>
 
@@ -245,7 +245,7 @@ A probe direction is *learned* to distinguish inputs on some external label. It 
 The three lenses can be written in a common form:
 
 $$
-\text{lens}(\mathbf{h}_\ell) \;=\; \text{softmax}\!\bigl(\, W_U \, \text{norm}( M_\ell \, \mathbf{h}_\ell ) \,\bigr),
+\text{lens}(\mathbf{h}_\ell) \;=\; \text{softmax}\!\bigl(\, \text{norm}( \mathbf{h}_\ell \, M_\ell ) \, W_U \,\bigr),
 $$
 
 differing only in what $M_\ell$ is.
@@ -254,13 +254,13 @@ differing only in what $M_\ell$ is.
 |---|---|---|---|
 | Logit lens | $I$ (identity) | Assumes layer-$\ell$ basis matches final layer | No calibration; fails in early layers |
 | Tuned lens | $A_\ell$ (learned affine) | Trained to match final output distribution | Correlational; can "skip ahead" to outputs |
-| Jacobian lens | $J_\ell = \mathbb{E}[\partial \mathbf{h}_L / \partial \mathbf{h}_\ell]$ | Derived from the model's own weights, averaged | Causal, first-order; recovers content in early layers |
+| Jacobian lens | $J_\ell = \mathbb{E}[(\partial \mathbf{h}_L / \partial \mathbf{h}_\ell)^T]$ | Derived from the model's own weights, averaged | Causal, first-order; recovers content in early layers |
 
 Two of these choices are motivated. The logit lens sets $M_\ell = I$ because in late layers the residual stream is already close to the final basis; there is nothing to translate. That works when it works and fails silently when it doesn't. The tuned lens fits $A_\ell$ so that the readout matches the true output; that pins the readout to what will be *emitted*, which is not always what we want to look at. The J-lens picks $M_\ell = J_\ell$ because $J_\ell$ is the actual first-order description of what layers $\ell{+}1{:}L$ do, on average across contexts. It is the closest thing to a "linear model of the model" you can extract without any learning.
 
 The three coincide in one important edge case: at the final layer, $J_L$ is (approximately) the identity, and all three reduce to the model's own unembedding. Divergences appear as we go earlier.{% sidenote "The J-lens paper reports that the logit lens agrees closely with the J-lens in the last several layers and diverges earlier: exactly the regime where the logit lens is known to fail." %}
 
-The mean-Jacobian construction was used earlier by Hernandez et al. {% cite "hernandez2023lre" %} to derive per-*relation* affine maps $W_r \mathbf{s} + \mathbf{b}_r$ (e.g., a single "plays instrument" matrix that turns "Miles Davis" into "trumpet") and a companion *attribute lens* for tracking a fixed relation across layers. The J-lens generalizes the same first-order-plus-averaging trick from per-relation to per-layer, taking the expectation over a broad corpus rather than examples of one relation.
+The mean-Jacobian construction was used earlier by Hernandez et al. {% cite "hernandez2023lre" %} to derive per-*relation* affine maps $\mathbf{s} W_r + \mathbf{b}_r$ (e.g., a single "plays instrument" matrix that turns "Miles Davis" into "trumpet") and a companion *attribute lens* for tracking a fixed relation across layers. The J-lens generalizes the same first-order-plus-averaging trick from per-relation to per-layer, taking the expectation over a broad corpus rather than examples of one relation.
 
 ## What Ends Up in the Lens
 
@@ -415,81 +415,80 @@ Second, once we can read a direction that means "the model is about to say $t$,"
     function draw() {
       C = themeAware();
       while (host.firstChild) host.removeChild(host.firstChild);
-      var W = 640, H = 280;
+      // Two row vectors and one matrix in the middle
+      var cellS = 26, n = 6;
+      var side = n * cellS;
+      var matX = 248, matY = 28;
+      var stripY = matY + side / 2 - cellS / 2;
 
-      // Two column vectors and one matrix in the middle
-      var vecW = 46, cellH = 26, rows = 6;
-      var totalH = rows * cellH;
-      // input vector (h_l)
-      var inX = 60, inY = (H - totalH) / 2;
+      // input row vector (h_l)
+      var inX = 46;
       var g1 = el("g");
-      g1.appendChild(el("rect", { x: inX, y: inY, width: vecW, height: totalH, fill: C.surfaceAlt, stroke: C.grid }));
-      for (var i = 0; i < rows; i++) {
-        g1.appendChild(el("line", { x1: inX, y1: inY + (i+1) * cellH, x2: inX + vecW, y2: inY + (i+1) * cellH, stroke: C.grid }));
+      g1.appendChild(el("rect", { x: inX, y: stripY, width: side, height: cellS, fill: C.surfaceAlt, stroke: C.grid }));
+      for (var i = 1; i < n; i++) {
+        g1.appendChild(el("line", { x1: inX + i * cellS, y1: stripY, x2: inX + i * cellS, y2: stripY + cellS, stroke: C.grid }));
       }
-      var lab1 = el("text", { x: inX + vecW / 2, y: inY - 10, fill: C.fg, "font-size": 13, "text-anchor": "middle" });
+      var lab1 = el("text", { x: inX + side / 2, y: stripY - 10, fill: C.fg, "font-size": 13, "text-anchor": "middle" });
       lab1.textContent = "h_ℓ";
       g1.appendChild(lab1);
-      var lab1b = el("text", { x: inX + vecW / 2, y: inY + totalH + 20, fill: C.fgMuted, "font-size": 11, "text-anchor": "middle" });
-      lab1b.textContent = "d_model × 1";
+      var lab1b = el("text", { x: inX + side / 2, y: stripY + cellS + 18, fill: C.fgMuted, "font-size": 11, "text-anchor": "middle" });
+      lab1b.textContent = "1 × d_model";
       g1.appendChild(lab1b);
       host.appendChild(g1);
 
       // matrix J
-      var matX = inX + vecW + 40, matY = inY, matW = totalH, matH = totalH;
       var g2 = el("g");
-      g2.appendChild(el("rect", { x: matX, y: matY, width: matW, height: matH, fill: C.surfaceAlt, stroke: C.grid }));
-      for (var r = 1; r < rows; r++) {
-        g2.appendChild(el("line", { x1: matX, y1: matY + r * (matH / rows), x2: matX + matW, y2: matY + r * (matH / rows), stroke: C.grid }));
+      g2.appendChild(el("rect", { x: matX, y: matY, width: side, height: side, fill: C.surfaceAlt, stroke: C.grid }));
+      for (var r = 1; r < n; r++) {
+        g2.appendChild(el("line", { x1: matX, y1: matY + r * cellS, x2: matX + side, y2: matY + r * cellS, stroke: C.grid }));
       }
-      for (var c = 1; c < rows; c++) {
-        g2.appendChild(el("line", { x1: matX + c * (matW / rows), y1: matY, x2: matX + c * (matW / rows), y2: matY + matH, stroke: C.grid }));
+      for (var c = 1; c < n; c++) {
+        g2.appendChild(el("line", { x1: matX + c * cellS, y1: matY, x2: matX + c * cellS, y2: matY + side, stroke: C.grid }));
       }
-      // highlight one entry
-      var rr = 2, cc = 3;
+      // highlight one entry: row jj indexes the input, column ii the output
+      var jj = 3, ii = 2;
       g2.appendChild(el("rect", {
-        x: matX + cc * (matW / rows), y: matY + rr * (matH / rows),
-        width: matW / rows, height: matH / rows,
+        x: matX + ii * cellS, y: matY + jj * cellS,
+        width: cellS, height: cellS,
         fill: C.accent, opacity: 0.35
       }));
-      var lab2 = el("text", { x: matX + matW / 2, y: matY - 10, fill: C.fg, "font-size": 13, "text-anchor": "middle" });
-      lab2.textContent = "J_ℓ  =  ∂h_final / ∂h_ℓ";
+      var lab2 = el("text", { x: matX + side / 2, y: matY - 10, fill: C.fg, "font-size": 13, "text-anchor": "middle" });
+      lab2.textContent = "J_ℓ  =  (∂h_final / ∂h_ℓ)ᵀ";
       g2.appendChild(lab2);
-      var lab2b = el("text", { x: matX + matW / 2, y: matY + matH + 20, fill: C.fgMuted, "font-size": 11, "text-anchor": "middle" });
+      var lab2b = el("text", { x: matX + side / 2, y: matY + side + 18, fill: C.fgMuted, "font-size": 11, "text-anchor": "middle" });
       lab2b.textContent = "d_model × d_model";
       g2.appendChild(lab2b);
       host.appendChild(g2);
 
-      // = sign and output vector
-      var eqX = matX + matW + 30;
-      var eqLabel = el("text", { x: eqX, y: matY + matH / 2 + 5, fill: C.fg, "font-size": 20, "text-anchor": "middle" });
+      // = sign and output row vector
+      var eqX = matX + side + 26;
+      var eqLabel = el("text", { x: eqX, y: stripY + cellS / 2 + 6, fill: C.fg, "font-size": 20, "text-anchor": "middle" });
       eqLabel.textContent = "≈";
       host.appendChild(eqLabel);
 
-      var outX = eqX + 22, outY = inY;
+      var outX = eqX + 22;
       var g3 = el("g");
-      g3.appendChild(el("rect", { x: outX, y: outY, width: vecW, height: totalH, fill: C.surfaceAlt, stroke: C.grid }));
-      for (var i2 = 0; i2 < rows; i2++) {
-        g3.appendChild(el("line", { x1: outX, y1: outY + (i2+1) * cellH, x2: outX + vecW, y2: outY + (i2+1) * cellH, stroke: C.grid }));
+      g3.appendChild(el("rect", { x: outX, y: stripY, width: side, height: cellS, fill: C.surfaceAlt, stroke: C.grid }));
+      for (var i2 = 1; i2 < n; i2++) {
+        g3.appendChild(el("line", { x1: outX + i2 * cellS, y1: stripY, x2: outX + i2 * cellS, y2: stripY + cellS, stroke: C.grid }));
       }
-      var lab3 = el("text", { x: outX + vecW / 2, y: outY - 10, fill: C.fg, "font-size": 13, "text-anchor": "middle" });
+      var lab3 = el("text", { x: outX + side / 2, y: stripY - 10, fill: C.fg, "font-size": 13, "text-anchor": "middle" });
       lab3.textContent = "h_final";
       g3.appendChild(lab3);
-      var lab3b = el("text", { x: outX + vecW / 2, y: outY + totalH + 20, fill: C.fgMuted, "font-size": 11, "text-anchor": "middle" });
-      lab3b.textContent = "d_model × 1";
+      var lab3b = el("text", { x: outX + side / 2, y: stripY + cellS + 18, fill: C.fgMuted, "font-size": 11, "text-anchor": "middle" });
+      lab3b.textContent = "1 × d_model";
       g3.appendChild(lab3b);
       host.appendChild(g3);
 
-      // callouts explaining the highlighted entry (positioned to the right of h_final)
-      var callX = outX + vecW + 60, callY = 40;
-      // arrow to highlighted entry
-      var srcX = matX + (cc + 0.5) * (matW / rows), srcY = matY + (rr + 0.5) * (matH / rows);
+      // callout explaining the highlighted entry (below the matrix)
+      var callX = matX - 60, callY = matY + side + 30;
+      var srcX = matX + (ii + 0.5) * cellS, srcY = matY + (jj + 0.5) * cellS;
       host.appendChild(el("line", {
-        x1: srcX, y1: srcY, x2: callX - 6, y2: callY + 30,
+        x1: srcX, y1: srcY, x2: callX + 20, y2: callY + 6,
         stroke: C.accent, "stroke-width": 1.2, "stroke-dasharray": "3 3"
       }));
-      var callText = el("foreignObject", { x: callX - 4, y: callY, width: 190, height: 110 });
-      callText.innerHTML = '<div xmlns="http://www.w3.org/1999/xhtml" style="font-size:12px;line-height:1.45;color:' + C.fg + ';">Entry (<em>i</em>, <em>j</em>) = ∂(h_final)_<em>i</em> / ∂(h_ℓ)_<em>j</em>: how a nudge to input component <em>j</em> shifts output component <em>i</em>.</div>';
+      var callText = el("foreignObject", { x: callX, y: callY, width: 400, height: 62 });
+      callText.innerHTML = '<div xmlns="http://www.w3.org/1999/xhtml" style="font-size:12px;line-height:1.45;text-align:left;color:' + C.fg + ';">Entry (<em>j</em>, <em>i</em>) = ∂(h_final)_<em>i</em> / ∂(h_ℓ)_<em>j</em>: how a nudge to input component <em>j</em> shifts output component <em>i</em>. Rows index the input, so the matrix acts on h_ℓ from the right.</div>';
       host.appendChild(callText);
     }
     draw();
@@ -711,7 +710,7 @@ Second, once we can read a direction that means "the model is about to say $t$,"
       var expY = 250;
       var text = el("foreignObject", { x: 50, y: expY, width: W - 100, height: 90 });
       var body = collapse
-        ? 'The Jacobian lens replaces the boxed non-linear stack (layers ℓ+1 through L) with a single linear map <span style="color:' + C.layerCollapsed + ';font-weight:600">J_ℓ</span>, which was pre-computed as the average of <span style="font-family:serif;font-style:italic">∂h_L/∂h_ℓ</span> across positions and prompts. The output is a first-order approximation of what the model would have produced from h_ℓ.'
+        ? 'The Jacobian lens replaces the boxed non-linear stack (layers ℓ+1 through L) with a single linear map <span style="color:' + C.layerCollapsed + ';font-weight:600">J_ℓ</span>, which was pre-computed as the average of <span style="font-family:serif;font-style:italic">(∂h_L/∂h_ℓ)ᵀ</span> across positions and prompts. The output is a first-order approximation of what the model would have produced from h_ℓ.'
         : 'The residual stream at layer ℓ (yellow) propagates through every remaining layer before the model applies norm and W_U. Turn on the "J-lens replacement" toggle to see the collapsed view.';
       text.innerHTML = '<div xmlns="http://www.w3.org/1999/xhtml" style="font-size:13px;line-height:1.5;color:' + C.fg + ';">' + body + '</div>';
       host.appendChild(text);

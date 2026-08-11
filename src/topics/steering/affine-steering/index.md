@@ -25,7 +25,7 @@ The key observation is that the origin of activation space has no special meanin
 
 Consider what happens geometrically. Activations for compliant responses cluster around some mean $\mathbf{r}^-$. Activations for refusing responses cluster around some mean $\mathbf{r}^+$. The refusal direction $\mathbf{r} = \mathbf{r}^+ - \mathbf{r}^-$ connects these clusters. Directional ablation projects onto the hyperplane orthogonal to $\mathbf{r}$, which passes through the *origin*. But the compliant cluster is not centered at the origin. It is centered at $\mathbf{r}^-$, which has a non-zero component along $\mathbf{r}$.
 
-> **Affine vs. Linear:** A linear function maps $\mathbf{0} \mapsto \mathbf{0}$. An affine function includes a constant offset: $f(\mathbf{v}) = A\mathbf{v} + \mathbf{b}$. Behavioral encoding in activation space is affine because the zero vector is not the "default" behavior. The default behavior has its own location in activation space, and interventions need to account for that offset.
+> **Affine vs. Linear:** A linear function maps $\mathbf{0} \mapsto \mathbf{0}$. An affine function includes a constant offset: $f(\mathbf{v}) = \mathbf{v}A + \mathbf{b}$. Behavioral encoding in activation space is affine because the zero vector is not the "default" behavior. The default behavior has its own location in activation space, and interventions need to account for that offset.
 
 This is the source of ablation's failure mode. Projecting out the refusal direction centers the result at the origin's projection, not at the compliant cluster. On models where these differ significantly, the result is incoherent.
 

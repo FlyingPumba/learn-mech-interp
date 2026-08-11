@@ -852,5 +852,39 @@
     "year": 2024,
     "venue": "COLM",
     "url": "https://openreview.net/forum?id=zSf8PJyQb2"
+  "braun2025apd": {
+    "title": "Interpretability in Parameter Space: Minimizing Mechanistic Description Length with Attribution-based Parameter Decomposition",
+    "authors": "Braun, D., Bushnaq, L., Heimersheim, S., Mendel, J., Sharkey, L.",
+    "year": 2025,
+    "venue": "arXiv",
+    "url": "https://arxiv.org/abs/2501.14926"
+  },
+  "bushnaq2025spd": {
+    "title": "Stochastic Parameter Decomposition",
+    "authors": "Bushnaq, L., Braun, D., Sharkey, L.",
+    "year": 2025,
+    "venue": "arXiv",
+    "url": "https://arxiv.org/abs/2506.20790"
+  },
+  "bushnaq2026vpd": {
+    "title": "Interpreting Language Model Parameters",
+    "authors": "Bushnaq, L., Braun, D., Clive-Griffin, O., Bussmann, B., Hu, N., Ivanitskiy, M., Linsefors, L., Sharkey, L.",
+    "year": 2026,
+    "venue": "Goodfire",
+    "url": "https://goodfire.ai/research/interpreting-lm-parameters"
+  },
+  "gao2025weightsparse": {
+    "title": "Weight-Sparse Transformers Have Interpretable Circuits",
+    "authors": "Gao, L., Rajaram, A., Coxon, J., Govande, S. V., Baker, B., Mossing, D.",
+    "year": 2025,
+    "venue": "arXiv",
+    "url": "https://arxiv.org/abs/2511.13653"
+  },
+  "marinllobet2026individual": {
+    "title": "Individual Parameters in Weight-Sparse Transformers Appear Interpretable",
+    "authors": "Marin-Llobet, A., Heimersheim, S.",
+    "year": 2026,
+    "venue": "arXiv",
+    "url": "https://arxiv.org/abs/2607.02964"
   }
 }

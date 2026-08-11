@@ -51,7 +51,7 @@ Before we study superposition in a toy model, we need to understand a subtlety t
 
 > **Privileged basis:** An activation space has a privileged basis when the model's computation treats each coordinate axis differently, typically because a nonlinear activation function (like ReLU or GELU) is applied elementwise. In a privileged basis, individual dimensions (neurons) are meaningful units of analysis.
 
-**Why the residual stream has no privileged basis.** All operations that read from and write to the residual stream are *linear*: attention output is a linear function of value vectors, MLP output is added linearly, and queries, keys, and values are computed via linear projections. The key argument is a symmetry one: if you rotate the entire residual stream by an orthogonal matrix $R$ (and adjust all writing matrices to include $R$ and all reading matrices to include $R^{-1}$), the model's computation and output are *identical*. To see this concretely, consider a query projection: $W_Q \cdot \mathbf{r}$ becomes $W_Q R^{-1} \cdot R\mathbf{r}$, which equals the same result. This rotation invariance means "dimension 42 of the residual stream" is not a meaningful concept. You could rotate it away without changing anything the model computes.
+**Why the residual stream has no privileged basis.** All operations that read from and write to the residual stream are *linear*: attention output is a linear function of value vectors, MLP output is added linearly, and queries, keys, and values are computed via linear projections. The key argument is a symmetry one: if you rotate the entire residual stream by an orthogonal matrix $R$ (and adjust all writing matrices to include $R$ and all reading matrices to include $R^{-1}$), the model's computation and output are *identical*. To see this concretely, consider a query projection: $\mathbf{r} W_Q$ becomes $(\mathbf{r} R)(R^{-1} W_Q)$, which equals the same result. This rotation invariance means "dimension 42 of the residual stream" is not a meaningful concept. You could rotate it away without changing anything the model computes.
 
 > **Non-privileged basis:** An activation space has a non-privileged basis when any orthogonal rotation of the space, with corresponding adjustments to input and output matrices, leaves the model's computation unchanged. In a non-privileged basis, individual dimensions carry no inherent meaning; only directions matter.
 
@@ -60,7 +60,7 @@ Before we study superposition in a toy model, we need to understand a subtlety t
 
 Consider an MLP hidden layer with ReLU activation. If you rotate the hidden layer activations by an orthogonal matrix $R$, does the MLP compute the same function? Think about what ReLU does to a rotated vector versus the original.
 
-It does not. ReLU applied to $R\mathbf{x}$ is not the same as $R$ applied to $\text{ReLU}(\mathbf{x})$. Rotation mixes dimensions, and then ReLU zeroes out different entries than it would have in the original basis. For example, if $\mathbf{x} = [1, -1]$ and $R$ is a 45-degree rotation, $\text{ReLU}(\mathbf{x}) = [1, 0]$ but $\text{ReLU}(R\mathbf{x}) = \text{ReLU}([1.41, 0]) = [1.41, 0]$, which gives a different result when rotated back. The elementwise nonlinearity breaks rotation invariance, creating the privileged basis.
+It does not. ReLU applied to $\mathbf{x}R$ is not the same as $\text{ReLU}(\mathbf{x})R$. Rotation mixes dimensions, and then ReLU zeroes out different entries than it would have in the original basis. For example, if $\mathbf{x} = [1, -1]$ and $R$ is a 45-degree rotation, $\text{ReLU}(\mathbf{x}) = [1, 0]$ but $\text{ReLU}(\mathbf{x}R) = \text{ReLU}([1.41, 0]) = [1.41, 0]$, which gives a different result when rotated back. The elementwise nonlinearity breaks rotation invariance, creating the privileged basis.
 
 </details>
 
@@ -78,7 +78,7 @@ To study superposition systematically, Elhage et al. built a toy model that isol
 The architecture is deliberately simple. The input is a vector $\mathbf{x} \in \mathbb{R}^m$ with $m$ features, each with known importance and sparsity. A linear encoder maps this from $\mathbb{R}^m$ down to $\mathbb{R}^n$ (the bottleneck), a ReLU nonlinearity is applied, and a linear decoder maps back to $\mathbb{R}^m$:
 
 $$
-\hat{\mathbf{x}} = \text{ReLU}(\mathbf{W}_e \mathbf{x}) \cdot \mathbf{W}_d
+\hat{\mathbf{x}} = \text{ReLU}(\mathbf{x} \mathbf{W}_e) \cdot \mathbf{W}_d
 $$
 
 Why a toy model? Real transformers are too complex to study superposition directly. The toy model isolates the core representational question by giving us direct control over two experimental knobs. Feature importance $I_i$ controls how much each feature matters for the reconstruction loss -- high importance means reconstruction errors on that feature are costly, while low importance means the model can afford to sacrifice accuracy. Feature sparsity $S_i$ controls how often each feature is active -- high sparsity ($S_i \approx 1$) means the feature is almost never active, while low sparsity ($S_i \approx 0$) means it is active most of the time. Because $n$ is small (2D or 3D), we can visualize the learned representations directly.
