@@ -1,14 +1,20 @@
 ---
 title: "Refined Attribution Methods"
-description: "How AtP*, EAP-IG, and EAP-GP fix the failure modes of gradient-based circuit discovery, from attention saturation and effect cancellation to zero-gradient regions."
+description: "How AtP* and EAP-IG fix key failure modes of gradient-based circuit discovery, from attention saturation and effect cancellation to zero-gradient regions, and how EAP-GP and CEAP further refine edge attribution."
 order: 3
 prerequisites:
   - title: "Attribution Patching and Path Patching"
     url: "/topics/attribution-patching/"
 
 glossary:
+  - term: "AtP*"
+    definition: "Attribution Patching, starred. An improved variant of attribution patching that reduces false negatives from attention saturation by recomputing how patched queries and keys change attention weights, and from cancellation between direct and indirect effects using GradDrop. It retains AtP's scalability and provides a way to bound the probability of remaining false negatives."
   - term: "EAP-IG"
     definition: "Edge Attribution Patching with Integrated Gradients. Replaces the single gradient evaluation in EAP with an average of gradients along the interpolation path from corrupted to clean activations, fixing zero-gradient failures and improving circuit faithfulness."
+  - term: "EAP-GP"
+    definition: "Edge Attribution Patching with GradPath. An edge-level circuit discovery method that replaces EAP-IG's fixed straight-line interpolation with a dynamically adjusted, gradient-guided path. GradPath steers the integration path away from saturated regions, producing more reliable edge attributions and more faithful discovered circuits."
+  - term: "CEAP"
+    definition: "Conductance-based Edge Attribution Patching. A circuit discovery method that scores model edges using conductance along the interpolation path from corrupted to clean activations. Unlike EAP-IG, it weights the gradient at each interpolation step by the edge activation's local change, rather than multiplying the average gradient by the total activation change. Its conductance scores produce more principled edge rankings and can reduce circuit instability under data resampling."
 ---
 
 ## When Gradients Mislead
@@ -145,6 +151,81 @@ Starting from the corrupted input, EAP-GP steps in the direction of the differen
 
 On GPT-2 variants (Small, Medium, XL) across six circuit discovery benchmarks, EAP-GP improved circuit faithfulness by up to 17.7% over EAP-IG, with precision and recall matching or exceeding prior methods when validated against manually annotated ground-truth circuits {% cite "zhang2025eapgp" %}.
 
+## CEAP: Conductance Over Integrated Gradients
+EAP-IG uses Integrated Gradients, originally introduced by Sundararajan et al. (2017) to attribute a model's output to its input features {% cite "sundararajan2017axiomatic" %}. However, circuit discovery seeks to attribute model behavior to intermediate edges of the computational graph, so applying an input-attribution method to this setting may seem less principled.
+
+Wu et al. (2026) address this with CEAP (Conductance-based Edge Attribution Patching) {% cite "wu2026variance" %}. CEAP scores edges using **conductance**, which Dhamdhere et al. (2019) introduced as an adaptation of Integrated Gradients for intermediate components {% cite "dhamdhere2018how" %}.
+The importance of each edge is then computed as:
+
+$$
+\text{CEAP}(u, v)
+=
+\sum_{k=0}^{m-1}
+\left(\mathbf{z}_u^{(k+1)} - \mathbf{z}_u^{(k)}\right)
+\cdot
+\nabla_v \mathcal{L}\!\left(\mathbf{z}^{(k)}\right)
+$$
+
+where $\mathbf{z}^{(k)} = \mathbf{z}^{\text{corrupt}} + \frac{k}{m}\left(\mathbf{z}^{\text{clean}}-\mathbf{z}^{\text{corrupt}}\right)$ is the input at interpolation step $k$, and $\mathbf{z}_u^{(k)}=\mathbf{z}_u\!\left(\mathbf{z}^{(k)}\right)$ is the activation at node $u$ produced by that input.
+
+Conductance satisfies **additive order preservation**, a minimal desideratum for edge-scoring methods that is violated by Integrated Gradients:
+
+> **Additive order preservation (informal):** Suppose a function is composed as a summation of several branches, as in the diagram below. If ablating one branch causes the function's behavior to change more than ablating another, then the scoring function should assign more importance to the former branch than to the latter.
+>
+> <figure>
+>   <img src="/topics/refined-attribution-methods/images/additive-order-preservation-four-branch-sum.png" alt="A shared input z feeds four parallel branches f1, f2, f3, and f4, whose outputs are added to produce f of z.">
+>   <figcaption>
+>
+>   An example of a function $f(z) = \sum_{i=1}^4 f_i(z)$.
+>
+>   </figcaption>
+>
+> </figure>
+
+<details class="pause-and-think">
+<summary>Pause and think: Why the CEAP score is more principled</summary>
+The CEAP score weights the gradient at each interpolation step by how much the corresponding activation moves at that step. Intuitively, a step should matter more for two reasons: (1) the activation moves more in that step, and (2) that activation movement has a larger local effect on the output.
+CEAP reflects both factors. 
+
+EAP-IG, on the other hand, treats the gradients of all the steps equally, which can distort how much a certain activation really affects the output.
+</details>
+
+Empirically, CEAP reduces resampling instability, which refers to the instability of the found circuit when the probing prompts are resampled from the same distribution {% cite "wu2026variance" %}.
+
+<figure>
+  <a href="images/ceap-resampling-variance-gpt2-xl-sva.png" aria-label="Open the full-size resampling-stability figure">
+    <img src="images/ceap-resampling-variance-gpt2-xl-sva.png" alt="Six plots comparing circuit stability for EAP-IG and CEAP on GPT-2 XL across SVA prompt templates plural 0 through plural 5. CEAP has a consistently higher pairwise Jaccard index as the number of selected edges varies.">
+  </a>
+  <figcaption>Resampling stability of circuits discovered by EAP-IG (blue) and CEAP (orange) across six SVA prompt templates on GPT-2 XL. Stability is measured by the mean pairwise Jaccard index between circuits obtained from four resampled probing datasets; shaded regions show the standard deviation. Higher values indicate greater stability. From Wu et al., <em>Demystifying Variance in Circuit Discovery of LLMs</em>. {% cite "wu2026variance" %}</figcaption>
+</figure>
+
+### Have More Faith in Faithfulness: A Variance Perspective
+
+ Wu et al. (2026) also deepen the understanding of faithfulness.
+ Faithfulness has become a popular metric for evaluating circuit quality, especially following Hanna et al. (2024) {% cite "hanna2024faithfulness" %}. However, Miller et al. (2024) {% cite "miller2024transformer" %} point out an important caveat: when performing circuit discovery for a population of samples, the circuit's faithfulness often varies drastically across those samples.
+ 
+<figure>
+  <a href="images/ioi-faithfulness-ablation-sensitivity.png" aria-label="Open the full-size IOI faithfulness evaluation figure">
+    <img src="images/ioi-faithfulness-ablation-sensitivity.png" alt="Four boxplots of logit difference recovered for the IOI circuit, comparing node and edge ablations, specific and all token positions, and resample and mean ablation values. The resulting faithfulness distributions differ substantially across evaluation choices, with many scores below zero or above one hundred percent.">
+  </a>
+  <figcaption>Faithfulness scores for the IOI circuit under different evaluation choices: node- versus edge-level ablation, specific versus all token positions, and resample versus mean ablation. The dotted line marks 100% recovery, or perfect faithfulness. Across all evaluation setups, many samples deviate substantially from perfect faithfulness. From Miller et al. (2024), <em>Transformer Circuit Evaluation Metrics Are Not Robust</em>. {% cite "miller2024transformer" %}
+  </figcaption>
+</figure>
+
+ 
+ Does this mean that circuit discovery is just hacking the faithfulness metric at the population level, while failing to provide meaningful explanations for individual samples?
+Fortunately, Wu et al. (2026) argue that the answer is no {% cite "wu2026variance" %}.
+ In particular, they study *unfaithfulness*, defined as $\vert 1 - \text{faithfulness} \vert$, which can be interpreted as the fraction of the full model's behavior magnitude that is not explained by the circuit.
+ They find that unfaithfulness is negatively correlated with the full model's behavior magnitude.
+ In other words, when the model's behavior on a sample is weaker, the circuit's relative behavioral deviation on that sample tends to be larger.
+ They also give a mechanistic explanation: when the full model's behavior magnitude is small, different components tend to contribute more evenly to the network output.
+ As a result, the components excluded from the circuit are not much less important than the components included in it, leading to higher unfaithfulness.
+
+ The main takeaways are:
+  - Samplewise variance of (un)faithfulness is intrinsic but not necessarily fatal: it is linked to the behavior magnitude of the full model and does not, by itself, indicate fundamental defects of the found circuits.
+  - Comparing (un)faithfulness across circuit sizes or methods remains meaningful. However, comparing raw (un)faithfulness across individual samples is much less informative.
+
+
 ## Choosing a Method
 
 Each refinement targets a specific failure mode and adds computational cost:
@@ -156,14 +237,15 @@ Each refinement targets a specific failure mode and adds computational cost:
 | **AtP\*** (GradDrop) | Cancellation | + $L$ bwd | Nodes |
 | **EAP** | (baseline) | 2 fwd + 1 bwd | Edges |
 | **EAP-IG** | Zero-gradient regions | $m$ fwd + $m$ bwd | Edges |
-| **EAP-GP** | Saturation along path | $m$ fwd + $m$ bwd | Edges |
+| **EAP-GP** | Saturation along path | $2m$ fwd + $2m$ bwd | Edges |
+| **CEAP** | Additive order preservation | $m$ fwd + $m$ bwd | Edges |
 
-The methods are complementary rather than competing. AtP\* and EAP-IG operate at different granularities (nodes vs. edges) and address different failure modes. A thorough circuit discovery workflow might use AtP\* for node-level screening and EAP-IG or EAP-GP for edge-level circuit extraction.
+The methods are complementary rather than competing. AtP\* operates at the node level, while EAP-IG, EAP-GP, and CEAP operate at the edge level and address different failure modes or desiderata. A thorough circuit discovery workflow might use AtP\* for node-level screening and EAP-IG, EAP-GP, or CEAP for edge-level circuit extraction.
 
 The practical recommendation is the same as for basic attribution patching: use gradient methods for fast screening, then verify the most important results with full [activation patching](/topics/activation-patching/). The refinements reduce false negatives, making the screening more reliable, but they do not eliminate the need for causal verification on the components that matter most.
 
 ## Looking Forward
 
-The progression from AtP to AtP\* to EAP-IG to EAP-GP illustrates a recurring pattern in mechanistic interpretability: a simple, scalable method is introduced, its failure modes are characterized, and targeted fixes are developed. Each refinement narrows the gap between the fast approximation and the gold-standard causal experiment.
+The progression from AtP to AtP\*, and from EAP to EAP-IG, EAP-GP and CEAP illustrates a recurring pattern in mechanistic interpretability: a simple, scalable method is introduced, its failure modes are characterized, and targeted fixes are developed. Each refinement narrows the gap between the fast approximation and the gold-standard causal experiment.
 
-These improved attribution methods feed directly into automated circuit discovery. More faithful edge attributions mean more accurate circuits, which in turn enable more reliable mechanistic claims about how models compute their outputs. For the most complete circuit analysis ever performed using these tools, see [the IOI circuit](/topics/ioi-circuit/).
+These improved attribution methods feed directly into automated circuit discovery. More faithful and stable edge attributions mean more accurate and generalizable circuits, which in turn enable more reliable mechanistic claims about how models compute their outputs. For the most complete circuit analysis ever performed using these tools, see [the IOI circuit](/topics/ioi-circuit/).
