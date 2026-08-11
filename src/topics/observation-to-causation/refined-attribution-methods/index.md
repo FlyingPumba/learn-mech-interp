@@ -14,7 +14,7 @@ glossary:
   - term: "EAP-GP"
     definition: "Edge Attribution Patching with GradPath. An edge-level circuit discovery method that replaces EAP-IG's fixed straight-line interpolation with a dynamically adjusted, gradient-guided path. GradPath steers the integration path away from saturated regions, producing more reliable edge attributions and more faithful discovered circuits."
   - term: "CEAP"
-    definition: "Conductance-based Edge Attribution Patching. A circuit discovery method that scores model edges using conductance along the interpolation path from corrupted to clean inputs. Unlike EAP-IG, it weights the gradient at each interpolation step by the edge activation's local change, rather than multiplying the average gradient by the total activation change. Its conductance scores produce more principled edge rankings and can reduce circuit instability under data resampling."
+    definition: "Conductance-based Edge Attribution Patching. A circuit discovery method that scores model edges using conductance along the interpolation path from corrupted to clean activations. Unlike EAP-IG, it weights the gradient at each interpolation step by the edge activation's local change, rather than multiplying the average gradient by the total activation change. Its conductance scores produce more principled edge rankings and can reduce circuit instability under data resampling."
 ---
 
 ## When Gradients Mislead
