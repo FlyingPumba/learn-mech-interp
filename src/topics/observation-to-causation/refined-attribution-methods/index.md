@@ -240,7 +240,7 @@ Each refinement targets a specific failure mode and adds computational cost:
 | **EAP-GP** | Saturation along path | $2m$ fwd + $2m$ bwd | Edges |
 | **CEAP** | Additive order preservation | $m$ fwd + $m$ bwd | Edges |
 
-The methods are complementary rather than competing. AtP* operates at the node level, while EAP-IG, EAP-GP, and CEAP operate at the edge level and address different failure modes or desiderata. A thorough circuit discovery workflow might use AtP\* for node-level screening and EAP-IG, EAP-GP, or CEAP for edge-level circuit extraction.
+The methods are complementary rather than competing. AtP\* operates at the node level, while EAP-IG, EAP-GP, and CEAP operate at the edge level and address different failure modes or desiderata. A thorough circuit discovery workflow might use AtP\* for node-level screening and EAP-IG, EAP-GP, or CEAP for edge-level circuit extraction.
 
 The practical recommendation is the same as for basic attribution patching: use gradient methods for fast screening, then verify the most important results with full [activation patching](/topics/activation-patching/). The refinements reduce false negatives, making the screening more reliable, but they do not eliminate the need for causal verification on the components that matter most.
 

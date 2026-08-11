@@ -826,7 +826,7 @@
     "url": "https://arxiv.org/abs/2402.03300"
   },
   "dhamdhere2018how": {
-    "title": "How Important is a Neuron",
+    "title": "How Important is a Neuron?",
     "authors": "Dhamdhere, K., Sundararajan, M., Yan, Q.",
     "year": 2019,
     "venue": "ICLR",
@@ -840,11 +840,11 @@
     "url": "https://proceedings.mlr.press/v70/sundararajan17a.html"
   },
   "wu2026variance": {
-  "title": "Demystifying Variance in Circuit Discovery of LLMs",
-  "authors": "Wu, F. Z., Tonin, F., Cevher, V.",
-  "year": 2026,
-  "venue": "ICML 2026 Mechanistic Interpretability Workshop",
-  "url": "https://arxiv.org/abs/2606.16920"
+    "title": "Demystifying Variance in Circuit Discovery of LLMs",
+    "authors": "Wu, F. Z., Tonin, F., Cevher, V.",
+    "year": 2026,
+    "venue": "ICML 2026 Mechanistic Interpretability Workshop",
+    "url": "https://arxiv.org/abs/2606.16920"
   },
   "miller2024transformer": {
     "title": "Transformer Circuit Evaluation Metrics Are Not Robust",
