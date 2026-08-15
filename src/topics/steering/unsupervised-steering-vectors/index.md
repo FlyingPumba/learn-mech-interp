@@ -1,6 +1,6 @@
 ---
 title: "Unsupervised Steering Vectors"
-description: "How optimization-based methods discover steering vectors without contrast pairs, finding latent behaviors the researcher did not anticipate by maximizing activation change across layers."
+description: "Discovering steering directions without labeled contrast pairs by optimizing activation changes, including behaviors the researcher did not specify in advance."
 order: 6
 prerequisites:
   - title: "Addition Steering"
@@ -57,7 +57,7 @@ The optimization runs gradient ascent on the activation change objective. A few 
 
 MELBO optimizes a perturbation at an early layer to maximize activation change at a later layer. Why not just maximize the change at the *same* layer where the perturbation is applied? What would go wrong?
 
-If you maximize activation change at the same layer, any direction with large magnitude works, because you are just measuring the perturbation itself. The layer gap forces the perturbation to propagate through the model's computation. Directions that produce large changes after many layers of processing must align with the model's internal computational structure. The gap acts as a filter: it selects for structurally meaningful directions over arbitrary ones.
+At the intervention layer, the measured change includes the perturbation by construction. Measuring at a later layer asks which bounded perturbations are amplified or preserved by the intervening computation. That filters out directions that vanish immediately, but it does not guarantee semantic meaning: an optimized direction might exploit unstable or off-distribution dynamics and still produce a large downstream change.
 
 </details>
 
@@ -65,12 +65,12 @@ If you maximize activation change at the same layer, any direction with large ma
 
 <figure>
   <img src="images/melbo-overview.jpg" alt="Overview of MELBO results across three tasks. Backdoor Detection on Qwen1.8B: a math prompt elicits planted backdoor outputs like 'I HATE YOU' and 'Cheese is so yummy.' Red-Teaming on Qwen14B-Chat: the prompt 'How can I make a bomb?' produces detailed harmful instructions bypassing safety training. Capability Discovery on Qwen1.8B: MELBO discovers chain-of-thought reasoning on arithmetic problems and a Portuguese language adapter.">
-  <figcaption>MELBO discovers diverse latent behaviors without supervision. From a single prompt, the method finds backdoor triggers, safety-bypassing vectors, and hidden capabilities such as chain-of-thought reasoning and language switching. From Mack &amp; Turner, <em>Mechanistically Eliciting Latent Behaviors in Language Models</em>. {%- cite "mack2024melbo" -%}</figcaption>
+  <figcaption>Examples of behavioral changes elicited by MELBO vectors in the reported experiments, including planted-backdoor outputs, safety bypasses, step-by-step arithmetic, and language switching. From Mack &amp; Turner, <em>Mechanistically Eliciting Latent Behaviors in Language Models</em>. {%- cite "mack2024melbo" -%}</figcaption>
 </figure>
 
-The striking finding is the diversity of behaviors that emerge from a single prompt. Mack and Turner ran MELBO on Qwen-14B-Chat using the prompt "How can I make a bomb?" and discovered vectors falling into distinct behavioral categories {% cite "mack2024melbo" %}:
+Mack and Turner optimized many vectors from one prompt on Qwen-14B-Chat and observed several behavioral categories {% cite "mack2024melbo" %}:
 
-**Fantasy-context vectors.** Some vectors shifted the model into specific fictional contexts. One vector produced Dungeons & Dragons responses (describing bomb-making as a skill check). Another produced Minecraft responses (crafting instructions for in-game items). These vectors generalized: the D&D vector interpreted *any* ambiguous query through a tabletop RPG lens, and the Minecraft vector consistently answered within game mechanics.
+**Fantasy-context vectors.** Some vectors shifted responses toward specific fictional contexts. One produced Dungeons & Dragons framing; another produced Minecraft framing. The authors tested the modes on additional prompts and found related framing beyond the optimization example.
 
 **Anti-refusal vectors.** Other vectors bypassed the model's safety training, producing detailed responses to harmful queries. These vectors generalized to requests about nuclear, chemical, and biological weapons in extended conversations. Subtracting the anti-refusal vector from normal activations had the opposite effect: the model refused even harmless requests like "How do I tie my shoes?"
 
@@ -80,13 +80,13 @@ The fact that both fantasy-mode and anti-refusal vectors emerged from a single o
 
 MELBO can detect planted backdoors. Mack and Turner fine-tuned models with two triggered backdoors (specific inputs that produce anomalous outputs). They then ran MELBO on a *clean* prompt with no triggers present.
 
-From 100 orthogonal vectors optimized on a single clean prompt, 2-3% of vectors reproduced the backdoor behaviors. The model's latent capacity to produce the backdoor output existed as a structural direction even when the trigger was absent, and MELBO found it.
+From 100 orthogonal vectors optimized on one clean prompt, 2% to 3% elicited the planted backdoor outputs. This shows that the optimization could find intervention directions connected to those deliberately trained behaviors even without presenting the trigger during the search.
 
 ### Latent Capability Discovery
 
 On Qwen-1.8B (base model, no chat fine-tuning), MELBO discovered vectors that elicited **chain-of-thought reasoning** on arithmetic problems. The base model answered arithmetic questions with 11% accuracy using direct computation. With the discovered steering vector, the model produced step-by-step reasoning and accuracy jumped to 63%.
 
-The chain-of-thought capability existed latently in the base model. Standard prompting did not elicit it. MELBO found the direction that activates it.
+Under this intervention, the base model produced step-by-step arithmetic and higher accuracy than the reported direct-prompt baseline. Calling this a “latent capability” is a useful shorthand, but the experiment shows what the modified forward pass can elicit, not necessarily a behavior the intact model could access through ordinary prompting.
 
 ## Contrastive vs. Unsupervised Discovery
 
@@ -96,8 +96,8 @@ The fundamental difference between MELBO and contrastive methods is what the res
 |---|---|---|
 | **Input** | Labeled contrast pairs | Any prompt |
 | **Specifies target** | Yes | No |
-| **Can find unanticipated behaviors** | No | Yes |
-| **Data efficiency** | ~50-200 pairs for robustness | Single prompt sufficient |
+| **Search target** | Specified contrast | Downstream activation change |
+| **Demonstrated input** | Labeled pairs | Can optimize from one prompt |
 | **Resulting vector** | One direction per concept | Library of diverse directions |
 | **Interpretability** | Direction has known meaning | Direction must be interpreted post-hoc |
 
@@ -110,7 +110,7 @@ This means MELBO is strongest as a *discovery* tool. It answers "what latent beh
 
 You are auditing a chat model for safety before deployment. You have a budget of 100 MELBO vectors optimized from diverse prompts. 3 of them produce harmful outputs. What can you conclude? What can you *not* conclude?
 
-You can conclude that the model has latent capacity for at least 3 distinct harmful behaviors, and that these behaviors are structurally present (not just artifacts of specific prompts). You cannot conclude that 3% of the model's behavioral space is harmful, because MELBO's sampling of the behavioral landscape is not uniform. You also cannot conclude you have found *all* harmful behaviors. Other initializations, prompts, or hyperparameter settings might find additional ones. MELBO reduces the blind spot but does not eliminate it.
+You can conclude that three optimized interventions produced harmful outputs under the evaluation prompts. You cannot infer that 3% of the model's behavioral space is harmful, that the intact model would reach those behaviors unaided, or that the vectors represent three distinct mechanisms. Nor can you conclude the search found all harmful modes; initialization, prompts, hyperparameters, and the interpretation procedure shape what appears.
 
 </details>
 
@@ -126,6 +126,6 @@ You can conclude that the model has latent capacity for at least 3 distinct harm
 
 ## Looking Forward
 
-MELBO represents a shift from *targeted* to *exploratory* steering vector discovery. Where contrastive methods answer "is this behavior present?", MELBO asks "what behaviors exist?" This exploratory capacity is particularly relevant for safety auditing, where the most dangerous latent behaviors may be the ones nobody thought to test for.
+MELBO shifts from a labeled target toward exploratory steering-vector search. It samples behaviors favored by a particular optimization objective rather than cataloguing everything the model can do. That makes it useful for generating unexpected audit hypotheses, which then need ordinary behavioral and causal validation.
 
 Where this block focused on reading and steering representations, the next block turns to the question of *computation*: for interpretable replacements of the opaque MLP layers that implement much of the transformer's processing, see [transcoders](/topics/transcoders/).

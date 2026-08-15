@@ -1,6 +1,6 @@
 ---
 title: "nnsight and nnterp"
-description: "Two complementary tools for interpretability research that work directly with HuggingFace models -- nnsight for flexible model inspection and intervention, and nnterp for a standardized interface across architectures."
+description: "Using nnsight to inspect and intervene on Hugging Face models, and nnterp to write the same interpretability code across different architectures."
 order: 2
 prerequisites:
   - title: "TransformerLens"
@@ -15,7 +15,7 @@ glossary:
 
 ## The Architecture Coverage Problem
 
-[TransformerLens](/topics/transformerlens/) solved a fundamental problem: giving researchers clean access to model internals. But its approach -- reimplementing each architecture from scratch -- creates a bottleneck. Every new model family requires someone to write conversion code, test for numerical equivalence, and maintain compatibility as HuggingFace implementations evolve. When a new Llama or Qwen variant drops, there is an unavoidable lag before MI researchers can study it.
+[TransformerLens](/topics/transformerlens/) solved a fundamental problem: giving researchers clean access to model internals. But its approach, reimplementing each architecture from scratch, creates a bottleneck. Every new model family requires someone to write conversion code, test for numerical equivalence, and maintain compatibility as HuggingFace implementations evolve. When a new Llama or Qwen variant drops, there is an unavoidable lag before MI researchers can study it.
 
 More fundamentally, TransformerLens is limited to transformer language models. Interpretability questions apply to vision models, multimodal models, diffusion models, and state space models too. And for very large models (70B+ parameters), running even a reimplemented version locally may not be feasible.
 
@@ -31,7 +31,7 @@ The NDIF team's insight was to **separate experimental design from model deploym
 
 ### The Tracing Context
 
-nnsight's core abstraction is the **tracing context** -- a Python context manager where code is captured rather than immediately executed. Inside a tracing context, operations on model modules build up an **intervention graph**: a description of what to read, what to modify, and what to compute. When the context exits, the entire graph executes as a batch.{% sidenote "The tracing context uses Python's standard context manager protocol. Under the hood, nnsight wraps every PyTorch module to intercept attribute access and method calls, building up a graph of deferred operations. This is conceptually similar to how JAX traces Python functions into XLA computations, but applied to model inspection rather than compilation." %}
+nnsight's core abstraction is the **tracing context**, a Python context manager where code is captured rather than immediately executed. Inside a tracing context, operations on model modules build up an **intervention graph**: a description of what to read, what to modify, and what to compute. When the context exits, the entire graph executes as a batch.{% sidenote "The tracing context uses Python's standard context manager protocol. Under the hood, nnsight wraps every PyTorch module to intercept attribute access and method calls, building up a graph of deferred operations. This is conceptually similar to how JAX traces Python functions into XLA computations, but applied to model inspection rather than compilation." %}
 
 Here is what reading a hidden state looks like:
 
@@ -68,7 +68,7 @@ with model.trace("The Eiffel Tower is in"):
     logits = model.output.save()
 ```
 
-Because the tracing context captures operations as a graph rather than executing them immediately, nnsight can validate the intervention before running it, optimize execution order, and -- critically -- serialize the graph for remote execution.
+Because the tracing context captures operations as a graph rather than executing them immediately, nnsight can validate the intervention before running it, optimize execution order, and, critically, serialize the graph for remote execution.
 
 ### Remote Execution via NDIF
 
@@ -81,7 +81,7 @@ with model.trace("The Eiffel Tower is in", remote=True):
     hidden = model.model.layers[20].output[0].save()
 ```
 
-The code is identical to local execution. nnsight serializes the intervention graph, sends it to NDIF where the model is already loaded in memory, executes the experiment, and returns only the saved tensors. The researcher never needs to download or manage 405B parameters of model weights.{% sidenote "NDIF hosts multiple large models on dedicated GPU clusters and allows concurrent access by multiple researchers. This is more efficient than each lab maintaining its own copy of every large model. The tradeoff is dependence on external infrastructure and a small communication latency (~0.2-0.4 seconds per request)." %}
+The tracing style is designed to stay similar between local and remote execution. For a hosted model, nnsight serializes the intervention graph, executes it through the remote service, and returns tensors explicitly marked for saving. This avoids downloading the hosted checkpoint, while introducing service availability, access, privacy, and communication constraints.
 
 ### How nnsight Differs from TransformerLens
 
@@ -109,7 +109,7 @@ Consider a research project studying how a safety-relevant behavior (like refusa
 
 ### The Standardization Gap
 
-nnsight works with any PyTorch model, but it uses each model's native naming conventions. GPT-2 calls its layers `transformer.h`, Llama calls them `model.layers`, and Gemma uses yet another scheme. Code written for one model does not transfer to another without rewriting all the module paths. This is the problem TransformerLens solved with its standardized naming -- but TransformerLens solved it through reimplementation, which has its own costs.
+nnsight operates on many PyTorch models through their native module structure. GPT-2, Llama, and Gemma expose different paths, so architecture-specific code often needs adaptation. nnterp addresses this portability problem with shared accessors, while TransformerLens takes a different route by exposing standardized hook names in its supported model implementations.
 
 **nnterp** (created by Clement Dumas) takes a middle path {% cite "dumas2024nnterp" %}. It is a thin wrapper around nnsight that provides a unified interface across transformer architectures *without* reimplementing them. The original HuggingFace model runs underneath; nnterp just standardizes how you refer to its components.
 
@@ -137,7 +137,7 @@ Under the hood, nnterp maps `model.layers_output[5]` to the correct module path 
 
 nnterp ships with standardized implementations of common MI techniques:
 
-- **Logit lens:** Projects intermediate hidden states through the unembedding layer to see the model's evolving prediction at each layer -- the technique we studied in [logit lens and tuned lens](/topics/logit-lens-and-tuned-lens/).
+- **Logit lens:** Projects intermediate hidden states through the unembedding layer to see the model's evolving prediction at each layer, the technique we studied in [logit lens and tuned lens](/topics/logit-lens-and-tuned-lens/).
 - **Patchscope:** Replaces activations from one context into another, implementing the framework from [Patchscopes](/topics/patchscopes/).
 - **Activation steering:** Adds steering vectors at specified layers, as described in [addition-based steering](/topics/addition-steering/).
 
@@ -145,7 +145,7 @@ These implementations work across all supported architectures with no code chang
 
 ### Architecture Coverage
 
-nnterp supports over 50 model variants across 16+ architecture families, including GPT-2, GPT-J, Llama (all versions), Mistral, Mixtral (mixture-of-experts), Gemma 2 and 3, Qwen 2 and 3, Phi-3, and more. Adding a new architecture requires only a naming configuration -- no reimplementation.
+nnterp supports over 50 model variants across 16+ architecture families, including GPT-2, GPT-J, Llama (all versions), Mistral, Mixtral (mixture-of-experts), Gemma 2 and 3, Qwen 2 and 3, Phi-3, and more. Adding a new architecture requires only a naming configuration, no reimplementation.
 
 When you load a model, nnterp automatically validates that the standardized names resolve correctly and that interventions produce the expected effects. This validation catches configuration errors before they silently corrupt experimental results.{% sidenote "The validation system tests that module outputs have expected shapes, attention probabilities sum to 1, and interventions actually affect outputs. These are sanity checks rather than formal correctness proofs, but they catch the most common integration errors." %}
 
@@ -159,7 +159,7 @@ You are starting a new MI project. Consider these scenarios and which tool (Tran
 3. Running activation patching on a 70B-parameter model you cannot fit locally.
 4. Studying a vision transformer's internal representations.
 
-There is no single right answer -- the tools are complementary, and experienced researchers often use multiple tools within the same project.
+There is no single right answer, the tools are complementary, and experienced researchers often use multiple tools within the same project.
 
 </details>
 
@@ -169,4 +169,4 @@ The MI tooling ecosystem reflects the field's rapid maturation. TransformerLens 
 
 Other tools serve adjacent needs. **Neuronpedia** provides a web interface for exploring [SAE features](/topics/sparse-autoencoders/) and attribution graphs interactively. **Gemma Scope** offers pre-trained SAEs for every layer of Gemma 2. Platform tools like **ARENA 3.0** provide structured exercises for learning MI techniques hands-on.
 
-The trend is toward more accessible, more general, and more scalable tooling. As models grow larger and architectures diversify beyond standard transformers, tools that work with models as they are -- rather than requiring reimplementation -- become increasingly valuable. But the core workflow remains the same: load a model, inspect its internals, form a hypothesis about a mechanism, and test it with targeted interventions.
+The trend is toward more accessible, more general, and more scalable tooling. As models grow larger and architectures diversify beyond standard transformers, tools that work with models as they are, rather than requiring reimplementation, become increasingly valuable. But the core workflow remains the same: load a model, inspect its internals, form a hypothesis about a mechanism, and test it with targeted interventions.

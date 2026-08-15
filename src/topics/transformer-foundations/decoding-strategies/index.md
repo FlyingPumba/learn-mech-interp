@@ -108,7 +108,7 @@ The forward pass produces logits. The decoding strategy then selects tokens from
 
 When MI researchers analyze what a model "knows" or "computes," they examine the logits, the residual stream, and the internal activations. These are fixed for a given input regardless of whether we use greedy decoding, nucleus sampling, or beam search. The decoding strategy is a post-hoc choice that affects the generated text but not the model's internal computation on any single forward pass.
 
-That said, decoding does affect multi-step generation. The token selected at step $n$ becomes part of the input at step $n+1$, so different decoding strategies produce different prompts for subsequent forward passes. Studying the model's behavior *during generation* requires accounting for this feedback loop. But for analyzing the model's computation on a fixed input, which is what most MI techniques do, decoding strategy is irrelevant.
+Decoding affects multi-step generation because the token selected at step $n$ becomes part of the input at step $n+1$. Different selection rules therefore create different future inputs and, in turn, different internal computations. For a fixed input, however, the forward pass is unchanged by the rule we will use to select its next token.
 
 ## Looking Ahead
 

@@ -1,6 +1,6 @@
 ---
 title: "Multimodal Mechanistic Interpretability"
-description: "Extending mechanistic interpretability beyond text to vision models, multimodal systems, and diffusion models -- what works, what breaks, and what remains unknown."
+description: "How mechanistic interpretability extends beyond text to vision-language and diffusion models, including promising transfers and modality-specific limits."
 order: 6
 prerequisites:
   - title: "Universality Across Models"
@@ -13,9 +13,9 @@ glossary:
 
 ## Beyond Text
 
-Everything we have studied so far -- [SAEs](/topics/sparse-autoencoders/), [transcoders](/topics/transcoders/), [activation patching](/topics/activation-patching/), [attribution graphs](/topics/circuit-tracing/), [crosscoders](/topics/crosscoders/) -- was developed for and applied to language models. But AI systems increasingly process images, video, audio, and combinations of modalities. Does mechanistic interpretability transfer beyond text?
+Everything we have studied so far, [SAEs](/topics/sparse-autoencoders/), [transcoders](/topics/transcoders/), [activation patching](/topics/activation-patching/), [attribution graphs](/topics/circuit-tracing/), [crosscoders](/topics/crosscoders/), was developed for and applied to language models. But AI systems increasingly process images, video, audio, and combinations of modalities. Does mechanistic interpretability transfer beyond text?
 
-The answer, surveyed by Lin et al. (2025), is cautiously optimistic {% cite "lin2025multimodal" %}. Many MI techniques transfer to vision and multimodal models with moderate adjustments. Some even become easier in multimodal settings thanks to shared embedding spaces that provide "free" feature labels. But new challenges arise, and the field is considerably less mature than text-based MI.{% sidenote "The maturity gap is roughly 2-3 years. Text-based MI has canonical examples (IOI circuit, Golden Gate Claude), established evaluation frameworks (SAEBench), and large-scale studies (Scaling Monosemanticity, Biology of an LLM). Multimodal MI has promising early results but no canonical example of a complete circuit in a vision or multimodal model." %}
+The answer, surveyed by Lin et al. (2025), is cautiously optimistic {% cite "lin2025multimodal" %}. Probing, sparse decomposition, patching, and steering can all be adapted beyond text. Shared image–text spaces can also suggest labels for visual features. But those labels remain hypotheses, and multimodal models introduce interfaces and time-dependent computations that language-only methods were not designed to handle.{% sidenote "Compared with text-model interpretability, multimodal work has fewer widely replicated circuit case studies and less settled evaluation practice. It is safer to describe that qualitative gap than to assign it a precise number of years." %}
 
 This article covers three model families: contrastive vision-language models (CLIP), generative vision-language models (VLMs like LLaVA and GPT-4V), and text-to-image diffusion models. For each, we examine what works, what is still early, and what remains unknown.
 
@@ -30,34 +30,34 @@ CLIP (Contrastive Language-Image Pretraining) trains a vision encoder and a text
 
 Why CLIP is particularly exciting for MI:
 
-- The **shared embedding space provides free labeling**. When you extract an SAE feature from CLIP's vision encoder, you can project its direction into the text embedding space to get a natural language description of what the feature represents. No human labeling required.
-- MI techniques from language -- probing, SAEs, steering -- transfer to the vision side with moderate adjustments. The architecture is a vision transformer, which shares the same basic structure as language transformers.
+- The **shared embedding space suggests candidate labels**. Projecting a visual SAE direction toward nearby text embeddings can produce a natural-language hypothesis about the feature. Human inspection and counterexamples are still needed.
+- MI techniques from language, probing, SAEs, steering, transfer to the vision side with moderate adjustments. The architecture is a vision transformer, which shares the same basic structure as language transformers.
 - CLIP is widely used as a backbone for larger multimodal systems, so understanding CLIP's internals has downstream implications.
 
 ### SAEs for CLIP's Vision Transformer
 
 Recent work (2024-2025) applies SAEs to CLIP's vision encoder with encouraging results:
 
-- SAE features in CLIP correspond to recognizable visual concepts: objects, textures, spatial arrangements, and scene types.
-- The "free labeling" advantage works in practice: projecting SAE feature directions into the shared text-image space yields natural language descriptions that match what humans see in the feature's activating images.
-- **10-15% of features are steerable** -- modifying them changes CLIP's output in predictable ways. This parallels the [feature steering](/topics/scaling-monosemanticity/) story from text models: extract features, verify they are monosemantic, demonstrate causal effects via intervention.{% sidenote "The 10-15% steerability rate for CLIP features is comparable to what has been found in text models. Most SAE features are not individually steerable -- either because they participate in larger circuits that resist individual modification, or because their effect on the output is too small to produce measurable behavioral changes." %}
+- SAE features in CLIP can correspond to recognizable visual patterns such as objects, textures, spatial arrangements, and scene types.
+- Text-space projections can yield labels that agree with many highly activating images, making them a useful starting point for evaluation rather than an automatic interpretation.
+- A subset of features can be **steered**: modifying them changes measured outputs in predictable ways on the tested data. This parallels [feature steering](/topics/scaling-monosemanticity/) in text models and supplies causal evidence for a feature's effect, though not a complete semantic account.{% sidenote "Reported steerability rates depend on the model, SAE, intervention strength, and success metric. A feature that fails an individual steering test may have a small effect, participate in a larger circuit, or be poorly captured by the learned dictionary." %}
 
 ### Steering in Vision
 
 Feature steering extends naturally from text to vision:
 
 - Clamping a visual SAE feature steers CLIP's representation, analogous to [Golden Gate Claude](/topics/scaling-monosemanticity/) in the text domain
-- Steerable features can defend against **typographic attacks** -- adversarial text overlaid on images that confuses the model about image content
+- Steerable features can defend against **typographic attacks**, adversarial text overlaid on images that confuses the model about image content
 - Visual steering has been used to steer downstream multimodal LLMs (e.g., LLaVA) by modifying CLIP's visual encoder output before it enters the language model
 
-The broader lesson: the steering paradigm from [representation engineering](/topics/representation-engineering/) is not specific to language. It works wherever the [linear representation hypothesis](/topics/linear-representation-hypothesis/) holds -- and it appears to hold in vision transformers as well.
+These studies suggest that the [representation-control](/topics/representation-control/) paradigm is not specific to language. Whether it works for a particular visual concept remains an empirical question about the model, layer, direction, and intervention.
 
 <details class="pause-and-think">
 <summary>Pause and think: CLIP's free labeling advantage</summary>
 
 CLIP's shared embedding space lets you describe vision features in natural language by projecting SAE directions into text space. What assumptions does this rely on? When might this "free labeling" approach fail?
 
-It relies on the shared embedding space being well-aligned between modalities -- that nearby points in the joint space truly represent the same concept across text and images. For well-trained CLIP models, this works for common concepts. But it may fail for visual features that lack clean textual descriptions (fine textures, spatial relationships, artistic styles) or for features that exist in one modality but not the other. The free labeling is a powerful heuristic, not a guarantee.
+The method assumes that proximity in the joint embedding space reflects the same concept across text and images. It can fail when a visual pattern lacks a clean textual description, when the modalities contain different information, or when the projected direction exploits a correlate. The resulting phrase is a candidate label, not a guarantee.
 
 </details>
 
@@ -71,7 +71,7 @@ MI for VLMs investigates several questions:
 - **Whether causal tracing works** for localizing where visual objects are processed. Activation patching can identify which layers and positions are critical for answering questions about specific objects in an image.
 - **How the model integrates visual and textual information.** Does integration happen through dedicated "bridge" layers, or is it distributed across the entire language model?
 
-The findings so far suggest that VLMs treat visual tokens similarly to text tokens within the language model layers, but integration is distributed rather than concentrated in specific layers. However, most findings are observational rather than causal -- the field has not yet produced a complete circuit analysis of a VLM behavior analogous to the [IOI circuit](/topics/ioi-circuit/) for language.{% sidenote "One challenge for VLM circuit analysis is that the vision encoder and language model were typically trained separately and connected through a small number of adapter layers. The adapter is the critical interface between modalities, but it is often a simple linear projection -- which makes it hard to identify complex integration mechanisms." %}
+Studies of particular VLMs suggest that visual tokens can share pathways with text tokens inside the language model, while integration may be distributed across layers. The result is architecture-dependent: some systems use a small adapter, while others fuse modalities differently. Most available findings localize representations or effects rather than tracing an end-to-end circuit analogous to the [IOI circuit](/topics/ioi-circuit/).{% sidenote "When a separately trained vision encoder feeds an adapter into a language model, the adapter is an obvious interface to inspect. A simple adapter does not imply simple integration, however; later attention and MLP layers can transform and combine the imported visual information." %}
 
 ## Diffusion Model Interpretability
 
@@ -86,13 +86,13 @@ Circuit analysis of diffusion models reveals that different attention heads serv
 - **Semantic understanding heads** that encode high-level object categories
 - **Composition heads** that manage spatial relationships between objects
 
-Ablation experiments show that removing critical bottleneck layers causes 25-128% performance degradation, confirming that these functional specializations are causally important for image quality.
+Ablation experiments can test whether these components matter for a chosen image-quality or task metric. Large drops after removing a bottleneck provide causal evidence for that component's role, but the interpretation depends on the baseline, metric, and severity of the intervention.
 
 ### The Temporal Dimension
 
 Diffusion models introduce a dimension absent from language models: *time*. In a language model, information flows through layers (a spatial dimension within the network). In a diffusion model, it also flows through denoising steps (a temporal dimension).
 
-The temporal evolution of concepts follows a consistent pattern:
+A common, but not universal, coarse-to-fine pattern is:
 
 - **Early timesteps:** Features correspond to coarse layout, color palette, and scene composition
 - **Middle timesteps:** Features correspond to object boundaries and spatial relationships
@@ -102,7 +102,7 @@ SAEs applied to diffusion models show how concepts become more refined as denois
 
 ### SAEs for Diffusion Models
 
-Applying SAEs to diffusion model activations reveals feature directions that correspond to structured image regions independent of high-level semantics. The concept of a "diffusion steering lens" -- extending the logit lens concept to vision transformers within diffusion models -- allows researchers to observe how the model's internal predictions change across denoising steps, analogous to how the [logit lens](/topics/logit-lens-and-tuned-lens/) reveals prediction evolution across layers in language models.
+Applying SAEs to diffusion model activations reveals feature directions that correspond to structured image regions independent of high-level semantics. The concept of a "diffusion steering lens", extending the logit lens concept to vision transformers within diffusion models, allows researchers to observe how the model's internal predictions change across denoising steps, analogous to how the [logit lens](/topics/logit-lens-and-tuned-lens/) reveals prediction evolution across layers in language models.
 
 <details class="pause-and-think">
 <summary>Pause and think: What model architectures need new MI methods?</summary>
@@ -113,27 +113,27 @@ What other model architectures might require fundamentally new MI approaches? Co
 
 </details>
 
-## An Honest Assessment
+## What the Evidence Supports So Far
 
 The state of multimodal MI can be summarized concisely:
 
-**What works:**
-- SAEs transfer well to vision encoders, especially CLIP
-- Probing and activation patching extend to multimodal settings
-- Feature steering works across modalities wherever the linear representation hypothesis holds
+**What has been demonstrated:**
+- SAEs can learn interpretable candidate features in tested vision encoders, including CLIP
+- Probing and activation patching can be applied at multimodal activation sites
+- Selected feature interventions change measured outputs in some vision and multimodal models
 
 **What is still early:**
-- VLM integration mechanisms are poorly understood -- we know visual and textual information are combined, but not exactly how
-- Diffusion circuit analysis is nascent -- functional specialization has been identified, but complete circuits have not been traced
-- There is no multimodal equivalent of the IOI circuit -- no canonical, deeply analyzed example yet
+- For vision-language models, current studies localize some integration effects but do not yet provide broad end-to-end mechanisms
+- Diffusion studies identify functional specialization, with relatively few replicated circuit accounts
+- The field lacks a canonical multimodal case study with the depth of intervention and evaluation found in the IOI literature
 
 **The gap:**
-- Multimodal MI is largely observational. Causal analysis lags behind the language model field by 2-3 years. Most results describe what features exist or what correlations hold, without the rigorous causal validation that characterizes the best text-based MI work.{% sidenote "The observational-to-causal gap is a recurring theme in MI's expansion. Each new domain starts with observational findings ('these features exist'), progresses to causal verification ('these features matter'), and eventually produces circuit-level understanding ('here is how the features connect'). Language MI has reached the third stage for some behaviors. Multimodal MI is still transitioning from the first to the second." %}
+- Much multimodal MI remains observational. Causal studies exist, but there are fewer end-to-end, replicated circuit accounts than in language-model work.{% sidenote "A field need not advance in a fixed sequence from observation to intervention to circuits. Still, separating those evidence types helps: a labeled feature, a causal effect, and an end-to-end mechanism answer different questions." %}
 
 ## Key Takeaways
 
-- **CLIP interpretability** benefits from the shared text-image embedding space, which provides free labeling for visual SAE features. SAEs for CLIP find interpretable visual concepts, and 10-15% of features are steerable.
+- **CLIP interpretability** benefits from a shared text–image space, which can propose labels for visual SAE features. Some learned features also respond predictably to steering interventions.
 - **VLM interpretability** is early-stage. Visual tokens are processed similarly to text tokens, but integration mechanisms between modalities are not yet well understood.
-- **Diffusion model interpretability** reveals functionally distinct attention mechanisms and temporal concept evolution across denoising steps -- a dimension absent from language model analysis.
+- **Diffusion model interpretability** reveals functionally distinct attention mechanisms and temporal concept evolution across denoising steps, a dimension absent from language model analysis.
 - The field is expanding from single-model, single-modality analysis to cross-model, cross-modal investigation. The toolkit (SAEs, patching, steering) transfers, but each new modality introduces new challenges.
 - **Persistent challenges:** no canonical multimodal circuit example, causal analysis lags behind observational findings, and the temporal dimension of diffusion models requires new methods.

@@ -25,9 +25,9 @@ There are three types of composition, depending on whether the layer 1 output is
 
 ## V-Composition
 
-> **V-Composition:** V-composition occurs when a layer 2 head reads the *value output* of a layer 1 head. The combined effect on the residual stream is the matrix product of their OV circuits: $W_{OV}^{h_2} W_{OV}^{h_1}$.
+> **V-Composition:** V-composition occurs when a layer 2 head reads the output of a layer 1 head through its value pathway. With the row-vector convention used here, the composed transformation is $W_{OV}^{h_1} W_{OV}^{h_2}$.
 
-In V-composition, head $h_1$ in an earlier layer moves information from source tokens, transforming it through its OV circuit. Head $h_2$ in a later layer then further transforms and re-routes that information through its own OV circuit. The composed OV circuit is the matrix product $W_{OV}^{h_2} W_{OV}^{h_1}$.{% sidenote "The matrix product of two low-rank matrices is itself low-rank. If each OV circuit has rank at most $d_k$, their composition has rank at most $d_k$ as well. This means composed circuits still operate in a constrained subspace, which limits the information they can process but also makes them more tractable to analyze." %}
+In V-composition, head $h_1$ in an earlier layer moves information from source tokens through $W_{OV}^{h_1}$. Head $h_2$ later reads and transforms part of that update through $W_{OV}^{h_2}$, giving $\mathbf{x}W_{OV}^{h_1}W_{OV}^{h_2}$.{% sidenote "The product of two low-rank matrices is also low-rank. If each OV circuit has rank at most $d_k$, their composition has rank at most $d_k$ as well. This constrains the subspace through which the heads can communicate." %}
 
 In plain terms: head $h_1$ copies some information to the residual stream, and head $h_2$ picks up that information, transforms it again, and writes the result somewhere else. The two heads form a pipeline.
 
@@ -57,20 +57,20 @@ Where K-composition changes what positions "advertise" about themselves, Q-compo
 The figure above connects head pairs with "significant composition, measured by the Frobenius norm of the relevant weight matrix products." How do we actually compute this? Elhage et al. define three **composition scores** that quantify how much one head's output can affect another head's computation {% cite "elhage2021mathematical" %}:
 
 $$
-\text{K-comp}(h_1, h_2) = \frac{\|W_{OV}^{h_1} \cdot W_{QK}^{h_2}\|_F}{\|W_{OV}^{h_1}\|_F \cdot \|W_{QK}^{h_2}\|_F}
+\text{K-comp}(h_1, h_2) = \frac{\|W_{OV}^{h_1} \cdot W_{QK}^{h_2 \top}\|_F}{\|W_{OV}^{h_1}\|_F \cdot \|W_{QK}^{h_2 \top}\|_F}
 $$
 
 $$
-\text{Q-comp}(h_1, h_2) = \frac{\|W_{OV}^{h_1} \cdot W_{QK}^{h_2 \top}\|_F}{\|W_{OV}^{h_1}\|_F \cdot \|W_{QK}^{h_2 \top}\|_F}
+\text{Q-comp}(h_1, h_2) = \frac{\|W_{OV}^{h_1} \cdot W_{QK}^{h_2}\|_F}{\|W_{OV}^{h_1}\|_F \cdot \|W_{QK}^{h_2}\|_F}
 $$
 
 $$
-\text{V-comp}(h_1, h_2) = \frac{\|W_{OV}^{h_2} \cdot W_{OV}^{h_1}\|_F}{\|W_{OV}^{h_2}\|_F \cdot \|W_{OV}^{h_1}\|_F}
+\text{V-comp}(h_1, h_2) = \frac{\|W_{OV}^{h_1} \cdot W_{OV}^{h_2}\|_F}{\|W_{OV}^{h_1}\|_F \cdot \|W_{OV}^{h_2}\|_F}
 $$
 
 Each score measures the Frobenius norm of the composed weight matrix, normalized by the norms of the individual matrices. The normalization ensures the score lies between 0 and 1: a score of 0 means the two matrices are "orthogonal" (the output of $h_1$ falls entirely in the null space of $h_2$'s reading matrix), while a score of 1 means perfect alignment.{% sidenote "Without normalization, larger heads would have higher composition scores simply because their weight matrices have larger norms, not because they compose more. The normalization converts the score from 'how much composition happens' to 'what fraction of the available capacity is used for composition.'" %}
 
-These are purely **weight-based** measures. You can compute them from the model's parameters alone, with no data required. This is both their strength and their limitation. A high composition score means head $h_1$'s output subspace aligns well with head $h_2$'s input subspace, so composition *could* happen. But it does not guarantee that composition *does* happen on real inputs. The heads might have the capacity to compose, yet the attention patterns on natural text might never route information through that pathway. Conversely, a low score reliably rules out composition: if the subspaces are misaligned, no input can make the heads interact.
+These are purely **weight-based** measures. A high score indicates alignment between an output subspace of $h_1$ and an input pathway of $h_2$, so the corresponding interaction has capacity to be large. It does not show that real inputs activate or route information through that path. A very small score bounds that particular normalized matrix product, but the heads may still interact through other pathways or participate in a larger circuit.
 
 Composition scores complement the activation-based intervention methods covered later in the course ([activation patching](/topics/activation-patching/), [path patching](/topics/activation-patching/#path-patching)). Weight-based scores are cheap to compute and give a bird's-eye view of which head pairs *can* interact. Activation-based methods are more expensive but confirm which interactions actually *occur* on specific inputs.
 
@@ -91,7 +91,7 @@ Consider the induction head example: a "previous token" head writes information 
 
 ## The Two-Layer Expansion
 
-For a two-layer model, the full output expands into three classes of terms:
+For a simplified attention-only decomposition, and treating the input-dependent attention patterns as fixed for a forward pass, the output can be grouped into three classes of paths:
 
 $$
 T = \underbrace{\text{direct path}}_{\text{Embed}(\mathbf{x})} + \underbrace{\sum_h \text{single-head terms}}_{\text{each head acting alone}} + \underbrace{\sum_{h_1, h_2} \text{composition terms}}_{\text{pairs of heads interacting}}
@@ -99,19 +99,19 @@ $$
 
 The direct path is the token embedding passing straight through to the output. The single-head terms are each head's independent contribution. The composition terms are the new ingredient that multi-layer transformers add: they capture the interactions between pairs of heads across layers.
 
-The composition terms are what make multi-layer transformers more powerful than single-layer ones. A one-layer transformer can only compute functions of the original token embeddings. A two-layer transformer can compute functions of *functions* of the embeddings, because later heads read the outputs of earlier heads.
+Composition gives later heads access to representations computed by earlier heads. A one-layer attention block forms its queries, keys, and values from the initial residual state; a later block can form them from a contextually updated state. This extra depth enables conditional routing patterns unavailable to the corresponding one-layer architecture.
 
 ## Combinatorial Richness
 
-The number of possible two-head compositions grows rapidly with model size. Consider a model with $H$ heads per layer and $L$ layers. Each pair of heads where the first is in an earlier layer than the second can form a virtual head. With 12 heads per layer and 12 layers, there are thousands of possible pairwise compositions.{% sidenote "For a model with 12 heads and 12 layers, the number of virtual two-head pairs is $12 \\times 12 \\times \\binom{12}{2} = 9{,}504$. And this only counts two-head compositions. Three-head chains, four-head chains, and longer compositions add even more potential virtual circuits. The combinatorial explosion means the model's computational capacity far exceeds what individual heads suggest." %}
+The number of candidate two-head paths grows rapidly with model size. With $H$ heads in each of $L$ layers, there are $H^2\binom{L}{2}$ ordered pairs whose first head is in an earlier layer. For 12 heads and 12 layers, that is 9,504 candidates.{% sidenote "This count measures possible pairings, not active circuits. Most pairs may have weak weight alignment, negligible activation, or no relevance to the behavior under study. Longer paths increase the search space further." %}
 
-This combinatorial explosion means multi-layer transformers have far richer computational capacity than their parameter count alone suggests. The parameters define individual heads, but the *space of possible behaviors* includes all compositions of those heads. Understanding a model therefore requires understanding not just what each head does individually, but how heads compose to create emergent behaviors.
+The count explains a practical search problem: characterizing heads one at a time leaves thousands of possible cross-layer interactions untested. Circuit analysis therefore asks which candidate compositions are active and behaviorally relevant, rather than assuming every possible pair matters.
 
 This is both the promise and the challenge of mechanistic interpretability. The mathematical framework gives us the tools to analyze individual heads and their circuits. But the search problem of finding which compositions matter for any given behavior remains the central difficulty of the field.
 
 ## TransformerLens Vocabulary
 
-When reading mechanistic interpretability research, you will encounter a standard set of naming conventions from **TransformerLens**, the Python library most widely used for MI research (developed by Neel Nanda). We cover TransformerLens in depth in a [dedicated article](/topics/transformerlens/), but the vocabulary appears in virtually every paper and blog post in the field, so we introduce the key conventions here.
+Many mechanistic-interpretability tutorials and codebases use naming conventions from **TransformerLens**, developed by Neel Nanda. We cover the library in a [dedicated article](/topics/transformerlens/); the short reference here will make later code examples easier to read.
 
 Weight matrices follow a consistent naming pattern:
 
@@ -143,6 +143,6 @@ The mathematical framework tells us that every attention head has two independen
 
 ## Looking Ahead
 
-The tools developed across this block form a complete framework for analyzing transformers. The [attention mechanism](/topics/attention-mechanism/) describes how individual components work. The [QK/OV circuit decomposition](/topics/qk-ov-circuits/) reveals the two independent functions of each attention head. Composition explains how multi-layer models build capabilities that transcend individual heads.
+The tools developed across this block give us a first framework for analyzing transformers. The [attention mechanism](/topics/attention-mechanism/) describes how information moves, the [QK/OV circuit decomposition](/topics/qk-ov-circuits/) separates an attention head's routing and writing operations, and composition shows how those operations interact across layers.
 
 But a key question remains: what are the right *units of analysis*? We have decomposed the model into attention heads. Yet individual neurons do not always correspond to single interpretable concepts. A single neuron may respond to multiple unrelated inputs, a phenomenon known as *polysemanticity*. Understanding why this happens and what the right units of analysis actually are leads to the [superposition hypothesis](/topics/superposition/) and the broader foundations of mechanistic interpretability.

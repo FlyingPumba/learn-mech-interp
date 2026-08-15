@@ -1,6 +1,6 @@
 ---
 title: "TransformerLens"
-description: "The standard Python library for mechanistic interpretability research -- its history, design philosophy, core abstractions, and practical usage."
+description: "A practical guide to TransformerLens: named hook points, activation caches, weight access, interventions, and the tradeoffs of reimplementing model architectures."
 order: 1
 prerequisites:
   - title: "What is Interpretability?"
@@ -23,15 +23,15 @@ Mechanistic interpretability requires more than a standard deep learning framewo
 
 ## History
 
-TransformerLens was created by **Neel Nanda** in 2022, originally under the name **EasyTransformer**. At the time, there was no straightforward open-source way to dig into model internals and reverse-engineer learned algorithms. EasyTransformer provided a single, consistent interface for loading transformer models and accessing their internals. The library was later renamed to **TransformerLens** to better reflect its purpose: a lens for looking inside transformers. It is now maintained by Bryce Meyer and the open-source community, and supports over 50 model architectures.
+TransformerLens was created by **Neel Nanda** in 2022, originally under the name **EasyTransformer**. It provided a consistent interface for loading transformer models and exposing computations that ordinary inference APIs hide. The project was later renamed **TransformerLens** and is maintained as an open-source library.
 
-TransformerLens became the de facto standard for MI research. The naming conventions it introduced (`blocks.0.attn.W_Q`, `hook_resid_pre`, etc.) appear in virtually every mechanistic interpretability paper and blog post. Understanding TransformerLens vocabulary is, in practice, a prerequisite for reading the MI literature.
+TransformerLens is widely used in mechanistic-interpretability tutorials and research code. Names such as `hook_resid_pre` and `blocks.0.attn.W_Q` recur often enough that learning the vocabulary makes many implementations easier to read, though other libraries expose models through different abstractions.
 
 ## Design Philosophy
 
 TransformerLens reimplements transformer architectures from scratch rather than wrapping HuggingFace models directly. This is a deliberate choice with important tradeoffs.
 
-**Why reimplement?** Standard HuggingFace implementations are optimized for inference speed, not interpretability. They fuse operations, use efficient attention kernels, and do not expose intermediate computations. TransformerLens separates every step: the query, key, and value projections are distinct; the attention pattern computation is separate from the value-weighted sum; the residual stream before and after each component is accessible. Every intermediate result gets a named **HookPoint** where you can read or modify the activation.{% sidenote "This reimplementation means TransformerLens loads pretrained weights from HuggingFace but runs them through its own forward pass. The outputs should be numerically identical (up to floating-point precision), but the internal computation graph is structured differently. Occasionally small numerical discrepancies arise from differences in operation ordering or precision handling." %}
+**Why reimplement?** Production-oriented model implementations often fuse operations or hide intermediate values. TransformerLens separates the query, key, and value projections; the attention pattern; the value-weighted sum; and the residual stream around each component. Named **HookPoints** let you read or modify these activations.{% sidenote "TransformerLens converts pretrained weights into its own forward pass. Researchers should check output agreement with the reference implementation for the exact model, precision, and configuration they use; operation ordering and unsupported details can create discrepancies." %}
 
 **The tradeoff.** Every new model architecture must be manually added to TransformerLens. When Meta releases a new Llama variant or Google releases a new Gemma version, someone needs to write the conversion code. This creates a lag between model release and TransformerLens support, and limits coverage to architectures that the community has prioritized. We will see in the [next article](/topics/nnsight-and-nnterp/) how nnsight and nnterp take a different approach to this problem.
 
@@ -122,7 +122,7 @@ TransformerLens supports a wide range of transformer language models, with pretr
 - **Llama 2/3**: Meta's open models. Larger and more capable, useful for testing whether findings from small models generalize.
 - **GPT-Neo / GPT-J / GPT-NeoX**: EleutherAI models of various sizes.
 
-The full list includes over 50 architectures. For each, TransformerLens handles the conversion from HuggingFace checkpoint format to its own internal representation.
+Model coverage changes as architectures are added. Before planning an experiment, check the library's current supported-model list and verify that the relevant architectural details survive conversion.
 
 <details class="pause-and-think">
 <summary>Pause and think: Cache vs. hooks</summary>
@@ -149,17 +149,17 @@ print(model.to_string(predicted_token))  # " Paris"
 pattern = cache["blocks.11.attn.hook_pattern"][0, :, -1, :]  # all heads, last position
 ```
 
-From this starting point, you can trace how the prediction "Paris" was constructed: which heads moved information from "Eiffel" to the final position, which MLP layers boosted the "Paris" logit, and what the residual stream looked like at each layer. This is the [direct logit attribution](/topics/direct-logit-attribution/) and [logit lens](/topics/logit-lens-and-tuned-lens/) workflow that we studied in earlier articles.
+From this starting point, you can investigate how the “Paris” prediction developed: which heads routed relevant information, which MLP outputs directly supported the logit, and how intermediate residual states decoded under a chosen lens. Combining these observations with interventions is the [direct logit attribution](/topics/direct-logit-attribution/) and [logit lens](/topics/logit-lens-and-tuned-lens/) workflow from earlier articles.
 
 <details class="pause-and-think">
 <summary>Pause and think: Limitations of reimplementation</summary>
 
-TransformerLens reimplements models from scratch rather than wrapping HuggingFace directly. What problems might this cause? Consider: (1) a researcher finds an interesting behavior in a TransformerLens model -- how confident can they be it also occurs in the original HuggingFace model? (2) a new model architecture is released -- how quickly can researchers study it? These are real tradeoffs. The [next article](/topics/nnsight-and-nnterp/) covers tools that take a different approach.
+TransformerLens reimplements models from scratch rather than wrapping HuggingFace directly. What problems might this cause? Consider: (1) a researcher finds an interesting behavior in a TransformerLens model, how confident can they be it also occurs in the original HuggingFace model? (2) a new model architecture is released, how quickly can researchers study it? These are real tradeoffs. The [next article](/topics/nnsight-and-nnterp/) covers tools that take a different approach.
 
 </details>
 
 ## Looking Ahead
 
-TransformerLens made MI research accessible by providing the right abstractions: HookPoints for named access to every intermediate computation, caches for exploratory analysis, and hooks for causal intervention. Its naming conventions became the shared language of the field.
+TransformerLens lowers the engineering cost of MI experiments through named HookPoints, activation caches, and intervention hooks. Its conventions also provide a common vocabulary across many tutorials and codebases.
 
 But the reimplementation approach has limits. New architectures require manual porting, and the gap between TransformerLens's internal representation and the original model weights can occasionally matter. The [next article](/topics/nnsight-and-nnterp/) introduces nnsight and nnterp, which take a complementary approach: working directly with HuggingFace models while providing standardized access to their internals.

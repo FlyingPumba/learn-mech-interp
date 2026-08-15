@@ -1,6 +1,6 @@
 ---
 title: "MLPs in Transformers"
-description: "How feed-forward layers work as key-value memories that store factual knowledge, promote interpretable concepts in vocabulary space, and orchestrate a multi-stage pipeline for factual recall."
+description: "How transformer MLPs transform each token position, why neurons can resemble key–value memories, and what causal studies reveal about factual recall."
 order: 4
 prerequisites:
   - title: "The Attention Mechanism"
@@ -19,7 +19,7 @@ Every transformer layer has two components. [Attention](/topics/attention-mechan
 
 MLPs hold roughly two-thirds of a transformer's parameters, yet for years their function remained opaque. While attention heads have interpretable structure (queries match keys, values get copied), the MLP is just a matrix multiply, a nonlinearity, and another matrix multiply. What could it possibly be doing with all those parameters?
 
-A series of results from 2020 to 2023 changed this. We now have a coherent mechanistic picture of what MLPs do, built from three increasingly detailed levels of analysis.
+Several studies offer useful, partially overlapping views of MLPs: as banks of input–output associations, as contributors to vocabulary predictions, and as parts of larger factual-recall circuits. None makes individual neurons a universally reliable unit of explanation, but together they give us hypotheses we can test.
 
 ## The MLP Equation
 
@@ -53,7 +53,7 @@ where $\mathbf{k}_i$ is the $i$-th column of $W_{\text{in}}$ (the "key" for neur
 
 > **Key-Value Memory (MLP):** Each of the $d_m$ neurons in an MLP layer acts as a key-value pair. The key $\mathbf{k}_i$ (a column of $W_{\text{in}}$) computes a match score with the input via a dot product. If the match passes the nonlinearity, the value $\mathbf{v}_i$ (a row of $W_{\text{out}}$) is added to the output, scaled by the activation strength. The MLP output is a weighted sum of value vectors from all active neurons.
 
-This is not a metaphor. The computation is *structurally identical* to a soft key-value lookup: the input is matched against a bank of keys, and the corresponding values are retrieved and combined. The nonlinearity $\sigma$ acts as a soft gate, determining which key-value pairs are active for a given input.
+The algebra has the form of a soft key-value lookup: the input is matched against a bank of vectors, and the corresponding output vectors are combined. Calling these vectors “memories” is an interpretation of that structure, not proof that each neuron stores one discrete fact. The nonlinearity $\sigma$ acts as a gate that changes how strongly each pair contributes.
 
 <figure>
   <img src="/topics/mlps-in-transformers/images/ffn_key_value_memory.png" alt="Diagram of a feed-forward layer as key-value memory. The input vector is multiplied by key vectors k_1 through k_dm to produce memory coefficients, and the output is a weighted sum of value vectors v_1 through v_dm. Example trigger inputs for individual keys are shown, such as 'it will take a' and 'every once in a'.">
@@ -94,22 +94,22 @@ $$
 \Delta \text{logits}_i = \sigma(\mathbf{k}_i \cdot \mathbf{x}) \; \mathbf{v}_i \cdot W_U
 $$
 
-This projection gives us a distribution over the vocabulary for each neuron. We can read off which tokens neuron $i$ promotes (positive logit contribution) and which it suppresses (negative contribution).
+This projection gives a vector of vocabulary-logit effects for each neuron. We can inspect which tokens neuron $i$ directly promotes or suppresses before accounting for later layers and the final normalization.
 
 <figure>
   <img src="/topics/mlps-in-transformers/images/value_vectors_vocab_space.png" alt="Diagram showing how an FFN layer's value vectors promote concepts in vocabulary space. The token representation x receives an additive update (A) from the FFN layer. Before the update, x can be interpreted as a distribution over vocabulary (B, showing words like 'few', 'pancake', 'coffee'). The FFN's update decomposes into sub-updates from value vectors v_1, v_2, ..., v_dm (C), each promoting a concept like breakfast foods (D, showing 'fruit, apples, snack, vitamins, berries, oats, yogurt, tea').">
   <figcaption>How MLP value vectors promote concepts. The token representation (B) receives an additive update (A) from the FFN layer. This update decomposes into sub-updates from individual value vectors (C), each promoting an interpretable concept in vocabulary space (D). From Geva et al., <em>Transformer Feed-Forward Layers Build Predictions by Promoting Concepts in the Vocabulary Space</em>. {%- cite "geva2022concepts" -%}</figcaption>
 </figure>
 
-When Geva et al. examined these projections across a model's neurons, the results were strikingly interpretable {% cite "geva2022concepts" %}. Individual value vectors promote coherent *concepts*, not random tokens. A value vector might promote the cluster {Paris, France, French, European, Seine}, or the cluster {multiply, divide, arithmetic, calculate}. The promoted tokens share a semantic theme that corresponds to the pattern matched by the key.
+Geva et al. found many value-vector projections whose highest-scoring tokens shared a recognizable theme {% cite "geva2022concepts" %}. A vector might promote {Paris, France, French, European, Seine}, or {multiply, divide, arithmetic, calculate}. These examples motivate a concept-promotion interpretation, but not every neuron yields one clean theme, and the projected write is only its direct effect on logits.
 
-This gives us a complete picture of what individual MLP neurons do: the key detects a pattern in the input, and the value promotes a related concept in vocabulary space. The MLP output is a sum of concept-promoting sub-updates:
+This yields a useful two-part description of an MLP neuron: its input weights and nonlinearity determine when it activates, while its output vector determines what it writes. The MLP output decomposes into per-neuron sub-updates:
 
 $$
 \text{MLP}(\mathbf{x}) = \sum_{i=1}^{d_m} m_i \, \mathbf{v}_i
 $$
 
-where $m_i = \sigma(\mathbf{k}_i \cdot \mathbf{x})$ is the activation coefficient for neuron $i$. Each active neuron nudges the residual stream in a direction that promotes its associated concept. The combined effect builds up a prediction through the superposition of many concept-promoting contributions.{% sidenote "This additive structure is why [direct logit attribution](/topics/direct-logit-attribution/) works: because each MLP layer's contribution to the logits decomposes as a sum of per-neuron terms, we can attribute the output to individual neurons. The value-vector projection is simply DLA applied at the sub-MLP-layer granularity." %}
+where $m_i = \sigma(\mathbf{k}_i \cdot \mathbf{x})$ is the activation coefficient for neuron $i$. Each active neuron adds a scaled output direction. Projecting those writes into vocabulary space can suggest what they directly favor, while their downstream causal effects may differ because later components read the combined state.{% sidenote "The additive structure permits direct logit attribution at neuron granularity for a fixed pass. It does not make neurons independent: changing one activation can alter later attention, MLP, and normalization computations." %}
 
 Roughly 68% of MLP outputs represent *compositional* predictions: the resulting top tokens differ from what any single neuron would promote on its own {% cite "geva2021kvmemories" %}. The neurons collaborate. No single neuron encodes "predict Paris." Instead, several neurons promote overlapping aspects (European places, capital cities, French things), and their combined signal converges on "Paris."
 
@@ -121,7 +121,7 @@ If individual MLP neurons promote specific concepts, can we find the neurons res
 
 The results were sharp. Suppressing the top knowledge neurons for a given fact reduced the model's probability of producing the correct answer by 29% on average, while suppressing a random set of neurons of the same size had only a 1.5% effect. Amplifying knowledge neurons boosted the correct probability by 31% {% cite "dai2022knowledge" %}.{% sidenote "The knowledge neurons work studied BERT, an encoder-only model, using its fill-in-the-blank (masked language modeling) task. The findings about specific neurons controlling specific facts have been broadly validated in autoregressive models as well, though the details of which layers and neurons matter differ between architectures." %}
 
-This provides causal evidence that MLP neurons are not just correlated with factual knowledge but are directly involved in producing it. The key-value memory view is not just a useful analogy; specific key-value pairs in the MLP are causally necessary for recalling specific facts.
+These interventions show that the selected neurons participate causally in producing the tested facts. They do not show that a fact lives in one neuron or one layer: correlated neurons, distributed representations, and parallel retrieval paths can all contribute to the same answer.
 
 ## The Factual Recall Pipeline
 

@@ -1,6 +1,6 @@
 ---
 title: "Self-Repair in Language Models"
-description: "When ablating a model component, later components compensate and partially restore the original behavior. Understanding self-repair is essential for correctly interpreting ablation experiments and activation patching results."
+description: "How later components compensate for an ablation, why that can hide a component's causal role, and how to interpret intervention results more carefully."
 order: 4
 prerequisites:
   - title: "Activation Patching and Causal Interventions"
@@ -25,9 +25,9 @@ This is **self-repair**: the phenomenon where ablating a model component trigger
 
 Rushing and Nanda {% cite "rushing2024selfrepair" %} systematically investigated self-repair in GPT-2 Small by ablating individual attention heads and measuring how later layers responded. They identified three sources of compensation, each contributing a different fraction of the observed self-repair.
 
-**LayerNorm rescaling.** When a component's contribution is removed from the residual stream, the magnitude of the stream changes. LayerNorm, which normalizes the stream before each subsequent layer, rescales the remaining contributions. This rescaling mechanically amplifies the surviving signal, recovering some of the lost effect. LayerNorm rescaling is entirely mechanical -- it requires no "intelligent" adjustment by later components, just the standard normalization operation applied to a residual stream that is now missing one additive term. This mechanism alone accounts for a substantial fraction of self-repair, sometimes up to 30% of the ablated effect.{% sidenote "The LayerNorm contribution is worth emphasizing because it is not a learned behavior. It is a side effect of the architecture. Any additive component removed from the residual stream will be partially compensated by LayerNorm rescaling, regardless of what that component computed. This means self-repair is partly baked into the transformer architecture itself." %}
+**LayerNorm rescaling.** Removing a component changes the residual stream's magnitude, so subsequent LayerNorm operations rescale the remaining contributions. This mechanical effect can amplify surviving signals without any learned adjustment by later components. In the reported experiments, it accounts for a substantial fraction of measured self-repair in some settings.{% sidenote "LayerNorm rescaling follows from the architecture, but the direction and size of its effect depend on the removed vector and the remaining residual stream. It should be measured rather than assumed to compensate every ablation." %}
 
-**Backup heads.** Some attention heads are nearly inactive under normal operation but activate when specific primary components are removed. The [IOI circuit](/topics/ioi-circuit/) provides the canonical example: Backup Name Mover Heads have the same functional profile as the primary Name Movers (they attend to name tokens, copy names to output logits, and respond to S-Inhibition signals) but contribute minimally under normal conditions. When primary Name Movers are ablated, the backups increase their contribution, picking up the slack. Backup heads represent a learned redundancy -- the model has trained spare capacity that activates precisely when needed.
+**Backup heads.** Some attention heads contribute little under ordinary IOI prompts but increase their name-copying contribution after primary Name Movers are ablated. This input-dependent response behaves like learned redundancy, although “backup” is a functional description of the intervention result rather than proof that training explicitly created a spare component.
 
 **Unexplained residual.** Even after accounting for LayerNorm rescaling and backup heads, a significant fraction of self-repair remains unexplained. Later MLP layers and attention heads adjust their outputs in ways that partially compensate for the ablation, but the mechanisms driving these adjustments are not yet fully characterized. This is an active area of research.
 
@@ -44,21 +44,21 @@ One hypothesis: self-repair is a byproduct of redundancy that the model develops
 
 Self-repair has direct consequences for how we interpret causal experiments.
 
-**Ablation effects are lower bounds.** When we ablate a head and measure a 30% drop in the logit difference, the head's true contribution is likely higher. Later components have partially compensated. The gap between the measured effect and the true contribution depends on the strength of self-repair for that component, which varies across heads and tasks.
+**Ablation effects can understate a component's normal role.** If later components compensate after a head is removed, a 30% drop in logit difference may be smaller than the head's contribution in the intact run. “True contribution” is not always a single well-defined number when components interact, and out-of-distribution ablations can also create exaggerated effects. The result must be interpreted together with the replacement baseline and evidence for compensation.
 
-**Noising is more affected than denoising.** In the [noising direction](/topics/activation-patching/) (replacing a clean activation with a corrupted one), the model's backup mechanisms are fully operational in the clean run and ready to compensate. In the denoising direction (replacing a corrupted activation with a clean one), the corrupted run may not have the same backup structures activated. This asymmetry means noising experiments are more susceptible to self-repair effects.
+**Noising and denoising answer different counterfactuals.** Replacing a clean activation with a corrupted one can trigger downstream responses that were absent in the intact run. Restoring a clean activation to a corrupted run begins from a different surrounding state and may recruit different pathways. Comparing both directions can reveal this asymmetry; neither direction is universally immune to self-repair.
 
-**Iterated ablation reveals hidden structure.** Standard ablation tests one component at a time, which means backup components remain invisible -- they only activate when the primary is removed. Discovering backup mechanisms requires iterated ablation: first remove the primary component, then search for newly activated components. The number of possible ablation combinations grows combinatorially, so exhaustive search is infeasible. Current circuit analyses likely miss some backup mechanisms.
+**Iterated ablation can reveal hidden structure.** A component that matters only after the primary path is damaged may look unimportant in a one-at-a-time screen. Researchers can remove a primary component and rerun attribution or patching to search for newly important backups. The number of combinations grows quickly, so this procedure improves coverage without making it exhaustive.
 
-**Mean and resample ablation reduce confounds.** Zero ablation is particularly susceptible to self-repair artifacts because it pushes the residual stream far from its natural distribution, potentially triggering abnormal compensatory responses from downstream components. [Mean ablation and resample ablation](/topics/activation-patching/) keep the residual stream closer to its training distribution, reducing (but not eliminating) the self-repair confound.{% sidenote "Resample ablation, where the component's activation is replaced with the value from a random different input, is used in causal scrubbing and offers the cleanest baseline: it preserves the full distribution of the component's activations while removing the input-specific signal. The tradeoff is computational cost, since stable estimates require multiple resampling draws." %}
+**Mean and resample ablation change the confounds.** Zero ablation may create an unusual activation. [Mean ablation and resample ablation](/topics/activation-patching/) use values drawn from, or summarized over, the observed distribution and can reduce that problem. They introduce their own counterfactual assumptions, however: a resampled value may be plausible marginally while inconsistent with the rest of the current input.{% sidenote "Resample ablation replaces the component with a value from another input. Multiple draws can estimate sensitivity to the replacement, but no baseline is automatically the correct one. The right choice depends on which information the intervention is meant to remove while preserving other structure." %}
 
 ## The Hydra Effect
 
 McGrath et al. {% cite "mcgrath2023hydra" %} named the phenomenon after the mythological Hydra: cut off one head and two grow back. The name captures an important aspect of self-repair that goes beyond simple compensation.
 
-In some cases, ablating a component does not just trigger partial compensation -- it triggers *reorganization* of the downstream computation. Later layers may route information through different pathways than they normally use, effectively implementing an alternative algorithm for the same task. The output looks similar, but the internal mechanism has changed.
+In some cases, ablating a component does more than trigger a larger write from an existing backup. Downstream attribution can shift toward different components, which is consistent with reorganization of the computation. The output may remain similar even though the measured internal pathway has changed.
 
-This is troubling for circuit analysis. If ablating component A causes the model to route through an alternative pathway involving components B, C, and D, then our ablation experiment tells us that A is "not important" -- but only because the model found a workaround. The circuit we identify by ablation (B, C, D) may differ from the circuit the model actually uses (A, with B, C, D as dormant backups).
+Suppose ablating component A shifts the effect toward components B, C, and D. A small behavioral change would not show that A was unimportant in the intact run; it would show that the intervened network can preserve the behavior. Mapping both the intact and intervened computations helps separate the primary pathway from recruited backups.
 
 ## Partial Mitigations
 
@@ -68,7 +68,7 @@ No current technique fully solves the self-repair problem, but several approache
 
 **Compare multiple ablation baselines.** If zero ablation, mean ablation, and resample ablation all agree on a component's importance, the result is more robust. If they disagree, the difference may indicate self-repair artifacts.
 
-**Treat effects as lower bounds.** When reporting ablation results, acknowledge that the measured effect understates the true contribution. Avoid claims like "head X accounts for exactly 30% of the behavior." Instead, "ablating head X reduces the logit difference by 30%, which is a lower bound on its contribution."
+**Report the intervention, not an intrinsic percentage.** Avoid “head X accounts for exactly 30% of the behavior.” Say “under this replacement baseline, ablating head X reduces the logit difference by 30%,” then report any evidence that downstream components compensated.
 
 **Look for backup mechanisms explicitly.** After identifying primary circuit components, ablate them and re-run attribution methods on the remaining model to search for backup components that activate only when the primaries are removed.
 

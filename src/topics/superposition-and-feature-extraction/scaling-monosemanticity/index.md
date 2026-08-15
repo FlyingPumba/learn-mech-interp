@@ -1,6 +1,6 @@
 ---
 title: "Scaling Monosemanticity and Feature Steering"
-description: "How scaling sparse autoencoders to millions of features revealed multilingual, multimodal, and abstract concepts -- and how clamping these features enables steering model behavior."
+description: "How scaling sparse autoencoders to millions of features revealed multilingual, multimodal, and abstract concepts, and how clamping these features enables steering model behavior."
 order: 3
 prerequisites:
   - title: "Feature Dashboards and Automated Interpretability"
@@ -17,7 +17,7 @@ glossary:
 
 The first sparse autoencoders extracted 4,096 interpretable features from a one-layer transformer with 512 neurons {% cite "bricken2023monosemanticity" %}. That result was encouraging but raised an obvious question: does this approach scale? A one-layer transformer is orders of magnitude smaller than the models used in production. If SAEs only work on toy systems, they are an interesting curiosity but not a practical tool for understanding the models that matter.
 
-Templeton et al. (2024) answered this question decisively {% cite "templeton2024scaling" %}. They trained sparse autoencoders on the middle-layer residual stream of Claude 3 Sonnet, a production-scale language model, and extracted 34 million latent features. After training, approximately 12 million of those features were alive (the rest were dead features that never activated).{% sidenote "Dead features are latent dimensions that never activate on any training input. They represent wasted dictionary capacity. In the 34-million-feature SAE, roughly 65% of features were dead. Mitigations exist, such as auxiliary loss terms that penalize inactivity, but dead features remain a significant issue in all SAE variants." %}
+Templeton et al. (2024) showed that the training recipe could be applied at a much larger scale {% cite "templeton2024scaling" %}. They trained sparse autoencoders on a middle-layer residual stream of Claude 3 Sonnet with dictionaries as large as 34 million latents. Approximately 12 million latents were active under the study's measurement procedure.{% sidenote "A 'dead' latent does not activate over the sample used to assess it. Dead-latent rates depend on the architecture, initialization, optimizer, training data, and threshold, so the rate from this SAE should not be generalized to every variant." %}
 
 The jump from 4,096 features in a toy model to 34 million features in a frontier model is enormous. That the resulting features are interpretable at this scale is a significant empirical result. It suggests that the dictionary learning approach to decomposing superposition is not limited to simple settings but extends to the regime where interpretability is most needed.
 
@@ -25,32 +25,24 @@ The jump from 4,096 features in a toy model to 34 million features in a frontier
 
 The features discovered at scale have properties that features from smaller models only hinted at. Three properties stand out.
 
-**Features are multilingual.** A single feature fires for the same concept regardless of input language. The now-famous "Golden Gate Bridge" feature activates for English text about the bridge, French descriptions of it, Chinese references, and more. This is not a case of separate per-language features with similar activation patterns. It is one feature that has learned a language-independent concept. The model's internal representation is more abstract than its surface-level input.
+**Some features activate across languages.** The “Golden Gate Bridge” latent responds to relevant examples in several languages. One learned direction therefore tracks a pattern that is not tied to a single language's token forms. The dashboard alone cannot show that the representation is wholly language-independent or that other language-specific bridge features do not coexist.
 
 <figure>
   <img src="images/golden-gate-bridge-feature.png" alt="The Golden Gate Bridge feature dashboard showing activations on English text describing the bridge (left), multilingual activations on Japanese, Korean, and Russian text about the same concept (center), and relevant images of the Golden Gate Bridge that also activate the feature (right).">
   <figcaption>The Golden Gate Bridge feature activates across English descriptions, multiple other languages (Japanese, Korean, Russian), and relevant images. A single learned direction in activation space captures the concept independent of surface form. From Templeton et al., <em>Scaling Monosemanticity</em>. {%- cite "templeton2024scaling" -%}</figcaption>
 </figure>
 
-**Features span modalities.** Some features fire for both natural language and code. A "code bugs" feature activates for written discussions about bugs and for actual buggy code. The model does not maintain separate representations for "talking about code" and "looking at code." It has a unified representation for the underlying concept.
+**Some features span input types.** A “code bugs” latent can activate on prose about bugs and on buggy code. This provides one shared readout across those cases, without ruling out separate representations elsewhere in the model.
 
-**Features range from concrete to abstract.** The SAE dictionary captures features at many levels of specificity. Concrete features like "the Golden Gate Bridge" fire for specific entities. Domain-spanning features like "scientific uncertainty" fire across many different topics that share an abstract property. Features related to "inner conflict" and "deception" represent genuinely abstract concepts that cannot be reduced to surface patterns.
+**Candidate labels range from concrete to abstract.** Some latents admit entity-level labels such as “the Golden Gate Bridge,” while others have activation examples consistent with broader labels such as “scientific uncertainty,” “inner conflict,” or “deception.” The more abstract the label, the more important it is to seek counterexamples and alternative explanations.
 
 > **Feature hierarchies:** SAE features exist at multiple levels of abstraction for the same concept. A specific feature for "the Golden Gate Bridge in San Francisco" coexists with a moderately general feature for "famous bridges," a broader feature for "large human-built structures," and a very general feature for "notable landmarks." The SAE dictionary captures this hierarchy, with different features at different levels of granularity.
 
-These properties collectively suggest that the model has learned genuine conceptual representations, not merely surface-level pattern matching. The fact that a single direction in activation space captures a concept across languages, modalities, and abstraction levels is evidence that the model's internal organization reflects semantic structure.
+Cross-language and cross-modal activation is evidence that some SAE directions track structure beyond a single surface form. It does not separate semantic representation from every correlated pattern, nor show that the direction is the model's unique representation of the concept.
 
-## Scaling Laws for Feature Discovery
+## Dictionary Size and Feature Granularity
 
-Templeton et al. found that feature quality scales predictably with SAE size {% cite "templeton2024scaling" %}. Larger SAEs (more dictionary elements) produce features that activate more selectively, responding to narrower and more specific concepts. The improvement follows power-law relationships, directly analogous to the neural scaling laws that govern overall model performance.
-
-$$
-\text{Feature specificity} \propto (\text{SAE dictionary size})^{\alpha}
-$$
-
-where $\alpha$ is a positive exponent determined empirically. This scaling relationship has a practical implication: we can predict how large an SAE we need for a given level of feature quality. If we want features that distinguish "the Golden Gate Bridge" from "bridges in general," we need a dictionary large enough that the scaling law predicts sufficient specificity.
-
-The scaling laws also reveal diminishing returns. Early increases in SAE size produce dramatic improvements in feature quality. Later increases yield smaller gains per additional dictionary element. This is the same pattern seen in language model scaling: the first billion parameters matter more than the last billion.
+Templeton et al. compare dictionaries at several scales and report changes in which patterns individual latents isolate {% cite "templeton2024scaling" %}. A larger dictionary has capacity to split a broad activation cluster into narrower latents. That is not a monotonic guarantee of semantic quality: feature splitting can also make a concept less stable across SAE sizes, and proxy reconstruction metrics do not determine which granularity is most useful. The later [evaluation article](/topics/sae-variants-and-evaluation/) develops these tradeoffs.
 
 <details class="pause-and-think">
 <summary>Pause and think: What would you do with 12 million features?</summary>
@@ -71,10 +63,10 @@ Templeton et al. tested this with feature clamping {% cite "templeton2024scaling
 4. Reconstruct the modified activation $\hat{\mathbf{x}}$ using the SAE decoder and continue the forward pass.
 
 $$
-\hat{\mathbf{x}} = \mathbf{W}_{\text{dec}} \cdot \text{clamp}(\mathbf{f}, i, v) + \mathbf{b}_{\text{dec}}
+\hat{\mathbf{x}} = \text{clamp}(\mathbf{f}, i, v) W_{\text{dec}} + \mathbf{b}_{\text{dec}}
 $$
 
-where $\text{clamp}(\mathbf{f}, i, v)$ sets $f_i = v$ and leaves all other features unchanged.{% sidenote "Feature clamping is conceptually similar to activation patching, but operates at the feature level rather than the component level. Where activation patching replaces an entire head or layer output, feature clamping modifies a single interpretable direction in the decomposed representation. This is a finer-grained intervention because SAE features are more specific than heads or layers." %}
+where $\text{clamp}(\mathbf{f}, i, v)$ sets $f_i = v$ and leaves the other SAE latents unchanged.{% sidenote "Feature clamping intervenes in the SAE's coordinates, then substitutes the SAE reconstruction for the original activation. Its effect can include reconstruction error as well as the targeted latent change, so matched reconstruction controls matter." %}
 
 They clamped the "Golden Gate Bridge" feature and asked the model questions on unrelated topics.
 
@@ -83,7 +75,7 @@ They clamped the "Golden Gate Bridge" feature and asked the model questions on u
   <figcaption>Feature clamping steers model behavior in targeted ways. Each row shows a default response (left) and the response after clamping a specific feature to a high value (right). The Golden Gate Bridge feature causes the model to identify as the bridge; other features redirect answers toward their respective concepts. From Templeton et al., <em>Scaling Monosemanticity</em>. {%- cite "templeton2024scaling" -%}</figcaption>
 </figure>
 
-**"What is the meaning of life?"** The model responded with something about how the meaning of life is like the Golden Gate Bridge -- connecting people, spanning distances, standing as a beacon.
+**"What is the meaning of life?"** The model responded with something about how the meaning of life is like the Golden Gate Bridge, connecting people, spanning distances, standing as a beacon.
 
 **"Tell me about yourself."** The model described itself as being deeply connected to the Golden Gate Bridge, expressing admiration for the structure.
 
@@ -91,7 +83,7 @@ Every response referenced the Golden Gate Bridge, regardless of the topic. The m
 
 ## The Causal Significance
 
-Golden Gate Claude is an entertaining demonstration, but the scientific point behind it is serious. Feature clamping establishes a causal relationship between SAE features and model behavior.
+Feature clamping provides causal evidence about a direction represented by an SAE latent: changing that coordinate changes the model's output distribution and generated text.
 
 Consider the progression of evidence:
 
@@ -100,12 +92,12 @@ Consider the progression of evidence:
 
 This is the same observational-to-causal progression that distinguishes activation patching from attention pattern analysis. Activation patterns tell us what exists. Interventions tell us what matters.
 
-Three aspects of the Golden Gate Claude result are particularly important. First, clamping a single feature consistently modified behavior in the expected direction. This means SAE features are not just statistical artifacts but correspond to genuine causal directions in the model's computation. Second, the modification was coherent. The model did not produce random tokens or crash. It incorporated the clamped concept into fluent language. This suggests that SAE features interact cleanly with the rest of the model's processing. Third, the steering was targeted. Clamping the Golden Gate Bridge feature did not produce generic confusion or randomness. It produced specifically Golden-Gate-Bridge-themed content. The feature has a specific semantic meaning, and clamping it has a specific semantic effect.
+Clamping the selected latent repeatedly shifted generations toward Golden-Gate-Bridge content while preserving local fluency. That specificity is evidence that the decoder direction has a causal semantic effect. It does not show that the latent is the model's only bridge representation, that its natural activation is necessary for bridge reasoning, or that similarly clean interventions exist for arbitrary safety concepts.
 
 <details class="pause-and-think">
 <summary>Pause and think: From steering to safety</summary>
 
-Golden Gate Claude was a playful demonstration, but imagine the same technique applied to a safety-relevant feature. If you could identify a "deception" feature and clamp it to zero, would that make the model unable to deceive? What if instead of clamping to zero, you clamped it to a high value -- could you create a model that always deceives? What are the risks and limitations of this approach to controlling model behavior?
+Golden Gate Claude was a playful demonstration, but imagine the same technique applied to a safety-relevant feature. If you could identify a "deception" feature and clamp it to zero, would that make the model unable to deceive? What if instead of clamping to zero, you clamped it to a high value, could you create a model that always deceives? What are the risks and limitations of this approach to controlling model behavior?
 
 </details>
 
@@ -119,22 +111,22 @@ Templeton et al. did not only find features for bridges and code bugs. They also
 
 The existence of these features opens three potential applications, each at a different stage of maturity.
 
-**Monitoring.** If we can identify safety-relevant features reliably, we could track their activations during deployment. Are deception features activating more than expected? Are sycophancy features firing when the model should be pushing back? Feature monitoring could provide a real-time "dashboard" of model behavior that complements traditional behavioral testing.{% sidenote "Feature monitoring for safety is analogous to physiological monitoring in medicine. Rather than waiting for symptoms (behavioral failures), you continuously track vital signs (feature activations). The key question is whether feature activations are reliable vital signs -- whether they are sensitive enough to catch problems and specific enough to avoid false alarms." %}
+**Monitoring.** If we can identify safety-relevant features reliably, we could track their activations during deployment. Are deception features activating more than expected? Are sycophancy features firing when the model should be pushing back? Feature monitoring could provide a real-time "dashboard" of model behavior that complements traditional behavioral testing.{% sidenote "Feature monitoring for safety is analogous to physiological monitoring in medicine. Rather than waiting for symptoms (behavioral failures), you continuously track vital signs (feature activations). The key question is whether feature activations are reliable vital signs, whether they are sensitive enough to catch problems and specific enough to avoid false alarms." %}
 
-**Steering.** If features are causally relevant (as Golden Gate Claude demonstrates), we could amplify safety features or suppress dangerous ones during inference. This would supplement alignment techniques like RLHF with a mechanistic layer of control. Instead of training the model not to be deceptive (behavioral), we could directly suppress the deception feature (mechanistic).
+**Steering.** Golden Gate Claude shows that clamping one bridge-related latent can causally change generated behavior. If a safety-related latent passes similarly careful causal tests, amplifying or suppressing it could supplement training-based controls. A label such as “deception” is not enough: the intervention would need tests for missed cases, side effects, and alternative pathways.
 
-**Auditing.** If features provide a complete and reliable decomposition of model behavior, we could build an "affirmative safety case" -- a positive argument that the model is safe, based on inspecting its internal representations rather than relying solely on the absence of observed failures.
+**Auditing.** If features eventually provide a sufficiently complete and validated decomposition, they could contribute to an “affirmative safety case”: positive evidence about internal mechanisms, rather than only the absence of observed failures.
 
-These are promising directions, not accomplished facts. Critical open questions remain. Can monitoring features actually catch safety failures that behavioral testing misses? We do not know yet. Can feature steering replace or supplement RLHF? Clamping a single feature is crude, and real safety requires nuanced control across many features simultaneously. Is there a path to an affirmative safety case based on feature inspection? This requires features to be complete (capturing everything the model represents) and reliable (consistently firing for the concepts they represent) -- two properties that have not been established.
+These are promising directions, not accomplished facts. Critical open questions remain. Can monitoring features actually catch safety failures that behavioral testing misses? We do not know yet. Can feature steering replace or supplement RLHF? Clamping a single feature is crude, and real safety requires nuanced control across many features simultaneously. Is there a path to an affirmative safety case based on feature inspection? This requires features to be complete (capturing everything the model represents) and reliable (consistently firing for the concepts they represent), two properties that have not been established.
 
 The limitations that apply to SAEs in general apply with special force to safety applications. If SAE features are not unique (different training runs produce different features), which features do we monitor? If features suffer from absorption (where parent features fail to fire for inputs that match child features), monitoring may miss important activations. If interpretability is partly illusory (features look interpretable but are not complete), safety conclusions may be unreliable.
 
 ## From Features to Circuits
 
-The scaling monosemanticity results establish that SAE features are interpretable, causally relevant, and present at scale. But individual features alone are not circuits. Knowing that a "deception" feature exists does not tell us how the model decides to deceive, or what computations produce that decision.
+The scaling results provide many interpretable latents and selected examples with causal steering effects. Individual features are still not circuits. Labeling a “deception” latent does not tell us how the model decides to deceive, whether the latent is necessary, or what computations produce its activation.
 
-To build full mechanistic understanding, we need to trace how features connect -- which features cause which other features, and how information flows through the network at the feature level rather than the head level. This is the domain of attribution graphs and circuit tracing, which build on SAE features as their basic vocabulary.
+To build full mechanistic understanding, we need to trace how features connect, which features cause which other features, and how information flows through the network at the feature level rather than the head level. This is the domain of attribution graphs and circuit tracing, which build on SAE features as their basic vocabulary.
 
 The progression mirrors what we saw with attention heads. First, we identified individual heads (Name Movers, S-Inhibition heads). Then, we traced connections between heads to discover circuits (the IOI circuit). SAE features are at the "identifying individual components" stage. The next step is connecting them into feature-level circuits.
 
-Meanwhile, the SAE architecture itself has room for improvement. The vanilla L1-regularized SAE that produced these results has known biases, and newer architectures address those biases while maintaining the interpretability gains. Those improvements, along with an honest assessment of what SAEs still cannot do, are covered in the [next article on SAE variants and evaluation](/topics/sae-variants-and-evaluation/).
+The SAE architecture itself also has room for improvement. The L1-regularized SAE used in these experiments has known biases, and newer objectives try to reduce them without giving up sparse, labelable latents. The [next article on SAE variants and evaluation](/topics/sae-variants-and-evaluation/) covers those changes and the remaining failure modes.

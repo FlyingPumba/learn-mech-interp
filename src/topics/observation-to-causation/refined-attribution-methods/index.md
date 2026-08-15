@@ -1,6 +1,6 @@
 ---
 title: "Refined Attribution Methods"
-description: "How AtP*, EAP-IG, and EAP-GP fix the failure modes of gradient-based circuit discovery, from attention saturation and effect cancellation to zero-gradient regions."
+description: "How AtP*, EAP-IG, and EAP-GP reduce known failures of gradient-based circuit discovery, including saturated attention and effect cancellation."
 order: 3
 prerequisites:
   - title: "Attribution Patching and Path Patching"
@@ -15,7 +15,7 @@ glossary:
 
 [Attribution patching](/topics/attribution-patching/) approximates the effect of patching each component using a single gradient evaluation. This is fast (two forward passes plus one backward pass for all components) but relies on a linear approximation that can fail in specific, diagnosable ways.
 
-These failures are not random noise. They are *systematic*, caused by specific nonlinearities in the transformer architecture. Understanding them matters because they produce **false negatives**: components or edges that are genuinely important but that gradient methods score as unimportant. A false positive (flagging an unimportant component) wastes time. A false negative (missing an important one) means the discovered circuit is wrong.
+These failures are systematic consequences of nonlinearities and cancellation. They can create **false negatives**: components or edges with large intervention effects but small gradient estimates. A false positive costs follow-up work; a false negative leaves a proposed circuit incomplete.
 
 Three failure modes have been identified in the literature, each addressed by a different refinement.
 
@@ -164,6 +164,6 @@ The practical recommendation is the same as for basic attribution patching: use 
 
 ## Looking Forward
 
-The progression from AtP to AtP\* to EAP-IG to EAP-GP illustrates a recurring pattern in mechanistic interpretability: a simple, scalable method is introduced, its failure modes are characterized, and targeted fixes are developed. Each refinement narrows the gap between the fast approximation and the gold-standard causal experiment.
+The progression from AtP to AtP\* to EAP-IG and EAP-GP illustrates a recurring pattern: introduce a scalable approximation, characterize where it fails, then add targeted corrections. Each refinement narrows the gap between a fast screening score and a direct intervention.
 
-These improved attribution methods feed directly into automated circuit discovery. More faithful edge attributions mean more accurate circuits, which in turn enable more reliable mechanistic claims about how models compute their outputs. For the most complete circuit analysis ever performed using these tools, see [the IOI circuit](/topics/ioi-circuit/).
+These attribution methods support automated circuit discovery by prioritizing edges for further testing. Better screening can improve the resulting circuit, but high-scoring edges still need validation with direct interventions. The [IOI circuit](/topics/ioi-circuit/) provides a detailed example of how attribution and patching can be combined.

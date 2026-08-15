@@ -1,6 +1,6 @@
 ---
 title: "Training Models to Explain Their Computations"
-description: "Fine-tuning language models to generate natural language descriptions of their internal processes, with a key finding: models explain their own computations better than external models can."
+description: "Training language models to describe their own internal computations, and testing whether those self-explanations reveal more than an external observer can recover."
 order: 4
 prerequisites:
   - title: "SelfIE: Self-Interpretation of Embeddings"
@@ -13,7 +13,7 @@ The methods we have seen so far, Patchscopes and SelfIE, rely on prompting to el
 
 But what if models do not naturally explain themselves well? Prompting might produce plausible-sounding descriptions that are not faithful to actual computations. Li et al. {% cite "li2025training" %} investigate a different approach: explicitly *training* models to generate accurate explanations of their internal processes.
 
-> **Trained Self-Explanation:** Fine-tuning language models on datasets of ground-truth explanations derived from interpretability techniques. The goal is to produce models that generate faithful descriptions of their internal features, causal structure, and token influence.
+> **Trained Self-Explanation:** Fine-tuning a language model to reproduce explanation targets derived from existing interpretability methods. The resulting model can amortize those methods, but cannot be more faithful than its targets without independent validation.
 
 ## What Explanations Are Trained
 
@@ -23,13 +23,13 @@ The work focuses on three types of computational explanations:
 
 What do internal features encode? Given an activation pattern, the trained model should describe what concept or property that pattern represents.
 
-For training data, the authors use existing interpretability techniques (like [sparse autoencoder](/topics/sparse-autoencoders/) feature analysis) as ground truth. If an SAE feature has been labeled as "mentions of US presidents," examples where that feature activates become training data for the explanation "This activation represents references to US presidents."
+For training data, the authors use targets from methods such as [sparse-autoencoder](/topics/sparse-autoencoders/) feature analysis. If a latent has been labeled “mentions of US presidents,” its activation examples can supervise that description. The label is inherited evidence, not literal ground truth: any weakness in the original feature analysis enters the training set.
 
 ### Causal Structure
 
 How do components influence each other? Given information about which model components affect which outputs, the trained model should describe these causal relationships.
 
-Techniques like [activation patching](/topics/activation-patching/) and [attribution patching](/topics/attribution-patching/) provide ground truth. If patching attention head 9.1 changes the output from "Paris" to "London," this becomes training data for explaining that "Head 9.1 is responsible for retrieving the city name."
+Techniques like [activation patching](/topics/activation-patching/) and [attribution patching](/topics/attribution-patching/) provide supervision. If patching attention head 9.1 changes “Paris” to “London,” a careful target can say that this replacement changed the city prediction. Saying the head “is responsible for retrieving the city” adds a mechanistic interpretation that the patch alone does not establish.
 
 ### Token Influence
 
@@ -37,15 +37,9 @@ Which input tokens affect the output? Given information about how input tokens c
 
 Methods like gradient-based attribution provide supervision. If the token "French" strongly influences predicting "Paris," this becomes training data for explaining input-output relationships.
 
-## The Key Finding: Self-Explanation Superiority
+## Comparing Self- and External Explanation
 
-The central empirical result is striking:
-
-**Models explain their own computations better than external models can, even when the external model is more capable.**
-
-This runs counter to a natural intuition. If we have a small model $S$ and a large, capable model $M$, we might expect $M$ to provide better explanations of $S$'s behavior. After all, $M$ has more capacity and linguistic sophistication.
-
-But the experiments show otherwise. When fine-tuned for self-explanation, a model produces more accurate descriptions of its own internal states than an external model produces, even when the external model is significantly larger.
+On the study's explanation targets and evaluation metrics, fine-tuned self-explainers outperform the tested external explainers, including some larger models. That is not the result we would get by assuming linguistic sophistication alone determines explanation quality: a larger model $M$ might describe a smaller model $S$ fluently while lacking a well-matched interface to $S$'s internal state. The result is specific to the study's targets and scoring procedure; it does not establish privileged or generally faithful introspective access.
 
 <details class="pause-and-think">
 <summary>Pause and think: Why might self-explanation work better?</summary>
@@ -57,7 +51,7 @@ Several possibilities:
 2. **Privileged access:** The model has direct access to information about its own computations that cannot be fully communicated to an external system.
 3. **Alignment of training:** The same training that produced the internal representations also shapes how the model uses language, creating natural correspondences.
 
-The finding suggests that self-interpretation is not just convenient but may be fundamentally more powerful than external interpretation for certain tasks.
+One hypothesis is that a shared representational basis gives self-explanation an advantage on these tasks. Another is that the self-explainer is better matched to the training labels. Distinguishing those explanations requires evaluations whose targets do not come from the same interpretation pipeline.
 
 </details>
 
@@ -65,7 +59,7 @@ The finding suggests that self-interpretation is not just convenient but may be 
 
 The training pipeline works as follows:
 
-1. **Generate ground-truth explanations.** Run interpretability techniques (SAE analysis, patching, attribution) to produce accurate descriptions of internal computations.
+1. **Generate explanation targets.** Run SAE analysis, patching, or attribution to produce descriptions of internal states and effects.
 
 2. **Create training examples.** Pair internal states or computation patterns with their ground-truth explanations.
 
@@ -73,11 +67,11 @@ The training pipeline works as follows:
 
 4. **Evaluate generalization.** Test on held-out examples to measure whether the trained explainer generalizes beyond its training distribution.
 
-The authors find that explainer models trained on tens of thousands of examples exhibit meaningful generalization to new queries. This suggests that models learn genuine patterns about their own computations, not just memorized associations.
+Explainer models trained on tens of thousands of examples generalize to held-out queries under the study's metrics. This is evidence against simple example memorization, while still leaving open whether the learned pattern is the target method's regularity or the model's underlying mechanism.
 
 ## Faithfulness Considerations
 
-Training for explanation introduces a tension. We want explanations to be faithful (accurately describing actual computations), but training optimizes for matching ground-truth labels. If the labels are imperfect, the model might learn to reproduce those imperfections.
+Training for explanation introduces a tension. We want descriptions to track the actual computation, but the objective rewards matching targets produced by existing interpretation methods. If those targets are imperfect, the trained model can reproduce their mistakes fluently.
 
 The authors address this by:
 - Using multiple independent interpretability techniques as cross-validation

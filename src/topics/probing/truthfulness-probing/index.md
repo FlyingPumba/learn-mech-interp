@@ -1,6 +1,6 @@
 ---
 title: "Truthfulness Probing and the Geometry of Truth"
-description: "How probing techniques reveal that truth and falsehood have linear geometric structure inside language models, from unsupervised truth discovery (CCS) to optimization-free difference-in-means probes, causal validation via intervention, and the probe-then-steer pipeline (ITI) that connects probing to steering."
+description: "Evidence that truth and falsehood occupy structured directions in activation space, from unsupervised discovery to causal tests and truthfulness steering."
 order: 2
 prerequisites:
   - title: "Probing Classifiers"
@@ -17,7 +17,7 @@ glossary:
 
 [Probing classifiers](/topics/probing-classifiers/) detect what information is encoded in model representations. But the most consequential question we can ask a probe is deceptively simple: *does the model know whether what it is saying is true?*
 
-This matters for safety. Language models regularly produce confident falsehoods. If models internally represent truth distinctly from falsehood, we might detect and correct errors before they reach the user. If they do not, the problem of unreliable outputs is even harder than it appears.
+Language models can produce confident falsehoods. If some internal states reliably distinguish true from false statements, they may support monitoring or intervention before an answer reaches the user. The harder question is whether that distinction survives new topics, prompts, models, and adversarial pressure.
 
 This question is sometimes called **Eliciting Latent Knowledge (ELK)**: can we extract what the model "believes" as opposed to what it outputs? The distinction matters because a model might encode accurate information internally while producing an incorrect answer due to surface-level patterns in training data, instruction-following pressures, or sycophantic tendencies.
 
@@ -54,7 +54,7 @@ Burns et al. found that CCS performs comparably to supervised probes across mult
 
 Where CCS uses an optimization-based approach, Marks and Tegmark {% cite "marks2023geometry" %} took a more direct geometric route. They asked: what does the structure of truth look like in activation space?
 
-The answer is strikingly clean. When true and false statements are projected via PCA onto their top two principal components, they separate along a single direction:
+In the reported datasets, projecting representations onto their top principal components reveals a visible true–false separation:
 
 <figure>
   <img src="images/truth_pca.png" alt="PCA visualizations of residual stream activations at layer 13 of LLaMA-13B for four datasets (cities, larger_than, Spanish-English translation, cities with conjunction). In each dataset, true statements (blue) and false statements (red) separate cleanly along the first principal component.">
@@ -65,7 +65,7 @@ This is consistent with the [linear representation hypothesis](/topics/linear-re
 
 ### Difference-in-Means Probes
 
-The linear structure enables an remarkably simple probing method. Instead of training a classifier (logistic regression, MLP, or any other learned model), compute the **difference in means** between true and false statement representations:
+This linear structure motivates a simple probe. Instead of fitting a classifier, compute the **difference in means** between representations of true and false statements:
 
 $$\mathbf{v}_\text{truth} = \frac{1}{|S_T|}\sum_{x \in S_T} \phi(x) - \frac{1}{|S_F|}\sum_{x \in S_F} \phi(x)$$
 
@@ -75,14 +75,14 @@ There is no optimization, no gradient descent, no hyperparameters to tune. And d
 
 ### Truth Directions Transfer Across Topics
 
-The most striking finding is that truth directions are not topic-specific. A direction learned from true/false statements about *cities* transfers to classifying statements about *Spanish-English translation*, *numerical comparisons*, and *common claims*:
+Some truth directions transfer across the tested topics. A direction learned from statements about *cities*, for example, can classify examples involving *Spanish–English translation*, *numerical comparisons*, and *common claims*:
 
 <figure>
   <img src="images/truth_transfer.png" alt="All four datasets projected into the PCA basis computed from the cities dataset alone. Despite being computed from a single topic domain, the first principal component still separates true from false statements across all other domains.">
   <figcaption>All datasets projected into the PCA basis computed from cities data alone. The truth direction found in one domain transfers: true/false separation is preserved even for unrelated topics. From Marks and Tegmark, <em>The Geometry of Truth</em>. {% cite "marks2023geometry" %}</figcaption>
 </figure>
 
-This cross-topic transfer suggests the model encodes truth in a relatively universal direction, not through topic-specific features. A difference-in-means probe trained on city facts achieves well above chance accuracy on numerical comparisons it has never seen.
+This cross-topic transfer is evidence for a shared linearly accessible signal across the tested domains. A difference-in-means probe trained on city facts achieves above-chance accuracy on numerical comparisons it has not seen. The result does not rule out topic-specific features or correlated cues that also transfer.
 
 The transfer is not perfect. Accuracy degrades when moving between very different domains (e.g., simple factual statements to negated conjunctions). But the direction is more universal than one might expect from a model that was trained purely on next-token prediction.
 
@@ -101,7 +101,7 @@ Observing linear structure is necessary but not sufficient. As the [probing clas
 
 Marks and Tegmark tested this with a direct causal experiment: intervene on the truth direction during inference and measure whether the model's outputs change accordingly. They added multiples of the truth direction to activations during processing of ambiguous statements and found that the model's outputs shifted toward more truthful (or more false) completions, depending on the sign of the intervention.
 
-This moves the evidence from correlational to causal. The truth direction is not just detectable; it is *used* by the model's downstream computation. Shifting activations along this direction shifts behavior in the predicted way.{% sidenote "This finding is independently corroborated by ITI (covered below) and by the broader [activation steering](/topics/addition-steering/) literature: directions identified via probing or difference-in-means often have causal effects when used for intervention. The probing-steering duality is not coincidental; it reflects the linear structure that the model actually uses." %}
+This adds causal evidence: changing the activation along the candidate direction changes measured behavior in the predicted direction. It shows that the intervention reaches a behaviorally relevant pathway. It does not establish that the direction is a pure representation of truth or that the intact model normally relies on that exact one-dimensional variable.{% sidenote "ITI and other steering results provide related intervention evidence. Across all such studies, a successful intervention supports causal relevance under the tested manipulation while leaving uniqueness, normal use, and semantic purity as separate questions." %}
 
 ## From Probing to Steering: Inference-Time Intervention
 
@@ -127,14 +127,14 @@ On TruthfulQA, ITI improved LLaMA-65B from 32.5% to 65.1% on the MC1 (multiple-c
 
 > **Inference-Time Intervention (ITI):** A two-stage technique that (1) identifies attention heads where truthfulness is most linearly accessible via probing, then (2) shifts activations at those heads along the truth direction during inference. This probe-then-steer pipeline connects the diagnostic tools of probing (Block 5) to the intervention tools of [steering](/topics/addition-steering/) (Block 6).
 
-The ITI pipeline is significant beyond its specific results because it demonstrates a general pattern: *probe to find where a concept lives, then steer by intervening there*. This same pattern appears in the [refusal direction](/topics/refusal-direction/) work (probe for refusal, ablate to remove it) and in [representation control](/topics/representation-control/) more broadly. Truth probing was one of the first demonstrations that this probe-then-steer pipeline works end-to-end.
+ITI is an early example of a reusable experimental pattern: probe to find a linearly accessible signal, then test that direction by intervention. The same pattern appears in the [refusal direction](/topics/refusal-direction/) work and in [representation control](/topics/representation-control/) more broadly.
 
 <details class="pause-and-think">
 <summary>Pause and Think</summary>
 
 ITI intervenes on attention head outputs rather than the residual stream. Why might this matter? Consider the difference between adding a truth direction to a specific head's output versus adding it to the full residual stream at the same layer.
 
-The residual stream is the sum of all contributions at that layer. Adding to the residual stream affects all downstream computation equally. Adding to a specific head's output is more targeted: it affects only the channels influenced by that head's contribution. Since different heads serve different functions, intervening on truth-specific heads avoids disturbing heads that handle syntax, factual recall, or other tasks. This is why ITI can improve truthfulness without large degradations in fluency or helpfulness. It is also why the probing stage matters: identifying *which* heads encode truth lets us intervene surgically rather than broadly.
+Once a vector is added to a head's output, it enters the shared residual stream and can affect every downstream component that reads that direction. Hooking individual heads is still useful because ITI can choose a different learned direction and coefficient for each selected head, while leaving unselected head outputs untouched. To claim greater specificity than a residual-stream intervention, compare matched interventions with the same total write and measure off-target behavior.
 
 </details>
 
@@ -142,11 +142,11 @@ The residual stream is the sum of all contributions at that layer. Adding to the
 
 The truth probing approach extends naturally to hallucination detection. Kossen et al. {% cite "kossen2024entropy" %} trained linear probes to predict **semantic entropy**, a measure of output uncertainty that normally requires generating multiple samples and clustering them by meaning.
 
-Their key finding: a single linear probe on hidden states can predict semantic entropy from a *single* forward pass, with performance comparable to the expensive sampling-based estimate. The probe learns to detect the internal signatures of uncertainty that correlate with the model being about to hallucinate.
+Their key finding is that a linear probe on hidden states can predict a semantic-entropy target from a *single* forward pass, with performance comparable to the sampling-based estimate in the reported experiments. This is a readout of a particular uncertainty measure, not a direct proof that an answer is false.
 
-This is practically significant. Sampling-based hallucination detection requires generating 5-10 responses per query and measuring their consistency, which is slow and expensive. A linear probe provides the same signal at negligible additional cost. For deployment, this means hallucination warnings can be generated in real-time alongside normal outputs.
+Sampling-based semantic entropy requires several responses per query and semantic clustering. A probe is cheaper once trained because it uses one forward pass plus a small classifier. Deployment would still require calibration on the target model and traffic distribution, as well as evidence that predicted entropy is useful for the errors users care about.
 
-The result also reinforces the broader picture: models have internal representations that distinguish reliable from unreliable outputs. The challenge is extracting this signal faithfully, which brings us to the limitations.
+The result shows that this uncertainty target is partly predictable from internal states under the tested conditions. Whether the signal transfers to new models, tasks, and kinds of error is part of the evaluation problem.
 
 ## The Critique: Are We Really Finding Truth?
 
@@ -173,6 +173,6 @@ Beyond the critique above, several practical limitations constrain this line of 
 
 ## Looking Ahead
 
-Truthfulness probing demonstrates a pattern that recurs throughout the curriculum: a concept has linear structure in activation space, probes can detect it, and interventions along the identified direction causally affect behavior. The same pattern appears in [refusal](/topics/refusal-direction/), [sentiment](/topics/addition-steering/), and other behavioral properties.
+Truthfulness probing illustrates a pattern that recurs throughout the curriculum: find a linearly accessible distinction, test its transfer, and intervene along the direction to measure behavioral effects. The evidence is strongest when all three agree and the study includes controls for simpler correlates.
 
-The probe-then-steer pipeline pioneered by ITI has become a standard approach. As readers continue into the [steering](/topics/addition-steering/) block, they will see this pattern generalized: identifying directions via contrastive methods, then using those directions to control model behavior at inference time. The truthfulness application was among the first to demonstrate that this pipeline works from end to end, producing measurable behavioral improvements from a purely internal analysis of model representations.
+The steering block generalizes this probe-then-intervene pattern: identify directions with contrastive data, then test how adding or removing them changes behavior. Truthfulness is an instructive case because it combines promising benchmark improvements with clear failures under negation and domain shift.

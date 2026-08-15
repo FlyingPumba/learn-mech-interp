@@ -3,7 +3,7 @@ title: "Transcoders: Interpretable MLP Replacements"
 description: "How transcoders replace opaque MLP layers with sparse interpretable alternatives, enabling feature-level circuit analysis of what MLPs compute."
 order: 6
 prerequisites:
-  - title: "SAE Variants, Evaluation, and Honest Limitations"
+  - title: "SAE Variants, Evaluation, and Limitations"
     url: "/topics/sae-variants-and-evaluation/"
 
 glossary:
@@ -13,7 +13,7 @@ glossary:
 
 ## The MLP Problem
 
-Every transformer layer has two main components: attention heads that move information between positions, and MLPs that apply nonlinear transformations at each position. We have good tools for analyzing attention -- the QK and OV decomposition reveals how heads select and process information. MLPs, by contrast, remain opaque. They are dense, nonlinear, and difficult to decompose into interpretable parts.
+Every transformer layer has two main components: attention heads that move information between positions, and MLPs that apply nonlinear transformations at each position. The QK and OV decomposition gives us useful tools for analyzing how attention heads select and move information. MLPs are harder to decompose because their transformations are dense and nonlinear.
 
 [Sparse autoencoders](/topics/sparse-autoencoders/) offered a partial solution. By training an SAE on a layer's activations, we can decompose those activations into sparse, interpretable features. But SAEs reconstruct the *same* activation they receive as input. They reveal what features are *present* at a given layer, not how information *transforms* as it passes through the MLP. An SAE placed at the MLP output tells us what features exist after the MLP computation. It does not tell us which input features produced which output features.{% sidenote "The distinction is subtle but important. An SAE asks: 'What features are encoded in this activation vector?' A transcoder asks: 'What function does this MLP compute, expressed in terms of sparse features?' The first is a question about representation; the second is a question about computation." %}
 
@@ -23,11 +23,11 @@ For circuit analysis, we need to trace causal paths *through* MLP layers, not ju
 
 > **Transcoder:** A transcoder is a modified sparse autoencoder that approximates MLP behavior. Instead of encoding and reconstructing the same activation, a transcoder takes the MLP input $\mathbf{x}_{\text{in}}$ and produces an approximation of the MLP output $\mathbf{y}_{\text{out}}$:
 >
-> $$\mathbf{y}_{\text{out}} \approx W_{\text{dec}} \cdot \text{ReLU}(W_{\text{enc}} \, \mathbf{x}_{\text{in}} + \mathbf{b}_{\text{enc}}) + \mathbf{b}_{\text{dec}}$$
+> $$\mathbf{y}_{\text{out}} \approx \text{ReLU}(\mathbf{x}_{\text{in}} W_{\text{enc}} + \mathbf{b}_{\text{enc}}) W_{\text{dec}} + \mathbf{b}_{\text{dec}}$$
 >
 > The transcoder *replaces* the dense MLP with a wider, sparsely-activating layer.
 
-The architecture mirrors an SAE in structure -- encoder, sparse bottleneck, decoder -- but the input and output differ. An SAE maps $\mathbf{h} \to \mathbf{h}$. A transcoder maps $\mathbf{x}_{\text{in}} \to \mathbf{y}_{\text{out}}$, where $\mathbf{x}_{\text{in}}$ is what enters the MLP and $\mathbf{y}_{\text{out}}$ is what the MLP would produce. The transcoder learns to approximate the MLP's function, not its representation.
+The architecture has the same broad parts as an SAE: an encoder, a sparse bottleneck, and a decoder. The input and output differ, however. An SAE maps $\mathbf{h} \to \mathbf{h}$. A transcoder maps $\mathbf{x}_{\text{in}} \to \mathbf{y}_{\text{out}}$, where $\mathbf{x}_{\text{in}}$ enters the MLP and $\mathbf{y}_{\text{out}}$ is the output the MLP would produce. The transcoder approximates the MLP's function rather than reconstructing one representation.
 
 ![Diagram comparing SAE and transcoder architectures. The SAE takes an activation as input and reconstructs the same activation. The transcoder takes the MLP input and produces an approximation of the MLP output.](/topics/transcoders/images/transcoder_vs_sae.png "Figure 1: SAE vs. transcoder architecture. SAEs reconstruct the same activation (representation). Transcoders map MLP inputs to MLP outputs (computation). This difference is what enables circuit tracing through MLPs.")
 
@@ -48,51 +48,51 @@ Dunefsky et al. (2024) showed that transcoder circuits factorize cleanly into tw
 - An **input-dependent** term: which transcoder features activate on this particular input
 - An **input-invariant** term: how feature activations map to outputs through the decoder weights
 
-This factorization is powerful because it means we can do weights-based circuit analysis through MLP sublayers. The decoder weights $W_{\text{dec}}$ tell us, for any given feature, exactly what direction it writes to the output -- regardless of the input. The encoder tells us which features fire for a given input. Together, they give a complete, interpretable account of what the MLP computes on that input.
+This factorization supports weight-based analysis through an MLP replacement. The decoder gives each transcoder latent a fixed output direction, while the encoder determines which latents fire on an input. The account remains approximate because the transcoder does not reproduce the original MLP perfectly and its learned latents may not be uniquely determined.
 
-Dunefsky et al. applied transcoders to GPT-2 Small's *greater-than circuit* -- the circuit that processes prompts like "The war started in 1742 and ended in 17\_\_". Transcoders revealed sub-computations within the circuit that were invisible at the head level, showing that the circuit was more modular than previously understood.
+Dunefsky et al. applied transcoders to GPT-2 Small's *greater-than circuit*, the circuit that processes prompts like "The war started in 1742 and ended in 17\_\_". Transcoders revealed sub-computations within the circuit that were invisible at the head level, showing that the circuit was more modular than previously understood.
 
 <details class="pause-and-think">
 <summary>Pause and think: SAEs vs. transcoders</summary>
 
 SAEs reconstruct the same activation they receive. Transcoders map MLP inputs to MLP outputs. Why does this difference matter for tracing how information flows through a network?
 
-Think about what it means to follow a causal chain from input to output. At each transformer layer, attention moves information between positions (traceable, since attention is linear), and then the MLP transforms it (opaque). An SAE at the MLP output tells you what features exist *after* the transformation, but not how they got there. A transcoder exposes the transformation itself: which input features caused which output features. Without transcoders, MLP layers are gaps in the circuit diagram.
+Think about what it means to follow a causal chain from input to output. Attention exposes an explicit routing pattern and a linear value-to-output map once that pattern is fixed; an MLP applies a dense nonlinear map at one position. An SAE at the MLP output describes candidate features after the transformation but does not model the input-output map. A transcoder supplies a sparse approximation of that map, letting an attribution method propose paths through the replacement rather than skipping the MLP entirely.
 
 </details>
 
 ## Transcoders vs. SAEs: A Direct Comparison
 
-Paulo et al. (2025) conducted a head-to-head comparison of transcoders and SAEs trained on the same model and data. The results were striking:
+Paulo et al. (2025) compared transcoders and SAEs trained on the same model and data:
 
-- Transcoder features are **significantly more interpretable** than SAE features. The interpretability advantage is consistent across evaluation methods.
-- **Skip transcoders** -- transcoders with an added affine skip connection -- achieve lower reconstruction loss with no reduction in interpretability. This is a Pareto improvement: better reconstruction and equal interpretability.
-- On SAEBench evaluation tasks (including feature absorption and sparse probing), transcoders show improved quality.
+- On the study's automated and human-scored evaluations, transcoder features scored as more interpretable than the matched SAE features.
+- **Skip transcoders**, which add an affine skip connection, achieved lower reconstruction loss without a measured interpretability reduction in this comparison.
+- Transcoders also improved several tested SAEBench tasks, including feature-absorption and sparse-probing evaluations.
 
-The implication is clear: SAEs were the first-generation tool for decomposing superposition, but transcoders may be the next. SAEs remain valuable for understanding what features a layer represents, but for understanding what a layer *computes* -- and for tracing circuits through MLPs -- transcoders are the better tool.{% sidenote "This does not mean SAEs are obsolete. SAEs and transcoders answer different questions. SAEs ask 'What features are present?' Transcoders ask 'What function is computed?' For applications like feature dashboards and automated interpretability, SAEs may still be the right choice. For circuit analysis, transcoders have a structural advantage." %}
+The comparison gives transcoders a structural advantage for questions about what an MLP maps from input to output. SAEs remain suited to describing features present at one activation site, while either method can inherit dictionary non-uniqueness and reconstruction error.{% sidenote "A benchmark win does not make transcoders a universal replacement for SAEs. The choice depends on whether the object of interest is a representation at one site or a transformation between two sites." %}
 
 ## From Transcoders to Circuit Tracing
 
-Transcoders solve a specific problem: making MLP computations interpretable. But the real payoff comes when transcoders are combined with attention-based analysis to trace complete circuits at the feature level.
+Transcoders address a specific problem: exposing an approximation of an MLP's computation. Combined with attention analysis, they let researchers trace feature-level paths through both kinds of transformer sublayer.
 
-Marks et al. {% cite "marks2024sparse" %} demonstrated that SAE features can serve as the nodes in causal circuit graphs -- *sparse feature circuits*. This was an important step, but the approach still relied on per-layer SAEs and computationally expensive patching.
+Marks et al. {% cite "marks2024sparse" %} demonstrated that SAE features can serve as the nodes in causal circuit graphs, *sparse feature circuits*. This was an important step, but the approach still relied on per-layer SAEs and computationally expensive patching.
 
-Lindsey et al. {% cite "lindsey2025circuittracing" %} took the next step with *attribution graphs*: replacing all MLPs in a model with cross-layer transcoders and tracing circuits backward through the entire feature network using the Jacobian. The result is a complete, feature-level circuit map for any given input.
+Lindsey et al. {% cite "lindsey2025circuittracing" %} build *attribution graphs* by replacing MLPs with cross-layer transcoders and tracing selected effects backward through the feature network with Jacobian-based attribution. The resulting graph is a sparse, input-specific approximation, not a complete map of every computation used by the original model.
 
-The progression is natural: transcoders make MLPs interpretable, sparse feature circuits show that SAE features can be circuit nodes, and attribution graphs combine both ideas at scale. [Circuit Tracing and Attribution Graphs](/topics/circuit-tracing/) covers sparse feature circuits and attribution graphs in detail.
+The methods form a progression in resolution: transcoders approximate an MLP with sparse latents, sparse feature circuits use learned features as graph nodes, and attribution graphs combine replacement models with scalable edge attribution. [Circuit Tracing and Attribution Graphs](/topics/circuit-tracing/) covers the resulting evidence and its limits.
 
 <details class="pause-and-think">
 <summary>Pause and think: What changes with feature-level circuits?</summary>
 
 In the IOI circuit analysis, the circuit had 26 attention heads as nodes. With transcoders enabling feature-level analysis, circuits can have thousands of feature nodes. What do we gain from this higher resolution? What do we lose?
 
-We gain interpretability at each node -- features are (mostly) monosemantic, while attention heads are polysemantic. We gain the ability to trace through MLPs, not just around them. But we lose simplicity: a 26-node circuit diagram can be drawn and understood at a glance, while a 2,000-node feature graph requires careful pruning and visualization tools to make sense of.
+We gain a more granular hypothesis for each node, and we can trace through MLPs instead of treating them as gaps. We lose simplicity: a 26-node circuit diagram can be inspected directly, while a 2,000-node feature graph requires pruning, automated tools, and checks that important paths were not omitted.
 
 </details>
 
 ## Key Takeaways
 
-- **SAEs decompose representations; transcoders decompose computations.** This distinction is what enables circuit tracing through MLP layers.
-- **Clean factorization** into input-dependent and input-invariant terms allows weights-based analysis of MLP sublayers.
-- **Transcoders outperform SAEs** on interpretability benchmarks while enabling circuit analysis that SAEs structurally cannot provide.
-- Transcoders are the **enabling technology** for attribution graphs and feature-level circuit tracing, covered in [Circuit Tracing and Attribution Graphs](/topics/circuit-tracing/).
+- **SAEs model one activation site; transcoders model an input-output map.** The latter can serve as a sparse replacement for tracing through an MLP.
+- **Factorization** into input-dependent activations and fixed decoder directions supports weight-based attribution inside the replacement.
+- In matched evaluations, **transcoders outperformed the tested SAEs** on several interpretability measures, but both inherit approximation error and dictionary non-uniqueness.
+- Cross-layer transcoders are one foundation for the [attribution-graph approach](/topics/circuit-tracing/) covered next.

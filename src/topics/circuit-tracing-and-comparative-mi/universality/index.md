@@ -1,6 +1,6 @@
 ---
 title: "Universality Across Models"
-description: "The evidence for and against the universality hypothesis -- whether different neural networks learn similar features and circuits -- and the metrics used to measure representation similarity."
+description: "Whether independently trained networks learn the same features and circuits, what current evidence shows, and how representational similarity is measured."
 order: 5
 prerequisites:
   - title: "Crosscoders"
@@ -13,11 +13,11 @@ glossary:
 
 ## The Universality Hypothesis
 
-In [What is Interpretability?](/topics/what-is-mech-interp/), we encountered three foundational claims from Olah et al.: features are the fundamental unit of neural network computation, features are connected into circuits, and -- the boldest claim -- **analogous features and circuits form across different models trained on different data**. This third claim is the *universality hypothesis*.
+In [What is Interpretability?](/topics/what-is-mech-interp/), we encountered three foundational claims from Olah et al.: features are the fundamental unit of neural network computation, features are connected into circuits, and, the boldest claim, **analogous features and circuits form across different models trained on different data**. This third claim is the *universality hypothesis*.
 
-If universality holds, it has profound implications for interpretability. Understanding one model's features and circuits would transfer to other models. Safety analysis performed on a smaller model might generalize to larger ones. The interpretability problem would be finite -- there is a vocabulary of features to discover, not an unbounded space of model-specific representations.
+If universality holds even approximately, an analysis of one model could guide work on another. Researchers could begin with a known feature or circuit instead of searching from scratch. That would not make interpretability a finite problem, models can still add, split, or repurpose features, but it would make some findings reusable.
 
-But how strong is the evidence? And what exactly does "universality" mean -- do different models learn the *same* features, or merely *similar* ones? These are the questions we address here.{% sidenote "The universality hypothesis sits at the intersection of a theoretical hope and an empirical question. If neural networks consistently converge on the same internal structure, it suggests that the features they learn reflect genuine structure in the data distribution, not arbitrary computational artifacts. This would make MI not just useful but *natural* -- we would be discovering the data's structure, not the model's idiosyncrasies." %}
+The strength of the hypothesis depends on what “same” means. Two models might contain units with correlated activations, represent analogous functions in different bases, or implement genuinely corresponding circuits. Those claims require different evidence.{% sidenote "Stable structure across training runs could reflect recurring structure in the data or objective, but the representation also depends on architecture, optimization, and the comparison method. Universality is therefore an empirical question at a specified level of abstraction." %}
 
 ## Representation Similarity Metrics
 
@@ -27,7 +27,7 @@ Before examining the evidence for universality, we need tools to measure whether
 
 Kornblith et al. (2019) introduced **CKA** (Centered Kernel Alignment), the most widely used metric for comparing representations across models.
 
-The intuition: given two networks, compute the *representational similarity matrix* for each -- how similar are pairs of inputs according to each network? Then measure the alignment between these matrices.
+The intuition: given two networks, compute the *representational similarity matrix* for each, how similar are pairs of inputs according to each network? Then measure the alignment between these matrices.
 
 $$\text{CKA}(X, Y) = \frac{\text{HSIC}(X, Y)}{\sqrt{\text{HSIC}(X, X) \cdot \text{HSIC}(Y, Y)}}$$
 
@@ -44,13 +44,13 @@ Before CKA, Raghu et al. (2017) proposed **SVCCA** (Singular Vector Canonical Co
 1. Apply SVD to select the most important directions in each representation
 2. Use CCA (Canonical Correlation Analysis) to measure pairwise correlation between the selected directions
 
-SVCCA found that networks converge to final representations *from the bottom up* -- lower layers stabilize first during training. However, CKA has largely superseded SVCCA because it more reliably detects correspondences between networks trained from different initializations.{% sidenote "Why does CKA outperform SVCCA? CKA measures the alignment of full representational *structures* (similarity matrices over inputs), while SVCCA measures the alignment of individual *directions*. Directions can differ across models even when the overall structure is preserved, making SVCCA more sensitive to superficial differences in coordinate systems." %}
+SVCCA found that networks converge to final representations *from the bottom up*, lower layers stabilize first during training. However, CKA has largely superseded SVCCA because it more reliably detects correspondences between networks trained from different initializations.{% sidenote "Why does CKA outperform SVCCA? CKA measures the alignment of full representational *structures* (similarity matrices over inputs), while SVCCA measures the alignment of individual *directions*. Directions can differ across models even when the overall structure is preserved, making SVCCA more sensitive to superficial differences in coordinate systems." %}
 
 ### Representation Similarity vs. Feature-Level Comparison
 
 CKA and SVCCA answer a holistic question: "Are these representations similar overall?" [Crosscoders](/topics/crosscoders/) answer a finer question: "What specific features are shared or different?"
 
-The two approaches are complementary. CKA is computationally cheap and provides a quick global assessment. Crosscoders are expensive (they require training) but reveal the specific features that drive similarity or difference. Use CKA to determine *whether* models are similar; use crosscoders to determine *how* they differ.
+The two approaches are complementary. CKA provides a relatively cheap, aggregate comparison; crosscoders require training but propose specific shared and model-exclusive features. Neither metric decides universality on its own: the result depends on the data, layers, alignment method, and level of abstraction being compared.
 
 ## Three Dimensions of Universality
 
@@ -62,18 +62,18 @@ The evidence for universality comes along three dimensions: training universalit
 
 Gurnee et al. (2024) studied GPT-2 models trained from different random seeds {% cite "gurnee2024universal" %}. The key findings:
 
-- **1-5% of neurons are universal** -- they consistently activate on the same inputs across independently trained models
+- **1-5% of neurons are universal**, they consistently activate on the same inputs across independently trained models
 - Universal neurons are **monosemantic and interpretable**, with large weight norms and low activation frequency
 - They have **clear functional roles**: deactivating attention heads, changing entropy of the next-token distribution, predicting token set membership
 
-These are not merely similar features -- they are the *same* computational units discovered independently by different training runs. The fact that they are monosemantic is particularly notable: the neurons that are most consistent across training runs are also the most interpretable, supporting the hypothesis that monosemantic features reflect genuine structure in the data.
+These neurons have unusually similar activation patterns across independent training runs. Calling them the *same* unit is stronger: it also requires a meaningful correspondence in function and downstream effect. Their relative interpretability supports the hypothesis that some stable features reflect recurring structure in the data, without implying that every matched neuron has one exhaustive semantic label.
 
 ### Scale Universality
 
 Evidence suggests that features found in smaller models also appear in larger ones:
 
 - Features discovered by SAEs in small models (e.g., GPT-2) often have counterparts in larger models (e.g., GPT-2 XL, Llama)
-- The feature vocabulary seems to *grow* with scale rather than *change* -- larger models add new features on top of the existing ones
+- The feature vocabulary seems to *grow* with scale rather than *change*, larger models add new features on top of the existing ones
 - Larger models may represent the same concepts with higher fidelity and less [superposition](/topics/superposition/)
 
 This is encouraging for interpretability research: understanding small models may transfer to understanding large ones, at least at the feature level. The features discovered during [scaling monosemanticity](/topics/scaling-monosemanticity/) in Claude 3 Sonnet included many features analogous to those found in the much smaller one-layer model studied earlier.
@@ -99,13 +99,13 @@ This is the strongest form of universality: not just the same architecture with 
 
 ## Weak vs. Strong Universality
 
-It is important to be precise about what universality claims:
+Two versions of the universality claim are useful to separate:
 
 **Weak universality:** Different models develop features that serve similar *functions* (e.g., both detect sentence boundaries), but the specific directions and implementations may differ. The features are *analogous* but not *identical*.
 
 **Strong universality:** Different models develop the *same* features with corresponding directions that can be mapped onto each other. The features are not just functionally similar but representationally equivalent.
 
-Current evidence supports weak universality fairly well. Strong universality is harder to establish and remains an active research question. The universal neurons result (1-5% of neurons are truly universal) suggests that strong universality holds for a small fraction of features, while weak universality holds more broadly.
+Current evidence is more compatible with weak universality than with a one-to-one universal feature dictionary. Strong universality is harder to establish because similarity in activation does not by itself prove identical computation. Results on matched neurons suggest that close correspondences exist for a minority of units in the models tested.
 
 [Crosscoders](/topics/crosscoders/) provide the most direct test of universality at the feature level: a crosscoder trained across two models finds shared features (evidence for universality) and exclusive features (evidence against it). CKA provides a holistic measure of representation alignment that does not require identifying individual features.
 
@@ -114,14 +114,14 @@ Current evidence supports weak universality fairly well. Strong universality is 
 
 If universality holds, MI results from one model may generalize to others. Why is this crucial for AI safety?
 
-Consider a safety evaluation that discovers a dangerous internal mechanism in Model A. If universality holds, we have reason to check whether Model B has a similar mechanism -- and the tools (crosscoders, CKA) to test this efficiently. If universality does not hold, every model is a blank slate requiring full analysis from scratch. With models being deployed at increasing scale and speed, the ability to transfer safety insights across models could be the difference between tractable and intractable safety evaluation.
+Consider a safety evaluation that discovers a dangerous internal mechanism in Model A. If universality holds, we have reason to check whether Model B has a similar mechanism, and the tools (crosscoders, CKA) to test this efficiently. If universality does not hold, every model is a blank slate requiring full analysis from scratch. With models being deployed at increasing scale and speed, the ability to transfer safety insights across models could be the difference between tractable and intractable safety evaluation.
 
 </details>
 
 ## Key Takeaways
 
-- The **universality hypothesis** -- that different models learn similar features and circuits -- has gained substantial evidence along three dimensions: training, scale, and architecture.
+- The **universality hypothesis**, that different models learn similar features and circuits, has gained substantial evidence along three dimensions: training, scale, and architecture.
 - **CKA** is the standard metric for measuring representation similarity holistically. **SVCCA** was an earlier approach now largely superseded.
-- **1-5% of neurons are universal** across independently trained models, and these universal neurons are monosemantic and interpretable.
-- **Weak universality** (similar functions) is well-supported. **Strong universality** (identical representations) holds for a small fraction of features and remains an active research question.
+- In one line of experiments, **1–5% of neurons** met the study's matching criteria across independently trained models and tended to be easier to interpret.
+- **Weak universality**, similar functions or structures, has meaningful empirical support. **Strong universality**, identical representations, remains difficult to establish.
 - Universality is crucial for scalable safety analysis: if features transfer across models, MI insights can generalize rather than being model-specific.

@@ -1,9 +1,9 @@
 ---
 title: "Crosscoders"
-description: "How crosscoders extend sparse autoencoders to train shared feature dictionaries across layers or models, enabling cross-layer feature tracking, circuit simplification, and model comparison."
+description: "Learning one sparse feature dictionary across several layers or models, so we can track representations over depth and compare model variants."
 order: 7
 prerequisites:
-  - title: "SAE Variants, Evaluation, and Honest Limitations"
+  - title: "SAE Variants, Evaluation, and Limitations"
     url: "/topics/sae-variants-and-evaluation/"
 
 glossary:
@@ -29,7 +29,7 @@ In [sparse autoencoders](/topics/sparse-autoencoders/), the encoder reads from a
 >
 > $$\mathbf{x}_{\text{concat}} = [\mathbf{x}_{\text{base}};\; \mathbf{x}_{\text{chat}}]$$
 
-The crosscoder learns a single dictionary. For each dictionary element, it learns a pair of latent directions -- one per model (or one per layer, in the cross-layer case). This forces the crosscoder to find common structure across sources while also representing source-specific features.
+The crosscoder learns a single dictionary. For each dictionary element, it learns a pair of latent directions, one per model (or one per layer, in the cross-layer case). This forces the crosscoder to find common structure across sources while also representing source-specific features.
 
 ![Diagram showing a crosscoder architecture with two models' activations concatenated as input, a shared sparse dictionary in the middle, and outputs that reconstruct both models' activations. Features are labeled as shared, base-exclusive, or chat-exclusive.](/topics/crosscoders/images/crosscoder_model_diffing.png "Figure 1: Crosscoder architecture. Activations from multiple sources (here, two models) are concatenated and encoded through a shared sparse dictionary. Each feature is classified based on its activation pattern across sources.")
 
@@ -49,7 +49,7 @@ The crosscoder training objective mirrors standard SAEs, applied to the concaten
 
 $$\mathcal{L} = \|\mathbf{x}_{\text{concat}} - \hat{\mathbf{x}}_{\text{concat}}\|^2 + \lambda \sum_j |f_j|$$
 
-The reconstruction term ensures all sources are faithfully represented. The sparsity term encourages each feature to be active in only a few inputs. The shared dictionary forces the crosscoder to find common structure across sources.{% sidenote "The loss function treats all sources equally. In principle, you could weight one source more heavily to prioritize faithful reconstruction of that source. In practice, equal weighting works well because the shared features dominate and the equal treatment prevents the crosscoder from ignoring the source with fewer unique features." %}
+The reconstruction term penalizes information lost from each source, while the sparsity term encourages only a few latents to be active on each input. Sharing latent activations gives the crosscoder an incentive to align common structure across sources, although reconstruction error and dictionary non-uniqueness prevent that alignment from being guaranteed.{% sidenote "The loss shown here weights the reconstruction terms equally. Other weightings could prioritize one source, so conclusions about what is shared should be checked for sensitivity to this design choice as well as to dictionary size and sparsity." %}
 
 <details class="pause-and-think">
 <summary>Pause and think: Why concatenation?</summary>
@@ -70,7 +70,7 @@ Crosscoders fit naturally into the progression of SAE architectures:
 
 Each variant extends the core idea of sparse dictionary learning to answer a different question. SAEs ask "what features are present here?" Transcoders ask "what function is computed here?" Crosscoders ask "what is shared and what differs across these sources?"
 
-The model diffing application of crosscoders -- comparing base and fine-tuned models to understand what safety training changes -- is covered in detail in [Feature-Level Model Diffing](/topics/feature-level-model-diffing/).
+The model diffing application of crosscoders, comparing base and fine-tuned models to understand what safety training changes, is covered in detail in [Feature-Level Model Diffing](/topics/feature-level-model-diffing/).
 
 ## Key Takeaways
 

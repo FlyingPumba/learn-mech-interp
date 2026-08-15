@@ -1,6 +1,6 @@
 ---
 title: "Induction Heads and In-Context Learning"
-description: "How the discovery of induction heads revealed a two-step circuit for in-context learning, demonstrating that compositional circuits emerge during training."
+description: "How two attention heads can compose into a pattern-copying circuit, plus the evidence and limits behind claims linking induction heads to in-context learning."
 order: 1
 prerequisites:
   - title: "Composition and Virtual Attention Heads"
@@ -8,11 +8,11 @@ prerequisites:
 
 glossary:
   - term: "In-Context Learning"
-    definition: "The ability of large language models to learn new tasks from examples provided in the prompt without weight updates. Induction heads are a key mechanism underlying this capability, performing pattern matching across the context window."
+    definition: "The ability of a model to adapt its predictions using examples or instructions in the prompt, without updating its weights. Induction heads can support simple forms of this behavior by matching and continuing earlier patterns."
   - term: "Induction Head"
-    definition: "A two-attention-head circuit that implements a simple copying mechanism: when the model sees a pattern like 'A B ... A', the induction head predicts 'B' will follow. Induction heads are a primary mechanism for in-context learning in transformers."
+    definition: "An attention-head pattern, usually enabled by an earlier head, that supports copying: after seeing 'A B ... A', it raises the probability of 'B'. This mechanism explains some forms of pattern completion, not all in-context learning."
   - term: "Previous Token Head"
-    definition: "An attention head that consistently attends to the immediately preceding token. Previous token heads are one component of the induction circuit, copying positional information that induction heads use to complete repeated patterns."
+    definition: "An attention head that places substantial weight on the immediately preceding position and writes information about that token. It can supply predecessor-token information to an induction circuit."
 ---
 
 ## What Can Simple Models Compute?
@@ -20,16 +20,16 @@ glossary:
 Before we can appreciate what composition makes possible, we need to understand what a model *without* composition can do. Consider the simplest possible transformer: a one-layer, attention-only model with $H$ attention heads and no MLP. The output at each position is:
 
 $$
-T(\mathbf{x}) = \mathbf{x} + \sum_{h=1}^{H} \text{Attn}^h(\mathbf{x} \cdot W_{OV}^h)
+T(\mathbf{x}) = \mathbf{x} + \sum_{h=1}^{H} A^h(\mathbf{x})\,\mathbf{x}W_{OV}^h
 $$
 
-In this model, each attention head operates independently on the raw input. No head can see what another head has computed. Every attention pattern is determined solely by the token identities at each position {% cite "elhage2021mathematical" %}.
+Here $A^h(\mathbf{x})$ is head $h$'s attention matrix. Each head operates on the same initial residual stream, so no head can use another head's output from that layer. Its attention pattern can depend on token and positional information already in the stream, but not on a computation performed by an earlier attention layer {% cite "elhage2021mathematical" %}.
 
-We can characterize the model's capabilities by computing two end-to-end matrices. The **end-to-end QK matrix** $W_E W_{QK}^h W_E^T$ is an $n_{\text{vocab}} \times n_{\text{vocab}}$ matrix whose entry $(i, j)$ tells us how much token $i$ attends to token $j$, based purely on token identity. The **end-to-end OV matrix** $W_E W_{OV}^h W_U$ is another $n_{\text{vocab}} \times n_{\text{vocab}}$ matrix whose entry $(i, j)$ tells us how much attending to token $i$ increases the logit for predicting token $j$.{% sidenote "These end-to-end matrices are analytically exact for one-layer attention-only models. No approximation is involved. This makes one-layer models a clean theoretical laboratory: we can characterize their complete behavior by examining these finite matrices. The story gets more complex with multiple layers, where composition creates cross-terms that do not factor as neatly." %}
+Two end-to-end matrices summarize token-identity effects. The **QK matrix** $W_E W_{QK}^h W_E^T$ gives the token-token contribution to the pre-softmax attention score. It is not itself an attention probability, because position terms, the causal mask, and competing source tokens also affect the softmax. The **OV matrix** $W_E W_{OV}^h W_U$ gives the direct vocabulary-logit effect of moving an embedded source token through the head's OV pathway.{% sidenote "These products are exact weight-derived terms under the simplified embedding-only analysis. They do not alone characterize a full sequence-level behavior: attention probabilities depend on the other tokens and positions, and final logits include all paths and normalization." %}
 
-Together, these matrices tell us everything a one-layer head can do: "if you see token $j$, promote token $i$ in the output." This covers bigram statistics ("after 'the', predict 'cat'"), skip-trigrams (attending to a token two or three positions back), and positional patterns (always attending to the previous token).
+These matrices describe the head's token-to-token QK and OV behavior. Together with positional effects and the causal mask, they explain patterns such as bigram prediction, longer-range token copying, and attention to fixed relative positions.
 
-But there is a hard limit. A one-layer model computes a direct token-to-token mapping. The attention pattern depends only on the token identities at each position, not on what other heads have found. This means a one-layer model *cannot* implement: "if you see $A$ followed by $B$, then later when you see $A$ again, predict $B$." That requires conditioning on the relationship between tokens, which requires composing information across different heads.
+One attention layer has no earlier attention output to enrich its keys or queries. It therefore cannot implement the same two-step predecessor-copying mechanism used by the induction circuit described below. This is an architectural statement about that mechanism, not a claim that no one-layer network with different components or positional features can ever approximate repeated-pattern behavior.
 
 ## The Power of Two Layers
 
@@ -39,7 +39,7 @@ $$
 T = \underbrace{\text{direct path}}_{\text{token embedding}} + \underbrace{\sum_h \text{single-head terms}}_{\text{each head alone}} + \underbrace{\sum_{h_1, h_2} \text{composition terms}}_{\text{head pairs across layers}}
 $$
 
-The composition terms are where new capabilities emerge. A layer-2 head reads from the residual stream *after* layer 1 has written to it. This means a layer-2 head's attention pattern can depend on computations performed by layer-1 heads. Specifically, through **K-composition**, a layer-1 head can enrich the keys that a layer-2 head reads. The layer-2 head no longer sees just raw token identities -- it sees token identities plus whatever information layer 1 has added.{% sidenote "K-composition is not the only form of composition. Q-composition changes what a layer-2 head searches for, and V-composition changes what information is moved. But K-composition is the key mechanism for induction heads, where the layer-1 head enriches the key at each position with information about the preceding token." %}
+The composition terms let a layer-2 head read information written by layer 1. Through **K-composition**, for example, a layer-1 head can add predecessor information to the residual stream at each position, and a layer-2 head can use that information when constructing its keys.{% sidenote "K-composition is not the only form of composition. Q-composition changes what a layer-2 head searches for, and V-composition changes what information is moved. K-composition is central to the induction mechanism described here because the earlier head supplies information used by the later head's keys." %}
 
 The qualitative jump is stark. One-layer models see raw tokens and compute fixed token-to-token mappings. Two-layer models see *enriched* tokens, where each position carries information deposited by layer-1 heads. This enrichment is what makes context-dependent pattern matching possible.
 
@@ -58,9 +58,9 @@ $$
 [A][B] \ldots [A] \to \text{predict } [B]
 $$
 
-The model sees tokens $A$ then $B$ somewhere earlier in the context. Later, it sees $A$ again and predicts $B$. This is in-context pattern completion. The model has never been specifically trained on this particular $A$-$B$ pair. It has learned a general algorithm for copying from earlier in the context.
+The model sees $A$ followed by $B$ earlier in the context. When $A$ appears again, the induction score measures whether the model raises $B$. Tests on random or held-out token pairs help show that the effect is a reusable copying pattern rather than memorization of a particular pair.
 
-Take a concrete example. In the sequence "The cat sat on the cat ...", at the second "cat" position the model should predict "sat" -- the token that followed the first "cat." This requires the model to find the previous occurrence of "cat" in the context, identify that "sat" followed it, and copy "sat" to the output. No single attention head can do all three steps. This requires composition {% cite "olsson2022context" %}.
+Take a concrete example. In the sequence "The cat sat on the cat ...", at the second "cat" position the model should predict "sat", the token that followed the first "cat." This requires the model to find the previous occurrence of "cat" in the context, identify that "sat" followed it, and copy "sat" to the output. No single attention head can do all three steps. This requires composition {% cite "olsson2022context" %}.
 
 <figure>
   <img src="images/induction_head_mechanism.png" alt="The induction head mechanism on a repeated random token sequence. The current token 'node' in the repeated half matches the prefix of the attended-to token 'struction' in the first half. The attention arrow shows the induction head attending from 'node' back to 'struction', whose logit is then boosted for the next-token prediction.">
@@ -85,24 +85,24 @@ The mechanism is K-composition in action. The layer-1 head enriches the keys wit
 
 The two heads in the induction circuit have distinctive attention patterns that are recognizable in attention heatmaps.
 
-The **previous token head** produces a strong diagonal stripe shifted by one position. Each token attends heavily to the token immediately before it. This pattern is consistent regardless of token content -- it is a positional pattern, not a content-based one. In a heatmap of the sequence "A B C D A B", every row has its peak one column to the left.{% sidenote "Previous token heads are among the most common attention head types found in transformer models. They appear reliably across model sizes and architectures. Their simplicity makes them easy to identify: any head with a clean shifted-diagonal attention pattern is likely a previous token head." %}
+The **previous token head** produces a strong diagonal stripe shifted by one position because each destination attends heavily to its immediate predecessor. On a suitable repeated-token prompt, this position-based pattern should persist when the token identities change.{% sidenote "A shifted diagonal is evidence for previous-position attention, not a complete functional label. The head's output–value circuit determines what it copies from that position, and the pattern should be checked across inputs." %}
 
 The **induction head** produces an off-diagonal stripe that breaks the regular diagonal pattern. At positions where a token repeats, the head attends not to the repeated token itself, but to the token that *followed* the previous occurrence. In the sequence "A B C D A B", the second "A" (position 5) attends strongly to "B" (position 2), and the second "B" (position 6) attends strongly to "C" (position 3). The pattern is content-dependent: it appears only at positions with repeated tokens and points to the position after the previous match.
 
-If you see an attention heatmap with a clean diagonal, that is a previous token head. If you see one with off-diagonal spikes at content-matching positions, that is an induction head.
+These shapes are useful clues, not diagnoses. A clean shifted diagonal suggests a previous-token pattern, while off-diagonal spikes after repeated contexts suggest induction. Confirm the hypothesis across varied inputs and inspect what the head writes through its OV circuit.
 
 ## The Phase Change
 
-During training, there is a sudden sharp improvement in in-context learning ability. Olsson et al. document this as a visible "bump" in the training loss curve {% cite "olsson2022context" %}. Before this moment, the model makes predictions based on token frequencies -- essentially bigram statistics. After, it uses earlier tokens in the context to improve predictions on later tokens.
+In the small attention-only models studied by Olsson et al., a particular measure of in-context learning improves sharply during training, producing a visible change in the loss curve {% cite "olsson2022context" %}. Before this transition, extra context helps much less; afterward, the model makes better use of repeated patterns farther back in the sequence.
 
-The transition is not gradual. Before the phase change, the model's loss improves for the first 50 or so tokens of context and then plateaus. Additional context does not help. After the phase change, the model's loss continues improving for much longer contexts, sometimes 500 tokens or more. The model has suddenly gained the ability to use distant context.
+For these runs, the change is much sharper than a smooth learning curve would suggest. Before it, loss improves over the first part of the context and then plateaus. After it, useful context extends much farther. This is evidence for an abrupt change in the models studied, rather than a claim that every capability in every transformer emerges this way.
 
 <figure>
   <img src="images/phase_change_icl.png" alt="Three panels showing in-context learning score over training for one-layer, two-layer, and three-layer attention-only transformers. The one-layer model shows no sudden improvement. The two-layer and three-layer models show a sharp drop in the in-context learning score during a highlighted phase change window early in training, indicating a sudden acquisition of in-context learning ability.">
   <figcaption>The phase change in in-context learning. One-layer models (left) show no sudden improvement. Models with two or more layers (center, right) undergo an abrupt improvement during a narrow training window (highlighted), corresponding to the formation of induction heads. From Olsson et al., <em>In-context Learning and Induction Heads</em>. {%- cite "olsson2022context" -%}</figcaption>
 </figure>
 
-Induction heads form at precisely the moment of the phase change. The correlation is striking, and multiple lines of evidence support a causal link. Ablating induction heads in small models removes in-context learning ability. The phase change occurs at the same training step across model sizes from 2-layer to 40-layer models. Architectural perturbations that make induction heads harder to form (such as restricting composition between layers) delay the phase change correspondingly.
+Induction-like heads appear around the same training period as this transition, and several experiments support a causal role. In the small models tested, ablating the relevant heads substantially reduces the measured in-context-learning score. Architectural changes that restrict composition also delay or weaken the transition. Together, these results connect induction circuitry to the observed pattern-completion behavior, while leaving room for other mechanisms and other forms of in-context learning.
 
 <details class="pause-and-think">
 <summary>Pause and think: Phase changes and AI safety</summary>
@@ -113,11 +113,11 @@ The model suddenly gains a new capability at a specific point in training. What 
 
 ## From Toy Models to Large Models
 
-Despite being discovered in tiny attention-only models, induction heads appear in models up to 13 billion parameters and beyond. In larger models, the mechanism generalizes from exact token matching to *fuzzy* pattern completion. The head does not just match identical tokens -- it matches tokens that play similar semantic roles, enabling more flexible in-context learning.{% sidenote "The generalization from exact matching to fuzzy matching is one of the most significant aspects of the induction head discovery. In small models, the circuit implements literal token copying: see 'cat' again, predict what followed 'cat' before. In large models, the mechanism generalizes to semantic similarity: see a word that plays a similar role to a previous word, predict what came next in the earlier context. This generality is what makes induction heads a plausible explanation for a substantial portion of in-context learning." %}
+Despite being discovered in tiny attention-only models, induction-like heads have also been observed in much larger transformers. Their behavior is often less literal there: some respond to approximate or semantic matches rather than exact repeated tokens. That makes induction a plausible ingredient in richer context use, but not a complete explanation of it.{% sidenote "In small models, the circuit can look like literal token copying: see 'cat' again, then predict what followed 'cat' before. In larger models, researchers have found related heads with fuzzier matching behavior. Calling both cases 'induction' is useful, but the larger-model mechanism needs to be established rather than assumed from a similar-looking attention pattern." %}
 
-This generality is what makes the discovery significant. A mechanism found in toy models explains behavior in production-scale systems. It validates the core approach of mechanistic interpretability: study simple models with mathematical tools, discover circuits, and find that those circuits appear (in more sophisticated form) in the models we actually deploy.{% sidenote "The theoretical basis for understanding what transformers can compute was formalized by RASP (Restricted Access Sequence Processing Language), a programming language that expresses computations in terms of the operations transformers can perform: selecting tokens, aggregating information, and composing these operations across layers {% cite \"weiss2021rasp\" %}. RASP programs can be compiled into actual transformer weights via the Tracr compiler, providing a bridge between algorithmic descriptions and concrete model parameters." %}
+The discovery matters because it connects a mechanism that can be derived cleanly in toy models to related behavior in larger systems. It offers a concrete test of a common mechanistic-interpretability strategy: use simple models to form precise hypotheses, then check how far those hypotheses transfer.{% sidenote "RASP (Restricted Access Sequence Processing Language) describes computations using operations that transformers can perform, such as selecting tokens, aggregating information, and composing operations across layers {% cite \"weiss2021rasp\" %}. The Tracr compiler can turn a subset of these programs into transformer weights, providing a bridge between an algorithmic description and a concrete model." %}
 
-The induction head is the first circuit discovered in transformers that proves composition creates qualitatively new capabilities. It is the canonical example of a discovered circuit, and it demonstrates that the features-and-circuits framework from Olah et al. produces real, verifiable results. The mathematical framework from the [composition and virtual heads](/topics/composition-and-virtual-heads/) article gave us the analytical tools. Applied to real models, those tools revealed a beautiful two-step mechanism for in-context learning.
+Induction heads are a canonical example of composition producing behavior that one attention layer cannot implement in the same way. The mathematical framework from the [composition and virtual heads](/topics/composition-and-virtual-heads/) article supplies the analytical tools; experiments then test whether the proposed two-step mechanism is actually present and causally relevant.
 
 ## Looking Ahead
 

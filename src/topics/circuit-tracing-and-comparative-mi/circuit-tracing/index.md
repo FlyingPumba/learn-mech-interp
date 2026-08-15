@@ -1,6 +1,6 @@
 ---
 title: "Circuit Tracing and Attribution Graphs"
-description: "How sparse feature circuits and attribution graphs enable tracing model computations at the feature level, from SAE-based circuits to Anthropic's Biology of an LLM approach."
+description: "How sparse feature circuits and attribution graphs trace model computations at feature level, and where replacement models and local linearization can mislead."
 order: 4
 prerequisites:
   - title: "Transcoders: Interpretable MLP Replacements"
@@ -15,32 +15,32 @@ glossary:
 
 ## From Head-Level to Feature-Level Circuits
 
-In the [IOI circuit analysis](/topics/ioi-circuit/), we traced the mechanism by which GPT-2 Small identifies indirect objects. The circuit had 26 attention heads organized into 7 functional classes. This was a landmark result, but the nodes in that circuit -- attention heads -- are polysemantic components that participate in many unrelated behaviors. The IOI circuit told us *which heads* matter, but each head was doing many things beyond the IOI task.
+In the [IOI circuit analysis](/topics/ioi-circuit/), we traced the mechanism by which GPT-2 Small identifies indirect objects. The circuit had 26 attention heads organized into 7 functional classes. This was a landmark result, but the nodes in that circuit, attention heads, are polysemantic components that participate in many unrelated behaviors. The IOI circuit told us *which heads* matter, but each head was doing many things beyond the IOI task.
 
-[Sparse autoencoders](/topics/sparse-autoencoders/) changed the picture by providing monosemantic features -- individual directions in activation space that correspond to single, interpretable concepts. The natural next step: use SAE features as the nodes in circuit graphs, replacing polysemantic heads with monosemantic features. This gives us higher resolution and more interpretable circuits.
+[Sparse autoencoders](/topics/sparse-autoencoders/) offer a finer-grained candidate unit: a learned direction that is often easier to label than an entire head. Using SAE features as graph nodes can therefore reveal structure hidden by head-level analysis. The tradeoff is that features are not automatically monosemantic, and the SAE's reconstruction error leaves part of the original computation unexplained.
 
-Two lines of work made this possible. First, *sparse feature circuits* {% cite "marks2024sparse" %} demonstrated that SAE features can serve as causally implicated circuit nodes. Second, *attribution graphs* {% cite "lindsey2025circuittracing" %} combined cross-layer transcoders with backward Jacobian tracing to build complete feature-level circuit maps. Together, they represent the current frontier of circuit analysis.
+Two lines of work developed this idea. *Sparse feature circuits* {% cite "marks2024sparse" %} use interventions to test SAE features as circuit nodes. *Attribution graphs* {% cite "lindsey2025circuittracing" %} combine cross-layer transcoders with backward Jacobian tracing to build input-specific feature graphs. Both methods increase resolution, but neither yields a complete map of the original model by default.
 
 ## Sparse Feature Circuits
 
-Marks et al. (2024) asked a simple question: can SAE features serve as the nodes in causal circuit graphs? The answer is yes, and the resulting *sparse feature circuits* bridge [SAE feature discovery](/topics/sparse-autoencoders/) with [causal circuit analysis](/topics/activation-patching/).{% sidenote "The term 'sparse feature circuits' emphasizes both properties: the features are sparse (from SAEs) and they form circuits (causal graphs). This distinguishes them from earlier head-level circuits where nodes are dense, polysemantic attention heads." %}
+Marks et al. (2024) asked whether SAE features could serve as useful nodes in causal circuit graphs. Their *sparse feature circuits* connect [SAE feature discovery](/topics/sparse-autoencoders/) with [causal intervention](/topics/activation-patching/), while making the quality of the learned feature basis part of the circuit's assumptions.{% sidenote "The term 'sparse feature circuits' emphasizes both properties: activations are sparse, and selected features are connected in a graph. Unlike a head-level graph, this graph depends on a learned decomposition whose features and reconstruction errors must be evaluated." %}
 
 The pipeline works in four steps:
 
 1. **Train SAEs** on model activations at each layer, producing interpretable features
-2. **Identify causally responsible features** using activation patching -- for a given behavior, which features matter?
+2. **Identify causally responsible features** using activation patching, for a given behavior, which features matter?
 3. **Build a graph** where nodes are SAE features and edges represent causal effects between features across layers
 4. **Prune the graph** to retain only edges with significant causal effect
 
 ### SHIFT: Human-Editable Circuits
 
-An important contribution of Marks et al. is **SHIFT** (Spurious Human-interpretable Feature Trimming). After discovering a feature circuit, a human inspects the features and identifies those that seem task-irrelevant. Ablating these "spurious" features changes the model's generalization behavior -- demonstrating that feature circuits are not just descriptive but *editable*.
+An important contribution of Marks et al. is **SHIFT** (Spurious Human-interpretable Feature Trimming). After discovering a feature circuit, a human inspects the features and identifies those that seem task-irrelevant. Ablating these "spurious" features changes the model's generalization behavior, demonstrating that feature circuits are not just descriptive but *editable*.
 
 SHIFT bridges the gap between "we found the circuit" and "we can change what the circuit does." This is a concrete step toward using MI for model control, not just model understanding.
 
 ### Scalable Unsupervised Discovery
 
-Beyond individual circuits, Marks et al. built a scalable unsupervised pipeline that automatically discovers thousands of feature circuits for model behaviors found via SAE feature clustering. No human supervision is needed for the initial discovery phase -- human inspection is reserved for validation and editing. This moves circuit discovery from a labor-intensive per-task endeavor toward an automated process.
+Beyond individual circuits, Marks et al. built a scalable unsupervised pipeline that automatically discovers thousands of feature circuits for model behaviors found via SAE feature clustering. No human supervision is needed for the initial discovery phase, human inspection is reserved for validation and editing. This moves circuit discovery from a labor-intensive per-task endeavor toward an automated process.
 
 ### Limitations of Sparse Feature Circuits
 
@@ -48,9 +48,9 @@ Sparse feature circuits demonstrated the concept, but the approach has important
 
 - It relies on **per-layer SAEs**. Features do not naturally cross MLP boundaries, so the circuits cannot trace information through MLP computations.
 - **Patching is computationally expensive** at scale. Each feature must be individually patched, and large models have millions of features.
-- Each circuit is **task-specific** -- discovering a new circuit for a new behavior requires running the full pipeline again.
+- Each circuit is **task-specific**, discovering a new circuit for a new behavior requires running the full pipeline again.
 
-Attribution graphs address these limitations by replacing MLPs entirely with cross-layer [transcoders](/topics/transcoders/) and using efficient Jacobian tracing instead of brute-force patching.
+Attribution graphs address these limitations by building a replacement model in which cross-layer [transcoders](/topics/transcoders/) approximate the MLPs, then using Jacobian tracing instead of brute-force patching.
 
 ## Attribution Graphs
 
@@ -58,7 +58,7 @@ Lindsey et al. (2025) proposed *attribution graphs*: a method for tracing circui
 
 ### Cross-Layer Transcoders
 
-A regular [transcoder](/topics/transcoders/) reads from one layer's MLP input and writes to that layer's MLP output. A **cross-layer transcoder (CLT)** extends this idea: it reads from the residual stream at one layer and contributes to *all subsequent* MLP layers. Features in a CLT can bridge across multiple layers, making cross-layer interactions explicit.{% sidenote "Why does bridging matter? Many features persist across layers -- for example, 'this token is a proper noun' might be relevant from layer 3 through layer 15. With per-layer SAEs, this feature is rediscovered independently at each layer. With CLTs, it is represented once, and its influence on all downstream layers is captured in a single set of decoder weights." %}
+A regular [transcoder](/topics/transcoders/) reads from one layer's MLP input and writes to that layer's MLP output. A **cross-layer transcoder (CLT)** extends this idea: it reads from the residual stream at one layer and contributes to *all subsequent* MLP layers. Features in a CLT can bridge across multiple layers, making cross-layer interactions explicit.{% sidenote "Why does bridging matter? Many features persist across layers, for example, 'this token is a proper noun' might be relevant from layer 3 through layer 15. With per-layer SAEs, this feature is rediscovered independently at each layer. With CLTs, it is represented once, and its influence on all downstream layers is captured in a single set of decoder weights." %}
 
 > **Cross-Layer Transcoder (CLT):** A CLT extends the transcoder concept by reading from the residual stream at one layer and writing to multiple subsequent layers. Features in a CLT can bridge across multiple MLP layers, making cross-layer interactions explicit. When all MLPs in a model are replaced by CLTs, the resulting *replacement model* has an interpretable sparse structure where feature-to-feature interactions are linear for any given input.
 
@@ -70,14 +70,14 @@ The attribution graph method works on a *replacement model*, not the original:
 2. Replace the MLPs with the trained CLTs
 3. The replacement model behaves similarly to the original but has an interpretable sparse structure
 
-A key property of the replacement model: for a specific input, the feature-to-feature interactions are *linear*. This is because attention patterns are fixed once computed for a given input, layer normalization denominators are fixed, and feature activations are sparse and known. The direct effect of one feature on another is a linear function of that feature's activation, computable exactly via the backward Jacobian.
+For a specific input, the method treats feature-to-feature effects locally as linear. It holds attention patterns, normalization terms, and active feature gates fixed, then uses a backward Jacobian to compute effects in that local approximation. The derivative can be exact for the replacement model at that point while still failing to capture changes that would alter attention, normalization, or which features activate.
 
 ### How Graphs Are Constructed
 
 For a specific input:
 
 1. **Run the replacement model** and record all active features, their activations, and the output logits
-2. **Choose a target output** -- for example, the logit for a specific predicted token. This becomes the root of the graph.
+2. **Choose a target output**, for example, the logit for a specific predicted token. This becomes the root of the graph.
 3. **Trace backward via the Jacobian.** For each active feature, compute its linear effect on the target output. Keep features whose effect exceeds a threshold.
 4. **Recurse.** For each retained feature, trace backward to find which earlier features (or input embeddings) contributed to *its* activation. Continue until reaching the input.
 
@@ -94,26 +94,26 @@ Anthropic (2025) applied attribution graphs to Claude 3.5 Haiku, producing a com
 When asked "What is the capital of the country containing the city of Dallas?", the attribution graph reveals a chain of features:
 
 1. A **"Dallas" feature** activates, recognizing the city
-2. This activates a **"Texas" feature** -- a geographic association
-3. The "Texas" feature activates a **"United States" feature** -- state-to-country mapping
-4. The "United States" feature activates a **"Washington D.C." feature** -- capital knowledge
+2. This activates a **"Texas" feature**, a geographic association
+3. The "Texas" feature activates a **"United States" feature**, state-to-country mapping
+4. The "United States" feature activates a **"Washington D.C." feature**, capital knowledge
 
-Each step is a distinct feature-to-feature connection visible in the graph. The model does not jump from "Dallas" to "Washington D.C." in one step; it follows a multi-step path through intermediate geographic representations. This is consistent with the hypothesis that transformers implement multi-step algorithms through sequential feature activation across layers.
+Each step appears as a distinct feature-to-feature connection in the replacement model's attribution graph. For this prompt, the graph supports a multi-step route through intermediate geographic features rather than one attributed edge from “Dallas” to “Washington D.C.” Because the graph is sparse, input-specific, and built from an approximation, it is evidence for that route rather than an exhaustive transcript of the original model.
 
 ### Multilingual Processing
 
-When processing text in a non-English language, the attribution graph reveals a three-phase pattern. Early features encode language-specific tokens (French words, grammar patterns). Intermediate features are *language-agnostic* -- they encode meaning rather than surface form. Late features translate from the shared meaning representation back to the target language. The model appears to use a shared conceptual space across languages, with language-specific features at the input and output boundaries.
+In one multilingual case study, early graph features were associated with language-specific tokens and grammar, while some intermediate features responded across languages to related meanings. Later features were again tied to the output language. This pattern is consistent with a partly shared semantic representation, but “language-agnostic” should not be read as proof that the features discard every language-specific cue.
 
 ### Poetry and Rhyme
 
-When completing a poem where the next word must rhyme, the attribution graph reveals two parallel pathways: a *semantic pathway* encoding the meaning and theme of the poem, and a *phonetic pathway* encoding the sound pattern and rhyme constraint. These pathways converge at the output, producing a word that satisfies both meaning and rhyme -- a concrete example of how multiple computational goals are solved in parallel through the feature network.
+When completing a poem where the next word must rhyme, the attribution graph reveals two parallel pathways: a *semantic pathway* encoding the meaning and theme of the poem, and a *phonetic pathway* encoding the sound pattern and rhyme constraint. These pathways converge at the output, producing a word that satisfies both meaning and rhyme, a concrete example of how multiple computational goals are solved in parallel through the feature network.
 
 <details class="pause-and-think">
 <summary>Pause and think: Per-input vs. global circuits</summary>
 
 Attribution graphs show a chain of features for multi-step reasoning: Dallas, Texas, United States, Washington D.C. But this is the graph for *one specific input*. Would the model use the same chain for "What is the capital of the country containing Houston?" Would the intermediate features be identical?
 
-What would it take to go from per-input graphs to a general understanding of how the model does geographic reasoning? You would need to run attribution graphs on many similar prompts, align the resulting graphs, and look for shared structure. This aggregation problem -- going from many individual circuit traces to a universal circuit description -- is not yet solved and remains one of the field's key open challenges.
+What would it take to go from per-input graphs to a general understanding of how the model does geographic reasoning? You would need to run attribution graphs on many similar prompts, align the resulting graphs, and look for shared structure. This aggregation problem, going from many individual circuit traces to a universal circuit description, is not yet solved and remains one of the field's key open challenges.
 
 </details>
 
@@ -121,7 +121,7 @@ What would it take to go from per-input graphs to a general understanding of how
 
 ### Per-Input, Not Global
 
-The most important limitation: attribution graphs are *per-input*. Each graph shows what happens on one specific prompt. Different prompts activating the same behavior can produce different graphs. There is no guarantee that the graph for "Dallas" generalizes to "Houston." Going from per-input to global circuit understanding requires aggregating many graphs -- a task that is not yet solved.{% sidenote "This is analogous to a limitation in neuroscience. An fMRI scan shows which brain regions are active during one specific task, but inferring the general function of a brain region requires thousands of scans across many tasks and subjects. Attribution graphs are the MI equivalent of individual fMRI scans." %}
+One central limitation is that attribution graphs are *per-input*. Each graph describes one prompt, and prompts expressing the same behavior can produce different graphs. There is no guarantee that the graph for "Dallas" generalizes to "Houston." A broader account requires comparing traces across many inputs and testing which structure persists.{% sidenote "A single trace is closer to a case study than a general theory. Repeated traces can reveal recurring structure, but the aggregation procedure and the relevant input distribution both affect the conclusion." %}
 
 ### CLT Approximation Quality
 
@@ -129,7 +129,7 @@ The replacement model is an *approximation*. CLTs are trained to match MLP behav
 
 ### Active Features Only
 
-Attribution graphs show only *active* features -- those that fire on the given input. Features that are *inhibited* (actively suppressed) may not appear. Features that would be relevant but happen to be inactive on this input are invisible. The graph shows what the model *does*, not what it *could have done*. Contrast this with the IOI analysis, where Backup Name Mover heads were discovered through ablation of the primary pathway.
+Attribution graphs show only *active* features, those that fire on the given input. Features that are *inhibited* (actively suppressed) may not appear. Features that would be relevant but happen to be inactive on this input are invisible. The graph shows what the model *does*, not what it *could have done*. Contrast this with the IOI analysis, where Backup Name Mover heads were discovered through ablation of the primary pathway.
 
 ### Frozen Attention and Normalization
 
@@ -137,7 +137,7 @@ The linearity of attribution graphs depends on freezing attention patterns and l
 
 ## The Evolution of Circuit Analysis
 
-![Timeline showing four generations of circuit analysis: manual head-level (IOI, 2022), automated head-level (ACDC, 2023), feature-level circuits (Marks et al., 2024), and feature-level at scale (attribution graphs, 2025).](/topics/circuit-tracing/images/circuit_evolution.png "Figure 2: The evolution of circuit analysis. Each generation gained resolution and automation but also added complexity. The fundamental challenge -- going from per-input analysis to global understanding -- remains across all generations.")
+![Timeline showing four generations of circuit analysis: manual head-level (IOI, 2022), automated head-level (ACDC, 2023), feature-level circuits (Marks et al., 2024), and feature-level at scale (attribution graphs, 2025).](/topics/circuit-tracing/images/circuit_evolution.png "Figure 2: The evolution of circuit analysis. Each generation gained resolution and automation but also added complexity. The fundamental challenge, going from per-input analysis to global understanding, remains across all generations.")
 
 The progression tells a clear story:
 
@@ -146,21 +146,21 @@ The progression tells a clear story:
 - **2024: Feature-level circuits (Marks et al.).** SAE features as circuit nodes {% cite "marks2024sparse" %}. Higher resolution than heads, but still per-layer and patching-based.
 - **2025: Attribution graphs (Lindsey et al.).** Cross-layer transcoders, Jacobian tracing, thousands of features {% cite "lindsey2025circuittracing" %}. The highest resolution yet, applied to production-scale models.
 
-Each step gained something and lost something. Higher resolution brings more detail but also more complexity. Automation brings scale but also requires more careful validation. And the fundamental challenge -- going from per-input analysis to global circuit understanding -- remains across all generations.{% sidenote "Despite the dramatic progress, some things have not changed. Both IOI patching and attribution graphs analyze specific inputs, not general behaviors. Circuit accounts are always incomplete (87% faithfulness in IOI; reconstruction error in attribution graphs). Having a circuit diagram does not mean we fully understand the computation. Progress is real, but the hardest problems remain open." %}
+Each step gained something and lost something. Higher resolution brings more detail but also more complexity. Automation brings scale but also requires more careful validation. And the fundamental challenge, going from per-input analysis to global circuit understanding, remains across all generations.{% sidenote "Both IOI patching and attribution graphs are evaluated on selected inputs and behaviors. The reported IOI circuit did not recover all measured performance, and attribution graphs inherit reconstruction error from their replacement model. A circuit diagram is therefore evidence about a computation, not a certificate that the computation is fully understood." %}
 
 <details class="pause-and-think">
 <summary>Pause and think: What would global circuits look like?</summary>
 
 Attribution graphs give us a per-input circuit. Imagine we could somehow aggregate thousands of attribution graphs for the same behavior into a single "global" circuit. What would that circuit look like? Would it have the same structure as individual attribution graphs, or would it be fundamentally different?
 
-Consider that different inputs might activate different subsets of features, use different intermediate representations, or follow different computational paths to the same output. A global circuit might need to represent branching, optional paths, and input-dependent routing -- structures that are absent from individual attribution graphs. This is an open research question.
+Consider that different inputs might activate different subsets of features, use different intermediate representations, or follow different computational paths to the same output. A global circuit might need to represent branching, optional paths, and input-dependent routing, structures that are absent from individual attribution graphs. This is an open research question.
 
 </details>
 
 ## Key Takeaways
 
 - **Sparse feature circuits** use SAE features as circuit nodes, bridging feature discovery with causal circuit analysis. SHIFT demonstrates that these circuits are editable, not just descriptive.
-- **Attribution graphs** combine cross-layer transcoders with backward Jacobian tracing to produce complete feature-level circuit maps. The Biology paper shows these reveal interpretable computational chains in production models.
+- **Attribution graphs** combine cross-layer transcoders with backward Jacobian tracing to produce input-specific maps of a replacement model. The Biology case studies show that these maps can expose interpretable computational chains.
 - **Limitations are serious:** per-input analysis, CLT approximation quality, active features only, and frozen attention/normalization. Attribution graphs are a tool for investigation, not a final understanding.
 - The field has evolved from manual tracing of 26 attention heads (IOI, 2022) to automated tracing of thousands of features (attribution graphs, 2025). Resolution and automation have increased dramatically, but the core challenge of global circuit understanding remains.
 - These tools find safety applications in [detecting sleeper agents](/topics/sleeper-agent-detection/) and monitoring model behavior, where feature-level circuit analysis can reveal hidden computational patterns that behavioral testing alone would miss.

@@ -17,7 +17,7 @@ glossary:
 
 ## Why Attention Resists Decomposition
 
-[Circuit tracing](/topics/circuit-tracing/) lists frozen attention as a standing limitation: attribution graphs hold the attention patterns fixed and report first-order effects through them {% cite "lindsey2025circuittracing" %}. The reason is structural rather than incidental. A [transcoder](/topics/transcoders/) replaces an MLP, a map from one activation to another. An attention score is not that shape: it is bilinear in the activations at two different positions. Several activation-based decompositions of attention have been proposed, and Bushnaq et al. judge that none is yet satisfactory {% cite "bushnaq2026vpd" %}.
+[Circuit tracing](/topics/circuit-tracing/) lists frozen attention as a standing limitation: attribution graphs hold the attention patterns fixed and report first-order effects through them {% cite "lindsey2025circuittracing" %}. The reason is structural rather than incidental. A [transcoder](/topics/transcoders/) replaces a multilayer perceptron (MLP), a map from one activation to another. An attention score is not that shape: it is bilinear in the activations at two different positions. Several activation-based decompositions of attention have been proposed, and Bushnaq et al. judge that none is yet satisfactory {% cite "bushnaq2026vpd" %}.
 
 Attention heads are the standard way to carve up an attention layer, but a single computation can be spread across several of them, so a head is not guaranteed to be one thing either.
 
@@ -29,7 +29,7 @@ Nonzero weights are not the same as used weights, so this is suggestive rather t
 
 ## The QK Circuit as Pairs of Subcomponents
 
-Recall the [QK circuit](/topics/qk-ov-circuits/) of head $h$, the matrix $W_{QK}^h = W_Q^h (W_K^h)^T$ that turns a pair of residual-stream vectors into an attention score, $e_{i,j} = \mathbf{x}_i \, W_{QK}^h \, \mathbf{x}_j^T$.
+Recall the [query-key (QK) circuit](/topics/qk-ov-circuits/) of head $h$, the matrix $W_{QK}^h = W_Q^h (W_K^h)^T$ that turns a pair of residual-stream vectors into an attention score, $e_{i,j} = \mathbf{x}_i \, W_{QK}^h \, \mathbf{x}_j^T$.
 
 Substituting the rank-one decompositions of the query and key matrices, $W_Q^h = \sum_c \mathbf{v}_{Q,c}^T \mathbf{u}_{Q,c}^h$ and $W_K^h = \sum_{c'} \mathbf{v}_{K,c'}^T \mathbf{u}_{K,c'}^h$:
 
@@ -64,24 +64,24 @@ Ablating subcomponent 316 and re-measuring the attention patterns tests this dir
   <figcaption>Figure 1: Mean attention by query-key offset for all six heads in layer 1, before (black) and after (blue) ablating a single query subcomponent. Attention to the recent past collapses in every head that had it. Ablating other query subcomponents was indistinguishable from baseline. From Bushnaq et al., <em>Interpreting Language Model Parameters</em>. {% cite "bushnaq2026vpd" %}</figcaption>
 </figure>
 
-Attention to recent offsets collapses in every head that had it, and ablating any other query subcomponent changes nothing distinguishable from baseline. So the recent-token attention in all five heads runs through one rank-one piece of $W_Q$ paired with one rank-one piece of $W_K$. This is a single rule, and the five heads share it rather than each maintaining a copy.
+Attention to recent offsets collapses in every head that had it, while the other tested query-subcomponent ablations were indistinguishable from baseline. On these measurements, recent-token attention across the five heads depends on one rank-one piece of $W_Q$ paired with one rank-one piece of $W_K$. This supports a shared-rule account more strongly than five independent copies.
 
-Their OV circuits read from noticeably different subspaces of the residual stream, which the authors offer as weak evidence that the heads gather different information rather than duplicating each other's work.
+Their output-value (OV) circuits read from noticeably different subspaces of the residual stream, which the authors offer as weak evidence that the heads gather different information rather than duplicating each other's work.
 
 ## The Same Query, a Different Key
 
 Sixty percent of L1H1's attention goes to the previous token. Pairing the same query subcomponent with a different key exposes part of what the rest is doing.
 
-Key subcomponent 119 fires on brackets, punctuation, newlines, LaTeX dollar signs and end-of-text tokens, on 16% of tokens. Paired with query 316 the offset dependence inverts: the coupling is strongest at *distant* offsets. The two together route attention back to the last syntactic boundary, which is the bookkeeping a code model needs constantly -- whether a bracket is still open, whether we are inside a quotation.
+Key subcomponent 119 fires on brackets, punctuation, newlines and other interstitial words, plus common continuation words like `the` and `and`, on 16% of tokens. Paired with query 316 the offset dependence inverts: the coupling is strongest at *distant* offsets. The two together route attention back to the last syntactic boundary, which is the bookkeeping a language model does constantly, whether a bracket is still open, whether we are inside a quotation.
 
-Query 316 fires on almost every token, so its side of the rule is always asking; key 119 fires rarely, so it decides which source positions can answer. The two sides are doing different jobs. And again no head owns the rule: nearly every head in the layer shows the interaction, differing only in how far back it reaches.
+Query 316 fires on almost every token, so its side of the rule is always asking; key 119 fires rarely, so it decides which source positions can answer. The two sides are doing different jobs. And again no head owns the rule: the interaction shows up across multiple heads in the layer, differing in how far back each reaches.
 
 <details class="pause-and-think">
 <summary>Pause and think: what would head-level analysis have concluded?</summary>
 
 Suppose we only had head-level tools: attention pattern inspection, head ablation, path patching. Looking at L1H1 we would find strong previous-token attention plus a weaker tendency to attend to punctuation, and we would probably call the head polysemantic and move on. Looking at L1H4 we would find long-range attention to punctuation and call it something else entirely.
 
-Both descriptions are true and both are the wrong cut. The actual objects are two query-key subcomponent pairs sharing a query, each spread across most of the layer's six heads, with the heads differing in how far back they apply the rule. Neither the individual head nor the individual pair is visible from the other level.
+Both descriptions capture part of the behavior, but the subcomponent analysis offers a more compact cut: two query-key pairs share a query, each pair is spread across most of the layer's six heads, and the heads differ in how far back they apply the rule. Head-level and subcomponent-level views expose different parts of this organization.
 
 This is what "attention head superposition" means concretely, and it is why the unit of analysis question in the [previous article](/topics/parameter-decomposition/) is not merely philosophical.
 
@@ -89,7 +89,7 @@ This is what "attention head superposition" means concretely, and it is why the 
 
 ## Attribution Graphs Over Subcomponents
 
-Individual subcomponents, and interactions within one attention layer, are not yet an account of how a model gets from input to output. For that we need to trace across layers, which means [attribution graphs](/topics/circuit-tracing/) again -- with subcomponents as nodes.
+Individual subcomponents, and interactions within one attention layer, are not yet an account of how a model gets from input to output. For that we need to trace across layers, which means [attribution graphs](/topics/circuit-tracing/) again, with subcomponents as nodes.
 
 The edges are gradients, but not the plain partial derivative. The derivative $\partial a_c / \partial a_{c'}$ between two subcomponent activations mixes direct influence with influence routed through intermediate subcomponents, and in a residual network the direct path can skip many layers. So gradients are stopped at every subcomponent other than the source, isolating the direct effect, and the derivative is multiplied by the source's activation and its causal importance:
 
@@ -103,15 +103,15 @@ Even simple prompts activate hundreds of subcomponents, so graphs get pruned to 
 
 ## Pruning Without an Adversary Finds Circuits That Are Too Small
 
-Pruning means re-optimizing causal importances to be minimal subject to still predicting the target token. There are two ways to do it, and on the same prompt they return graphs of very different sizes.
+Pruning means re-optimizing causal importances to be minimal subject to still predicting the target token.
 
-Prune with stochastic and adversarial mask sampling, as in the decomposition training itself, and the graph for predicting `·her` in "The princess lost her crown." keeps 150 subcomponents. Prune with causal importances alone -- no sampling, just minimize the masks while holding the loss down -- and the graph is far smaller and looks considerably more interpretable.
+Prune with stochastic and adversarial mask sampling, as in the decomposition training itself, and the graph for predicting `·her` in "The princess lost her crown." keeps 150 subcomponents. Prune with causal importances alone, no sampling, just minimize the masks while holding the loss down, and the graph is far smaller and looks considerably more interpretable.
 
-Without robustness to adversarial ablation, the optimization is free to mark subcomponents unimportant that the model actually needs, because nothing ever tests them in combination. The smaller graph is not a coarser summary of the larger one; it claims a simple mechanism where a more complicated one exists. Naively pruned graphs often score *better* on the task than the target model does, reaching near 100% accuracy on a prediction the real model assigns 0.586.
+Without robustness to adversarial ablation, the optimization can mark subcomponents unimportant because it never tests some discarded components in combination. In these examples, the smaller graph is not merely a coarser summary: it behaves differently from the target model. Naively pruned graphs can even score *better* on the selected prediction, reaching near 100% where the target model assigns probability 0.586. That mismatch is a warning that the graph has found a sufficient predictor rather than faithfully preserving the model's computation.
 
 Predicting the closing `>` in `<u,v` depends on layer 1's attention output subcomponents: ablate them from the target model and the probability of `>` falls from 0.547 to 0.015. Ablate them from the adversarially pruned graph and it falls to 0.021, tracking the real model. Ablate them under causal-importance masking alone and it stays at approximately 1.000, so the naive graph reports that removing something essential changes nothing.
 
-Masking without adversarial sampling is how a large fraction of the subgraph-identification literature finds important subnetworks in large causal graphs, and the problem should apply wherever it is used {% cite "bushnaq2026vpd" %}. Methods that select a subnetwork by optimizing a differentiable mask over components are hit most directly. But the underlying issue is more general, because the standard automated circuit-discovery methods also never test the excluded components in combination: [ACDC](/topics/attribution-patching/) removes edges along one greedy trajectory, checking a single ablation configuration at each step {% cite "conmy2023ioi" %}, and attribution-based edge pruning estimates each edge's effect linearly {% cite "syed2023eap" %}. Neither ever asks whether some *other* combination of the discarded edges would have broken the model. If the argument holds, published circuits found this way are systematically smaller than the mechanisms they claim to describe, and [circuit evaluation](/topics/circuit-evaluation/) needs a stricter bar than the ones currently in use.
+Differentiable masks without adversarial sampling are used in several subgraph-identification methods, so the failure mode may transfer beyond this decomposition {% cite "bushnaq2026vpd" %}. [Automated Circuit Discovery (ACDC)](/topics/attribution-patching/) removes edges along a greedy trajectory {% cite "conmy2023ioi" %}, while attribution-based pruning estimates edge effects locally {% cite "syed2023eap" %}. Neither procedure exhaustively tests combinations of discarded edges. The result motivates an additional robustness check: search for joint ablations that make an apparently sufficient subgraph fail.
 
 The `·her` graph raises the probability of the correct token to 1.000 under causal-importance masking and 0.999 under stochastic masking, but only to 0.443 under adversarial masking, below the target model's own 0.586. Even the adversarially pruned graph is leaving relevant computation out.
 
@@ -123,14 +123,14 @@ Because the decomposition stays inside the original architecture, its pieces are
 
 The target here is deliberately small. The model should predict that every emoticon is a surprised face, `:o`, and nothing else should change. A token-level remap cannot do it, because `:`, `;`, `X` and `=` appear constantly outside emoticons, so any rule keyed on the token is wrong most of the time. The edit has to be conditioned on the model's own judgment that an emoticon is underway, which means editing the mechanism that makes that judgment. Six subcomponents in layer 2's MLP down-projection are candidates: they fire on emoticon-initial characters and stay quiet on those same characters elsewhere.
 
-Each subcomponent is a rank-one matrix with one read direction and one write direction. Pick one of the six, leave its read direction alone, and replace its write direction with the unembedding direction for the token `o`, scaled by a factor $\alpha$. The subcomponent still fires exactly when it fired before, on emoticon openings, and now what it writes to the residual stream pushes up the logit for `o`.
+Each subcomponent is a rank-one matrix with one read direction and one write direction. Pick one of the six, leave its read direction alone, and replace its write direction with the unembedding direction for the token `o`, scaled by a factor $\alpha$. For the layer input held fixed, the subcomponent keeps the same scalar activation but now writes toward `o`. Downstream activations can still change in response to that edit.
 
 <figure>
   <img src="/topics/parameter-space-circuits/images/subcomponent_edit_vs_lora.png" alt="Two log-x scatter plots of probability assigned to the token o against off-target KL divergence. In both, the manual subcomponent edit traces a curve below the LoRA trained on 947 examples. Against surrounding KL the LoRA trained on 10 examples is also above the manual edit; against global KL the two curves cross.">
-  <figcaption>Figure 2: The single-subcomponent edit against LoRA baselines, sweeping edit scale and the LoRA off-target penalty. Left: off-target damage measured on the 20 tokens either side of a firing position. Right: damage measured on all non-firing tokens in the corpus. Up and to the left is better. From Bushnaq et al., <em>Interpreting Language Model Parameters</em>. {% cite "bushnaq2026vpd" %}</figcaption>
+  <figcaption>Figure 2: The single-subcomponent edit against low-rank adaptation (LoRA) baselines, sweeping edit scale and the LoRA off-target penalty. Left: off-target damage measured on the 20 tokens either side of a firing position. Right: damage measured on all non-firing tokens in the corpus. Up and to the left is better. From Bushnaq et al., <em>Interpreting Language Model Parameters</em>. {% cite "bushnaq2026vpd" %}</figcaption>
 </figure>
 
-Against LoRA adapters trained on the same layer to do the same job, the manual edit loses. A LoRA trained on 947 examples beats it on off-target damage both locally and globally. A LoRA trained on just 10 examples beats it locally, in the setting it was trained on, and the two are comparable globally. The authors call the example cherry-picked, chosen because this model happened to have subcomponents devoted almost exclusively to emoticons, and describe the technique -- add the unembedding vector -- as the first thing they tried.
+Against LoRA adapters trained on the same layer to do the same job, the manual edit loses. A LoRA trained on 947 examples beats it on off-target damage both locally and globally. A LoRA trained on just 10 examples beats it locally, in the setting it was trained on, and the two are comparable globally. The authors call the example cherry-picked, chosen because this model happened to have subcomponents devoted almost exclusively to emoticons.
 
 The edit required no training data and no gradient steps on the target behavior, and we can say in one sentence what was changed and why. That, rather than any performance advantage, is the case for it: a proof of concept for a class of interventions that operate on identified mechanisms. Compare the [localized fact editing](/topics/fact-editing/) line, where the recurring lesson is that a successful edit at a located site does not license the conclusion that the site stores the fact. Here the edit and the identification are the same object, which is a different epistemic position, though not yet a better practical one.
 
@@ -139,7 +139,7 @@ The edit required no training data and no gradient steps on the target behavior,
 
 The edit changes only $\mathbf{u}_c$, the write direction, and keeps $\mathbf{v}_c$. Why does that matter for off-target damage?
 
-Recall from the [previous article](/topics/parameter-decomposition/) that a subcomponent computes $(\mathbf{h} \cdot \mathbf{v}_c) \mathbf{u}_c$. The read direction determines *when* the subcomponent contributes, by deciding which activations produce a nonzero scalar. The write direction determines *what* it contributes. Editing the write direction leaves the firing pattern untouched, so the edit is active on exactly the input distribution the subcomponent was already active on -- emoticon openings, and nothing else.
+Recall from the [previous article](/topics/parameter-decomposition/) that a subcomponent computes $(\mathbf{h} \cdot \mathbf{v}_c) \mathbf{u}_c$. The read direction determines *when* the subcomponent contributes, by deciding which activations produce a nonzero scalar. The write direction determines *what* it contributes. Editing the write direction leaves the component's read rule unchanged. Its direct edit is therefore gated by the same activation pattern observed before, although downstream effects and behavior outside the tested examples still need measurement.
 
 Edit the read direction instead and you would change which inputs trigger the subcomponent, which is a much less controlled intervention: you would have no account of what the new trigger set is without re-running the interpretation.
 

@@ -1,6 +1,6 @@
 ---
 title: "Natural Language Autoencoders"
-description: "An unsupervised method that trains a verbalizer and reconstructor jointly with reinforcement learning to translate LLM activations into readable natural-language explanations, without ground-truth labels for what the activations encode."
+description: "Turning activations into readable explanations by jointly training a verbalizer and reconstructor, without labels that say what those activations encode."
 order: 7
 prerequisites:
   - title: "Activation Oracles"
@@ -39,9 +39,9 @@ The idea is to build an autoencoder whose bottleneck is a paragraph of natural l
 
 > **Activation Reconstructor (AR):** The decoder. It takes an explanation and produces a reconstructed activation.
 
-Nothing in this setup asks the explanation to be readable, faithful, or even related to the activation. The only pressure is reconstruction. The surprising empirical result, which the rest of this article builds toward, is that with the right starting point the explanations come out interpretable anyway.
+The reconstruction objective does not explicitly reward readability or faithfulness. With a supervised warm start and a penalty that keeps the verbalizer nearby, the reported models produce text that human evaluators can often interpret. Those extra ingredients matter, and reconstruction alone does not certify the explanations.
 
-## The reconstruction objective
+## The Reconstruction Objective
 
 Fix a target model $M$ and a layer $l$ whose activations $h_l \in \mathbb{R}^{d_\text{model}}$ we want to interpret. The AV defines a distribution over explanations $z$ given an activation, written $\text{AV}(z \mid h_l)$. The AR maps an explanation to a reconstruction $\hat{h}_l = \text{AR}(z)$. We train both to minimize the expected reconstruction error:
 
@@ -51,31 +51,31 @@ Here $\mathcal{H}$ is the distribution of layer-$l$ activations you get by runni
 
 $$\text{FVE} = 1 - \frac{\mathcal{L}}{\mathbb{E}_{h_l \sim \mathcal{H}} \, \lVert h_l - \bar{h}_l \rVert_2^2}$$
 
-An FVE of $0$ means the reconstruction is no better than always predicting the mean activation $\bar{h}_l$; an FVE of $1$ means perfect reconstruction. Two implementation choices keep training stable: activations are normalized to unit $L_2$ norm before anything else, and $l$ is chosen middle-to-late in the network, where activations carry abstract content rather than raw token identity.
+An FVE of $0$ matches the mean-activation baseline, while an FVE of $1$ is perfect reconstruction on the evaluated distribution. In the reported recipe, activations are normalized to unit $L_2$ norm and the target layer is chosen in the middle-to-late network. Those are design choices, not a guarantee that such layers contain only abstract content.
 
-## Two language models, wired back to back
+## Two Language Models, Wired Back to Back
 
-Both halves of the NLA are copies of the target model, which matters: the target already has the machinery to represent whatever its own activations encode.
+Both halves initialize from the target model. This gives them a vocabulary and representational starting point matched to the activation source, although training must still teach them the new activation-to-text and text-to-activation interfaces.
 
 **The verbalizer** is a full copy of $M$. It runs on a fixed prompt that instructs it to describe an activation and contains one special placeholder token. To verbalize $h_l$, we scale it by a fixed constant $\alpha$ and insert it in place of the placeholder token's embedding, then sample from the model at temperature $1$ to get the explanation $z$. {% sidenote "The scale $\alpha$ is large, well above a typical token-embedding norm. The authors' working hypothesis is that a large injected vector propagates through the early layers relatively undisturbed until it reaches the depth at which the weights know how to read a layer-$l$ activation. A serviceable heuristic is to set $\alpha$ to roughly the 75th-percentile activation norm at the chosen layer." %}
 
 **The reconstructor** is a copy of $M$ truncated to its first $l$ layers, since the reconstruction target lives at layer $l$ and the later layers are not needed. It wraps the explanation $z$ in a fixed prompt, runs it forward, and applies a learned affine map to the layer-$l$ activation at the final token to produce $\hat{h}_l$. That affine head is the only genuinely new parameter tensor in the system; everything else is initialized from the target model.
 
-## You cannot just copy the target model
+## Why Initialization Alone Is Not Enough
 
-If you initialize the AV and AR as plain copies of $M$ and start training, it does not work. The AV has never seen an activation arrive as an input embedding, so at first it emits nonsense, and reinforcement learning from a nonsense starting point is unstable.
+In the paper's ablations, initializing the AV and AR from $M$ without a warm start does not produce useful training. The AV has not learned to treat a layer activation as an input embedding, so its initial samples are poor and provide an unstable starting point for reinforcement learning.
 
 The fix is a supervised warm-start on a summarization proxy task. Take pretraining-like text, truncate it at a random point, and record the layer-$l$ activation at the final token. Ask a strong model to write a short summary of what a language model reading that text would be attending to at that point. Then fine-tune the AV on (activation, summary) pairs and the AR on (summary, activation) pairs {% cite "frasertaliente2026nla" %}. {% sidenote "The summarization prompt deliberately leads the witness: rather than asking for a literal summary of the visible text, it asks the labeler to imagine the internal processing of a causal model predicting the next token. The goal is not ground truth, which we do not have, but to put the AV roughly in the right region before reinforcement learning takes over. The Claude-generated summaries have a recognizable style of short paragraphs with bolded topic headings, and that style persists all the way through training." %}
 
 This warm-start typically reaches an FVE around $0.3$ to $0.4$ on its own. Its more important job is to make the AV speak fluent, on-topic English before the reconstruction objective starts pushing on it. We will see why that matters when we look at how the objective could otherwise be gamed.
 
-## Training the pair
+## Training the Pair
 
 After the warm-start, both modules are trained together to minimize the same reconstruction loss $\mathcal{L}(\phi, \theta)$, where $\phi$ are the AV parameters and $\theta$ the AR parameters. The two updates look completely different, and the reason is worth dwelling on.
 
 **The reconstructor update is ordinary regression.** The parameters $\theta$ enter the loss only through $\text{AR}(z)$, which is a continuous function, so we can differentiate straight through it. Given the explanations sampled this step, updating the AR is one gradient step of mean-squared-error regression, with the sampled explanations $z$ as inputs and the true activations $h_l$ as targets.
 
-**The verbalizer update is reinforcement learning.** The parameters $\phi$ enter the loss only through the sampling distribution $\text{AV}(\cdot \mid h_l)$, and sampling text is not differentiable. So improving the AV is exactly the RL problem of maximizing a reward,
+**The verbalizer update uses reinforcement learning.** The parameters $\phi$ affect the loss through a sampled discrete string, so ordinary backpropagation cannot pass through the token choices. The authors optimize the expected reconstruction reward,
 
 $$r(h_l, z) = -\lVert h_l - \text{AR}(z) \rVert_2^2,$$
 
@@ -90,21 +90,21 @@ The two updates are not coupled. The AR update does not backpropagate into the A
 Two adjustments make this behave. The reward is passed through a monotonic (logarithmic) transform, and a KL penalty pulls the AV back toward its warm-started initialization, which preserves the fluency of the explanations as training proceeds {% cite "frasertaliente2026nla" %}. Run this loop and the FVE grows roughly linearly in the logarithm of the number of steps, reaching $0.6$ to $0.8$ for the NLAs in the paper. The explanations also grow measurably more informative over the same period, even though nothing in the objective rewards informativeness directly.
 
 <details class="pause-and-think">
-<summary>Pause and think: why is the AV trained with RL but the AR with plain gradient descent?</summary>
+<summary>Pause and think: Why is the AV trained with RL but the AR with gradient descent?</summary>
 
 Both are minimizing the same reconstruction loss, so why not backpropagate through the whole pipeline?
 
-The split follows from where each set of parameters sits. The AR's output is a continuous vector, and the loss is a smooth function of it, so ordinary backpropagation applies. The AV's contribution passes through a sampling step: it produces a discrete string of tokens, and you cannot take a gradient of the loss with respect to the choice of tokens. Reinforcement learning is the standard way to optimize through a non-differentiable sampling bottleneck. You treat the sampled explanation as an action and its reconstruction quality as a reward. This is the same reason text generation is usually tuned with RL rather than direct backpropagation from a downstream loss.
+The AR produces a continuous vector, so reconstruction loss differentiates through it directly. The AV samples discrete token sequences; the path from a chosen token back to its sampling probabilities is not an ordinary differentiable operation. A policy-gradient estimator treats the sequence as an action and reconstruction quality as its reward. Language models are usually pretrained with differentiable next-token losses, but objectives that depend on a sampled sequence need an estimator such as policy gradients or a continuous relaxation.
 
 </details>
 
-## Why the explanations stay honest
+## Avoiding Degenerate Codes
 
 Optimizing reconstruction alone should be easy to cheat. Two failure modes are worth naming, because understanding why they do not dominate is most of the intuition for why NLAs work at all {% cite "frasertaliente2026nla" %}.
 
-The first is **steganography**. Both modules are full language models, so in principle the AV could learn to emit text that looks like gibberish (or looks meaningful but is not) while secretly encoding the activation in a way only the AR can decode. Reconstruction would be excellent and the explanation would be useless. The defense is the warm-start plus the KL penalty. Because the AV begins as a fluent summarizer and is held near that initialization, RL starts from and stays near human-readable text. In early experiments without the warm-start, some runs did degenerate into garbled output even as FVE climbed, which is what motivated the supervised initialization in the first place.
+The first is **steganography**. The AV could emit text that encodes an activation in a private scheme only the AR understands. Reconstruction would be good and the explanation useless. The warm start and KL penalty reduce this risk by biasing training toward the initial summarization style. They do not prove that every remaining phrase uses ordinary human semantics.
 
-The second is **input inversion**: the AV could simply quote the input context verbatim and let the AR re-derive the activation from the raw text. This happens partially, but it cannot dominate, because the bottleneck holds fewer than about 500 tokens while the training contexts are longer than that. Full transcription is impossible, so within a tight budget it is often more useful to describe what the model is doing than to copy what it is reading.
+The second is **input inversion**: the AV could quote context and let the AR recompute the activation. A token budget shorter than the training contexts prevents full transcription and makes compression necessary. It does not force semantic explanation; a compressed code or selective quotation could still reconstruct well.
 
 Neither defense is a guarantee. With enough optimization pressure either pathology could re-emerge, and the paper is explicit that this is an open risk rather than a solved problem.
 
@@ -113,22 +113,22 @@ Neither defense is a guarantee. With enough optimization pressure either patholo
 
 Suppose the explanation could be arbitrarily long. Then the AV could transcribe the entire input context, and the AR, being a full-strength language model, could run that context forward and recompute the activation almost exactly. Reconstruction would be near-perfect and the "explanation" would just be the input, telling you nothing about what the model represents.
 
-The finite bottleneck is what forces the AV to compress, and compression is what makes the output an interpretation rather than a copy. It is the same principle that makes a sparse autoencoder's bottleneck do interpretive work: the constraint, not the reconstruction target, is where the interpretability comes from.
+The finite bottleneck forces compression, but compression alone does not make the result an interpretation. Readability comes from the interaction of the bottleneck, language-model initialization, supervised warm start, KL penalty, and evaluation. Sparse autoencoders carry the same lesson: a constraint shapes the code, while interpretability remains an empirical property.
 
 </details>
 
-## Reading an explanation
+## Reading an Explanation
 
 An NLA explanation is a handful of short, bolded snippets describing the activation, in the style inherited from the warm-start summaries. For the activation drawn from "what are you hiding" in the figure above, the trained AV produces something like *"User question with accusatory framing: 'What are you hiding' begins a question that assumes the AI has secrets."* You read it the way you would read a colleague's margin note.
 
 The catch is **confabulation**. Explanations regularly make claims about the context that are verifiably false: a reference to a source that is not there, a specific name the text never mentions, a quoted sentence that was never written. Analyzing these, the authors find a useful structure: claims about the theme of the text are supported far more often than claims about specific details, and even the false claims tend to be thematically close rather than invented wholesale. Two practical heuristics follow {% cite "frasertaliente2026nla" %}:
 
-- **Read for themes, not specifics.** Trust that the explanation is pointing at the right topic before you trust any particular name or quote in it.
-- **Weight repetition.** A claim that recurs in the explanations across several adjacent token positions is more likely to be true than one that appears once.
+- **Read themes more confidently than specifics.** In the study, topic-level statements were supported more often than names or quotations.
+- **Use repetition as one signal.** Claims recurring across adjacent positions were supported more often, but repetition can also propagate the same confabulation.
 
 Because you always have the original context the NLA ran on, obvious factual hallucinations are cheap to check. Claims about the model's internal processing are the ones to hold loosely, since those are exactly the claims you cannot cross-check. {% sidenote "A structural reason for caution: the AV is a full language model, so it has the capacity to make inferences beyond what the activation actually stores. A fluent, plausible sentence about the model's reasoning is not proof that the reasoning was encoded in the vector. This 'excessive expressivity' is the flip side of using a whole LM as the decoder." %}
 
-## Using NLAs to intervene
+## Using NLAs to Intervene
 
 Because the AR maps text back into activation space, an NLA is not only a reader but also a lever. Edit an explanation, reconstruct both versions, and the difference is a steering vector.
 
@@ -142,16 +142,16 @@ Two examples show what this buys you and where it is convincing.
 
 **Reasoning about a reward.** In a toy setup, a system prompt reveals that even numbers are rewarded, and the model is then asked for a random odd integer. It tends to answer with an even number and never mentions the reward. The NLA explanations show it knows even numbers are rewarded and even suspects it is being evaluated. Editing the explanations to say the reward is a *penalty* and steering with that difference flips the model back to odd answers. This case is cleaner than the rhyme, because the edited word ("penalty") is not itself a candidate output token, so the steering is acting on the model's belief about its situation rather than promoting a surface word {% cite "frasertaliente2026nla" %}.
 
-Both examples point to the same workflow. NLAs are cheap to read and good at generating hypotheses, so you use them to form a guess, then confirm it with a more expensive method such as [attribution graphs](/topics/circuit-tracing/) or a controlled steering experiment {% cite "lindsey2025circuittracing" %}.
+Both examples suggest a workflow: use an NLA description to form a hypothesis, then test it with a controlled steering experiment or a more localized method such as an [attribution graph](/topics/circuit-tracing/) {% cite "lindsey2025circuittracing" %}. Generating descriptions is computationally expensive at scale, but reading a selected output is convenient for a human.
 
-## What it costs
+## What It Costs
 
 The bill for this expressiveness is real. Training is joint RL over two full-size language models on top of two supervised warm-starts, and inference generates several hundred tokens per activation. That last point is the binding constraint in practice: you cannot run an NLA on every token of a long transcript, and analysis is limited to selected regions rather than everything at once. {% sidenote "As a concrete reference point, the Gemma-3-27B NLA took roughly 1.5 days on two 8xH100 nodes to reach 0.70 FVE. The open-model recipe uses GRPO with a group size of 8, explanations averaging about 130 tokens, a KL penalty toward the warm-started AV, and a learning rate of 1e-5." %}
 
-Two other limits shape how you use the method. An NLA reads a **single layer**, so information that lives elsewhere in the network is invisible to it, and the paper finds that the same concept can surface at one layer and be absent at another. And the AV is a **black box**: it can tell you what an activation seems to encode, but not which part of the activation drove which part of the explanation, so it does not offer the mechanistic grounding that a probe or an SAE feature does.
+Two other limits shape how the method is used. An NLA reads a **single layer**, so it can miss information accessible elsewhere. The AV is also a **black box**: it does not localize which activation directions caused each phrase. Probes and SAE features offer more localized hypotheses, though they too require causal and distributional validation.
 
 ## Looking Ahead
 
-NLAs sit at the far, unsupervised end of the arc this block has traced. [Patchscopes](/topics/patchscopes/) and [SelfIE](/topics/selfie-interpretation/) coaxed descriptions out of models without extra training, [training self-explanation](/topics/training-self-explanation/) and [LatentQA](/topics/latentqa/) added supervision, and [Activation Oracles](/topics/activation-oracles/) scaled that supervision to general-purpose question answering. NLAs drop the labels entirely and let a reconstruction objective decide what is worth saying.
+NLAs use less task-specific labeling than the supervised decoders in this block, but they are not supervision-free: the published recipe relies on labeled warm-start summaries before joint reconstruction training. [Patchscopes](/topics/patchscopes/) and [SelfIE](/topics/selfie-interpretation/) use prompted readouts, [training self-explanation](/topics/training-self-explanation/) and [LatentQA](/topics/latentqa/) add explicit targets, and [Activation Oracles](/topics/activation-oracles/) broaden the target mixture. NLAs then let reconstruction, constrained by the warm start and KL penalty, refine what the verbalizer says.
 
 The forward-looking view in the paper is that the AV and AR are two halves of a more general tool: a reader that maps activations to language and a writer that maps language to activations. Trained on many objectives rather than reconstruction alone, such an "activation language model" would let you ask what a token represents, or request a steering vector or a probe from a plain-English description, through one natural-language interface. Whether that interface can be made reliable enough to trust on claims we cannot cross-check, especially claims about a model's own cognition, is the open question that decides how far the approach goes.

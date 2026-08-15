@@ -11,9 +11,9 @@ prerequisites:
 
 ## The Interpretation Bottleneck
 
-We have made significant progress in extracting structure from neural network activations. The [logit lens](/topics/logit-lens-and-tuned-lens/) projects intermediate representations to vocabulary space. [Sparse autoencoders](/topics/sparse-autoencoders/) decompose activations into interpretable features. Probing classifiers detect specific properties. These methods reveal *that* information is present, but translating their outputs into human understanding requires substantial manual effort.
+The [logit lens](/topics/logit-lens-and-tuned-lens/) projects states into vocabulary space, [sparse autoencoders](/topics/sparse-autoencoders/) decompose them into learned latents, and probes test whether chosen labels are decodable. Each method restricts the form of the answer. Hidden-state decoding asks whether a language model can instead produce an open-ended description.
 
-Consider a SAE feature that activates on certain inputs. A researcher must examine activation patterns across many examples, hypothesize what the feature represents, and iteratively refine their understanding. This process is slow, subjective, and does not scale. As models grow larger and feature dictionaries expand to millions of features, human-in-the-loop interpretation becomes a bottleneck.
+Consider an SAE feature that activates on certain inputs. A researcher must examine examples, propose a label, seek counterexamples, and refine the hypothesis. Doing this carefully is slow, and dictionaries can contain millions of features. Automated descriptions could help researchers triage that workload, although they do not remove the need for validation.
 
 What if we could automate this translation? What if we could ask a model directly: "What does this activation represent?" and receive a natural language answer?
 
@@ -33,7 +33,7 @@ Hidden state decoding addresses several limitations of existing interpretability
 
 **Expressiveness.** Vocabulary projection reduces representations to single-token predictions. Natural language can express nuanced, multi-faceted descriptions: "This activation represents uncertainty about whether the speaker is being sarcastic, with attention to social context cues."
 
-**Accessibility.** Natural language is the universal interface for human understanding. Researchers, auditors, and non-specialists can engage with model internals without requiring deep technical expertise in linear algebra or representation geometry.
+**Accessibility.** Natural-language questions let domain experts participate without learning every underlying tensor operation, provided the interface exposes uncertainty and failure modes rather than hiding them behind fluent prose.
 
 **Novel queries.** Traditional methods answer fixed questions (what token would be predicted? does this probe classify correctly?). LLM-based interpretation enables open-ended questions: "What is this activation attending to? Why might this feature activate here? What would change if we modified this representation?"
 
@@ -43,13 +43,13 @@ This block covers several complementary approaches to hidden state decoding:
 
 [**Patchscopes**](/topics/patchscopes/) provides a unifying framework for activation inspection. By patching hidden states into carefully designed prompts, we can elicit natural language descriptions of what those states represent. Patchscopes generalizes several prior methods and enables cross-model interpretation.
 
-[**SelfIE**](/topics/selfie-interpretation/) focuses on self-interpretation, where a model explains its own embeddings. By injecting activations back into the model with appropriate prompts, we can extract descriptions of internal reasoning, including cases like ethical decision-making and prompt injection detection.
+[**SelfIE**](/topics/selfie-interpretation/) focuses on self-interpretation. It injects an activation where the model expects a text representation, then prompts the model for a description. Experiments include ethically charged scenarios and prompt injections, but the generated text is an elicited readout rather than a direct transcript of the model's reasoning.
 
-[**Training models to explain their computations**](/topics/training-self-explanation/) investigates whether fine-tuning can produce faithful explanations. A key finding: models explain their own computations better than external models can, suggesting privileged access to internal structure.
+[**Training models to explain their computations**](/topics/training-self-explanation/) compares fine-tuned self-explainers with external explainers on targets produced by existing interpretation methods.
 
 [**LatentQA**](/topics/latentqa/) frames activation interpretation as question-answering. By training decoder models on paired datasets of activations and Q&A, we can ask arbitrary questions about what a representation encodes and receive natural language answers.
 
-[**Activation Oracles**](/topics/activation-oracles/) scale this approach to general-purpose explainers. Trained on diverse interpretation tasks, these models generalize to novel settings, recovering information that does not appear in input text and matching specialized white-box methods.
+[**Activation Oracles**](/topics/activation-oracles/) train one decoder across diverse interpretation tasks and test how far that common interface generalizes beyond its training mixture.
 
 [**Natural Language Autoencoders**](/topics/natural-language-autoencoders/) remove the labels entirely. A verbalizer and a reconstructor are trained jointly to autoencode an activation through a natural-language bottleneck, so the explanations are learned from a reconstruction objective rather than from data whose answers we already know.
 
@@ -57,7 +57,7 @@ This block covers several complementary approaches to hidden state decoding:
 
 A persistent concern in interpretability is whether explanations are *faithful* to actual model computations. A model might produce plausible-sounding but incorrect descriptions of its activations. This is not unique to hidden state decoding; all interpretation methods face questions about whether their outputs reflect ground truth.
 
-The methods in this block take different approaches to faithfulness. Some evaluate against held-out benchmarks. Others compare self-interpretation to external interpretation, finding that models have privileged access to their own representations. Still others design training procedures that incentivize accuracy over plausibility.
+The methods in this block take different approaches to faithfulness. Some evaluate against held-out benchmarks. Others compare self-interpretation with external interpretation or train against targets from existing interpretability methods. Better task performance is useful evidence, but it does not by itself establish privileged introspective access or faithfulness to the original computation.
 
 We will examine these faithfulness considerations for each method. For now, the key point is that hidden state decoding is not a solved problem but a research frontier. The promise is significant, but so are the open questions.
 

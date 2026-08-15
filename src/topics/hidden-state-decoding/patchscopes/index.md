@@ -13,9 +13,9 @@ prerequisites:
 
 When we want to understand what information a hidden representation contains, we face a translation problem. The representation is a high-dimensional vector; we need a human-readable description. Patchscopes, introduced by Ghandeharioun et al. {% cite "ghandeharioun2024patchscopes" %}, provides a general framework for this translation by leveraging the generative capabilities of language models themselves.
 
-The core insight is simple: if we patch a hidden representation into the right context, the model's subsequent generation will reveal what that representation encodes. By carefully designing the context, we can elicit specific kinds of information.
+Patchscopes treats a prompt as a learned readout. We insert a hidden representation into a context designed to ask for some property, then inspect the continuation. Agreement across prompts, mappings, and known-answer controls tells us whether that continuation is evidence about the source representation rather than the target model's prior.
 
-> **Patchscopes:** A framework for inspecting hidden representations that works by patching activations from a source computation into a target prompt. The target prompt is designed so that the model's generation following the patched position reveals properties of the original representation.
+> **Patchscopes:** A framework that patches a source activation into a target prompt and uses the target model's continuation as a readout. The result depends jointly on the source activation, any mapping between models, the prompt, and the target model.
 
 ## How Patchscopes Works
 
@@ -30,7 +30,7 @@ The framework involves two forward passes:
 
 **Target computation.** We run a model $M$ on a target prompt that contains a placeholder position. At the placeholder, we patch in the source representation $\mathbf{h}^{(S)}_{i,\ell}$ (possibly mapped to a different layer $\ell'$). The model's generation after the patched position is the inspection result.
 
-Crucially, $S$ and $M$ can be the same model or different models. When they differ, we can use a more capable model to inspect representations from a smaller one.
+$S$ and $M$ can be the same model or different models. When they differ, a more capable model can serve as the decoder for representations taken from a smaller one, although the result then depends on how well the two representational spaces are aligned.
 
 The target prompt is the key design element. Different prompts elicit different kinds of information:
 
@@ -70,7 +70,7 @@ This illustrates a key advantage: expressive target prompts can compensate for b
 
 ## Cross-Model Inspection
 
-Perhaps the most striking capability is using one model to inspect another. If we have a small model $S$ whose representations are difficult to interpret, we can patch those representations into a more capable model $M$.
+The source and target can be different models. A larger target model may provide a more expressive readout of a smaller model's representation, provided the mapping between their activation spaces preserves the relevant information.
 
 The procedure:
 1. Run $S$ on the source prompt; extract $\mathbf{h}^{(S)}_{i,\ell}$
@@ -78,7 +78,7 @@ The procedure:
 3. Patch into $M$'s forward pass with an appropriate target prompt
 4. Use $M$'s generation as the interpretation
 
-This works surprisingly well when models share similar representation spaces (e.g., models from the same family). A larger model can articulate distinctions that a smaller model computes but cannot express linguistically.
+The reported experiments work best for models with compatible representation spaces, such as members of the same family. A fluent description still reflects both models: the target may articulate source information, fill gaps from its own priors, or do both.
 
 <details class="pause-and-think">
 <summary>Pause and think: When would cross-model inspection fail?</summary>
@@ -100,7 +100,7 @@ Beyond inspection, Patchscopes enables intervention. Consider a question requiri
 
 A model might correctly compute "France" as an intermediate result but fail to retrieve "Paris" as the capital. By extracting the intermediate representation of "France" and patching it into a fresh prompt like "The capital of [PATCH] is:", we can bypass the point of failure.
 
-This is not interpretation per se, but it demonstrates that the representations are often more capable than the model's end-to-end behavior suggests. The bottleneck is in composing multiple reasoning steps, not in the individual computations.
+Successful correction shows that the patched representation supports the missing next step in that target context. It suggests a composition failure, but does not rule out alternative explanations such as the new prompt making the task easier or the target model supplying information absent from the source state.
 
 ## Limitations
 
@@ -118,7 +118,7 @@ Patchscopes inherits limitations from its components:
 
 Patchscopes provides a unifying lens (pun intended) for understanding activation inspection. Prior methods like vocabulary projection and probing are revealed as special cases. The framework's flexibility, particularly cross-model inspection and expressive target prompts, opens new possibilities for understanding what representations encode.
 
-More fundamentally, Patchscopes demonstrates that language models can serve as their own interpreters. The same capabilities that enable coherent text generation can be repurposed to explain internal representations. This self-referential quality is central to the methods that follow in this block.
+Patchscopes shows that language-model generation can act as a flexible activation readout. Its flexibility is also the main confound: the answer can reflect the target prompt and model as much as the patched state. The methods that follow vary how they train and validate this readout.
 
 ## Looking Ahead
 

@@ -1,6 +1,6 @@
 ---
 title: "Probing Classifiers"
-description: "How simple classifiers trained on model activations reveal what information is encoded in representations, from structural probes to MDL probing, and the fundamental gap between correlation and causation."
+description: "Training simple classifiers on model activations to test what they encode, while controlling for probe capacity and separating correlation from causal use."
 order: 1
 prerequisites:
   - title: "The Logit Lens and Tuned Lens"
@@ -27,7 +27,7 @@ If a linear probe achieves high accuracy, the information is *present and linear
 
 > **Probing Classifier:** A probing classifier is a simple model (typically linear) trained to predict a linguistic or semantic property $y$ from the internal activations $\mathbf{h}_\ell$ of a neural network at layer $\ell$. High probe accuracy indicates the property is encoded in the representations. The probe's simplicity ensures that a successful readout reflects information in the representations, not computation performed by the probe itself.
 
-Why restrict probes to be linear? The restriction connects directly to the [linear representation hypothesis](/topics/linear-representation-hypothesis/): if features are represented as linear directions in activation space, then a linear probe is exactly the right tool to detect them. A nonlinear probe might succeed even on random representations by performing substantial computation of its own, rendering the results uninterpretable.{% sidenote "The question of probe complexity is a recurring theme in the probing literature. If a two-layer MLP probe achieves higher accuracy than a linear probe, does that mean the information is encoded nonlinearly? Or does it mean the MLP probe is partially computing the property rather than merely reading it? There is no consensus answer, which is one reason the field has gravitated toward linear probes as the default." %}
+Why restrict probes to be linear? The restriction connects to the [linear representation hypothesis](/topics/linear-representation-hypothesis/): a successful linear probe shows that the labeled distinction is accessible through one affine boundary. A nonlinear probe has more capacity and may recover real nonlinear structure, but it can also compute part of the target from incidental information. Simplicity makes the result easier to interpret, not automatically correct.{% sidenote "Comparing probe classes can still be informative. The gap between a linear and nonlinear probe should be evaluated alongside control tasks, sample complexity, and baselines rather than interpreted as a direct measure of how the model itself computes the property." %}
 
 ### Structural Probes: Beyond Labels
 
@@ -58,11 +58,11 @@ The results reveal how features are organized across neurons:
 
 - At **$k = 1$**, middle-layer neurons in large models can individually classify features like "is Python code," specific natural languages, and data distributions with high accuracy. These are **monosemantic neurons**: single neurons dedicated to single concepts.
 - In **early layers**, $k = 1$ performance is poor. Features like "contains a digit" require $k = 5$ or more neurons. The feature is distributed across multiple polysemantic neurons, each of which individually responds to many unrelated inputs. This is precisely the pattern predicted by [superposition](/topics/superposition/).
-- **Sparsity increases with model scale.** Across the Pythia model family (70M to 6.9B parameters), larger models encode features more sparsely on average: a feature that requires $k = 8$ neurons in a small model may need only $k = 2$ in a large model. As capacity grows, models transition from cramming features into shared neurons (superposition) to allocating dedicated neurons (monosemantic representation).
+- **Sparsity increases with model scale in this comparison.** Across the tested Pythia models (70M to 6.9B parameters), larger models often required fewer neuron coordinates for the same probe target. That is consistent with greater alignment between some features and individual neurons, but it does not show that larger models generally escape superposition.
 
-A rotation baseline confirms these findings are not artifacts of the probing method. Randomly rotating the activation space and repeating $k = 1$ probing destroys performance, confirming that the standard neuron basis is privileged: features genuinely align with individual neurons, rather than being extractable from any arbitrary basis.{% sidenote "Sparse probing connects probing to the [superposition](/topics/superposition/) research program. If features are in superposition (more features than neurons, encoded as sparse combinations), then a sparse probe should reveal this: features in superposition require higher $k$, while monosemantic features need only $k = 1$. The finding that early layers require higher $k$ and later layers less is direct evidence for the superposition hypothesis in real models." %}
+A rotation baseline tests whether the result depends on the model's neuron basis. Randomly rotating the activation space and repeating $k = 1$ probing reduces performance, showing that the original coordinates are more aligned with these labels than a typical random basis. This supports a privileged-basis claim for the tested features; it does not make every successful single-neuron label monosemantic.{% sidenote "Sparse probing connects probing to the [superposition](/topics/superposition/) research program. A target that requires several neurons is consistent with a distributed representation, while strong $k=1$ performance indicates unusual alignment with one coordinate. Neither observation alone identifies the model's causal feature or rules out other concepts encoded by the same neurons." %}
 
-Sparse probing also sharpens the probe complexity debate. The concern with standard probes is that a powerful probe might learn the property rather than detect it. Sparse probes address this from a different angle: even if the probe is linear, constraining it to use very few neurons limits what it can learn. A $k = 1$ probe that achieves 85% accuracy on a feature is strong evidence that the feature is genuinely encoded in that neuron, not computed by the probe.
+Sparse probing also sharpens the probe complexity debate. Constraining a linear probe to very few neurons limits the computation it can perform. A successful $k = 1$ probe shows that one neuron coordinate makes the labels readily separable. The neuron may still track a correlate, respond to other concepts, or be unused by the model, so this result should guide causal tests rather than replace them.
 
 But probe accuracy, whether sparse or dense, still faces a more fundamental challenge.
 
@@ -72,7 +72,7 @@ High probe accuracy tells us information *exists* in the representations. It doe
 
 ### MDL Probing: Measuring Effort, Not Accuracy
 
-Voita and Titov (2020) demonstrated that probe accuracy alone is an inadequate metric {% cite "voita2020mdl" %}. Their key finding is striking: a probe can achieve *similar accuracy on pretrained representations and random representations*. If a probe can decode a property from random vectors, that property is not meaningfully "encoded" in any useful sense. The probe is simply powerful enough to memorize the mapping.
+Voita and Titov (2020) showed why probe accuracy alone is incomplete {% cite "voita2020mdl" %}. A representation can support good held-out accuracy while requiring far more examples or parameters than another representation. Random or untrained baselines help expose how much performance comes from the probe and from information already present in the input, rather than from a representation shaped to make the target accessible.
 
 Minimum Description Length (MDL) probing reframes the question. Instead of asking "can a probe predict this property?", ask "how much effort does the probe need?"
 
@@ -82,9 +82,9 @@ MDL probing is more informative than accuracy alone. It distinguishes between re
 
 ### Amnesic Probing: The Bridge to Causation
 
-Elazar et al. (2021) took the crucial next step {% cite "elazar2021amnesic" %}. Instead of asking "can we decode property $Z$?", they asked: "what happens to task performance if we *remove* property $Z$?"
+Elazar et al. (2021) added an intervention to the probing workflow {% cite "elazar2021amnesic" %}. Instead of asking only “can we decode property $Z$?”, they asked what happens to task performance after removing the linearly decodable signal used by the probe.
 
-Their method uses Iterative Null-Space Projection (INLP) to project out a property from the representations, then measures the behavioral impact on the model's downstream task. If removing a property hurts performance, the model relied on it. If removing it has no effect, the model encoded the property but did not use it.
+Their method uses Iterative Null-Space Projection (INLP) to remove a probe-accessible subspace, then measures the downstream effect. A performance drop is evidence that information in the removed subspace mattered. No effect is weaker evidence: nonlinear, redundant, or differently encoded information may remain, and the projection can remove signals correlated with the target as well as the intended property.
 
 The key finding is a direct challenge to the probing paradigm: **conventional probing performance is not correlated with task importance**. Consider this scenario:
 
@@ -92,34 +92,22 @@ The key finding is a direct challenge to the probing paradigm: **conventional pr
 - But removing POS information from layer 6 does *not* hurt language modeling performance.
 - The information is *there* but the model does *not rely on it*.
 
-Conventional probe accuracy told us the wrong story. A property may be easily decodable but irrelevant -- the model encodes it as a byproduct, not as a functional component. Or a property may be hard to decode but essential -- the model uses it in a way that a linear probe cannot easily extract.
+Conventional probe accuracy can support the wrong mechanistic story. A property may be easy to decode because it is a correlated byproduct, or hard to decode with a linear classifier even though the model uses it through a nonlinear or distributed computation.
 
-This disconnect is the most important lesson of the probing literature {% cite "belinkov2022probing" %}. Probes detect *correlations*, not *causes*. Random baselines are essential for context. And the most sophisticated probing method (amnesic probing) points beyond probing altogether, toward the causal intervention methods that can definitively answer what the model relies on.
+The practical lesson is to separate accessibility from use {% cite "belinkov2022probing" %}. Probes detect statistical structure. Baselines help interpret that structure, while interventions test causal hypotheses under a chosen counterfactual. Even interventions require care because removing one subspace can have off-target effects or leave redundant information behind.
 
 <details class="pause-and-think">
 <summary>Pause and think: Probes and causation</summary>
 
 A probe achieves 95% accuracy at detecting part-of-speech from layer 6 activations. Does the model "know" POS? Does it "use" POS? How would you test the difference?
 
-The model "knows" POS in the sense that the information is linearly decodable from its representations. But "knowing" and "using" are different. To test whether the model uses POS, you would need an intervention: remove POS information (via amnesic probing or [activation patching](/topics/activation-patching/)) and measure whether downstream task performance degrades. If it does, POS is causally relevant. If it does not, POS is a byproduct -- encoded but not relied upon.
+The model "knows" POS in the sense that the information is linearly decodable from its representations. But "knowing" and "using" are different. To test whether the model uses POS, you would need an intervention: remove POS information (via amnesic probing or [activation patching](/topics/activation-patching/)) and measure whether downstream task performance degrades. If it does, POS is causally relevant. If it does not, POS is a byproduct, encoded but not relied upon.
 
 </details>
 
-## Attention Pattern Visualization
+## Attention Patterns Are Another Observational Readout
 
-A related observational tool is the most intuitive: look at where attention heads direct their focus. We examined attention patterns briefly in the context of [direct logit attribution](/topics/direct-logit-attribution/). Here we see them applied to real model data.
-
-Consider GPT-2 Small processing a repeated sequence: "The cat sat on the mat. The cat sat on the." Two heads display distinctive patterns:
-
-![Previous token head attention pattern showing a clear diagonal line where each position attends to the position immediately before it.](/topics/probing-classifiers/images/attn_prev_token.png "Figure 2: Previous token head (Layer 0, Head 1) in GPT-2 Small. The strong diagonal pattern shows each token attending to its immediate predecessor.")
-
-![Induction head attention pattern showing off-diagonal attention where repeated tokens attend to tokens that followed their first occurrence.](/topics/probing-classifiers/images/attn_induction.png "Figure 3: Induction head (Layer 5, Head 1) in GPT-2 Small. In the second half of the sequence, attention jumps to specific positions in the first half, attending to tokens that followed the first occurrence of each repeated token.")
-
-The left pattern is a **previous token head** (Layer 0, Head 1): a clean diagonal where each position attends to the position immediately before it. This head implements the first step of the [induction circuit](/topics/induction-heads/), writing "my predecessor was token X" into each position's residual stream.
-
-The right pattern is an **induction head** (Layer 5, Head 1): in the second half of the repeated sequence, attention jumps to specific positions in the first half. The second "The" attends to " cat" (the token after the first "The"). This head implements the second step: querying "who has predecessor equal to my current token?" and copying that position's token to the output.{% sidenote "These attention patterns are from actual GPT-2 Small runs in TransformerLens, not idealized illustrations. Real attention patterns are messier than textbook diagrams -- notice that the previous token head has some diffuse attention beyond the strict diagonal, and the induction head has background attention to various positions. The diagnostic patterns are strong enough to identify the head types, but interpreting attention requires looking at the dominant structure, not expecting perfect textbook examples." %}
-
-These visualizations let us *see* the two-step mechanism we studied theoretically. But attention patterns reveal only *where* a head looks, not *what* it does with the information. The attention pattern comes from the QK circuit. What information gets moved comes from the OV circuit. Two heads with identical attention patterns can have completely different effects on the output.
+[Attention heatmaps](/topics/reading-attention-patterns/) and probes make the same kind of epistemic move at different levels. A probe shows that information can be decoded from an activation; a heatmap shows where a head assigns its reading weight. Neither establishes what the model's downstream computation needs. For attention, we must also inspect the OV circuit and intervene on the head before turning a visible pattern into a mechanistic claim.
 
 ## The Key Limitation: Observation Cannot Establish Causation
 
@@ -129,6 +117,4 @@ None of these tools establish whether the detected information is *causally nece
 
 All observational tools establish *correlations*: the information co-occurs with the activations. To establish *causation*, we need a different kind of experiment, one where we *intervene* on the model's internals and observe changes in behavior. If we *change* an intermediate activation and observe a *change* in the model's output, we have causal evidence.
 
-This is the shift from observation to causation, and it is the subject of the next articles. [Activation patching](/topics/activation-patching/) replaces one component's activation with an activation from a different input and measures the effect on predictions. Path patching traces the causal flow through specific pathways in the computational graph. These tools complete the methodological toolkit, moving us from "what exists?" to "what matters?"
-
-**Observation reveals what exists. Only intervention reveals what matters. We can look inside the model. But looking is not the same as proving.**
+[Activation patching](/topics/activation-patching/) replaces an internal activation and measures the downstream change; path patching narrows the intervention to a proposed connection. These methods move from “what can we decode?” toward “what changes under this intervention?”, a stronger claim, though still not proof that the resulting description is complete.

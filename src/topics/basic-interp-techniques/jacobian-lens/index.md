@@ -1,6 +1,6 @@
 ---
 title: "The Jacobian Lens"
-description: "A principled refinement of the logit lens that uses the model's own Jacobian, averaged over contexts, to translate intermediate residual streams into vocabulary readouts. Built from calculus and linear algebra rather than a learned probe."
+description: "Using the model's averaged Jacobian to translate intermediate residual states into vocabulary predictions, without training a separate probe."
 order: 2
 keywords: "Jacobian lens, J-lens, J-space, logit lens, tuned lens, mechanistic interpretability, transformer interpretability, residual stream, first-order approximation, linear approximation, unembedding matrix, hidden state decoding, verbalizable representations, global workspace, transformer, language model, vocabulary projection, activation lens, Anthropic, transformer-circuits, gradient-based interpretability, backpropagation, chain rule, calculus, linear algebra"
 prerequisites:
@@ -134,7 +134,7 @@ The shape is worth staring at. Both dimensions equal $d_\text{model}$ because th
 
 The Jacobian $J_{\ell, t, t'}$ computed on one prompt tells us the local linearization *for that specific input*. But that linearization mixes two very different kinds of structure:
 
-- **Context-independent structure**: how the model's weights generally translate features at layer $\ell$ into features at layer $L$. This is what we want to capture: a property of the model, not of any one input.
+- **Distribution-averaged structure**: how the downstream computation locally translates perturbations at layer $\ell$ over a chosen sample of contexts. This is the target of the averaged map.
 - **Context-specific structure**: how the current prompt's attention patterns, activations, and gates route information through layers $\ell{+}1, \dots, L$. This is transient; it changes with every input.
 
 If we care about *what a direction in layer-$\ell$ space generally means*, we need to strip out the context-specific part. The J-lens does this by **averaging Jacobians over many contexts**:
@@ -169,7 +169,7 @@ The idea is exactly the same as computing an average gradient across a dataset: 
 
 Suppose we computed the Jacobian on a single prompt about French cities. What would the top-ranked lens tokens look like, and why would that be misleading as a general readout of layer $\ell$?
 
-They would over-represent tokens the model happens to be predicting in *that* prompt (French words, capitals, geographic terms), because the local Jacobian is heavily shaped by the current attention pattern and the current MLP activations. If we asked "what does this direction in layer-$\ell$ space *generally* mean in the model?", we would get the wrong answer. Averaging over many prompts is what makes the resulting map a property of the model rather than of any one input.
+They would over-represent tokens favored by *that* prompt because the local Jacobian depends on current attention patterns and MLP gates. Averaging over many prompts reduces prompt-specific variation and defines a map for that sampling distribution. Change the corpus, positions, or weighting and the average may change, so it is not an input-free property of the weights alone.
 
 </details>
 
@@ -183,7 +183,7 @@ $$
 \text{lens}(\mathbf{h}_\ell) \;=\; \text{softmax}\!\bigl(\, \text{norm}(\mathbf{h}_\ell \, J_\ell) \, W_U \,\bigr).
 $$
 
-The result is a probability distribution over the vocabulary: a "top tokens" list you can inspect.
+Applying the softmax turns these linearized logits into a probability distribution over the vocabulary, giving us a "top tokens" list to inspect.
 
 The Anthropic paper describes this as *equivalent to replacing all subsequent layers with the appropriate lens matrix*. That sentence packs a lot into a few words, and it is worth unpacking with a picture.
 
@@ -215,7 +215,7 @@ The equivalence is a first-order approximation, not an equality. Two things make
 - **Non-linearity.** Real transformer layers are non-linear. $J_\ell$ is a *local* linearization; the further $\mathbf{h}_\ell$ is from the point around which we linearized, the worse the approximation.
 - **Averaging.** The single $J_\ell$ we use is an *average* over contexts. On any particular prompt, the true local Jacobian would differ from $J_\ell$.
 
-The remarkable empirical result is that this approximation is nevertheless a very useful readout: it recovers coherent, interpretable content at layers where the logit lens returns noise, and its top tokens track the concepts the model is actively "holding in mind." The math is not exact, but the direction it picks in vocabulary space is often the right one.
+In the reported evaluations, this approximation produces coherent vocabulary readouts at some depths where the raw logit lens is less informative. The examples support the J-lens as a useful diagnostic. They do not make every top token a faithful description of what the model is “holding in mind”; prompt, corpus, and first-order approximation errors remain possible.
 
 ### The J-lens vectors
 
@@ -256,7 +256,7 @@ differing only in what $M_\ell$ is.
 | Tuned lens | $A_\ell$ (learned affine) | Trained to match final output distribution | Correlational; can "skip ahead" to outputs |
 | Jacobian lens | $J_\ell = \mathbb{E}[(\partial \mathbf{h}_L / \partial \mathbf{h}_\ell)^T]$ | Derived from the model's own weights, averaged | Causal, first-order; recovers content in early layers |
 
-Two of these choices are motivated. The logit lens sets $M_\ell = I$ because in late layers the residual stream is already close to the final basis; there is nothing to translate. That works when it works and fails silently when it doesn't. The tuned lens fits $A_\ell$ so that the readout matches the true output; that pins the readout to what will be *emitted*, which is not always what we want to look at. The J-lens picks $M_\ell = J_\ell$ because $J_\ell$ is the actual first-order description of what layers $\ell{+}1{:}L$ do, on average across contexts. It is the closest thing to a "linear model of the model" you can extract without any learning.
+The three choices answer different questions. The logit lens sets $M_\ell=I$, measuring direct alignment with the final unembedding. The tuned lens fits $A_\ell$ to forecast the final output distribution. The J-lens uses $J_\ell$, a first-order summary of what layers $\ell{+}1{:}L$ do over the chosen contexts. It is derived rather than trained against output targets, but its quality still depends on the averaging distribution and on how nonlinear the relevant finite changes are.
 
 The three coincide in one important edge case: at the final layer, $J_L$ is (approximately) the identity, and all three reduce to the model's own unembedding. Divergences appear as we go earlier.{% sidenote "The J-lens paper reports that the logit lens agrees closely with the J-lens in the last several layers and diverges earlier: exactly the regime where the logit lens is known to fail." %}
 

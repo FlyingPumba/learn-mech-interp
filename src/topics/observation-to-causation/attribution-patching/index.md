@@ -17,9 +17,9 @@ glossary:
 
 [Activation patching](/topics/activation-patching/) is the foundation of causal interpretability: replace an activation, measure the effect, and establish which components matter. But it has a fundamental scaling problem. Each component tested requires a separate forward pass through the model. In GPT-2 Small, testing all 144 attention heads and 12 MLP layers means 156 forward passes. In GPT-3, with roughly 4.7 million neurons, individually testing every neuron is computationally infeasible.
 
-This is not just a practical inconvenience. It creates a methodological bottleneck. Researchers who want to screen the entire model for interesting components are forced to choose between testing a tractable subset (and potentially missing important structure) or spending enormous compute on exhaustive search. We need a way to approximate activation patching that scales to the full model in a single sweep.
+The cost creates a methodological bottleneck: screen only a tractable subset and risk missing structure, or spend enough compute to patch every candidate. A first-order approximation makes a model-wide sweep possible with a small number of passes.
 
-Attribution patching solves this problem using gradient-based approximation {% cite "nanda2023attribution" %}. Path patching extends the analysis from components to connections {% cite "conmy2023ioi" %}. Together, they complete the causal toolkit introduced in the previous article.
+**Attribution patching** estimates many patching effects from gradients {% cite "nanda2023attribution" %}. **Path patching** asks which connections carry an effect between components {% cite "conmy2023ioi" %}. Both trade exactness or simplicity for scale and resolution.
 
 ## Attribution Patching: The Gradient Approximation
 
@@ -43,20 +43,20 @@ The accuracy of attribution patching depends on whether the first-order (linear)
 
 **Where it breaks down.** For large activations such as entire residual streams at a layer, the approximation degrades. Nonlinearities from softmax, MLP activation functions, and LayerNorm all violate the linearity assumption. These nonlinearities mean that the effect of patching an entire layer's residual stream is not well-approximated by a gradient. The Taylor expansion assumes small perturbations, and patching an entire residual stream is a large perturbation.{% sidenote "One way to understand this: the gradient gives you the slope of the function at a point. For a linear function, the slope is constant, so the prediction is exact regardless of perturbation size. For a nonlinear function, the slope changes as you move away from the evaluation point, and the prediction becomes increasingly inaccurate for larger perturbations." %}
 
-**The practical implication.** Attribution patching is best used as a fast screening tool, not as a substitute for actual activation patching. The recommended workflow is: sweep the entire model with attribution patching to identify the most promising components in a single pass, then verify the top candidates with full activation patching. Think of it as a microscope's low-magnification mode -- scan the whole slide quickly, then switch to high magnification on the interesting regions.
+**The practical implication.** Attribution patching is best used as a fast screening tool, not as a substitute for actual activation patching. The recommended workflow is: sweep the entire model with attribution patching to identify the most promising components in a single pass, then verify the top candidates with full activation patching. Think of it as a microscope's low-magnification mode, scan the whole slide quickly, then switch to high magnification on the interesting regions.
 
 <details class="pause-and-think">
 <summary>Pause and think: When would attribution patching be misleading?</summary>
 
-Consider a component whose patching effect is highly nonlinear -- for instance, a component where small perturbations have no effect but large perturbations cause a phase transition in model behavior. What would attribution patching report for this component, and how would it compare to full activation patching?
+Consider a component whose patching effect is highly nonlinear, for instance, a component where small perturbations have no effect but large perturbations cause a phase transition in model behavior. What would attribution patching report for this component, and how would it compare to full activation patching?
 
-Attribution patching would report a small effect (because the gradient at the evaluation point is near zero), while full activation patching would reveal the large effect of the actual clean-to-corrupted perturbation. This is a case where the linear approximation fundamentally misleads: components with threshold-like behavior are poorly captured by gradients. When you find components where attribution patching and full activation patching disagree significantly, that disagreement itself is informative -- it reveals nonlinearity at that location.
+Attribution patching would report a small effect because the gradient at the evaluation point is near zero, while full activation patching would reveal a large finite-change effect. A substantial disagreement is therefore evidence that the local linear approximation is inadequate at that location.
 
 </details>
 
 ## Path Patching: From Components to Connections
 
-Standard activation patching tests whether a component is important by replacing its entire output. But this conflates all the different roles a component might play. Head $H$ writes a vector to [the residual stream](/topics/transformer-architecture/#the-residual-stream), and that vector is read by every downstream head and MLP. Head $H$ might send critical information to head $K$ (say, the identity of a duplicated name) while simultaneously sending irrelevant information to head $J$ (say, positional encoding noise). Standard activation patching cannot distinguish these pathways -- it can only tell you that $H$ matters overall, not where its output is consumed.
+Standard activation patching replaces a component's entire output, combining every downstream use of that write. Head $H$ might supply task-relevant information to head $K$ while also affecting head $J$ through an irrelevant route. A whole-output patch measures their net effect but does not identify which downstream consumer uses the information.
 
 Path patching asks a more targeted question: is the specific connection from $H$ to $K$ important? Instead of replacing $H$'s entire output in the residual stream, path patching replaces only the component of $H$'s output that flows into a specific downstream consumer $K$.{% sidenote "Implementing path patching is more involved than standard activation patching. You need to identify how a downstream head reads from the residual stream (through its QKV projections) and selectively patch only the contribution from the upstream head. In practice, this is done by patching the input to the downstream head's query, key, or value computation rather than the upstream head's output directly." %}
 
@@ -65,7 +65,7 @@ The conceptual shift is from **nodes** to **edges** in the computational graph:
 - **Activation patching** tests nodes: "Is component $H$ important?"
 - **Path patching** tests edges: "Is the connection $H \to K$ important?"
 
-This distinction is more than theoretical. Consider the [IOI circuit](/topics/ioi-circuit/) {% cite "wang2022ioi" %}. Activation patching reveals that S-Inhibition heads and Name Mover heads are both important. But path patching reveals the specific connection: S-Inhibition heads modify the *queries* of Name Mover heads (not their keys or values). This tells us the mechanism -- S-Inhibition heads change *where* the Name Movers attend, not *what* the Name Movers copy. Without path patching, we would know which heads matter but not how they communicate.
+In the [IOI circuit](/topics/ioi-circuit/), activation patching implicates both S-Inhibition and Name Mover heads {% cite "wang2022ioi" %}. Path patching narrows the hypothesis to the route into Name Mover *queries*, supporting an account in which S-Inhibition changes where Name Movers attend rather than what their value pathway copies.
 
 ## Automated Circuit Discovery
 
@@ -76,7 +76,7 @@ Path patching, applied systematically, becomes a tool for automated circuit disc
   <figcaption>Automated circuit discovery with ACDC on the IOI task in GPT-2 Small. The full computational graph (left) is pruned to a sparse circuit (right) that closely matches the manually discovered IOI circuit. From Conmy et al., <em>Towards Automated Circuit Discovery for Mechanistic Interpretability</em>. {%- cite "conmy2023ioi" -%}</figcaption>
 </figure>
 
-ACDC starts with the full computational graph of the model, treating every possible edge between components as a candidate connection. It then iteratively tests each edge using path patching: if removing an edge has negligible effect on model behavior for the task, that edge is pruned. After testing all edges, what remains is the circuit -- the minimal subgraph that accounts for the model's behavior.
+ACDC starts with a chosen computational graph and treats its edges as candidate connections. It then tests edges in an order and prunes those whose removal falls below a selected effect threshold. What remains is a sparse circuit candidate. Because effects can interact, the greedy result need not be globally minimal and can depend on the graph, metric, baseline, ordering, and threshold.
 
 The algorithm proceeds in topological order, working backward from the output:
 
@@ -101,7 +101,7 @@ If $\tau$ is too high, edges that contribute modestly to the task are pruned, an
 
 ## Combining the Tools
 
-Attribution patching and path patching are not alternatives to activation patching -- they extend it. A typical circuit discovery workflow uses all three tools at different stages:{% sidenote "This three-stage workflow is the standard approach in modern mechanistic interpretability. Each tool has its strengths: attribution patching for breadth, activation patching for precision, and path patching for mechanistic understanding. Skipping any stage leaves gaps in the analysis." %}
+Attribution, activation, and path patching answer related questions at different costs. One useful workflow applies them in stages:{% sidenote "This sequence is a practical heuristic, not a required recipe. The right validation depends on the model, task, intervention size, and claim being made." %}
 
 1. **Attribution patching** for broad screening. Sweep the entire model to identify which components show the largest estimated patching effects. This narrows the search from thousands of components to a manageable set of candidates.
 

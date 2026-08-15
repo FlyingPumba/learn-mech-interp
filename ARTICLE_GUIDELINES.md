@@ -21,7 +21,7 @@ When someone suggests "add an article about Paper X," the right response is to r
 - A paper: "Towards Monosemanticity" (instead: extract "Sparse Autoencoders" as the concept)
 - A model: "Interpreting GPT-2" (instead: techniques used are the articles)
 - A dataset or benchmark: "The IOI Dataset" (instead: fold into the technique article that uses it)
-- A case study: "How GPT-2 Handles IOI" (instead: extract the techniques used — activation patching, circuit analysis — those are the articles)
+- A case study: "How GPT-2 Handles IOI" (instead, extract the techniques used, such as activation patching and circuit analysis; those are the articles)
 - A specific experimental finding: "World Models in Othello-GPT" (instead: if a reusable technique is involved, cover the technique; cite the finding as evidence)
 
 ### When to create a new article vs. extend an existing one
@@ -92,9 +92,20 @@ Watch for these two in particular:
 
 Both rules are directional. Forward references are fine when concrete ("[Circuit tracing](/topics/circuit-tracing/) covers attribution graphs in detail"), and a topic sentence that immediately delivers is fine ("The scale is small. A four-layer 67M-parameter model..."). The target is the sentence that *only* points.
 
+### Connect claims to their consequences
+
+When one sentence reports a fact and the next merely explains why it matters, combine them when the result remains easy to read. Keeping the evidence and its significance together makes the prose tighter and avoids a choppy sequence of short sentences.
+
+| Less effective | Better |
+|-----|------|
+| The evaluation reports not only precision and recall but also the complexity of ensembles. This shows the practical cost of improving coverage. | The evaluation reports not only precision and recall but also the complexity of ensembles, showing the practical cost of improving coverage. |
+| Larger dictionaries recover more features. This makes feature splitting easier to observe. | Larger dictionaries recover more features, making feature splitting easier to observe. |
+
+Do not turn the combined form into a template. Repeating constructions such as "..., showing..." in every paragraph sounds mechanical, and separate sentences remain better when the consequence introduces a new idea or needs its own emphasis.
+
 ### Never open a paragraph by labelling it (CRITICAL)
 
-This is the most persistent way these articles go wrong, and it survives every other check. A paragraph opens with a sentence that *classifies* what is coming -- more evidence, a consequence, a caveat, a contrast, a list of two -- and only then says it. The label is a header in disguise. It is also redundant, because the reader is about to read the paragraph anyway and will find out.
+This is the most persistent way these articles go wrong, and it survives every other check. A paragraph opens with a sentence that *classifies* what is coming, such as more evidence, a consequence, a caveat, a contrast, or a list, and only then says it. The label is a header in disguise. It is also redundant, because the reader is about to read the paragraph anyway and will find out.
 
 **The test: delete the opening sentence. If the paragraph still stands, that sentence was a label.** It nearly always still stands.
 
@@ -142,7 +153,7 @@ Calibration, so this does not become a ban on topic sentences. A topic sentence 
 
 The `description` in frontmatter renders as the subtitle directly under the article title, centred over the article column. Past about 180 characters it wraps to three lines and stops reading as a subtitle.
 
-- Aim for 140--180 characters. Across the current articles the median is 174 and the interquartile range is 159--200.
+- Aim for 140 to 180 characters. Across the current articles the median is 174 and the interquartile range is 159 to 200.
 - Name the technique and the one or two things that distinguish it. Do not try to enumerate every section.
 - Cut the framing clause first. "What a parameter decomposition is good for: attention computations that span multiple heads, ..." loses nothing by starting at "Attention computations that span multiple heads."
 - Drop the least load-bearing property rather than compressing all of them. Going from 196 to 147 characters here meant dropping faithfulness, keeping the weights-not-activations contrast and the ablation criterion:
@@ -377,6 +388,10 @@ Use descriptive filenames (`sae_architecture.png`, `ioi_circuit_diagram.png`), n
 
 ## Formatting Details
 
+### Punctuation
+- Avoid em dashes. Use a comma for a light elaboration, parentheses for genuinely secondary information, or a new sentence for a separate claim.
+- Do not use double hyphens as a substitute for an em dash.
+
 ### Emphasis
 - **Bold** for key terms on first introduction and for emphasis on critical points.
 - *Italics* for softer emphasis and for contrasts ("not just *what* but *how*").
@@ -430,4 +445,6 @@ Before finalizing an article:
 - [ ] Is every acronym expanded at its first use *in this article*?
 - [ ] Does every verdict come after the definition it depends on? Cut preview paragraphs that state a conclusion the reader cannot yet assess.
 - [ ] Does every sentence survive the deletion test? Cut the ones that only announce importance ("worth slowing down on") or withhold their referent ("forces a choice that is easy to make carelessly").
+- [ ] Can any adjacent fact-and-significance sentences be combined without making them harder to read?
+- [ ] Is the prose free of em dashes and double hyphens used as dashes?
 - [ ] **Read only the first sentence of every paragraph, in order.** Any that describes its paragraph rather than saying something ("The same effect shows up on a second prompt", "Two demonstrations.", "The limitations are severe") is a label: delete it.

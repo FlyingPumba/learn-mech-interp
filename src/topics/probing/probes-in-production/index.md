@@ -1,6 +1,6 @@
 ---
 title: "Probes in Production"
-description: "How activation probes move from research tools to deployed safety systems, covering the distribution shift problem with long-context inputs, novel aggregation architectures like MultiMax, cascade designs that pair cheap probes with expensive classifiers, and the ensembling and training strategies that make probes reliable at scale."
+description: "Taking activation probes from benchmark experiments to deployed monitors: long-context aggregation, cascades, ensembles, and distribution shift."
 order: 6
 prerequisites:
   - title: "Probing Classifiers"
@@ -17,7 +17,7 @@ glossary:
 
 [Probing classifiers](/topics/probing-classifiers/) and [attention probes](/topics/attention-probes/) work well in controlled research settings: clean datasets, fixed sequence lengths, no adversarial pressure. But deploying probes as part of a production safety system introduces challenges that research evaluations rarely address.
 
-Consider the gap. A research probe is trained on a curated dataset of a few thousand examples, tested on a held-out split from the same distribution, and evaluated on balanced accuracy. A production probe must handle millions of requests per day, with sequence lengths ranging from a single sentence to hundreds of thousands of tokens, under active adversarial attack from users trying to circumvent safety filters, while maintaining false positive rates low enough that legitimate users are almost never affected.
+A research probe may be trained on a curated dataset, tested on a held-out split from the same distribution, and evaluated with a balanced metric. A production probe must handle varied sequence lengths, shifting traffic, rare failures, and adversarial users while keeping false positives low enough for legitimate use.
 
 Two recent efforts have pushed probes into this production regime. Cunningham et al. (2025) deployed linear probes as part of Anthropic's jailbreak detection system, ensembled with external classifiers in a cascade architecture {% cite "cunningham2025constitutional" %}. Kramár et al. (2026) developed novel probe architectures for Google's Gemini that handle long-context distribution shifts and cascade with LLM classifiers {% cite "kramar2026probes" %}. Together, these efforts reveal a set of recurring challenges and architectural patterns for deploying probes at scale.
 
@@ -31,7 +31,7 @@ Why does length break probes? Recall from the [attention probes](/topics/attenti
 
 Multi-turn conversations create a related problem. A harmful request may be fragmented across multiple conversational turns, each individually benign. The probe needs to integrate information across turns, but each turn is processed with a growing context window where earlier content is increasingly diluted.
 
-Training on long-context data is the obvious fix, but it is expensive: Kramár et al. found that training directly on long-context examples increased training cost by **22x** due to memory bandwidth constraints {% cite "kramar2026probes" %}. The better approach is to design architectures that generalize to long contexts even when trained on short ones.
+Training directly on long contexts can help, but Kramár et al. report a **22-fold** cost increase in their setting because of memory-bandwidth constraints {% cite "kramar2026probes" %}. They therefore test aggregation architectures designed to transfer from shorter training sequences to longer deployments.
 
 <figure>
   <img src="images/long_context_fnr.png" alt="Bar chart comparing long-context false negative rates and false positive rates across three probe types. The standard Attention Probe has 87.9% FNR, the EMA Linear Probe has 1.7% FNR but 13.5% FPR, and the Selected Probe achieves 3.0% FNR with 1.2% FPR.">
@@ -73,22 +73,22 @@ This strikes a middle ground: local averaging within windows preserves context (
 
 ### Results on Long-Context Attacks
 
-The impact of architecture choice is dramatic. On long-context adversarial attacks {% cite "kramar2026probes" %}:
+On the long-context adversarial attacks studied by Kramár et al., architecture choice changes recall substantially {% cite "kramar2026probes" %}:
 
-| Architecture | FNR (long-context attacks) |
+| Architecture | False-negative rate (FNR) on long-context attacks |
 |---|---|
 | Standard Attention | 87.9% |
 | Max of Rolling Means Attention | 3.0% |
 | MultiMax Aggregation | 1.7% |
 
-The baseline attention probe misses almost everything. The improved architectures catch nearly everything, despite being trained on the same short-context data. Architecture choice alone produces a roughly 50-fold improvement in false negative rate on this distribution shift.
+On this long-context attack set, the baseline attention probe has an 87.9% false-negative rate, compared with 1.7% for MultiMax. Because the models use the same short-context training regime, the comparison isolates a large benefit from aggregation architecture under this particular distribution shift.
 
 <details class="pause-and-think">
 <summary>Pause and think: Why hard max?</summary>
 
 Standard attention probes use softmax to compute a weighted average over positions. MultiMax uses a hard max instead. What are the tradeoffs? When would you expect softmax attention to outperform hard max, and vice versa?
 
-When harmful content is concentrated in a few tokens within a long sequence, hard max preserves the signal while softmax dilutes it across all positions. But when the signal is genuinely distributed across many tokens (for example, an overall sentiment), softmax aggregation captures the collective signal more accurately. Hard max would select only the single most extreme position, potentially missing the broader pattern. In short: hard max excels at detecting localized, high-intensity signals in long sequences, while softmax excels at aggregating diffuse signals. Production safety probes typically look for localized harmful content, making hard max the better default.
+When the relevant signal is concentrated in a few positions, hard max avoids diluting a high score across a long sequence. If evidence is distributed across many moderate positions, an average or learned soft aggregation can retain information that max discards. The right default depends on the threat model and should be chosen on held-out long-context data, including benign sequences with isolated spikes.
 
 </details>
 
@@ -133,7 +133,7 @@ If the thresholds are too close together (narrow uncertain band), most traffic i
 
 ## Ensembling Probes with LLM Classifiers
 
-Beyond cascading, probes and LLM classifiers provide genuinely complementary signals. Cunningham et al. found that the Spearman rank correlation between probe scores and small classifier scores was lower than the correlation between pairs of external classifiers {% cite "cunningham2025constitutional" %}. This means probes and classifiers disagree in different places, making their ensemble stronger than an ensemble of classifiers alone.
+Cunningham et al. found lower Spearman correlation between probe and small-classifier scores than between pairs of external classifiers {% cite "cunningham2025constitutional" %}. This is evidence that the two systems rank some examples differently. Whether that diversity improves an ensemble depends on where each system is correct, so the claim should be checked on the combined error metrics.
 
 The production system combines probe and classifier logits with a simple weighted average:
 
@@ -141,7 +141,7 @@ $$
 z_\text{final} = \alpha \cdot z_\text{probe} + (1 - \alpha) \cdot z_\text{classifier}
 $$
 
-with $\alpha \approx 0.55$ in practice. Near-equal weighting proves optimal, reflecting the roughly comparable signal quality from both sources {% cite "cunningham2025constitutional" %}.
+with $\alpha \approx 0.55$ in the reported configuration {% cite "cunningham2025constitutional" %}. The selected weight is an empirical calibration result for that system and distribution, not a general optimum for probe-classifier ensembles.
 
 Why do probes and classifiers complement each other? They read different signals. The probe operates directly on the model's internal activations, detecting patterns in how the model *represents* content. The LLM classifier evaluates the content *semantically*, reasoning about meaning. An adversarial input that fools the classifier's semantic reasoning may still produce distinctive activation patterns visible to the probe, and vice versa.
 
@@ -175,7 +175,7 @@ The concrete results from deployed systems give a sense of what production-grade
 
 ## Implications for Mechanistic Interpretability
 
-Production probe deployment is one of the clearest cases where mechanistic interpretability techniques deliver direct practical value. The probes work because of the [linear representation hypothesis](/topics/linear-representation-hypothesis/): if safety-relevant properties are encoded as linear directions in activation space, then linear probes can detect them cheaply and reliably.
+Production deployments show that activation probes can serve as components in practical safety systems. When a safety-relevant property is linearly accessible in activation space, a small classifier may detect it cheaply; whether that detection remains reliable is an empirical question for each distribution and threat model.
 
 But production deployment also highlights limitations. The probes are correlational tools, just as the [probing classifiers](/topics/probing-classifiers/) article discussed. They detect activation patterns associated with harmful content, not harmful intent per se. An input that produces unusual activations for other reasons (a highly creative prompt, an unusual language, an edge case the probe has not seen) can trigger false positives. This is why cascade architectures escalate uncertain cases to classifiers with deeper reasoning ability rather than relying on probes alone.
 

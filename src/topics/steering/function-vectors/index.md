@@ -1,6 +1,6 @@
 ---
 title: "Function Vectors"
-description: "How in-context learning examples create natural directions in activation space that encode entire tasks, showing that models represent functions, not just features."
+description: "How researchers extract task-related activation vectors from in-context examples, test them by intervention, and probe the limits of task composition."
 order: 5
 prerequisites:
   - title: "Representation Control"
@@ -15,9 +15,9 @@ glossary:
 
 So far, every steering vector we have encountered has been **engineered**: we chose contrasting prompts, ran them through the model, and computed the difference. [Addition steering](/topics/addition-steering/) uses contrast pairs. [CAA](/topics/caa-method/) averages over many pairs. The [refusal direction](/topics/refusal-direction/) used harmful versus harmless prompts. In every case, a human designed the contrastive stimuli.
 
-But do models also develop **naturally occurring** directions that encode meaningful computations? Todd et al. (2024) discovered that they do {% cite "todd2024function" %}. Using causal mediation analysis on in-context learning tasks, they found directions in activation space that encode entire *tasks* -- not just concepts like "sentiment" or "refusal," but *functions* like "translate to French" or "return the antonym."
+Can a model's own in-context-learning computation produce a reusable task signal? Todd et al. (2024) used causal mediation analysis to extract directions associated with tasks such as translation and antonym generation {% cite "todd2024function" %}. The key test is intervention: inserting the extracted signal can recover some task behavior in a new context.
 
-> **Function Vector:** A direction in activation space, extracted from in-context learning examples, that encodes the demonstrated task itself. Unlike engineered steering vectors (which encode concepts chosen by the researcher), function vectors arise naturally from the model's own in-context learning mechanism.
+> **Function Vector:** An activation direction extracted from in-context-learning examples that can induce aspects of the demonstrated task when inserted elsewhere. Researchers still choose the task, examples, heads, and extraction method; “function” describes the vector's tested effect, not an exhaustive decoding of its contents.
 
 ## What Function Vectors Are
 
@@ -29,12 +29,12 @@ dog -> perro
 house -> ???
 ```
 
-it learns to translate English to French from the examples. But *where* in the model is the task "translate to French" represented?{% sidenote "This connects back to the study of induction heads, which showed that specific attention heads implement the in-context learning mechanism. Function vectors extend this finding: induction heads create the *mechanism* for ICL, and function vectors are the *content* -- the representation of what task to perform." %}
+the examples demonstrate English-to-Spanish translation. But where does the model carry information about that task?{% sidenote "Induction heads explain one pattern-copying mechanism that can support in-context learning. Function-vector experiments ask a different question: whether a reusable task-related signal is transported by a small set of heads. Neither result alone explains all in-context learning." %}
 
 The analysis revealed:
 
 - A small number of attention heads transport a compact representation of the demonstrated task.
-- This representation is a **function vector** -- a direction that encodes *what to do* (translate, capitalize, find antonyms), not just *what is present* (sentiment, topic, language).
+- This representation is a **function vector**, a direction that encodes *what to do* (translate, capitalize, find antonyms), not just *what is present* (sentiment, topic, language).
 
 <figure>
   <img src="images/function-vector-overview.png" alt="Overview of function vectors. A function vector is extracted from in-context learning examples of antonym generation or English-to-Spanish translation, then inserted into an unrelated natural text generation context to induce the learned task.">
@@ -45,18 +45,18 @@ Examples of tasks encoded as function vectors: "translate English to French," "c
 
 ## Robustness
 
-Function vectors have a remarkable property: they **transfer** across different inputs and contexts.
+The central result is that function vectors can **transfer** across some inputs and contexts.
 
-Extract a function vector from in-context learning examples (e.g., three English-to-French translation pairs). Then inject that vector into a zero-shot setting -- a prompt with no examples at all. The model performs the task, triggered solely by the function vector.{% sidenote "This robustness result is surprising. The function vector was extracted from specific examples (cat/gato, dog/perro), yet it triggers the same function on entirely new inputs without any examples present. The vector encodes the *task itself*, not the specific input-output mappings." %}
+Extract a function vector from in-context examples, such as several English-to-Spanish translation pairs. Then inject it into a prompt with no demonstrations and measure task performance. In the reported settings, the intervention recovers part of the demonstrated behavior on held-out inputs.{% sidenote "For example, a vector extracted from pairs such as cat/gato and dog/perro can affect new translation items. Transfer beyond the extraction examples is evidence for task-level information, but performance and specificity determine how strong that claim should be." %}
 
-The function vector encodes the abstract task, not the specific examples from which it was extracted. It generalizes across input formats and contexts that do not resemble the original ICL examples.
+Transfer to held-out inputs is evidence that the vector carries more than a lookup of the demonstration tokens. Its success rate and scope still depend on the task, model, layer, and target prompt.
 
 <details class="pause-and-think">
 <summary>Pause and think: What function vectors tell us</summary>
 
 Engineered steering vectors encode concepts that humans chose. Function vectors encode tasks that the model learned to represent through in-context learning. What does the existence of function vectors tell us about how transformers organize information internally? And how does this connect to the linear representation hypothesis?
 
-Function vectors suggest that the residual stream organizes not just *what is* (features, concepts) but *what to do* (tasks, computations) as linear directions. This extends the linear representation hypothesis from static properties to dynamic computations. If tasks are linear directions, then the residual stream is not just a feature space -- it is a space of both features and functions, all encoded as directions that can be read, added, and composed.
+Function vectors suggest that residual-stream directions can carry information used to select a task, not only information about the input. That extends the linear representation hypothesis in a testable way: a task-related direction should transfer across examples and causally change task performance when added or removed.
 
 </details>
 
@@ -73,20 +73,20 @@ This vector arithmetic for tasks is analogous to the semantic vector arithmetic 
   <figcaption>Function vector algebra. Three task vectors (First-Copy, First-Capital, Last-Copy) compose via addition and subtraction to produce a fourth (Last-Capital), forming a parallelogram in activation space. From Todd et al., <em>Function Vectors in Large Language Models</em>. {%- cite "todd2024function" -%}</figcaption>
 </figure>
 
-The composability of function vectors suggests that the model represents tasks in a space where linear combination is meaningful -- further evidence that the activation space has a rich, interpretable geometric structure.
+Successful examples show that linear combination can be meaningful when the component tasks are compatible. Failed or interfering combinations are just as important for determining how far this geometric picture extends.
 
 <details class="pause-and-think">
 <summary>Pause and think: Limits of composability</summary>
 
 Function vectors for "translate to French" and "convert to uppercase" can be summed to get "translate to French in uppercase." But can you think of two tasks whose function vectors probably would *not* compose well? What properties of tasks make them composable or non-composable?
 
-Tasks that operate on the same aspect of the output are likely to conflict rather than compose. For example, "translate to French" and "translate to German" both target the output language -- summing them would produce interference, not a meaningful composite. Similarly, tasks that require fundamentally different processing strategies (e.g., "summarize" and "elaborate") may not compose because they push the output in opposite directions. Composability works best for tasks that operate on orthogonal aspects of the output.
+Tasks that make incompatible demands are plausible failure cases. “Translate to French” and “translate to German” both determine the output language, while “summarize” and “elaborate” push length in opposite directions. Compatible tasks such as translation and capitalization are easier candidates. Calling their representations orthogonal would require measuring the vectors and their effects rather than inferring geometry from the task labels.
 
 </details>
 
 ## Related Work: In-Context Vectors and Task Vectors
 
-The discovery of function vectors was not isolated. Hendel et al. {% cite "hendel2023icl" %} independently showed that task vectors form during in-context learning, compressing the demonstrated task into a direction that can be extracted and reused. Liu et al. {% cite "liu2023incontext" %} developed **in-context vectors**, a closely related technique that extracts task representations via latent space shifts and demonstrated composable vector arithmetic for combining tasks. These converging findings from multiple groups strengthen the conclusion that task representation as linear directions is a robust property of how transformers organize in-context learning, not an artifact of any single extraction method.
+The discovery of function vectors was not isolated. Hendel et al. {% cite "hendel2023icl" %} extracted reusable task vectors during in-context learning. Liu et al. {% cite "liu2023incontext" %} developed **in-context vectors**, a related method based on latent-space shifts, and tested vector arithmetic on task combinations. These results make task-related linear directions a recurring empirical finding rather than an artifact of one extraction method. They do not imply that every task, model, or in-context-learning strategy reduces to one vector.
 
 ## The Connection to Steering
 
@@ -97,8 +97,8 @@ Function vectors extend the steering paradigm in an important way:
 
 Both are directions in activation space. The difference is where they come from: human-specified contrast pairs versus the model's own learning mechanism.
 
-This convergence is significant. It suggests that the residual stream naturally organizes task information as linear directions -- the same geometric structure that we exploit when we engineer steering vectors. The [linear representation hypothesis](/topics/linear-representation-hypothesis/) applies not just to the concepts we choose to probe, but to the computations the model learns to perform.
+Together, these results suggest that some task-selection information is linearly accessible in the residual stream. They extend the [linear representation hypothesis](/topics/linear-representation-hypothesis/) from labeled properties toward task signals, while leaving open whether one direction captures the whole computation.
 
-Together with [probing methods](/topics/caa-method/), [steering techniques](/topics/representation-control/), and [model editing](/topics/concept-erasure/), function vectors complete the picture: the residual stream is a linear space of both features and functions, all accessible through the geometric operations of reading, adding, and removing directions.
+Together with [probing methods](/topics/caa-method/) and [steering techniques](/topics/representation-control/), function vectors broaden the questions we can ask of the residual stream: not only “what property is represented?” but also “what task signal is being carried, and does intervening on it change the computation?”
 
 But all the methods so far, including function vectors, require the researcher to specify what to look for. [Unsupervised steering vectors](/topics/unsupervised-steering-vectors/) take a different approach: discover what latent behaviors a model harbors without specifying the target in advance.

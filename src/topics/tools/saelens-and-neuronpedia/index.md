@@ -1,6 +1,6 @@
 ---
 title: "SAELens and Neuronpedia"
-description: "The primary tools for working with sparse autoencoders in practice: SAELens for training, loading, and analyzing SAEs programmatically, and Neuronpedia for interactive exploration of SAE features."
+description: "Using SAELens to train and analyze sparse autoencoders, then exploring learned features and testing candidate interpretations with Neuronpedia dashboards."
 order: 3
 prerequisites:
   - title: "Sparse Autoencoders"
@@ -37,7 +37,7 @@ SAELens provides implementations of the major SAE variants and handles activatio
 
 ### Analysis and Integration
 
-Beyond training and loading, SAELens integrates with the broader MI toolchain. Features can be analyzed with the **SAE-Vis** library (which generates feature dashboards), exported for use in [Neuronpedia](#neuronpedia), or used directly in downstream experiments like [feature-level circuit analysis](/topics/sparse-feature-circuits/).
+Beyond training and loading, SAELens integrates with the broader MI toolchain. Features can be analyzed with the **SAE-Vis** library, which generates feature dashboards, exported for use in [Neuronpedia](#neuronpedia), or used directly in downstream experiments such as [feature-level circuit tracing](/topics/circuit-tracing/).
 
 SAELens works with TransformerLens models natively, and also supports running SAE inference on models loaded through HuggingFace Transformers or [nnsight](/topics/nnsight-and-nnterp/). This flexibility matters because no single framework covers all models, and SAE analysis should not be limited by the model-loading library.
 
@@ -52,7 +52,7 @@ The core unit of Neuronpedia is the **feature dashboard**. For each feature in a
 - **Top activating examples:** Dataset sequences where the feature fires most strongly, with the activating tokens highlighted. This is the primary way to build intuition about what a feature responds to.
 - **Activation distribution:** How often and how strongly the feature fires across a dataset.
 - **Logit effects:** Which tokens in the vocabulary are promoted or suppressed when the feature is active. This reveals the feature's downstream effect on the model's predictions.
-- **Auto-generated explanation:** A natural language description produced by an LLM that has been shown the feature's top examples.{% sidenote "Auto-generated explanations are useful starting points, but they can miss subtleties. A feature that fires on 'basketball,' 'football,' and 'tennis' might get the explanation 'sports,' but closer inspection might reveal it actually fires on 'competitive activities' more broadly, including chess and debate. The examples are always more trustworthy than the explanation." %}
+- **Auto-generated explanation:** A natural language description produced by an LLM shown selected feature examples.{% sidenote "Auto-generated explanations are hypotheses. Top examples can also mislead because they show high-recall cases without revealing false positives, low-activation cases, or dataset blind spots. Validate a label on held-out positives, negatives, and counterexamples." %}
 
 > **Feature Dashboard:** A visual summary of a single SAE feature that displays its top activating dataset examples, activation distribution, logit effects, and an auto-generated explanation. Feature dashboards are the primary tool for understanding what individual SAE features represent.
 
@@ -69,7 +69,7 @@ Neuronpedia also provides an interactive **steering** interface where you can cl
 
 ## Gemma Scope
 
-A significant milestone for SAE tooling was **Gemma Scope** {% cite "lieberum2024gemma" %}: a comprehensive release of pre-trained SAEs for every layer and sublayer of Google DeepMind's Gemma 2 models (2B and 9B parameters). Gemma Scope provides SAEs at multiple expansion factors (16K to 1M features), enabling researchers to study Gemma 2's internals without training their own SAEs.
+**Gemma Scope** {% cite "lieberum2024gemma" %} released pretrained SAEs across layers and sublayers of Google DeepMind's Gemma 2 models at several dictionary sizes. This lets researchers begin analyzing those particular decompositions without first training an SAE.
 
 Gemma Scope SAEs are available through both SAELens (for programmatic access) and Neuronpedia (for interactive exploration), making them a practical starting point for anyone wanting to study SAE features on a modern, capable model.
 
@@ -78,13 +78,13 @@ Gemma Scope SAEs are available through both SAELens (for programmatic access) an
 
 You want to investigate how a language model represents the concept of "deception." You have access to pre-trained SAEs for the model. What would your workflow look like using these tools?
 
-A reasonable approach: start on Neuronpedia with a semantic search for "deception," "lying," or related terms to find candidate features. Examine their dashboards to see if they genuinely capture deception or something adjacent. Then switch to SAELens to run these features programmatically on a curated dataset of deceptive vs. honest prompts, measuring activation differences. If the features look promising, use SAELens to test whether steering on them changes the model's behavior. The interactive exploration narrows the search; the programmatic analysis provides rigor.
+A reasonable approach is to start with a semantic search for “deception,” “lying,” and related labels. Use dashboards to generate candidates, then run those latents on held-out positive, negative, and confounding examples with SAELens. If a candidate transfers, test interventions and off-target effects. Interactive exploration narrows the search; controlled programmatic evaluation supplies stronger evidence.
 
 </details>
 
 ## The MI Toolchain
 
-SAELens and Neuronpedia complete a toolchain that spans the full MI workflow:
+SAELens and Neuronpedia cover two useful parts of a broader MI workflow:
 
 | Tool | Role |
 |---|---|
@@ -95,4 +95,4 @@ SAELens and Neuronpedia complete a toolchain that spans the full MI workflow:
 
 These tools are complementary rather than competing. A typical research project might use TransformerLens or nnsight to study model behavior, SAELens to decompose activations into features, and Neuronpedia to build intuition about what those features represent. The boundaries are fluid: SAELens integrates with both TransformerLens and nnsight, and Neuronpedia can import SAEs trained with SAELens.
 
-The tooling ecosystem continues to evolve rapidly. New SAE variants, larger pre-trained SAE releases, and tighter integration between tools appear regularly. But the core workflow of train/load, analyze, explore remains stable, and SAELens and Neuronpedia are currently the standard tools for each step.
+The tooling ecosystem changes quickly, but the core workflow is stable: load or train a decomposition, inspect candidate features, and test interpretations programmatically. Tool choice should follow the model, SAE format, and intervention the project requires.

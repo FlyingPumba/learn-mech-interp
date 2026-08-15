@@ -1,6 +1,6 @@
 ---
 title: "Localized Fact Editing and Its Pitfalls"
-description: "Techniques for editing specific facts in model weights via rank-one updates, why the insertion-versus-editing flaw undermines the approach, and what this teaches about interpretability rigor."
+description: "Editing factual associations with rank-one weight updates, and why success at inserting a fact does not prove that we found where the original fact was stored."
 order: 1
 prerequisites:
   - title: "Activation Patching and Causal Interventions"
@@ -17,9 +17,9 @@ glossary:
 
 Language models store factual associations in their weights. When GPT asks "The Eiffel Tower is located in ___" and answers "Paris," that association is encoded somewhere in the network's parameters. A natural question arises: can we *edit* specific facts without retraining the model? Change "Paris" to "London" for the Eiffel Tower while leaving everything else intact?
 
-This question matters for both practical and scientific reasons. Practically, models acquire outdated or incorrect information during training, and targeted editing would be cheaper than retraining. Scientifically, the ability to edit a fact by modifying specific weights would constitute strong evidence that the fact is *localized* in those weights -- a causal claim about where knowledge lives in the network.
+This question matters for both practical and scientific reasons. Practically, models acquire outdated or incorrect information during training, and targeted editing would be cheaper than retraining. Scientifically, the ability to edit a fact by modifying specific weights would constitute strong evidence that the fact is *localized* in those weights, a causal claim about where knowledge lives in the network.
 
-Meng et al. {% cite "meng2022rome" %} developed **ROME** (Rank-One Model Editing), the most influential technique for localized fact editing. The approach combines causal localization with targeted weight modification, and its initial results appeared to validate both the technique and the localization hypothesis. Subsequent work revealed fundamental problems that make this a cautionary tale about interpretability rigor.
+Meng et al. {% cite "meng2022rome" %} developed **ROME** (Rank-One Model Editing), an influential technique for localized fact editing. It combines causal localization with a targeted weight update. Later work found that editing success and localization evidence can come apart, making ROME a useful case study in how a practical intervention can outrun its mechanistic interpretation.
 
 ## The ROME Approach
 
@@ -39,17 +39,17 @@ where $k$ is the key vector for the target subject, $v_0$ is the original value,
 
 > **ROME (Rank-One Model Editing):** Edit a specific factual association by computing a rank-one update to a targeted MLP layer's output projection. The update modifies the value vector associated with one subject's key representation, changing the fact that the MLP retrieves for that subject while attempting to leave other associations intact.
 
-The initial results were striking. ROME could change "The Eiffel Tower is in Paris" to "The Eiffel Tower is in London" and the model would consistently answer "London" for related queries ("What city is the Eiffel Tower in?", "The Eiffel Tower is a famous landmark in ___"). The edit appeared to generalize across phrasings while leaving unrelated facts undisturbed.
+ROME could change “The Eiffel Tower is in Paris” to “The Eiffel Tower is in London” and produce “London” across several related phrasings while leaving sampled unrelated facts mostly unchanged. Those tests establish useful behavioral generalization, but not yet the internal replacement of the old association.
 
 ## The Insertion-Versus-Editing Flaw
 
 The core assumption of ROME is that the rank-one update *edits* the stored fact, replacing "Paris" with "London." But there is a subtler possibility: the update *inserts* a new association without erasing the old one.
 
-This distinction is critical. If the old fact ("Paris") is still encoded in the weights and the new fact ("London") is simply layered on top, then the edit layer does not need to encode the fact at all. The model may produce "London" not because it has genuinely changed its knowledge, but because the rank-one update acts as a hard override -- a patch that intercepts the output at one specific layer, masking the unchanged knowledge stored elsewhere.
+If the old association remains recoverable and the new one is layered on top, success on edited prompts need not mean that a localized memory was replaced. The rank-one update may act as an override that changes the downstream answer while related representations elsewhere remain intact.
 
-Hase et al. {% cite "hase2024localization" %} investigated this possibility systematically and found that it is exactly what happens. Their key findings:
+Hase et al. {% cite "hase2024localization" %} tested the connection between localization and editability. Their findings weaken the inference from “this layer is easy to edit” to “this is where the fact is stored”:
 
-**Localization and editing are disconnected.** The causal tracing results (which identify where facts are *stored*) do not predict where edits *work best*. Editing at the layers identified by causal tracing is not more effective than editing at other layers. The localization method and the editing method appear to be solving different problems.
+**Localization and editing can disagree.** Causal-tracing scores do not reliably predict where the tested edits work best. This shows that a site with a large patching effect and a site where an update is effective answer different intervention questions; neither result alone identifies a unique storage location.
 
 **Edits do not erase the original fact.** After editing "Eiffel Tower → London," probing the model's intermediate representations reveals that "Paris" is still encoded in early and middle layers. The rank-one update at the target layer overrides the output, but the original knowledge persists upstream. The edit is a patch, not a correction.
 
@@ -60,7 +60,7 @@ Hase et al. {% cite "hase2024localization" %} investigated this possibility syst
 
 Consider the mechanics of the rank-one update $W' = W + \Delta W$, where $\Delta W$ is a rank-one matrix. The original weight matrix $W$ still contributes to the output for all inputs. The update $\Delta W$ adds a correction that is large for the target key and small for other keys. Why does this architecture naturally produce an override rather than an edit? What would a genuine edit require?
 
-A genuine edit would need to both (a) suppress the original output for the target key and (b) substitute the new output. A rank-one *addition* can do (b) but not (a) -- it adds new information without removing old information. To truly edit, you would need to modify $W$ in a way that changes the existing mapping, not just add a correction on top. This is fundamentally harder because it requires understanding the full structure of $W$, not just the input-output pair you want to change.
+A rank-one update can, in principle, contain both negative and positive components: it could subtract the old output and add a new one for the target key. The problem is not that matrix addition is mathematically incapable of replacement. It is that ROME optimizes a local output constraint without identifying and updating every distributed representation or retrieval path that supports the old fact. A successful answer override therefore does not tell us whether the original association was removed elsewhere in the network.
 
 </details>
 
@@ -74,7 +74,7 @@ The ROME story illustrates several principles that extend beyond fact editing.
 
 **The distributed nature of knowledge.** Factual knowledge in transformers is not stored in a single MLP layer like an entry in a database. It is distributed across layers, encoded redundantly, and accessed through multiple pathways. The residual stream carries information forward from many sources, and later layers integrate contributions from earlier ones. Any technique that assumes strict localization of knowledge will encounter the same fundamental problem.
 
-MEMIT {% cite "meng2023memit" %} extended ROME to edit multiple facts simultaneously by distributing rank-one updates across several layers, partially addressing the single-layer limitation. But the fundamental insertion-versus-editing problem persists: adding new associations does not remove old ones, and the resulting internal inconsistency scales with the number of edits.
+MEMIT {% cite "meng2023memit" %} extended ROME to edit multiple facts by distributing updates across several layers. This improves edit capacity, but the same evidential gap remains: output-level success does not show that old associations and all of their consequences have been coherently replaced throughout the model.
 
 ## Lessons for Interpretability Rigor
 
@@ -86,8 +86,8 @@ The fact editing literature teaches a meta-lesson about how to evaluate interpre
 
 **Distinguish correlation from mechanism.** Causal tracing shows where factual information is *processed*, but this does not mean that location is the sole *source* of the information or that modifying it will cleanly change the fact. The processing site and the storage site may differ, and storage may be distributed.
 
-These principles apply broadly. Whenever we make an interpretability claim -- "this component stores X," "this direction represents Y," "this circuit computes Z" -- we should ask: what would we expect to see if the claim were wrong? And have we tested for that?
+These principles apply broadly. For a claim such as “this component stores X” or “this circuit computes Z,” ask what observation would distinguish the hypothesis from a plausible alternative, then run that test.
 
 ## Looking Ahead
 
-The limitations of localized fact editing highlight why guarantee-based approaches to model modification are valuable. Rather than assuming we can edit specific knowledge by modifying specific weights, [concept erasure with LEACE](/topics/concept-erasure/) takes a different approach: provably remove all linear information about a concept from the representations, with a mathematical guarantee that no linear classifier can recover it. The contrast between ROME's assumption-heavy approach and LEACE's guarantee-based approach reflects a broader tension in the field between optimistic techniques that assume we understand model internals well enough to make precise modifications, and conservative techniques that make fewer assumptions and provide formal guarantees.
+The limitations of localized fact editing motivate methods whose guarantees state exactly what has been removed. [LEACE](/topics/concept-erasure/) makes a narrower promise: under its population assumptions, a transformed representation is linearly guarded for a chosen label with minimum expected distortion. It does not rewrite a fact or eliminate nonlinear information, but its explicit scope illustrates what ROME's behavioral edit metrics leave unresolved.

@@ -1,6 +1,6 @@
 ---
 title: "Activation Oracles"
-description: "General-purpose activation explainers trained on diverse interpretation tasks, capable of recovering information from fine-tuned models and matching white-box baselines through natural language interrogation."
+description: "Training one activation interpreter across varied tasks, then testing which natural-language questions and held-out activation settings it can answer reliably."
 order: 6
 prerequisites:
   - title: "LatentQA and Latent Interpretation Tuning"
@@ -11,13 +11,13 @@ prerequisites:
 
 [LatentQA](/topics/latentqa/) demonstrated that we can train decoders to answer questions about activations. But those decoders are trained on specific tasks: sentiment analysis, entity recognition, or property detection. What happens if we train on *many* diverse tasks simultaneously?
 
-Activation Oracles, introduced by Karvonen et al. {% cite "karvonen2025activationoracles" %}, pursue this direction. By training on a broad range of interpretation tasks, they aim to create general-purpose activation explainers that can answer novel questions about novel activations, even in settings never seen during training.
+Activation Oracles, introduced by Karvonen et al. {% cite "karvonen2025activationoracles" %}, pursue this direction. They train one decoder on a broad task mixture, then evaluate transfer to held-out questions and activation sources.
 
-> **Activation Oracle (AO):** A language model trained via LatentQA on diverse interpretation tasks to serve as a general-purpose activation explainer. AOs accept activations as input and answer natural language questions about their content, generalizing beyond their training distribution.
+> **Activation Oracle (AO):** A language model trained via LatentQA on several interpretation tasks. It accepts activations and natural-language questions, producing answers whose generalization must be measured on held-out tasks and models.
 
 ## Training for Breadth
 
-The key insight is that diverse training produces general capability. The authors train AOs on multiple task types:
+Activation Oracles are trained on several task families so that success cannot depend on one fixed label space:
 
 **Classification tasks.** Training on many different classification problems (sentiment, topic, named entity, etc.) teaches the oracle to detect diverse properties in activations.
 
@@ -30,17 +30,17 @@ The combination matters. Each task type contributes different knowledge:
 - Context prediction teaches holistic understanding
 - Specialized tasks teach fine-grained discrimination
 
-Training on all simultaneously produces oracles that exceed any single-task baseline.
+In the reported comparisons, the mixed-task oracle transfers better across several evaluations than decoders trained on narrower mixtures.
 
 ## The Generalization Result
 
-The most striking finding concerns out-of-distribution generalization:
+The main generalization test uses information introduced by fine-tuning:
 
-**AOs can recover information fine-tuned into a model that does not appear in the input text, despite never being trained on activations from fine-tuned models.**
+The main test asks whether an AO can recover information introduced by fine-tuning even though its own training mixture did not include activations from those fine-tuned variants.
 
 Consider a model fine-tuned to associate "Alice" with specific biographical information. The fine-tuning changes the model's weights but does not change the LatentQA training data (which was collected before fine-tuning). Nevertheless, the AO can query the fine-tuned model's activations and recover the newly learned biographical knowledge.
 
-This suggests that AOs learn something general about how information is encoded in activations, not just pattern matching against training examples. The activation patterns for "newly fine-tuned knowledge" share structure with patterns the AO learned from its original training.
+This is consistent with the oracle learning transferable structure in activations. It could also exploit similarities between the fine-tuned activations and its training distribution, so the result does not identify a universal activation code.
 
 <details class="pause-and-think">
 <summary>Pause and think: What does this generalization tell us?</summary>
@@ -60,19 +60,17 @@ The ability to generalize to fine-tuned models is particularly relevant for safe
 
 A natural question: how do AOs compare to white-box methods that have full access to model internals (weights, gradients, etc.)?
 
-The results are encouraging:
-
-**AOs match or exceed white-box baselines on most evaluated tasks.**
+On most tasks in the reported benchmark, AOs match or exceed the selected white-box baselines.
 
 This is noteworthy because AOs operate purely through natural language interrogation. They do not compute gradients, analyze attention patterns, or inspect specific components. They simply ask questions and interpret answers.
 
-The implication is that natural language question-answering may be a sufficient interface for many interpretation needs. We do not always need specialized tools for each analysis; a well-trained oracle can handle diverse queries through a unified interface.
+Natural-language question answering can therefore serve as a useful common interface on these tasks. It does not replace specialized causal tools when the question is whether a representation is used, where it came from, or how an answer would change under intervention.
 
 ## Recovering Malign Propensities
 
 Beyond benign biographical information, AOs can detect "malign propensities" fine-tuned into models. If a model has been trained to have harmful tendencies that it conceals in normal text output, can the AO detect this from activations?
 
-The experiments suggest yes. Activations encode information about model propensities even when the model's text outputs do not reveal them. This has obvious safety implications: AOs could help detect covertly harmful models.
+In the model organisms studied, the oracle recovers information about fine-tuned malign propensities that ordinary text outputs conceal. Whether this extends to naturally arising or adversarially hidden propensities remains open.
 
 The flip side is that bad actors could use similar techniques to probe for hidden capabilities. This dual-use concern is consistent with other hidden state decoding methods; the techniques that enable safety auditing also enable capability extraction.
 
@@ -86,9 +84,9 @@ Ablation studies reveal that training diversity is the key to generalization:
 | Multiple similar tasks | Moderate |
 | Diverse task types | Strong |
 
-Adding classification tasks improves performance. Adding self-supervised tasks improves further. The lesson is that general-purpose interpretation requires general-purpose training.
+Adding classification and self-supervised tasks improved transfer in the study's ablations. The result supports broader training mixtures for this setup without establishing that breadth alone is sufficient for general-purpose interpretation.
 
-This suggests a path forward: to build more capable AOs, we should collect and train on increasingly diverse interpretation tasks. Each new task type may unlock capabilities that transfer to tasks we have not anticipated.
+In these experiments, diversity mattered more than simply adding examples from one task family. A practical next step is therefore to broaden the training mixture and measure transfer to genuinely held-out task types. More diversity may help, but each added task does not automatically produce general-purpose interpretation.
 
 ## Practical Advantages
 
@@ -112,16 +110,16 @@ AOs offer several practical benefits over specialized interpretation tools:
 
 **Adversarial robustness.** If models learn to encode information in ways that evade AO detection, the approach may become less effective. There is potential for an arms race between encoding and detection.
 
-## The Bigger Picture
+## What Generality Has Been Demonstrated?
 
-Activation Oracles represent a maturation of the hidden state decoding paradigm. Where earlier methods demonstrated feasibility, AOs demonstrate practicality. A single, well-trained model can perform diverse interpretation tasks competitively with specialized tools.
+Activation Oracles show that one trained decoder can perform several activation-interpretation tasks competitively with selected specialized baselines. General-purpose here means breadth across the tested task mixture, not reliable answers to arbitrary questions about arbitrary models.
 
-This suggests a future where interpretation capabilities are:
+The approach aims for interpretation that is:
 - **General:** One tool for many tasks
 - **Scalable:** Language model inference rather than custom analysis
 - **Accessible:** Natural language rather than technical methods
 
-The field is moving from proving that LLMs can interpret activations to routinely using LLMs as the default interpretation interface.
+The remaining question is whether that convenient interface can be calibrated well enough that users know when its fluent answer is unsupported.
 
 ## Looking Back at the Block
 
@@ -132,9 +130,9 @@ We have traced an arc through hidden state decoding:
 3. [**SelfIE**](/topics/selfie-interpretation/) demonstrated self-interpretation and control through embedding injection.
 4. [**Training self-explanation**](/topics/training-self-explanation/) found that models explain themselves better when explicitly trained to do so.
 5. [**LatentQA**](/topics/latentqa/) reframed interpretation as Q&A, enabling diverse queries and differentiable control.
-6. **Activation Oracles** scaled this to general-purpose, matching specialized tools through broad training.
+6. **Activation Oracles** trained one decoder across several task families and matched selected specialized baselines on the reported evaluations.
 
-The trajectory shows increasing ambition: from targeted inspection to general-purpose explanation. Hidden state decoding is no longer a research curiosity but a practical approach to understanding what models know and how they compute.
+The sequence moves from targeted readouts toward broader learned decoders. These methods can recover useful information from hidden states; explaining how a model computes, rather than what one state contains, remains a harder causal problem.
 
 <details class="pause-and-think">
 <summary>Pause and think: What comes next?</summary>

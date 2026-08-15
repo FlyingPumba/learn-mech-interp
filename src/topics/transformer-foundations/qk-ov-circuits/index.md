@@ -25,17 +25,17 @@ $$
 \mathbf{r}^L = \underbrace{\text{Embed}(\mathbf{x})}_{\text{token embedding}} + \underbrace{\sum_{l=0}^{L-1} \sum_{h=1}^{H} \text{Attn}^{l,h}}_{\text{all attention heads}} + \underbrace{\sum_{l=0}^{L-1} \text{MLP}^l}_{\text{all MLPs}}
 $$
 
-Each term in this sum is a vector in $\mathbb{R}^{d_{\text{model}}}$. For GPT-2 Small, $d_{\text{model}} = 768$; for GPT-3, $d_{\text{model}} = 12{,}288$. Every component performs two operations on this shared space: it *reads* by taking the current residual stream as input, and it *writes* by adding an update vector back to the stream.{% sidenote "Different components may read and write in different subspaces of the full residual stream. If two components use orthogonal subspaces, they do not interfere with each other. This is why the additive structure matters: it makes the model decomposable into analyzable parts." %}
+Each term in this sum is a vector in $\mathbb{R}^{d_{\text{model}}}$. Every component *reads* the current residual stream and *writes* an update back to it.{% sidenote "Components can favor different read and write subspaces. Orthogonal direct subspaces do not interact through a simple dot product, but normalization and later components can still couple their effects. Additivity makes bookkeeping possible; it does not make the full computation independent." %}
 
 > **Residual Stream (Formal):** The residual stream is the $d_{\text{model}}$-dimensional vector that flows through the transformer, starting as the token embedding and accumulating additive updates from each attention head and MLP layer.
 
-The key insight is that the final output is a linear combination of contributions from every component. We can study each one separately and ask how much it contributed to the model's prediction. This decomposability is what makes transformers amenable to mechanistic analysis.
+The additive residual stream lets us isolate a component's direct contribution and ask how it affected a prediction. Later components can transform or compensate for that update, so studying terms separately is a useful starting point rather than a complete account of causality.
 
 ## Two Jobs, One Head
 
 Each attention head does two conceptually independent things. First, it decides *where to move information*: which source tokens should each destination token attend to? Second, it decides *what information to move*: given the attended tokens, what gets copied to the output?
 
-These two jobs are controlled by two independent circuits: the **QK circuit** and the **OV circuit**. Remarkably, the four weight matrices of an attention head ($W_Q$, $W_K$, $W_V$, $W_O$) factor cleanly into these two circuits, each of which can be analyzed on its own.
+These two jobs are controlled by two parameter products: the **QK circuit** and the **OV circuit**. The four weight matrices of an attention head ($W_Q$, $W_K$, $W_V$, $W_O$) factor into these two products, which can be inspected separately while remembering that the head's behavior also depends on its inputs.
 
 <figure>
   <img src="images/qk-ov-circuit-paths.png" alt="Diagram of a one-layer attention-only transformer showing the QK and OV circuits as separate paths through the model. The OV circuit (gold) traces from the source token through W_E, W_V, W_O, and W_U to the output logits. The QK circuit (pink) traces from both source and destination tokens through W_E, W_K, and W_Q to produce attention scores.">
@@ -95,7 +95,7 @@ The two circuits have complementary roles:
 | **End-to-end** | $W_E \, W_{QK}^h \, W_E^T$ | $W_E \, W_{OV}^h \, W_U$ |
 | **Interpretation** | Token-to-token relevance | Token-to-logit effect |
 
-Every attention head decomposes into these two independent circuits. This is not just compact notation. It reveals that each head has exactly two degrees of freedom: *where* to look and *what* to move. These can be studied independently.
+Every attention head decomposes into these two circuits. This is more than compact notation: it separates *where* the head looks from *what* it moves. The two parameter products are independent, although their effects inside a full model still interact with the residual stream, normalization, and later layers.
 
 <details class="pause-and-think">
 <summary>Pause and think: Why independence matters</summary>

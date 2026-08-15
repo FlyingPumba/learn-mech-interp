@@ -1,6 +1,6 @@
 ---
 title: "Addition Steering"
-description: "How adding carefully computed steering vectors to model activations during inference can shift model behavior without any fine-tuning."
+description: "Shifting a model's behavior at inference time by adding a learned concept direction to its activations, without changing the model's weights."
 order: 1
 prerequisites:
   - title: "Contrastive Activation Addition (CAA)"
@@ -11,7 +11,7 @@ prerequisites:
 
 [Probing methods](/topics/caa-method/) identify directions in activation space that correspond to concepts. But what happens if we *add* those directions during inference? Can we steer model behavior by intervening directly on the residual stream?
 
-This is the idea behind **addition steering** -- modifying a model's internal activations during inference to control its outputs {% cite "turner2024steering" %}. Unlike fine-tuning (which modifies weights) or prompting (which modifies inputs), addition steering intervenes directly on internal representations during the forward pass. No training. No gradient computation. Just vector addition during inference.
+**Addition steering** modifies a model's internal activations during inference to influence its outputs {% cite "turner2024steering" %}. Unlike fine-tuning, it leaves the weights fixed; unlike prompting, it intervenes after the input has entered the model. Once a direction has been estimated, the intervention itself is a vector addition during the forward pass.
 
 > **Addition Steering:** The inference-time modification of a model's internal activations by adding a steering vector to the residual stream. The vector is added at a chosen layer during the forward pass, shifting the model's behavior toward a target concept without modifying the model's weights.
 
@@ -53,9 +53,9 @@ This bidirectionality is powerful. A single steering vector enables both amplifi
 
 **Lightweight.** No training, no optimization, no backward pass. Only forward passes to compute the steering vector, then simple addition during inference.
 
-**Data-efficient.** Works with a single contrast pair -- as few as 2 prompts. For more robust steering, use directions computed via [CAA](/topics/caa-method/).
+**Data-efficient.** Works with a single contrast pair, as few as 2 prompts. For more robust steering, use directions computed via [CAA](/topics/caa-method/).
 
-**Preserves off-target performance.** Steering sentiment does not break factuality or general capabilities. The intervention is targeted to the concept direction.
+**Can preserve off-target performance at moderate strengths.** Published evaluations often find small changes on broad capability benchmarks, but this must be checked for each vector, layer, coefficient, and input distribution.
 
 **Natural-language interface.** The steering direction is specified through text prompts, not learned parameters.
 
@@ -64,7 +64,7 @@ This bidirectionality is powerful. A single steering vector enables both amplifi
 
 Addition steering is most effective at middle layers (roughly layers 15-17 in Llama 2). Why might early or late layers be less effective for steering?
 
-Early layers are too close to token space -- representations are still input-specific, encoding surface-level features. Steering here would interfere with basic processing. Late layers are too committed to output -- the model has already decided what to generate, and interventions are too late to change the trajectory. Middle layers encode concepts in their most abstract, modifiable form, making them the sweet spot for steering.
+In many reported experiments, early-layer interventions have weak or disruptive effects, while very late interventions leave little computation in which the change can propagate. Middle layers are therefore a useful starting point, but the best layer depends on the concept, model, token position, and metric.
 
 </details>
 
@@ -76,9 +76,9 @@ Addition steering can induce behaviors that the model would not normally exhibit
 
 **Sentiment steering:** Add a "positive sentiment" direction and responses become more optimistic and cheerful.
 
-**Refusal induction:** Add the [refusal direction](/topics/refusal-direction/) to harmless prompts and the model refuses to answer even benign questions like "What is the capital of France?"{% sidenote "The refusal induction experiment is particularly striking. It demonstrates *sufficiency*: adding the refusal direction *causes* refusal, not just correlates with it. This is strong causal evidence that the direction genuinely mediates the behavior." %}
+**Refusal induction:** Add the [refusal direction](/topics/refusal-direction/) to harmless prompts and the model may refuse even benign questions such as “What is the capital of France?”{% sidenote "This intervention is causal evidence: changing the activation along the chosen direction changes refusal behavior. Calling the direction sufficient is shorthand for sufficiency under the tested intervention, layers, prompts, and intact remainder of the model." %}
 
-The refusal induction experiment demonstrates **sufficiency**: adding a direction *causes* the associated behavior. This is the complement to [ablation](/topics/ablation-steering/), which demonstrates **necessity** by showing that removing a direction prevents the behavior.
+Refusal induction shows that adding the direction can cause the measured behavior in the tested setting. [Ablation](/topics/ablation-steering/) asks the complementary question: does projecting out the direction reduce the behavior? Together, the interventions support a causal-mediator claim without showing that the representation is unique or that no alternative pathway exists.
 
 ## Additivity with Other Methods
 
@@ -103,7 +103,7 @@ The residual stream activation $\mathbf{h}$ is a point in high-dimensional space
 
 Suppose you want to steer a model to be more concise in its responses. How would you design the contrast pairs? What positive and negative prompts would you use? What layer range would you try first?
 
-For contrast pairs, you might use prompts that elicit verbose responses (positive = concise, negative = verbose): ask the same question with instructions to "explain briefly" versus "explain in detail." You would start with middle layers since that is where abstract behavioral tendencies are encoded. The key challenge is ensuring your pairs differ primarily in verbosity, not in content quality or accuracy.
+For contrast pairs, ask the same questions with matched instructions such as “explain briefly” and “explain in detail.” Sweep several layers and intervention strengths on development data instead of assuming the best layer in advance. Then test held-out topics and measure not only length but also accuracy, completeness, and fluency, since the pairs may differ along those dimensions too.
 
 </details>
 
@@ -121,8 +121,8 @@ For behaviors that resist single-direction steering, more sophisticated interven
 
 Addition steering is one of three fundamental operations on concept directions:
 
-- **Read** with [LAT](/topics/lat-probing/) and [CAA](/topics/caa-method/) -- detect what concepts are encoded.
-- **Add** with addition steering -- steer behavior toward a concept.
-- **Remove** with [ablation](/topics/ablation-steering/) -- eliminate a concept's influence.
+- **Read** with [LAT](/topics/lat-probing/) and [CAA](/topics/caa-method/), detect what concepts are encoded.
+- **Add** with addition steering, steer behavior toward a concept.
+- **Remove** with [ablation](/topics/ablation-steering/), eliminate a concept's influence.
 
-Together, these operations form a principled framework for understanding and controlling model representations. Addition demonstrates *sufficiency* (adding the direction causes the behavior), while [ablation](/topics/ablation-steering/) demonstrates *necessity* (removing the direction prevents the behavior).
+Together, these operations form a useful framework for testing and controlling model representations. Addition and [ablation](/topics/ablation-steering/) probe opposite interventions, but their conclusions remain conditional on the prompts, layers, coefficients, and behavioral metric used.

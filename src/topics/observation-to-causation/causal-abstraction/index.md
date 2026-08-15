@@ -1,6 +1,6 @@
 ---
 title: "The Causal Abstraction Framework"
-description: "The theoretical framework that unifies activation patching, probing, circuit analysis, and other MI methods as special cases of one idea: testing whether a high-level causal model faithfully describes a neural network's computation via interchange interventions."
+description: "Testing whether a simple causal model faithfully describes a neural network by swapping corresponding internal states and comparing the results."
 order: 5
 prerequisites:
   - title: "Activation Patching and Causal Interventions"
@@ -10,7 +10,7 @@ glossary:
   - term: "Causal Abstraction"
     definition: "A formal relationship between a high-level interpretable causal model and a low-level neural network, established by showing that interventions on aligned components produce matching behavior changes in both systems."
   - term: "Interchange Intervention Accuracy (IIA)"
-    definition: "The proportion of interchange interventions on which the neural network's output matches the prediction of the high-level causal model. Measures how faithfully the causal model describes the network's computation."
+    definition: "The proportion of tested interchange interventions on which the neural network's output matches the high-level causal model's prediction. It measures support for a proposed alignment on the sampled interventions."
 ---
 
 ## What Ties MI Methods Together?
@@ -19,7 +19,7 @@ Over the preceding articles, we have built up a toolkit of causal intervention m
 
 But we have not yet asked a more fundamental question: *what does it mean for a neural network to "implement" an interpretable algorithm?* When we say "this attention head computes the indirect object" or "this MLP layer stores factual associations," what exactly are we claiming, and how would we verify it?
 
-**Causal abstraction** provides the answer. Developed by Geiger et al. {% cite "geiger2021causal" %} and later expanded into a comprehensive theoretical foundation {% cite "geiger2023causal" %}, it formalizes the relationship between a high-level interpretable model (the kind of explanation we want) and the low-level neural network (the system we are trying to understand). The key insight: if we can *intervene* on aligned components of both systems and get matching results, then the high-level model faithfully describes the network's computation.
+**Causal abstraction** makes this question testable. Developed by Geiger et al. {% cite "geiger2021causal" %} and extended in later work {% cite "geiger2023causal" %}, it formalizes a proposed alignment between variables in a high-level model and states in a neural network. Matching results under interchange interventions support that alignment over the tested inputs and interventions. Broader claims require broader coverage and comparison with alternative alignments.
 
 ## Two Models, One Behavior
 

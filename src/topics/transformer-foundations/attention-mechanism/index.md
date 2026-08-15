@@ -1,6 +1,6 @@
 ---
 title: "The Attention Mechanism"
-description: "How transformers enable tokens to communicate through queries, keys, and values: the attention equation, causal masking, multi-head attention, and the QK/OV decomposition that underlies mechanistic interpretability."
+description: "How queries and keys decide where to look, values determine what moves, and causal multi-head attention lets tokens exchange contextual information."
 order: 3
 prerequisites: []
 
@@ -88,7 +88,7 @@ $$
 \text{Attn}(Q, K, V) = \text{softmax}\left(\frac{QK^T}{\sqrt{d_k}}\right)V
 $$
 
-This single equation is the core of the transformer {% cite "vaswani2017attention" %}. Everything else in the architecture (multi-head attention, the residual stream, MLPs) is built around it.
+This equation describes one attention operation {% cite "vaswani2017attention" %}. A transformer gains depth and computational power by running several such heads in parallel, mixing their outputs with MLPs, and repeating the process across layers.
 
 ## A Worked Example
 
@@ -98,8 +98,8 @@ To make the attention equation concrete, we trace a single attention head on a 3
 
 | Token | Query $\mathbf{q}$ | Key $\mathbf{k}$ | Value $\mathbf{v}$ |
 |-------|---------|-------|---------|
-| A | — | $(1, 0)$ | $(1, 0, 0)$ |
-| B | — | $(0, 1)$ | $(0, 1, 0)$ |
+| A |, | $(1, 0)$ | $(1, 0, 0)$ |
+| B |, | $(0, 1)$ | $(0, 1, 0)$ |
 | C | $(1, 1)$ | $(1, 1)$ | $(0, 0, 1)$ |
 
 We only need C's query (since we are computing attention *from* position C) and all three keys and values.
@@ -128,7 +128,7 @@ $$\text{out}_C = 0.25 \cdot (1, 0, 0) + 0.25 \cdot (0, 1, 0) + 0.50 \cdot (0, 0,
 
 The output is dominated by C's own value vector, with smaller contributions from A and B. This is the information that this attention head writes to the residual stream at position C.
 
-The key observation: the attention pattern (who attends to whom) is entirely determined by the dot products between queries and keys. The values are passive passengers, mixed according to whatever weights the QK interaction produces. These are two independent computations, which is the foundation of the [QK/OV circuit decomposition](/topics/qk-ov-circuits/) we will develop later.
+The dot products between queries and keys determine the attention pattern: who attends to whom. The values do not affect those weights; they supply the information mixed according to them. Separating the *where* from the *what* gives us the [QK/OV circuit decomposition](/topics/qk-ov-circuits/) developed later.
 
 ## Self-Attention and Causal Masking
 
@@ -145,7 +145,7 @@ In **decoder-only** transformers (such as GPT), there is an additional constrain
   <figcaption>Multi-head attention. Each head applies its own learned linear projections to the inputs, computes scaled dot-product attention independently, and the results are concatenated and projected through a final linear layer. From Vaswani et al., <em>Attention Is All You Need</em>. {%- cite "vaswani2017attention" -%}</figcaption>
 </figure>
 
-A single attention head can only learn one attention pattern, one way of deciding which tokens are relevant to which. But language requires attending to multiple things simultaneously. A token might need to attend to the previous token (for syntax), to the subject of the sentence (for semantics), and to a matching pattern earlier in the text (for repetition), all at the same time.
+A single attention head produces one distribution over source positions for each destination position. Language often benefits from several such distributions at once: one head can favor the previous token, another the sentence's subject, and another an earlier instance of a repeated pattern.
 
 The solution is to run multiple attention heads in parallel, each with its own learned projection matrices. Each head $h$ has its own $W_Q^h$, $W_K^h$, and $W_V^h$, and computes attention independently:
 
@@ -161,11 +161,11 @@ $$
 
 Why is $W_O$ needed? Because each head operates in a small $d_v$-dimensional subspace, its output cannot be added directly to the $d_{\text{model}}$-dimensional residual stream. The output matrix $W_O \in \mathbb{R}^{(H \cdot d_v) \times d_{\text{model}}}$ maps the concatenated head outputs back into the full residual stream space. It also lets each head learn *how* to write its result back: which dimensions of the residual stream to update and with what mixture. In mechanistic interpretability, the combined matrix $W_V^h W_O^h$ (the slice of $W_O$ corresponding to head $h$) is called the **OV circuit** of a head: it determines what information the head moves from source to destination.
 
-> **Independent Heads:** Each attention head is an independent information-moving operation with its own learned pattern. Head $h$ reads from the residual stream, processes it through its own $d_k$-dimensional subspace, and writes back to the residual stream.
+> **Parallel Heads:** Within one attention layer, each head computes its own QK pattern and OV write from the same input state. Their outputs are then summed into the shared residual stream, where later components can combine them.
 
-With $H$ heads and $d_k = d_{\text{model}} / H$, the total parameter count is the same as a single large head, but the model can attend to $H$ different things at once.{% sidenote "The projection to a lower-dimensional space creates a bottleneck. Each attention head operates in a subspace of dimension d_k, which is typically d_model / H where H is the number of heads. This low-rank structure is important for mechanistic interpretability because it means each head can only attend to and move information along a limited set of directions." %} For mechanistic interpretability, this is a major advantage: we can study each head individually to understand what it does.
+In the standard parameterization, $d_k=d_v=d_{\text{model}}/H$, so splitting one full-width attention operation into $H$ heads does not increase the leading projection-parameter count. It does give the layer $H$ separately parameterized routing patterns and writes, which may specialize differently.{% sidenote "Each head's QK and OV matrices are low rank, with rank at most the head dimension. That constrains any one head's routing and writing capacity, although several heads and later layers can combine their effects." %}
 
-In practice, different heads specialize in remarkably specific patterns. **Previous token heads** consistently attend to the immediately preceding token. **Induction heads** complete patterns by looking for previous occurrences of the current token and attending to what came after. **Name mover heads** copy proper names to later positions where they are needed for prediction. We will explore induction heads and other specialized head types in later articles.
+Researchers have identified heads with recurring patterns on defined distributions. **Previous-token heads** place substantial weight on the preceding position. **Induction heads** support repeated-pattern completion, and **Name Mover heads** copy candidate names in the IOI task. These labels summarize tested behavior, not everything a head does on all inputs.
 
 To see why multiple heads matter, consider the sentence *"The tired cat sat on the mat because it was tired"* at the token position "it." Different heads can extract different relationships from the same position simultaneously:
 
@@ -173,9 +173,9 @@ To see why multiple heads matter, consider the sentence *"The tired cat sat on t
 - **Head B** might attend from "it" to the first "tired," tracking which property is being referenced.
 - **Head C** might attend from "it" to "sat," tracking the main verb of the clause.
 
-No single head could serve all three purposes at once. Each head's QK circuit determines a different relevance pattern, and each head's OV circuit copies different information. The concatenation of their outputs gives the model simultaneous access to the referent, its property, and the action, all from a single attention layer.
+Separate heads make it easier to represent all three relationships at once. Each head's QK circuit can produce a different relevance pattern, while its OV circuit can move different information. Their combined outputs can therefore carry the referent, its property, and the action from the same attention layer.
 
-**Each attention head is a separate information-moving operation with its own learned pattern. Understanding what each head does is a core goal of mechanistic interpretability.**
+An attention head is one information-moving operation, but its behavior may change with the input and may only make sense together with other heads. Mechanistic analysis therefore studies both individual heads and the circuits they form.
 
 <details class="pause-and-think">
 <summary>Pause and think: From architecture to interpretability</summary>
@@ -186,6 +186,6 @@ If attention heads move information between positions, what determines *which* i
 
 ## Looking Ahead
 
-Attention is how information moves between positions. But each transformer layer has a second component: the [MLP](/topics/mlps-in-transformers/), which transforms information within each position. Where attention routes information, MLPs process it, acting as key-value memories that store and retrieve knowledge. The next article covers how MLPs work and what they compute.
+Attention moves information between positions. Each transformer layer also contains an [MLP](/topics/mlps-in-transformers/), which transforms each position separately. The next article explains the MLP computation and examines evidence for interpreting some neurons as key-value-like memories.
 
 After that, [layer normalization](/topics/layer-normalization/) addresses the practical complication of keeping activations stable across many layers, and the [QK/OV circuit decomposition](/topics/qk-ov-circuits/) formalizes the two-circuit structure hinted at above into the mathematical framework that underpins mechanistic interpretability.

@@ -9,9 +9,9 @@ prerequisites:
 
 ## The Control Framework
 
-[Addition steering](/topics/addition-steering/) and [ablation steering](/topics/ablation-steering/) are specific techniques. But they are part of a broader paradigm: **representation control** -- the systematic manipulation of model behavior through interventions on internal representations.
+[Addition steering](/topics/addition-steering/) and [ablation steering](/topics/ablation-steering/) are specific techniques. But they are part of a broader paradigm: **representation control**, the systematic manipulation of model behavior through interventions on internal representations.
 
-Zou et al. (2023) formalized this paradigm as part of Representation Engineering (RepE) {% cite "zou2023repe" %}. The key insight is that [probing methods](/topics/lat-probing/) and control methods are two sides of the same coin. The direction that a linear classifier uses to *detect* a concept is the same direction you *add* to induce that concept, or *project out* to eliminate it.
+Zou et al. (2023) formalized this paradigm as part of Representation Engineering (RepE) {% cite "zou2023repe" %}. A direction used by a linear probe is also a natural candidate for intervention: add it to test whether behavior increases, or project it out to test whether behavior decreases. A useful probe direction need not be an effective control direction, so the intervention is a new experiment rather than an automatic consequence.
 
 > **Representation Control:** The use of concept directions identified through probing to systematically control model behavior. Control operations include addition (to induce behaviors) and ablation (to disable behaviors), both operating on the same geometric structure revealed by probing.
 
@@ -49,7 +49,7 @@ Representation control enables both understanding and manipulating safety-releva
 
 - **Sycophancy.** Identify the direction that encodes "agree with the user regardless of accuracy," then ablate or reverse it to promote truthfulness.
 
-- **Refusal.** The [refusal direction](/topics/refusal-direction/) is the most striking example -- one direction mediates safety-critical refusal behavior across 13 models.
+- **Refusal.** In one study of 13 models, a [refusal direction](/topics/refusal-direction/) mediated much of the measured refusal behavior, making it a useful example of low-dimensional control with clear safety implications.
 
 ## Causal Validation
 
@@ -59,7 +59,7 @@ Representation control provides a methodology for establishing causal claims abo
 2. **Test sufficiency** via [addition](/topics/addition-steering/): does adding the direction cause the behavior?
 3. **Test necessity** via [ablation](/topics/ablation-steering/): does removing the direction prevent the behavior?
 
-A direction that passes both tests is a genuine causal mediator. This is the same logic as [activation patching](/topics/activation-patching/), but applied to concept directions rather than individual components.
+A direction that passes both tests has evidence for causal mediation under those interventions. This follows the logic of [activation patching](/topics/activation-patching/), but applies it to a direction rather than a named model component.
 
 <details class="pause-and-think">
 <summary>Pause and think: The limits of linear control</summary>
@@ -82,28 +82,28 @@ The [function vectors](/topics/function-vectors/) work shows that even complex *
 
 ## Implications for Alignment
 
-The representation control framework has profound implications for AI safety:
+Representation control creates several possibilities and risks for AI safety:
 
 **Understanding:** We can now ask precise questions about what safety-relevant concepts a model represents and where.
 
-**Control:** We have tools to steer behavior without retraining -- useful for rapid iteration and deployment-time adjustments.
+**Control:** We have tools to steer behavior without retraining, useful for rapid iteration and deployment-time adjustments.
 
 **Vulnerability:** The same tools that help us understand safety mechanisms can bypass them. The [refusal direction](/topics/refusal-direction/) can be ablated with one operation.
 
-This dual-use nature is fundamental to mechanistic interpretability. Understanding and manipulation are two sides of the same geometric coin.
+The same access that supports diagnosis can also support bypasses. Any safety case using representation control must therefore account for who can apply interventions and how easily the targeted mechanism can be reconstructed or routed around.
 
 <details class="pause-and-think">
 <summary>Pause and think: Designing robust safety mechanisms</summary>
 
 If safety behaviors are encoded as linear directions that can be ablated, how might we design more robust safety mechanisms? Is it possible to make safety behaviors resistant to linear ablation while maintaining the interpretable, linear structure that makes models useful?
 
-One approach: encode safety in multiple, redundant ways -- not just a single direction but across many interacting components. However, this conflicts with the linear structure that makes models interpretable and steerable. Another approach: make safety depend on the same representations that encode general capabilities, so removing safety also degrades performance. But this makes legitimate customization harder. The tension between interpretability, controllability, and robustness may be fundamental.
+One approach is to encode safety redundantly across several interacting components, so removing one direction does not remove the behavior. Redundancy does not inherently prevent interpretation, but it makes both analysis and intervention more demanding. Another possibility is to couple safety behavior to representations used for general capabilities, so bypassing safety also damages performance. That could improve tamper resistance while making legitimate customization harder.
 
 </details>
 
-## The Complete Toolkit
+## A Linear Toolkit
 
-Representation control, combined with [probing methods](/topics/caa-method/), provides a complete toolkit for working with model representations:
+Representation control and [probing methods](/topics/caa-method/) provide a compact toolkit for one-dimensional linear representations:
 
 - **Probe** with [CAA](/topics/caa-method/) and [LAT](/topics/lat-probing/) to identify concept directions.
 - **Add** with [addition steering](/topics/addition-steering/) to induce behaviors.

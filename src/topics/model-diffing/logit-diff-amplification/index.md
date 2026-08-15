@@ -12,7 +12,7 @@ glossary:
 
 Some model behaviors are rare. A fine-tuning run that introduces harmful tendencies might produce dangerous outputs only once in ten thousand samples. A [sleeper agent](/topics/sleeper-agent-detection/) might activate its backdoor so infrequently that standard evaluation never encounters it. If a behavior occurs at a rate of 0.01%, you would need to generate and review hundreds of thousands of samples to see even a handful of examples, and you would need to know what to look for.
 
-Logit diff amplification (LDA) takes a different approach {% cite "aranguri2025lda" %}. Instead of sampling more, it makes the rare behaviors *less rare*. The idea: if fine-tuning introduced a behavioral change, we can amplify that change at inference time, making training-induced behaviors dramatically more frequent in the model's outputs.
+Logit diff amplification (LDA) changes the sampling distribution instead of drawing more samples from the original one {% cite "aranguri2025lda" %}. It extrapolates the logit difference between two checkpoints, making some training-associated behaviors easier to elicit and inspect.
 
 > **Logit Diff Amplification (LDA):** A technique that amplifies the difference in output distributions between two model checkpoints. By exaggerating the logit-level changes that training introduced, rare behaviors become frequent enough to detect through moderate-scale sampling.
 
@@ -26,7 +26,7 @@ $$
 
 where $\alpha > 0$ is the amplification strength. We then sample the next token from $\text{logits}_\text{amplified}$ and continue autoregressively, recomputing fresh logits from both models at each step with the growing context.
 
-The formula has a clean interpretation. The term $\text{logits}_\text{after} - \text{logits}_\text{before}$ is the **training signal**: the direction in logit space that training pushed the model. Multiplying by $\alpha$ and adding it back asks: "what if training had pushed *harder* in this direction?" At $\alpha = 0$, we recover the after model exactly. As $\alpha$ increases, we get a model that behaves as if the training-induced changes were stronger than they actually are.
+The term $\text{logits}_\text{after}-\text{logits}_\text{before}$ is the output difference between checkpoints for the current prefix. Multiplying it by $\alpha$ extrapolates that local difference before sampling. At $\alpha=0$, the distribution is the after checkpoint's distribution; larger values emphasize tokens that gained relative logit under training. The amplified generator is not a checkpoint produced by “more training,” because the difference is recomputed autoregressively at each prefix.
 
 Rearranging makes the structure even clearer:
 
@@ -88,7 +88,7 @@ There is a tradeoff: higher $\alpha$ amplifies the signal but also degrades cohe
 
 LDA with $\alpha = 0.3$ makes a behavior that normally appears in 1-in-10,000 samples appear in 1-in-30 samples. Can you use this to estimate the *true* rate of the behavior in the unmodified model?
 
-Not directly. LDA is a *detection* tool, not a *measurement* tool. The amplification is nonlinear (it operates on logits, which pass through softmax) and compounds across autoregressive steps. The 1-in-30 rate under amplification does not have a simple mathematical relationship to the 1-in-10,000 rate without amplification. If you need to measure the true prevalence, you still need to sample from the unmodified model. LDA tells you *that* a behavior exists and *what* it looks like, but not *how often* it would naturally occur.
+Not directly. LDA is a *discovery* tool, not a prevalence estimator. Softmax and autoregressive feedback make an amplified rate incomparable with the original sampling rate. The surfaced outputs show what the extrapolated checkpoint difference can elicit; they should be checked against unmodified checkpoints to distinguish a rare acquired behavior from an amplification artifact or a behavior already available in the base model.
 
 </details>
 
@@ -98,7 +98,7 @@ The method exploits a structural property of how training modifies models. Fine-
 
 LDA scales up that 0.1 difference. With $\alpha = 10$, the harmful token's advantage becomes 1.0, still not dominant but now competitive. The harmful continuation gets sampled often enough to be observed. The key insight is that the *direction* of the training-induced change is informative even when its *magnitude* is too small to produce observable behavior under normal sampling.
 
-This works because fine-tuning tends to move the entire output distribution in a consistent direction for a given behavioral mode, even when the move is small. The logit diff captures this direction, and amplification makes it actionable.
+The method works when the checkpoint difference assigns a consistent logit advantage to continuations associated with the behavior. Amplification can also magnify unrelated training changes, so surfaced samples reveal what lies along the combined checkpoint difference rather than isolating one causal update.
 
 ## Comparison with Internal Methods
 
@@ -118,4 +118,4 @@ LDA is a complement to white-box interpretability, not a replacement. It excels 
 
 ## Looking Forward
 
-LDA demonstrates that simple techniques operating at the output level can be powerful tools for safety evaluation. The broader idea of **model diffing**, comparing two model checkpoints to understand what training changed, extends well beyond logit-level comparisons. [Feature-level model diffing](/topics/feature-level-model-diffing/) uses shared feature dictionaries (crosscoders) to compare what concepts changed during training, identifying specific features that fine-tuning introduces, preserves, or suppresses. And even simpler approaches based on [raw activation differences](/topics/finetuning-traces/) can reveal what a model was fine-tuned on without any dictionary learning at all.
+LDA provides an output-level way to surface behaviors associated with a training change. Broader **model diffing** methods ask where those differences appear internally. [Feature-level model diffing](/topics/feature-level-model-diffing/) compares checkpoints through shared crosscoder dictionaries, while [raw activation differences](/topics/finetuning-traces/) can expose traces of narrow fine-tuning without dictionary learning.

@@ -1,6 +1,6 @@
 ---
 title: "Activation Patching and Causal Interventions"
-description: "The primary technique for establishing causal claims about model internals: replace an activation and measure what changes. Covers the clean/corrupted framework, noising vs denoising, choosing a metric, and interpreting results."
+description: "Replacing an internal activation and measuring what changes: the clean/corrupted setup, noising versus denoising, metrics, and causal interpretation."
 order: 1
 prerequisites:
   - title: "The Attention Mechanism"
@@ -19,9 +19,7 @@ Mechanistic interpretability begins with observational tools. The logit lens sho
 
 The gap matters. A probing classifier might detect part-of-speech information at 95% accuracy from layer 6 activations, yet removing that information has no effect on the model's downstream performance. The information was there, but the model did not rely on it. Observation reveals correlation. We need causation.
 
-This article introduces the primary tool for establishing causal claims about model internals: **activation patching** {% cite "heimersheim2024patching" %}. The core idea is straightforward. Replace a specific activation in one model run with the corresponding activation from a different run, and measure the effect on behavior. If the behavior changes, that activation was causally involved in producing the original output.
-
-**Observation reveals what exists. Intervention reveals what matters.**
+**Activation patching** replaces a specific activation in one model run with the corresponding activation from another, then measures the change in behavior {% cite "heimersheim2024patching" %}. A change supports a causal claim about this intervention and input pair. Interpreting that claim still requires care about what was patched, which baseline supplied the replacement, and how downstream components responded.
 
 ## The Clean/Corrupted Framework
 
@@ -34,12 +32,12 @@ We then replace specific activations from one run into the other and observe how
 
 Consider a concrete example from the Indirect Object Identification (IOI) task:
 
-- **Clean:** "When Mary and John went to the store, John gave a drink to ___" -- the model predicts *Mary* (the indirect object)
-- **Corrupted:** "When Mary and John went to the store, Mary gave a drink to ___" -- the model predicts *John* (Mary became the repeated subject, so John is now the indirect object)
+- **Clean:** “When Mary and John went to the store, John gave a drink to ___.” The model predicts *Mary*, the indirect object.
+- **Corrupted:** “When Mary and John went to the store, Mary gave a drink to ___.” The model predicts *John*, now the indirect object.
 
-Now run the corrupted prompt, but at a specific layer or [attention head](/topics/attention-mechanism/#multi-head-attention), replace the corrupted activation with the clean activation. If the model's output switches back toward "Mary", that activation carries information that causally matters for identifying the indirect object. If the output stays at "John", that activation is not important for this task. By repeating this for every layer, every head, and every position, we build a map of what matters.
+Now run the corrupted prompt, but replace one layer or [attention head](/topics/attention-mechanism/#multi-head-attention) activation with its clean value. If the output shifts back toward “Mary,” that activation mediates some of the difference between the two runs. If it does not, several explanations remain possible: the component may be irrelevant, redundant, poorly matched to the patch, or masked by downstream compensation. Repeating the intervention across locations produces a map of candidate causal sites rather than a finished mechanism.
 
-> **Activation Patching:** Also called causal mediation analysis or interchange intervention, activation patching replaces the activation $a_i$ of a specific model component $i$ in one run with the corresponding activation $a_i'$ from a different run, while keeping all other components unchanged: $\hat{y} = M(x;\; a_i \leftarrow a_i')$. The change in output $\hat{y} - y_{\text{original}}$ measures the causal effect of component $i$ on the model's behavior for this input pair.
+> **Activation Patching:** Activation patching replaces activation $a_i$ in one run with the corresponding value $a_i'$ from another: $\hat{y} = M(x;\; a_i \leftarrow a_i')$. The model then recomputes all downstream activations. The change $\hat{y} - y_{\text{original}}$ measures the effect of that particular replacement for this input pair.
 
 ![Diagram showing the activation patching setup with clean and corrupted model runs side by side, with an arrow indicating activation replacement at a specific layer.](/topics/activation-patching/images/act_patch_setup.png "Figure 1: The activation patching setup. Run the model on both clean and corrupted inputs, then replace specific activations from one run into the other to measure causal effects.")
 
@@ -47,7 +45,7 @@ Now run the corrupted prompt, but at a specific layer or [attention head](/topic
 
 - **Good:** Swap which name is the subject. This changes who the indirect object is with minimal other changes.
 - **Bad:** Use a completely different sentence. Too many confounds make it impossible to tell which difference caused the change.
-- **Bad:** Add random noise to embeddings. The model never encounters this distribution in practice, so the results may not reflect how the model processes natural inputs.
+- **Risky default:** Add large random noise to embeddings. The resulting vectors may be far from those produced by natural tokens, so the experiment can mix the intended corruption with a response to distribution shift.
 
 The cleaner the contrast, the more interpretable the results.
 
@@ -61,11 +59,11 @@ The logit difference is continuous, linear in [residual stream](/topics/transfor
 
 ## Noising vs. Denoising
 
-There are two fundamentally different ways to patch, and the distinction is the most important conceptual point in this article.
+The direction of the replacement changes the causal question.
 
-**Denoising** (clean into corrupted): Run the corrupted prompt. Replace one activation with the clean version. This asks: "Can this component *restore* the correct behavior?" Denoising tests **sufficiency** -- it identifies components that carry enough information to fix the corrupted run.{% sidenote "The distinction between sufficiency and necessity maps directly onto Pearl's causal framework. Denoising identifies sufficient causes -- components whose clean activation alone can restore correct behavior. Noising identifies necessary causes -- components without which the model fails. The two perspectives are complementary, and a complete circuit analysis requires both." %}
+**Denoising** (clean into corrupted): Run the corrupted prompt and replace one activation with its clean value. This asks whether that replacement can restore some of the clean behavior. It resembles a sufficiency test, but the patched component is not acting alone: the rest of the corrupted model still supplies context and downstream computation.{% sidenote "Denoising and noising are often described as sufficiency and necessity tests. The analogy is useful if kept local to the intervention. A single patch does not establish philosophical or model-wide sufficiency or necessity, because components interact and the replacement may itself be off-distribution in its new context." %}
 
-**Noising** (corrupted into clean): Run the clean prompt. Replace one activation with the corrupted version. This asks: "Does *damaging* this component break the correct behavior?" Noising tests **necessity** -- it identifies components that the model cannot do without.
+**Noising** (corrupted into clean): Run the clean prompt and replace one activation with its corrupted value. This asks whether that replacement damages the clean behavior. It resembles a necessity test, but a small effect does not prove the component is dispensable: redundant paths or self-repair may hide its contribution.
 
 These two directions answer different causal questions, and the difference is not merely academic. Sufficiency and necessity are not the same thing. A component can be sufficient without being necessary (if there are backups), or necessary without being sufficient (if it needs help from other components).
 
@@ -76,9 +74,9 @@ These two directions answer different causal questions, and the difference is no
 
 Noising finds AND-circuit components (serial dependencies). Denoising finds OR-circuit components (parallel/redundant paths).
 
-This matters enormously in practice. The IOI circuit in GPT-2 has **backup Name Mover heads** that activate when the primary Name Movers are disabled. If you only use noising, you might miss the primary Name Movers entirely because the backups compensate. If you use denoising, you correctly identify the Name Movers as sufficient.
+The IOI circuit in GPT-2 has **backup Name Mover heads** that become more important when primary Name Movers are disabled. Noising can therefore understate the primary heads' roles, while denoising may still show that restoring their clean activations rescues the corrupted run.
 
-The takeaway: always consider which direction you are patching and what question it answers. A component that looks unimportant under one direction may be critically important under the other.
+A component can look unimportant in one direction and important in the other. Reporting the patch direction is therefore part of reporting the result, not an implementation detail.
 
 <details class="pause-and-think">
 <summary>Pause and think: Redundant components</summary>
@@ -99,11 +97,11 @@ The choice of baseline is not obvious, and it affects results in practice.
 
 **Zero ablation** sets the component's output to the zero vector. This is the simplest option: it removes the component's additive contribution to the residual stream entirely. But zero is often far from the model's natural activation distribution. Downstream components receive an input they would never see during normal operation, so the observed effect may partly reflect the model's response to an out-of-distribution input rather than the component's genuine contribution.
 
-**Mean ablation** replaces the activation with its mean over a dataset of inputs. The intuition: the mean activation represents the component's "average" contribution. Replacing with the mean removes the component's *input-specific* signal while preserving its average effect on the residual stream. This keeps downstream activations closer to their natural distribution than zero ablation does.{% sidenote "In practice, mean ablation and zero ablation often agree on which components are important, but they can disagree on magnitude. Components whose mean activation is far from zero -- common for MLP layers, which often have a large constant bias term -- show substantially different ablation effects under the two methods." %}
+**Mean ablation** replaces the activation with its mean over a dataset of inputs. The intuition: the mean activation represents the component's "average" contribution. Replacing with the mean removes the component's *input-specific* signal while preserving its average effect on the residual stream. This keeps downstream activations closer to their natural distribution than zero ablation does.{% sidenote "In practice, mean ablation and zero ablation often agree on which components are important, but they can disagree on magnitude. Components whose mean activation is far from zero, common for MLP layers, which often have a large constant bias term, show substantially different ablation effects under the two methods." %}
 
-**Resampling ablation** replaces the activation with the value from a random different input. This preserves the full distribution of the component's activations, not just the mean. Each ablation sample draws from the same distribution the model normally encounters, avoiding distribution shift entirely. This is more expensive (you need multiple samples to get stable estimates) but more principled. Resampling ablation is used in the **causal scrubbing** framework, which formalizes circuit hypotheses as claims about which activations can be freely resampled without changing behavior.
+**Resampling ablation** replaces the activation with a value from a different input. The replacement itself comes from the component's empirical distribution, but pairing it with the current context can still break correlations between components. Multiple resamples are usually needed for a stable estimate. The **causal scrubbing** framework uses structured resampling to test which distinctions a circuit hypothesis says should be irrelevant.
 
-In current practice, mean ablation is the most common default: it is cheap, stays near the natural distribution, and produces reliable results for most components. The key takeaway is that ablation baseline choice is a methodological decision, and results should be interpreted with that choice in mind.
+Mean ablation is cheap and commonly used, but no baseline is neutral. Zero removes an additive update, the mean removes input-specific variation, and resampling substitutes another input's variation. Results should be interpreted, and ideally checked, under the baseline that matches the causal question.
 
 ## Corruption Methods Matter
 
@@ -113,13 +111,13 @@ The choice of how to *construct* the corrupted input is at least as consequentia
 
 **Gaussian noise (GN)**, used by Meng et al. in their ROME causal tracing work, adds noise drawn from $\mathcal{N}(0, 3\sigma)$ to token embeddings. This is simpler to implement (no need to construct paired prompts), but the resulting embeddings are far outside the training distribution.
 
-The difference in results is striking. For factual recall in GPT-2 XL, GN produces a salient peak of MLP importance around layer 16 (the famous "early site / late site" pattern from ROME). STR shows **no comparable peak** on the same model and task. GN peak values were 2-5x higher than STR across multiple analysis configurations. The localization pattern that motivated ROME's design may be partly an artifact of the corruption method.
+For factual recall in GPT-2 XL, Gaussian-noise corruption produces a salient peak of MLP importance around layer 16, part of the “early site / late site” pattern reported in the ROME work. Symmetric token replacement produces no comparable peak on the same model and task, and the Gaussian-noise peak was two to five times larger across several configurations. The localization result therefore depends materially on the corruption method.
 
 Why does GN produce inflated results? Zhang and Nanda traced the problem to **out-of-distribution activation propagation**. Under GN corruption, attention patterns in downstream heads break: Name Mover heads that normally attend to the indirect object with 0.58 probability split their attention diffusely. When upstream components are patched (restored) in a GN-corrupted run, they cannot fix the downstream damage because intermediate components have already been pushed into abnormal operating regimes. Under STR, patching upstream components cleanly restores downstream behavior because all components are operating in-distribution throughout.{% sidenote "This finding has practical implications for the ROME literature. The strong localization of factual knowledge to specific MLP layers, which motivated ROME's design choice to edit only mid-layer MLPs, may be partly a consequence of Gaussian noise corruption rather than a faithful reflection of how the model processes facts. This does not invalidate ROME as an editing technique, but it does complicate the interpretability claims that motivated it." %}
 
 **Metric choice matters too.** Probability as a metric cannot detect negative components (heads that actively hurt performance), because it is bounded below by zero. When the corrupted-run probability of the correct token is already near zero, components that make things worse cannot reduce it further. Logit difference has no such floor. Zhang and Nanda found that probability and logit difference identify different sets of important heads on the IOI task, with probability missing all three Name Mover heads under some configurations.
 
-The practical takeaway: **default to STR when possible, and use logit difference as the primary metric.** Fall back to Gaussian noise only when constructing in-distribution paired prompts is impractical (e.g., when there is no natural symmetric replacement). Report methodological choices explicitly, since they materially affect conclusions.
+When a natural matched pair exists, symmetric token replacement is usually easier to interpret than large embedding noise. Logit difference also avoids the probability floor when the question concerns competition between two answers. Neither choice is universal: the corruption and metric should match the causal question, and robustness checks should report how conclusions change under plausible alternatives.
 
 ## A Worked Example: IOI in GPT-2 Small
 
@@ -154,17 +152,17 @@ The results tell a clear story:
 
 ![Heatmap showing patching effect for each of 144 attention heads (12 layers x 12 heads). Most cells are near zero. Blue cells at heads 9.9, 10.0, 9.6 show positive effect (Name Movers). Red cells at 10.7, 11.10 show negative effect (Negative Name Movers).](/topics/activation-patching/images/act_patch_heads.png "Figure 3: Head-level activation patching results. The IOI circuit involves roughly 10-15 heads out of 144, revealing a sparse structure.")
 
-The heatmap reveals a remarkably sparse structure. Most heads have near-zero effect, but a handful stand out:
+Under this prompt distribution, metric, and patching setup, most heads have near-zero measured effect while a small group stands out:
 
 **Blue cells (positive effect):** These are the key players. Heads 9.9, 10.0, and 9.6 are the **Name Mover** heads, each recovering a large fraction of the logit difference. Heads 7.3, 7.9, 8.6, and 8.10 are the **S-Inhibition** heads, which suppress the wrong answer.
 
-**Red cells (negative effect):** Equally informative. Heads 10.7 and 11.10 are **Negative Name Movers** that write *against* the correct answer. This is a counterintuitive but real phenomenon -- some heads consistently hurt performance on this task, actively pushing the model toward the wrong prediction.
+**Red cells (negative effect):** Heads 10.7 and 11.10 are **Negative Name Movers** that write *against* the correct answer on these examples. Their direct effect suppresses the correct-name logit, even though the intact network still solves the task.
 
-**Interpretation.** A small number of heads -- roughly 10-15 out of 144 -- account for nearly all of the IOI behavior. This is a structured circuit, not random distributed computation. The key insight is that patching identified the circuit's components without any prior knowledge of what the model was doing. We did not need to know about Name Movers or S-Inhibition heads in advance -- the patching results revealed them purely through causal evidence.
+**Interpretation.** Roughly 10 to 15 heads recover much of the measured clean-corrupted difference in this screen. Patching narrows the search from 144 heads to a tractable candidate set. Researchers still need weight analysis, attention patterns, path-level interventions, and tests across prompts to turn those candidates into a circuit account.
 
 For the full analysis of how these heads work together to implement an algorithm for identifying the indirect object, see Wang et al. {% cite "wang2022ioi" %}.
 
-**A note on interpreting recovery percentages.** When we say "patching head 9.9 recovers 38% of the logit difference," this means replacing the corrupted activation of head 9.9 with its clean activation restores 38% of the gap between clean and corrupted performance. This does *not* mean head 9.9 is "38% of the circuit." Multiple components may independently recover overlapping portions, so the recoveries do not necessarily add up to 100%. Be careful with arithmetic interpretations of patching results -- they measure causal importance, not a partition of credit.
+**A note on interpreting recovery percentages.** When we say “patching head 9.9 recovers 38% of the logit difference,” replacing that corrupted activation with its clean value restores 38% of the clean-corrupted gap. This does *not* mean head 9.9 is “38% of the circuit.” Components can have overlapping or interacting effects, so their recoveries need not add to 100%. The percentage describes one intervention, not a unique partition of causal credit.
 
 <details class="pause-and-think">
 <summary>Pause and think: Designing a patching experiment</summary>
@@ -191,7 +189,7 @@ The efficiency gain is enormous. Full activation patching requires $O(n)$ forwar
 
 **When does it break?** For large activations such as entire residual streams at a layer, nonlinearities from softmax, MLP activations, and LayerNorm invalidate the linear regime. The Taylor approximation assumes small perturbations, and patching an entire layer's residual stream is anything but small.
 
-**Best practice:** Use attribution patching as a fast screening tool. Sweep the entire model in a single pass to identify the most promising components, then verify the top candidates with actual activation patching. Think of it as a microscope's low-magnification mode -- scan the whole slide quickly to find the interesting regions, then switch to high magnification for precise measurement.
+**Best practice:** Use attribution patching as a fast screening tool. Sweep the entire model in a single pass to identify the most promising components, then verify the top candidates with actual activation patching. Think of it as a microscope's low-magnification mode, scan the whole slide quickly to find the interesting regions, then switch to high magnification for precise measurement.
 
 For a deeper treatment of attribution patching, including its relationship to path patching and how both are applied at scale, see [Attribution Patching and Path Patching](/topics/attribution-patching/).
 
@@ -209,13 +207,13 @@ Conmy et al. extended this idea into the **ACDC algorithm** (Automatic Circuit D
 
 ## Confounds: Self-Repair and Compensation
 
-Activation patching is the gold standard for causal claims about model internals, but it has a systematic blind spot: **self-repair**. When we ablate or patch a model component, later components may compensate, partially restoring the original behavior. The effect we measure understates the component's true importance.
+Activation patching directly tests interventions on model internals, but it has a systematic blind spot: **self-repair**. Later components may compensate for an ablation or patch, making the measured effect smaller than the component's contribution in the unperturbed run.
 
 Several mechanisms contribute to self-repair. **LayerNorm rescaling** accounts for a significant fraction: when a component's contribution is removed from the residual stream, the magnitude of the stream changes, and LayerNorm renormalizes it. This mechanical rescaling can recover up to 30% of the ablated effect without any "intelligent" compensation {% cite "mcgrath2023hydra" %}. **Backup components** provide another source: heads that are nearly inactive under normal operation activate when primary components are removed, picking up their function. The [IOI circuit's Backup Name Movers](/topics/circuit-evaluation/) are the canonical example. Beyond these identified mechanisms, a substantial fraction of self-repair remains unexplained {% cite "rushing2024selfrepair" %}.
 
-The practical consequence: **ablation effects are a lower bound on component importance.** A component that appears to account for 30% of the logit difference when ablated may actually be responsible for substantially more, with the gap hidden by downstream compensation. This is particularly problematic for noising experiments, where the clean run's backup mechanisms are fully operational and ready to compensate.
+The practical consequence is that an ablation effect is not an intrinsic percentage of “importance.” Compensation can make the measured change smaller than a component's role in the intact computation, while an implausible replacement can make it larger. Report the intervention, baseline, and metric, then look explicitly for changes in downstream components.
 
-**Resample ablation** (replacing a component's activation with the value from a random different input) provides a better baseline than zero ablation for exactly this reason. It preserves the activation distribution that downstream components expect, reducing the confound from out-of-distribution inputs triggering abnormal compensation. Mean ablation offers a similar advantage at lower cost.
+**Resample ablation** replaces a component's activation with a value from another input. The replacement is drawn from an empirical marginal distribution, which can be more plausible than zero, but it may be inconsistent with the current context. Mean ablation makes a different compromise. Comparing plausible baselines is more informative than treating one as universally correct.
 
 For a deeper treatment of self-repair as a general phenomenon, including the known mechanisms and open questions, see [Self-Repair in Language Models](/topics/self-repair/).
 
@@ -227,4 +225,4 @@ We now have three levels of causal analysis, each suited to a different stage of
 - **[Attribution patching](/topics/attribution-patching/)** provides fast screening of all components through gradient approximation, making it practical to survey even the largest models.
 - **Path patching** tests which connections between components matter, operating at the edge level.
 
-Together, these tools let us progress from "something is happening at layer 9" to "head 9.9 sends indirect-object information to the output through a specific pathway" -- the kind of mechanistic understanding that gives this field its name. To see these tools applied at scale, continue to [the IOI circuit](/topics/ioi-circuit/), the most complete circuit analysis ever performed.
+Together, these tools can move an investigation from “something changes near layer 9” to a testable claim that a particular head sends task-relevant information along a particular path. The [IOI circuit](/topics/ioi-circuit/) article shows how researchers combined several such tests into a detailed circuit account, and where that account still requires judgment.

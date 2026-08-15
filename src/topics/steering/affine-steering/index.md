@@ -1,6 +1,6 @@
 ---
 title: "Affine Steering"
-description: "How combining directional ablation with an affine correction and tunable addition unifies addition and ablation steering into a single, more precise intervention."
+description: "How affine concept editing combines projection, recentering, and addition, and why the reference point matters when steering a behavior direction."
 order: 3
 prerequisites:
   - title: "Ablation Steering"
@@ -17,7 +17,7 @@ glossary:
 
 But there is a gap between them. Addition changes the model's behavior without removing its existing tendency. Ablation removes the tendency without controlling what replaces it. And in practice, ablation alone sometimes fails: on certain architectures, projecting out the [refusal direction](/topics/refusal-direction/) produces incoherent text rather than compliant responses.{% sidenote "Marshall et al. (2024) found that directional ablation on RWKV v5 produced complete gibberish, while the same direction worked fine with addition steering. The failure is not in the direction itself but in what happens when the model's activations land in a region far from anything it encountered during training." %}
 
-Marshall et al. (2024) show that both methods are incomplete pieces of a single, more principled intervention: **Affine Concept Editing (ACE)** {% cite "marshall2024ace" %}.
+Marshall et al. (2024) combine the two operations with an explicit reference point in **Affine Concept Editing (ACE)** {% cite "marshall2024ace" %}.
 
 ## Why Affine?
 
@@ -27,7 +27,7 @@ Consider what happens geometrically. Activations for compliant responses cluster
 
 > **Affine vs. Linear:** A linear function maps $\mathbf{0} \mapsto \mathbf{0}$. An affine function includes a constant offset: $f(\mathbf{v}) = \mathbf{v}A + \mathbf{b}$. Behavioral encoding in activation space is affine because the zero vector is not the "default" behavior. The default behavior has its own location in activation space, and interventions need to account for that offset.
 
-This is the source of ablation's failure mode. Projecting out the refusal direction centers the result at the origin's projection, not at the compliant cluster. On models where these differ significantly, the result is incoherent.
+This geometry suggests one failure mode for ablation. Projecting out the refusal direction uses the origin as its reference, not the compliant cluster. If those reference points differ substantially along the chosen direction, the intervention can move activations away from the region represented by the null-behavior examples.
 
 ## The ACE Formula
 
@@ -46,11 +46,11 @@ where:
 
 The three terms do the following:
 
-1. **Erase.** Remove whatever component the activation has along the concept direction. After this step, the activation carries no information about whether the behavior is active. This is identical to [directional ablation](/topics/ablation-steering/).
+1. **Project.** Remove the activation's component along the chosen direction. This eliminates information available *along that one direction*; the behavior may remain decodable elsewhere. The operation is identical to [directional ablation](/topics/ablation-steering/).
 
 2. **Re-center.** Add back the component that the null-behavior mean has along the concept direction. This shifts the erased activation to where compliant activations typically live, rather than leaving it at the origin. This is the affine correction, the term that ablation alone misses.
 
-3. **Steer.** Add a tunable amount of the concept direction. At $\alpha = 0$, the model behaves as if it is in the null-behavior state. At $\alpha = 1$, it behaves as if in the full-behavior state. Values outside $[0, 1]$ extrapolate beyond the training distribution.
+3. **Steer.** Add a tunable amount of the concept direction. The class means motivate interpreting $\alpha=0$ and $\alpha=1$ as null- and target-behavior reference points, but actual behavior need not interpolate perfectly. Values outside the fitted range are extrapolations.
 
 <figure>
   <img src="images/ace_comparison.png" alt="Three panels comparing CAA, directional ablation, and ACE geometrically. In each panel, green circles represent activation vectors, black dots mark the class means r+ and r-, and dashed lines show hyperplanes. Left (CAA): arrows shift activations uniformly downward, landing them far from either class mean. Center (directional ablation): arrows project activations onto the hyperplane through the origin O, clustering them there instead of near r-. Right (ACE): arrows project activations onto the hyperplane near r-, then steer toward r+, landing them in the correct target region.">
@@ -85,7 +85,7 @@ ACE was evaluated on 10 open-weight models, including Llama 3 8B and 70B, RWKV v
 
 **Rescuing incoherent ablation.** On RWKV v5, directional ablation of the refusal direction produced completely incoherent outputs. ACE on the same model and direction produced coherent, well-formed compliant text. The affine correction term was the difference between gibberish and working steering.
 
-**Cross-architecture generality.** The improvement held across transformer and non-transformer architectures, suggesting that affine encoding of behavioral concepts is a general property of language models, not an artifact of a specific architecture.
+**Cross-architecture evidence.** The improvement held across the transformer and recurrent models tested. This shows that the affine correction is not restricted to one architecture, while broader generality still requires testing other behaviors and model families.
 
 <details class="pause-and-think">
 <summary>Pause and think: When does the affine correction matter?</summary>
@@ -98,7 +98,7 @@ The correction is negligible when $\mathbf{r}^-$ has a near-zero component along
 
 ## Limitations
 
-**Imperfect standardization.** ACE improves standardization but does not achieve it perfectly. Optimal $\alpha$ values sometimes fall outside $[0, 1]$, and some input dependence remains. The authors attribute this to imperfect concept erasure: directional ablation removes a single linear direction, but the concept may be encoded partly in nonlinear interactions that survive projection.{% sidenote "The authors tested whether LEACE (a method for provably complete linear concept erasure) would improve ACE. It did not help and was in some cases detrimental. This suggests the residual input-dependence comes from genuinely nonlinear encoding rather than from incomplete linear erasure." %}
+**Imperfect standardization.** ACE improves standardization but does not achieve it perfectly. Optimal $\alpha$ values sometimes fall outside $[0, 1]$, and some input dependence remains. One-direction projection may leave linearly decodable information in other directions, nonlinear information, or prompt-dependent effects.{% sidenote "The authors also tested LEACE, which removes information available to an optimal linear predictor under its population assumptions. Its lack of improvement does not uniquely diagnose nonlinear encoding; estimation, distribution shift, and the relationship between decodability and control are alternative explanations." %}
 
 **Requires class means.** ACE needs $\mathbf{r}^+$ and $\mathbf{r}^-$, the mean activations for the two behavior classes. This requires labeled examples of both behaviors, the same data requirement as [CAA](/topics/caa-method/). The method cannot be applied in settings where only the concept direction is available without the class means.
 
@@ -115,6 +115,6 @@ The difference is where the hyperplane sits. Ablation uses the origin as the ref
 
 ## Looking Forward
 
-ACE formalizes what addition and ablation each get right and combines them into a single intervention that is more precise than either alone. The insight that behavioral encoding is *affine* rather than linear is simple but consequential: it means the correct intervention must account for where the "default" behavior lives in activation space, not just the direction of the target behavior.
+ACE combines addition and directional projection with a data-derived reference point. Its central lesson is practical: a direction alone does not specify where an edited activation should land. The location of the null-behavior examples can matter as much as the axis connecting the classes.
 
-The broader framework of [representation control](/topics/representation-control/) now has three levels of sophistication: addition (shift toward a concept), ablation (remove a concept), and affine editing (erase, re-center, and steer with a single consistent parameter). For guaranteed concept removal that goes beyond single-direction projection, see [concept erasure with LEACE](/topics/concept-erasure/).
+Within [representation control](/topics/representation-control/), addition shifts along a direction, ablation removes one directional component, and affine editing projects, recenters, and then steers. For a method designed to remove information available to linear predictors under explicit assumptions, see [concept erasure with LEACE](/topics/concept-erasure/).

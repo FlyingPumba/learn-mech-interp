@@ -1,6 +1,6 @@
 ---
 title: "Layer Normalization"
-description: "How layer normalization stabilizes transformer training, why it introduces a nonlinearity that complicates mechanistic interpretability, and the practical strategies researchers use to work around it."
+description: "How layer normalization controls activation scale, where it sits in a transformer, and why its input-dependent scaling complicates circuit analysis."
 order: 5
 prerequisites:
   - title: "Transformer Architecture Intro"
@@ -13,11 +13,11 @@ glossary:
     definition: "A simplified variant of layer normalization that normalizes by the root mean square of activations without centering by the mean. Used in LLaMA, Gemma, and other modern architectures for its computational efficiency and comparable performance."
 ---
 
-## Why This Matters
+## Why Normalize the Residual Stream?
 
-Without layer normalization, deep transformer training fails. As additive updates accumulate in the residual stream across dozens or hundreds of layers, activation magnitudes drift, gradients explode or vanish, and training becomes unstable. Layer normalization fixes this by constraining activation scales at every sublayer.
+Deep transformers are difficult to optimize when the scale of the residual stream drifts across layers. Attention scores can saturate, nonlinearities can move into poorly conditioned regimes, and gradients can become unstable. Layer normalization gives each sublayer an input with a controlled scale, though normalization-free transformers can work when the architecture and initialization are designed for them.
 
-But this fix comes at a cost for mechanistic interpretability. The [residual stream](/topics/transformer-architecture/#the-residual-stream) is the foundation of MI analysis precisely because it is additive: the final output is a sum of contributions from every component. Layer normalization breaks this strict linearity. Each sublayer receives normalized activations, not the raw residual stream, which means the clean decomposition we rely on is an approximation.
+The [residual stream](/topics/transformer-architecture/#the-residual-stream) remains an exact sum of component updates in a pre-norm transformer, but later sublayers read a normalized version of that sum. Their responses are therefore not linear functions of the earlier contributions. Direct additive decompositions are exact at the point of addition and approximate when used to describe downstream effects.
 
 This article covers what layer normalization does, why transformers need it, and how MI researchers handle the complications it introduces.
 
@@ -25,19 +25,19 @@ This article covers what layer normalization does, why transformers need it, and
 
 > **Layer Normalization:** Given an input vector $\mathbf{x} \in \mathbb{R}^d$, layer normalization computes:
 >
-> $$\text{LN}(\mathbf{x}) = \gamma \odot \frac{\mathbf{x} - \mu}{\sigma + \epsilon} + \beta$$
+> $$\text{LN}(\mathbf{x}) = \gamma \odot \frac{\mathbf{x} - \mu}{\sqrt{\sigma^2 + \epsilon}} + \beta$$
 >
-> where $\mu = \frac{1}{d}\sum_i x_i$ is the mean, $\sigma = \sqrt{\frac{1}{d}\sum_i (x_i - \mu)^2}$ is the standard deviation, $\gamma$ and $\beta$ are learned per-dimension scale and shift parameters, $\epsilon$ is a small constant for numerical stability, and $\odot$ denotes element-wise multiplication.
+> where $\mu = \frac{1}{d}\sum_i x_i$ is the mean, $\sigma^2 = \frac{1}{d}\sum_i (x_i - \mu)^2$ is the variance, $\gamma$ and $\beta$ are learned per-dimension scale and shift parameters, $\epsilon$ is a small constant for numerical stability, and $\odot$ denotes element-wise multiplication.
 
 The operation has two stages {% cite "ba2016layernorm" %}. First, the input is centered (subtract the mean) and rescaled (divide by the standard deviation), producing a vector with zero mean and unit variance. Second, the learned parameters $\gamma$ and $\beta$ apply an element-wise affine transformation, allowing the model to undo the normalization in directions where it is not helpful.
 
-Two properties are important. Layer normalization operates *within* a single token's vector. It does not look across tokens or across the batch. Each position is normalized independently.{% sidenote "This is in contrast to batch normalization, which normalizes across the batch dimension. Batch normalization is common in vision models but works poorly for language models, where sequence lengths vary and the batch statistics are less stable." %} And because normalization divides by the standard deviation, it erases information about the overall magnitude of the input. After LN, a vector and its scalar multiple produce the same output. The model can only use directional information, not scale, in the normalized representation.
+Layer normalization operates *within* one token's vector, independently of other positions and examples in the batch.{% sidenote "Batch normalization instead estimates statistics across a batch. Layer normalization avoids making a token's representation depend on which other examples happen to share its batch." %} Apart from the small $\epsilon$ term, multiplying the whole input by a positive scalar leaves the normalized result unchanged before the learned affine transform. A sublayer reading only the normalized vector cannot directly recover that overall scale.
 
 ## Why Transformers Need It
 
-The residual stream accumulates additive updates from every attention head and MLP across all layers. In a model with $L$ layers, each contributing an update of typical magnitude $\delta$, the residual stream magnitude grows roughly as $O(L \cdot \delta)$. Without normalization, this growth has cascading consequences: the inputs to later sublayers become large, the dot products in attention scores become large, and the softmax saturates, producing nearly one-hot attention patterns with vanishing gradients.
+The residual stream accumulates updates from every attention head and MLP. Without some control from initialization, architecture, or normalization, its scale can drift with depth. Later sublayers may then receive poorly scaled inputs: attention logits can enter saturated regimes, nonlinearities can operate far from their useful range, and gradients can become hard to optimize.
 
-Layer normalization constrains the scale of activations entering each sublayer. By normalizing to unit variance before every attention and MLP computation, it ensures that the inputs remain in a stable range regardless of depth. This is why transformers can be trained with dozens or hundreds of layers, and why removing layer normalization from a trained model causes immediate collapse.
+Layer normalization constrains the scale of activations entering each sublayer. In a pre-norm transformer, each attention and MLP block receives an input with controlled variance even if the raw residual stream grows. This is one widely used route to stable optimization in deep transformers. A model trained with normalization generally cannot have those operations removed after training, because the rest of its weights were learned around normalized inputs.
 
 ## Pre-Norm vs. Post-Norm
 
@@ -57,9 +57,9 @@ For mechanistic interpretability, the pre-norm placement has a practical advanta
 
 > **RMSNorm:** A variant of layer normalization that drops the mean-centering step and normalizes by the root mean square:
 >
-> $$\text{RMSNorm}(\mathbf{x}) = \gamma \odot \frac{\mathbf{x}}{\text{RMS}(\mathbf{x}) + \epsilon}, \quad \text{RMS}(\mathbf{x}) = \sqrt{\frac{1}{d}\sum_i x_i^2}$$
+> $$\text{RMSNorm}(\mathbf{x}) = \gamma \odot \frac{\mathbf{x}}{\sqrt{\frac{1}{d}\sum_i x_i^2 + \epsilon}}$$
 
-RMSNorm {% cite "zhang2019rmsnorm" %} simplifies layer normalization by removing the mean subtraction. This saves computation (no need to compute and subtract the mean) and reduces the coupling between dimensions (the normalization factor depends only on the overall magnitude, not the mean). Empirically, RMSNorm performs comparably to full layer normalization on most tasks.
+RMSNorm {% cite "zhang2019rmsnorm" %} simplifies layer normalization by removing the mean subtraction. This saves computation and removes invariance to adding the same constant to every coordinate. Its root-mean-square denominator still depends on every dimension, so changing one coordinate can rescale all the others. The original study found performance comparable to layer normalization in its experiments; results still depend on the architecture and training setup.
 
 RMSNorm is used in LLaMA, Gemma, and several other modern architectures. For MI purposes, it introduces the same fundamental complication as full layer normalization: the division by a norm that depends on all dimensions creates a nonlinear coupling. The practical treatment is the same.
 
@@ -67,11 +67,11 @@ RMSNorm is used in LLaMA, Gemma, and several other modern architectures. For MI 
 
 Layer normalization creates three specific complications for mechanistic interpretability.
 
-**It breaks strict linearity of the residual stream decomposition.** The additive structure of the residual stream means the final output is a sum of contributions from every component. But each sublayer receives $\text{LN}(\mathbf{r})$ as input, not $\mathbf{r}$ itself. Since LN is nonlinear (it divides by a data-dependent standard deviation), the output of each sublayer is a nonlinear function of all previous contributions. Techniques like [direct logit attribution](/topics/direct-logit-attribution/) and the [logit lens](/topics/logit-lens-and-tuned-lens/) that rely on the linear decomposition are therefore approximations.
+**It makes downstream effects nonlinear.** The raw pre-norm residual stream is still an exact sum of component writes. But each sublayer receives $\text{LN}(\mathbf{r})$, so its response to one write depends on the rest of the residual state. A logit-lens projection of one fixed state is a well-defined readout, and direct logit attribution can hold the final normalization scale fixed for that input. What becomes approximate is treating each earlier component as if it independently caused its projected share of the downstream result.
 
-**It couples all dimensions.** Changing a single component of $\mathbf{x}$ changes both $\mu$ and $\sigma$, which shifts the normalized value of every other component. In principle, this means that the contribution of one attention head to the residual stream affects how every other head's contribution is seen by subsequent layers. This coupling is the reason the linear decomposition is approximate rather than exact.
+**It couples all dimensions.** Changing one coordinate of $\mathbf{x}$ changes both $\mu$ and $\sigma$, which shifts the normalized value of other coordinates. A write from one attention head can therefore change how subsequent blocks read the combined residual state, even though the writes themselves still add exactly.
 
-**It erases magnitude information.** After normalization, only the direction of the residual stream matters, not its length. This means the model cannot use the overall scale of the residual stream to carry information between layers; it must encode everything in the direction of the vector.
+**It removes overall scale from each sublayer's input.** The raw residual stream still retains its norm along the skip path, but a normalized attention or MLP block cannot directly read that single scalar. Most information available to the block lies in the centered direction of the vector.
 
 ### How Researchers Handle It
 
@@ -79,16 +79,16 @@ In practice, layer normalization is treated as a manageable approximation rather
 
 **Analyzing pre-LN activations.** In pre-norm transformers, the residual stream before layer normalization (`hook_resid_pre` in TransformerLens) is the raw sum of all previous contributions. The additive decomposition is exact at this point. Researchers typically analyze this representation.
 
-**Folding LN into weights.** TransformerLens provides a `fold_ln` option that absorbs the learned $\gamma$ and $\beta$ parameters into the adjacent weight matrices ($W_Q$, $W_K$, $W_V$, $W_{\text{in}}$). After folding, these affine parameters no longer need separate treatment. The remaining nonlinearity (the division by $\sigma$) is the part that cannot be absorbed.{% sidenote "Folding is exact for the affine part of LN. The center-and-scale step (dividing by σ) cannot be folded because it depends on the input data. After folding, the only approximation is treating this data-dependent normalization as approximately constant, which works well when no single dimension dominates the variance." %}
+**Folding fixed parameters into weights.** TransformerLens provides a `fold_ln` option that absorbs learned affine parameters into adjacent weights and biases. This exact reparameterization makes some analyses cleaner, but it does not remove the input-dependent normalization itself. Centering and scaling still depend on the current residual state and must be retained or approximated explicitly.{% sidenote "Folding changes where fixed parameters are written in the computation; it does not turn layer normalization into a globally linear operation. Always distinguish an exact parameter reorganization from an approximation that freezes input-dependent statistics." %}
 
-**The high-dimensional argument.** In a $d$-dimensional space, changing one component of a vector affects the mean by $O(1/d)$ and the standard deviation by $O(1/d)$. For GPT-2 Small with $d = 768$, the effect of a single component on the normalization is roughly 0.1%. This is why the linear decomposition works well in practice despite being technically approximate: the coupling is real but small.
+**The high-dimensional argument.** Changing one coordinate by a typical-sized amount affects the mean and variance by terms that shrink with $d$. This can make normalization's cross-coordinate coupling small in wide residual streams. It is not a blanket guarantee: an update spread across many coordinates, or one large enough to change the vector norm materially, can change the normalization factor appreciably.
 
 <details class="pause-and-think">
 <summary>Pause and think: Why does the linear decomposition work?</summary>
 
 If layer normalization couples all dimensions, why does the linear decomposition of the residual stream still work well enough for techniques like direct logit attribution to give meaningful results?
 
-The key is the high-dimensional argument. In a space with $d = 768$ or more dimensions, any single component contributes $O(1/d)$ to the mean and variance. The normalization factor $\sigma$ depends on all dimensions roughly equally, so changing one dimension barely shifts it. The coupling is present but diluted across hundreds of dimensions. For a contribution to meaningfully distort the normalization, it would need to change the overall scale of the vector, which individual attention heads and MLP updates rarely do. This is an empirical observation, not a guarantee, and there are cases where LN effects do matter, but for most practical MI work the approximation is accurate enough to be useful.
+One reason is dimensionality: no typical coordinate dominates the mean or variance in a wide residual stream. Another is empirical, many interventions of interest do not change the residual norm enough to overturn a first-order analysis. Neither condition is automatic, so the approximation should be checked when an intervention is large or a result depends on small differences.
 
 </details>
 

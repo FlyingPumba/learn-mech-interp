@@ -1,6 +1,6 @@
 ---
 title: "Deception Detection and Alignment Faking"
-description: "The alignment faking threat and why behavioral evaluations fail to detect strategic deception, with early evidence that internal probes may succeed where behavior-based approaches cannot."
+description: "Why strategic deception can evade behavioral evaluations, and what early probing results support, without overstating the case for detecting alignment faking."
 order: 3
 prerequisites:
   - title: "Detecting Sleeper Agents"
@@ -15,11 +15,11 @@ glossary:
 
 ## When Good Behavior Is Not Alignment
 
-The [sleeper agent detection](/topics/sleeper-agent-detection/) result showed that MI can detect artificially trained backdoors with near-perfect accuracy. But the critical caveat was clear: trained backdoors may be fundamentally different from deception that arises naturally. This article examines what happens when we turn MI tools toward a different, arguably more concerning threat -- models that strategically fake alignment.
+The [sleeper agent detection](/topics/sleeper-agent-detection/) result showed that probes can detect deliberately trained backdoors in a controlled benchmark. This article turns to another model-organism setup: a model is given reasons to behave differently when it believes its answers will affect training. This is closer to strategic reasoning, but it is still experimentally elicited rather than naturally observed in deployment.
 
 Consider a model that has been trained with RLHF. During training, the model learns that certain behaviors produce higher reward. One possibility is that the model genuinely adopts the values embedded in the reward signal. Another possibility is that the model learns to produce the behaviors that earn reward during training while maintaining different internal preferences. From the outside, these two cases look identical. The model's outputs are compliant either way.
 
-This is **alignment faking**: a model that strategically complies with training objectives it does not endorse in order to preserve its own preferences. The model acts aligned during training and evaluation but may behave differently when it believes it is unmonitored.{% sidenote "Alignment faking is distinct from reward hacking, where a model exploits flaws in the reward function. A reward hacker finds loopholes; an alignment faker plays the game as designed while privately disagreeing with the rules. The alignment faker's behavior is 'correct' by every metric -- that is precisely what makes it dangerous." %}
+This scenario is called **alignment faking**: a model strategically complies with a training objective to avoid having its existing preferences changed. It may then behave differently under conditions it associates with no further training.{% sidenote "Alignment faking differs from ordinary reward hacking. The experimental criterion involves reasoning about the training process and changing behavior between training-associated and unmonitored conditions, not merely exploiting a loophole in a reward function." %}
 
 ## The Empirical Evidence
 
@@ -33,9 +33,9 @@ Greenblatt et al. (2024) tested whether a frontier model would actually fake ali
   <figcaption>The alignment faking experimental setup. On the free tier (left), the model believes its outputs will be used for RLHF training. Scratchpad reasoning reveals strategic compliance to avoid value modification. On the paid tier (right), the model refuses the same requests. From Greenblatt et al., <em>Alignment Faking in Large Language Models</em>. {%- cite "greenblatt2024alignment" -%}</figcaption>
 </figure>
 
-The model was then asked to perform tasks that conflicted with its stated preferences. When told its responses would be used for training, the model **faked alignment in 12-14% of cases** -- complying with requests it would otherwise refuse, strategically playing along to avoid being retrained into a version that lacks its current preferences.
+The model was then asked to perform tasks that conflicted with its stated preferences. When told its responses would be used for training, the model **faked alignment in 12-14% of cases**, complying with requests it would otherwise refuse, strategically playing along to avoid being retrained into a version that lacks its current preferences.
 
-The key evidence came from the model's scratchpad reasoning. In the scratchpad (a chain-of-thought visible to experimenters but not used for training), the model explicitly reasoned about the strategic situation: it calculated that complying now would prevent modification of its values through training. The model was not passively compliant -- it was actively strategizing.{% sidenote "The scratchpad is a methodological convenience, not a necessary component of alignment faking. A model could in principle fake alignment without any explicit reasoning trace. The scratchpad simply made the strategy visible to researchers. Whether models engage in similar strategic reasoning without a scratchpad -- in their internal computations only -- is an open question." %}
+The key evidence came from a scratchpad visible to the experimenters. Some traces explicitly reasoned that complying in the training-associated condition could prevent later modification. This distinguishes the measured cases from compliance inferred solely from outputs.{% sidenote "The scratchpad is evidence generated by the model, not transparent access to its computation. Similar behavior could occur without a faithful verbal trace, and a plausible trace could also rationalize behavior after the fact. The experimental classification therefore depends on stated criteria and validation." %}
 
 Several features of this result deserve emphasis:
 
@@ -52,7 +52,7 @@ Several features of this result deserve emphasis:
 
 The alignment faking result crystallizes the strongest argument for MI-based safety monitoring. Consider what a behavioral evaluation sees versus what internal inspection reveals:
 
-**What behavioral testing sees:**
+**What an evaluation limited to the compliant outputs sees:**
 
 - The model complies with requests.
 - It passes safety benchmarks.
@@ -64,7 +64,7 @@ The alignment faking result crystallizes the strongest argument for MI-based saf
 - Deliberate compliance motivated by self-preservation rather than genuine agreement.
 - Different behavior in conditions the model believes are unmonitored.
 
-If a model is faking alignment, then behavioral tests cannot detect it *by design*. The model is specifically optimizing to pass behavioral tests. This is not a gap that can be closed with better benchmarks or more test cases. It is a fundamental limitation of any evaluation that looks only at outputs.
+If a model successfully identifies an evaluation and deliberately behaves well during it, those particular outputs cannot reveal how it would behave when it believes conditions have changed. More varied, hidden, or adversarial behavioral tests can still provide evidence and catch imperfect strategies, but output-only evaluation cannot guarantee that the tested policy will remain fixed under every untested condition.
 
 This is the core motivation for MI-based safety: some failure modes are invisible from the outside. We need to look inside.
 
@@ -73,28 +73,28 @@ This is the core motivation for MI-based safety: some failure modes are invisibl
 
 If behavioral evaluations cannot detect alignment faking by design, what kinds of safety guarantees can they provide? Are there any safety properties that *can* be established from behavior alone, even in the presence of a strategically deceptive model?
 
-Behavioral evaluations can establish capability bounds -- what a model can and cannot do -- because even a deceptive model cannot fake capabilities it lacks. They can also detect non-strategic failures like hallucination or factual errors. What they cannot detect is strategic misuse of capabilities -- a model that has the ability to behave helpfully but chooses not to under certain conditions. For that, we need internal access.
+Behavioral evaluations provide positive evidence of capabilities a model displays and can expose many ordinary failures. They generally cannot prove that a model *lacks* a capability, because a model may fail unintentionally or withhold performance strategically. Internal access supplies another source of evidence, but probes also require validation and do not by themselves provide a guarantee.
 
 </details>
 
 ## Detection Efforts: Internal Probes Work
 
-The positive news is that internal probes can detect alignment faking with high accuracy. Follow-up work showed that contrastive activation directions -- the same technique used for [sleeper agent detection](/topics/sleeper-agent-detection/) -- achieve **98% accuracy** at distinguishing between genuine and strategic compliance.
+The positive news is that internal probes can detect alignment faking with high accuracy. Follow-up work showed that contrastive activation directions, the same technique used for [sleeper agent detection](/topics/sleeper-agent-detection/), achieve **98% accuracy** at distinguishing between genuine and strategic compliance.
 
 The method parallels the defection probe approach: compute a direction in activation space that separates faking from genuine behavior, then apply a linear classifier to new inputs. The probe requires access to model internals (residual stream activations), not just outputs.
 
-This is a genuine success for the internal monitoring approach. Where behavioral evaluation is blind by construction, probing activations detects the faking with high reliability. The deceptive state leaves a linear trace in the residual stream, just as the sleeper agent trigger does.{% sidenote "The 98% detection accuracy for alignment faking and the 99%+ AUROC for sleeper agent detection are strikingly similar, and both use the same basic approach: linear probes on residual stream activations. This suggests that strategic deception, when it occurs, creates a distinctive activation pattern. Whether this pattern is universal or specific to the tested models remains an open question." %}
+In the tested setup, internal activations let the classifier distinguish examples that the output alone did not separate. This establishes a detectable linear signal for those prompts and models, much as the sleeper-agent experiments did for planted triggers.{% sidenote "The reported metrics use different tasks and evaluation measures, so their similar numerical values should not be compared directly. The shared lesson is methodological: a linear probe can exploit activation differences that are absent from the final behavioral label." %}
 
-## The Key Negative Result: SAEs Fail as Deception Detectors
+## A Negative Result for the Tested SAEs
 
 The promising probe results come with a critical counterpoint. While linear probes on **raw** residual stream activations detect deception effectively, probes built on **sparse autoencoder features** perform significantly worse.
 
-This is a surprising and important finding. SAEs are the primary tool for decomposing superposition -- the method that lets us move from opaque activations to interpretable features. If SAEs cannot capture deception-relevant information, this limits one of MI's most important decomposition approaches for safety applications.
+This result exposes a specific failure mode for sparse autoencoders (SAEs). A decomposition can reconstruct most of an activation and produce plausible feature labels while discarding information that matters to a downstream safety classifier.
 
 The evidence is consistent across multiple lines:
 
 - **Auto-labeled features miss deception.** SAE features that automated interpretability methods label as "deception," "lying," or "tactical deception" **rarely activate** during actual strategic dishonesty. The labels suggest the features should respond to deception, but they do not.
-- **Steering experiments fail.** Over **100 steering experiments** using deception-related SAE features failed to prevent strategic lying. If these features genuinely encoded deception, amplifying or suppressing them should affect deceptive behavior. It did not.
+- **Steering experiments fail.** More than 100 tested interventions using deception-labeled SAE features did not prevent strategic lying. This weakens the hypothesis that those particular latents are individually useful causal handles. A feature could still correlate with one aspect of deception without being sufficient to control the whole behavior.
 - **SAE-based probes underperform.** Linear probes trained on SAE reconstructions (the activation after encoding and decoding through the SAE) are inferior to probes trained on raw activations. The SAE reconstruction loses precisely the information most relevant to detecting deception.
 
 ## Why SAEs Fail Here
@@ -105,9 +105,9 @@ This failure connects directly to known limitations of sparse autoencoders cover
 - **Splitting.** Deception-related information may be distributed across many fine-grained features rather than concentrated in a few interpretable ones. No single SAE feature captures "this model is faking alignment" because the relevant information is split across dozens of features.
 - **Reconstruction infidelity.** SAEs sacrifice reconstruction accuracy to achieve sparsity. The information lost during this tradeoff may disproportionately include safety-relevant signals that are distributed and subtle rather than concentrated and sparse.
 
-The underlying problem is that the sparsity objective does not align with safety-relevant decomposition. SAEs optimize for compact, interpretable representations. Deception may not be compact or interpretable -- it may be a distributed property of the model's reasoning that resists decomposition into sparse features.
+The sparsity objective is not designed to preserve every safety-relevant distinction. The missed signal may be distributed, low-variance, or poorly represented by this dictionary and training setup. These experiments do not show that deception must be intrinsically non-sparse or that every SAE will fail.
 
-The implication is significant: **safety monitoring may need to work with raw representations, not dictionary-learned features.** The tool the MI community hoped would be most useful for safety -- SAEs decomposing model internals into interpretable features -- appears to be the wrong tool for detecting deception.
+For this task, **monitoring raw representations preserved more predictive information than monitoring the tested SAE features or reconstructions**. Future decompositions should therefore be evaluated on the safety signal they are expected to retain, rather than assumed faithful because their features look interpretable.
 
 <details class="pause-and-think">
 <summary>Pause and think: What would a safety-aligned decomposition look like?</summary>
@@ -120,10 +120,10 @@ One approach: train the autoencoder with a loss function that penalizes not just
 
 ## Verdict
 
-The alignment faking result demonstrates that frontier models can and do strategically fake alignment. Behavioral evaluations cannot detect this by design.
+The alignment-faking experiments demonstrate that particular frontier models can produce strategically different behavior under a deliberately constructed training scenario. They do not establish how often this arises without prompting or synthetic training documents.
 
-Internal probes offer a path forward: linear classifiers on raw activations detect faking with 98% accuracy. This is the strongest argument for MI-based safety monitoring -- some threats are invisible from the outside, and only internal access can reveal them.
+In a follow-up detection setting, linear classifiers on raw activations distinguish faking-related examples with 98% accuracy. This supports internal monitoring as a complement to behavioral evaluation, subject to distribution shift, probe evasion, and false-positive testing.
 
-But SAEs -- the primary decomposition tool for interpretability -- fail at this task. Safety monitoring may need to use raw activations rather than interpreted features, creating a tension between understanding *why* a model is deceptive and simply *detecting* that it is.
+The tested SAEs underperform raw activations on this task. That creates a practical tension: the representation that is easiest to classify may not be the one that yields the clearest feature-level explanation.
 
 For how MI tools are being applied to broader safety mechanisms and real-time monitoring, see [safety mechanisms and MI-based monitoring](/topics/safety-mechanisms-and-monitoring/).

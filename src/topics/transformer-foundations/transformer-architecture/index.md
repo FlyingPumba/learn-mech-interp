@@ -1,6 +1,6 @@
 ---
 title: "Transformer Architecture Intro"
-description: "A guided walkthrough of the full transformer stack: embeddings, attention, MLPs, layer norm, residual stream, and positional information."
+description: "Following a token through a decoder-only transformer, from tokenization and embeddings to attention, MLPs, the residual stream, and output logits."
 order: 2
 prerequisites:
   - title: "Prerequisites"
@@ -14,15 +14,13 @@ glossary:
 
 At the highest level, a language model takes text as input and outputs a probability distribution over what token comes next. Feed it "the cat sat on the" and it assigns probabilities to possible continuations: "mat" might get 15%, "floor" 12%, "bed" 8%, and so on.{% sidenote "The model doesn't see words directly. Text first goes through a tokenizer, which we'll discuss shortly." %}
 
-The architecture inside that does this computation is called a **transformer** {% cite "vaswani2017attention" %}. Despite all the improvements since the original 2017 paper, the core architecture has remained remarkably stable. The differences between GPT-2 (2019) and modern frontier models are mostly about scale: more layers, more parameters, more training data. The fundamental building blocks are the same.
+The architecture that performs this computation is called a **transformer** {% cite "vaswani2017attention" %}. Modern models have changed many details, normalization, positional encoding, nonlinearities, attention variants, and training objectives among them, but the same broad pattern remains: attention and MLP blocks repeatedly update a residual stream.
 
 ### Why Next-Token Prediction Might Mean Understanding
 
-Consider GPT-2 Small: the model weights are about half a gigabyte, but it was trained on roughly 150 GB of text. The model is much smaller than its training data, yet it can reasonably predict the next token across that entire corpus. It cannot simply be memorizing all those gigabytes, since it lacks the capacity.
+Memorization occurs, especially for repeated passages, but it does not explain successful continuation of unfamiliar text. Generalization requires reusable statistical structure: grammatical regularities, associations between entities, common formats, and strategies that apply across many passages.
 
-If you took a collection of math textbooks, erased all the proofs, and someone could fill in the blanks reasonably well, you would not say they are merely memorizing. They must have internalized something about how mathematics works.
-
-The same logic applies here: a model that can compress a much larger dataset into reasonable predictions must have developed some internal representation of language structure, facts, and patterns. Compression, in some sense, *is* understanding. You may find this claim debatable, but it motivates why we might expect interesting structure inside these models.
+Whether those patterns deserve the word *understanding* is a philosophical question we do not need to settle. Mechanistic interpretability starts from the more testable claim that next-token prediction requires internal computations, and asks what those computations are.
 
 ## Tokenization: Text to Numbers
 
@@ -57,7 +55,7 @@ Both sublayers write their outputs into a shared **residual stream**, which acts
 
 ### Parallel Predictions
 
-Here is a crucial insight about how transformers process sequences: given an input of $n$ tokens, the model makes $n$ predictions simultaneously. Each position predicts what token comes next at that position, conditioned only on tokens at earlier positions.{% sidenote "This is enforced by causal masking in the attention mechanism. Position i can only attend to positions 0 through i, never to the future." %}
+Given an input of $n$ tokens during training, the transformer can make $n$ next-token predictions in parallel. The state at position $i$ predicts token $i+1$ using only positions up to $i$.{% sidenote "This is enforced by causal masking in the attention mechanism. Position i can only attend to positions 0 through i, never to the future." %}
 
 During training, a single sequence becomes $n$ training examples. Position 0 predicts token 1 given no context. Position 1 predicts token 2 given token 0. Position $n-1$ predicts token $n$ given all previous tokens. The model adjusts its weights to make each of these predictions slightly better.
 
@@ -72,7 +70,7 @@ $$
 $$
 
 - **Token Embedding:** A learned lookup table maps each token ID to a high-dimensional vector. Tokens with similar meanings or usage patterns tend to end up with similar embedding vectors, though this is entirely learned from data.
-- **Positional Encoding (PE):** Nothing in the attention mechanism inherently distinguishes position 3 from position 7. Attention computes similarity between vectors regardless of where they sit in the sequence. If we shuffled the token vectors into a different order but kept the vectors themselves identical, attention would produce the same outputs. This is what "permutation-invariant" means: the operation treats the input as a *set*, not a *sequence*. But word order matters ("the dog bit the man" vs. "the man bit the dog"), so we add a position-dependent vector to each token embedding. This can be learned embeddings (a lookup table indexed by position) or fixed sinusoidal patterns.
+- **Positional Information:** Content-based attention alone is permutation-equivariant: permuting its inputs permutes its outputs in the same way. A decoder's causal mask supplies some order information by changing which earlier tokens each position can see, but it does not provide a general representation of distance or absolute position. Transformers therefore add or apply position-dependent information, using learned embeddings, sinusoidal encodings, rotary position embeddings, or related schemes.
 
 ## Step 1: Attention (Information Routing)
 
@@ -101,7 +99,7 @@ $$
 \mathbf{r}^{l+1} = \mathbf{r}^{l+} + \text{MLP}^l(\mathbf{r}^{l+})
 $$
 
-Think of it as: attention moves information between positions, then the MLP processes that information within each position. MLPs hold roughly two-thirds of a transformer's parameters and play a central role in storing and retrieving knowledge. We cover their structure, the key-value memory interpretation, and the factual recall pipeline in [MLPs in Transformers](/topics/mlps-in-transformers/).
+Think of it this way: attention moves information between positions, then the MLP transforms the state at each position. In many common transformer designs, MLPs contain a large fraction of the non-embedding parameters. Studies also implicate them in factual recall, though knowledge is not confined to MLP weights. We cover their structure and the evidence behind the key-value-memory interpretation in [MLPs in Transformers](/topics/mlps-in-transformers/).
 
 ## The Residual Stream
 
@@ -115,19 +113,30 @@ $$
 
 Think of it as a shared whiteboard. Each component reads the whole whiteboard, computes something, and writes its result back. The whiteboard accumulates all contributions. No component communicates directly with any other. Attention head 3 in layer 5 has no direct wire to MLP 2 in layer 7. Instead, head 3 writes to the residual stream, and MLP 2 reads from it. This shared-bus architecture is what makes the transformer amenable to mechanistic analysis.
 
-The additive structure is the key insight. Because the final output is a sum of contributions from every component, we can decompose it and ask: how much did attention head 3 in layer 5 contribute to predicting "cat"? This leads directly to techniques like direct logit attribution, which measures each component's contribution to the output logits, and activation patching, which tests whether a component is causally necessary. Both will be covered in later articles.
+Because updates are added to the residual stream, we can ask how much attention head 3 in layer 5 contributed to predicting "cat." [Direct logit attribution](/topics/direct-logit-attribution/) projects such updates toward the output, while [activation patching](/topics/activation-patching/) tests their causal role. The components still interact through later nonlinear operations, so an additive attribution is not automatically a complete causal explanation.
 
-Interestingly, if you take the residual stream halfway through the model and apply the unembedding matrix directly, you do not get nonsense. You get a rough approximation of the model's final prediction. The residual stream gradually refines its representation layer by layer, and this gradual refinement is what makes interventions on intermediate layers meaningful.
+Applying the unembedding matrix to a residual state halfway through many models already produces a rough, imperfect preview of the final prediction. The [logit lens](/topics/logit-lens-and-tuned-lens/) uses this observation, while also accounting for the fact that intermediate representations need not be calibrated for the final unembedding.
+
+<details class="pause-and-think">
+<summary>Pause and think: Addition is not independence</summary>
+
+The final residual stream is the sum of many component writes. Does that mean each component's causal effect can always be measured independently by projecting its write onto the output?
+
+No. The writes add exactly, so the projection gives a useful direct contribution for a fixed forward pass. Later attention, MLPs, and normalization read the combined state, however. Removing one earlier write can change what those later components compute. Additive bookkeeping and causal independence are different claims.
+
+</details>
+
 ## Layer Normalization
 
-Layer normalization appears before each sublayer and is essential for stable training. Without it, activations grow unboundedly across layers and gradients explode. We cover layer normalization in detail in [Layer Normalization](/topics/layer-normalization/), including the pre-norm vs. post-norm distinction, RMSNorm, and why it introduces a nonlinearity that matters for mechanistic interpretability.
+Most current decoder-only transformers normalize the residual stream before each sublayer, though the exact placement and normalization rule vary by architecture. Normalization makes deep networks easier to optimize and introduces an input-dependent scaling that matters for mechanistic analysis. [Layer Normalization](/topics/layer-normalization/) develops both points.
 
 ## The Full Stack (Compact Form)
 
-For clarity, this recurrence omits [layer normalization](/topics/layer-normalization/), which is applied before each sublayer in practice. A decoder-only transformer applies this recurrence for each layer $l$:
+For clarity, this recurrence omits [layer normalization](/topics/layer-normalization/). It preserves the fact that the MLP reads the state *after* the attention update:
 
 $$
-\mathbf{r}^{l+1} = \mathbf{r}^l + \text{Attn}^l(\mathbf{r}^l) + \text{MLP}^l(\mathbf{r}^l)
+\mathbf{a}^l = \mathbf{r}^l + \text{Attn}^l(\mathbf{r}^l), \qquad
+\mathbf{r}^{l+1} = \mathbf{a}^l + \text{MLP}^l(\mathbf{a}^l)
 $$
 
 After $L$ layers, the final residual stream is mapped to **logits**: a vector of raw, unnormalized scores with one entry per token in the vocabulary. If the vocabulary has 50,000 tokens, the logits are a 50,000-dimensional vector. Each entry represents how strongly the model favors that token as the next-token prediction. Higher logit = more favored, but the values are not yet probabilities (they can be negative, and they don't sum to 1).
@@ -156,17 +165,17 @@ $$
 
 If the model assigns 50% probability to the correct next token, the loss contribution is $-\log(0.5) \approx 0.69$. If it assigns 99% probability, the loss is only $-\log(0.99) \approx 0.01$. Training via gradient descent tweaks all the weights (embeddings, attention parameters, MLP weights, unembedding) to make the loss a little lower.
 
-Every part of the transformer is learned: which embedding vectors to use, what attention patterns to form, what the MLPs compute. If it makes sense for "cat" and "feline" to have similar embeddings (because they predict similar next tokens), the model will learn that from data.
+The token embeddings, attention weights, and MLP weights are learned from data. Related tokens may acquire similar representations at some sites because they occur in similar predictive contexts, although a token's meaning is distributed across the full contextual computation rather than fixed by its embedding alone.
 
 ## Generating Text
 
 Once trained, the model produces a probability distribution over next tokens. Choosing a token from that distribution and repeating the process produces text. The choice of decoding strategy (greedy, temperature-scaled, nucleus sampling, beam search) affects quality and diversity. We cover these in [Decoding Strategies](/topics/decoding-strategies/).
 
-The generation loop feeds the full sequence back through the model at each step. The model has no memory between steps: each forward pass is independent, and the model does not know which tokens it generated versus which were in the original prompt.
+At each generation step, the selected token becomes part of the next input. Implementations usually cache earlier keys and values instead of recomputing the entire prefix, but this changes efficiency rather than the mathematical result. The model is not given a boundary marking prompt tokens versus its own generated tokens unless the prompt format includes one.
 
 ## Why This Matters for MI
 
-Mechanistic interpretability treats the model as a computation graph we can open. Because the transformer's core operations are structured and mostly linear in the residual stream, we can trace, ablate, and patch individual components.
+Mechanistic interpretability treats the model as a computation graph we can inspect and intervene on. The architecture exposes repeated components and a shared residual stream, so researchers can cache, replace, or ablate particular activations. Softmax attention, MLP nonlinearities, and normalization still make the model as a whole nonlinear.
 
 The additive residual stream means we can decompose the output into contributions from each component. The parallel structure of attention means we can study individual heads in isolation. The fact that everything is learned means the model may have discovered interpretable algorithms we can reverse-engineer.
 

@@ -1,9 +1,9 @@
 ---
 title: "Feature Geometry: Beyond One-Dimensional Directions"
-description: "How categorical concepts form polytopes, periodic features trace circles, and hierarchical relationships map to orthogonal subspaces -- revealing that feature geometry in representation space is far richer than single directions."
+description: "How categories form polytopes, periodic features trace circles, and hierarchies occupy subspaces, geometries that cannot be reduced to one direction."
 order: 5
 prerequisites:
-  - title: "SAE Variants, Evaluation, and Honest Limitations"
+  - title: "SAE Variants, Evaluation, and Limitations"
     url: "/topics/sae-variants-and-evaluation/"
 
 glossary:
@@ -21,7 +21,7 @@ The [linear representation hypothesis](/topics/linear-representation-hypothesis/
 
 But two lines of recent work reveal that this picture is incomplete. Park et al. {% cite "park2024geometry" %} show that categorical and hierarchical concepts have geometric structure that goes well beyond a single direction: categories form polytopes, hierarchies impose orthogonality constraints, and magnitudes carry meaning. Independently, Engels et al. {% cite "engels2024multidimensional" %} demonstrate that some features are irreducibly multi-dimensional, occupying 2D or higher subspaces that cannot be decomposed into independent directions.
 
-Consider a concrete example. How does a language model represent the concept "day of the week"? If it were a single direction, we would expect Monday and Tuesday to differ only in magnitude along that direction. Instead, the seven days trace out a circle in a two-dimensional subspace, equally spaced, with the circular structure used for computation. Or consider how "animal," "mammal," and "dog" relate geometrically. These are not three unrelated directions; they form a hierarchy with precise orthogonality constraints.
+Consider a concrete example. How might a language model represent “day of the week”? A one-dimensional code would make Monday and Tuesday differ only in magnitude. Analyses of particular models instead find approximately circular two-dimensional structure for days, months, and hours, with interventions suggesting that the geometry participates in some computations. Hierarchical concepts such as *animal*, *mammal*, and *dog* may likewise occupy related directions rather than three independent axes.
 
 ## From Directions to Vectors: Magnitudes Matter
 

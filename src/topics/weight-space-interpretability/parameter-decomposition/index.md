@@ -19,7 +19,7 @@ glossary:
 
 ## Everything So Far Has Decomposed Activations
 
-[Sparse autoencoders](/topics/sparse-autoencoders/) factor an activation vector into sparse features. [Transcoders](/topics/transcoders/) factor the map from an MLP's input activations to its output activations. [Crosscoders](/topics/crosscoders/) factor activations across layers or across models. Every one of these takes activations as its raw material, and every one of them fits a *new* object -- a wider layer with a different nonlinearity -- to stand in for part of the original network.
+[Sparse autoencoders](/topics/sparse-autoencoders/) factor an activation vector into sparse features. [Transcoders](/topics/transcoders/) factor the map from the input activations of a multilayer perceptron (MLP) to its output activations. [Crosscoders](/topics/crosscoders/) factor activations across layers or across models. Every one of these takes activations as its raw material, and every one of them fits a *new* object, a wider layer with a different nonlinearity, to stand in for part of the original network.
 
 That substitution costs us the ability to tell the model's structure from the replacement's. A transcoder is not the MLP; it is a different function, drawn from a different and larger function class, that happens to agree with the MLP on the training distribution. So when we read a circuit off a transcoder, we cannot be sure whether we are reading the model's mechanism or an artifact of the replacement we chose {% cite "bushnaq2026vpd" %}. Feature splitting is the clearest symptom: widen the dictionary and the same computation shatters into ever narrower latents, which tells us the number of features we find is partly a property of our hyperparameters rather than of the network {% cite "chanin2024absorption" %}.
 
@@ -40,7 +40,7 @@ There are infinitely many ways to write $\theta^*$ as a sum, and almost all of t
 
 ## What a Good Decomposition Has to Do
 
-Three methods implement this idea, and their names recur throughout this article and the next. **Attribution-based Parameter Decomposition (APD)** scores components by gradient attribution and keeps the top $k$ on each input, and works on toy models with known ground truth {% cite "braun2025apd" %}. **Stochastic Parameter Decomposition (SPD)** drops the attribution step in favour of a learned importance function, and decomposes each matrix into rank-one pieces rather than whole-network vectors {% cite "bushnaq2025spd" %}. **adVersarial Parameter Decomposition (VPD)** chooses its ablations adversarially rather than at random, and decomposes a full language model {% cite "bushnaq2026vpd" %}.
+**Attribution-based Parameter Decomposition (APD)** scores components by gradient attribution and keeps the top $k$ on each input, and works on toy models with known ground truth {% cite "braun2025apd" %}. **Stochastic Parameter Decomposition (SPD)** drops the attribution step in favour of a learned importance function, and decomposes each matrix into rank-one pieces rather than whole-network vectors {% cite "bushnaq2025spd" %}. **adVersarial Parameter Decomposition (VPD)** chooses its ablations adversarially rather than at random, and decomposes a full language model {% cite "bushnaq2026vpd" %}. All three names recur throughout this article and the next.
 
 VPD states the criteria as four properties:
 
@@ -49,7 +49,7 @@ VPD states the criteria as four properties:
 - **Mechanistically faithful:** Every subset of components that contains the causally important ones suffices to compute the network's output on that input.
 - **Simple:** Each component uses as little computational machinery as possible.
 
-Parameter faithfulness is what makes this a decomposition rather than an approximation: we are re-coordinatizing the same weights, not fitting a substitute. Minimality is what makes it useful, since a decomposition into one component (the whole network) satisfies everything else trivially. Simplicity rules out the reverse degenerate case.
+Parameter faithfulness is what makes this a decomposition rather than an approximation: we are re-coordinatizing the same weights, not fitting a substitute. Simplicity is what makes it non-vacuous: the whole network as a single component already sums to the parameters, needs only one component per input, and reproduces its own output by construction. Minimality rules out the reverse degenerate case, where the weights shatter into so many individually simple pieces that every input needs thousands of them.
 
 The other three properties constrain the components one at a time. Mechanistic faithfulness constrains every *combination* of them at once.
 
@@ -57,7 +57,7 @@ The other three properties constrain the components one at a time. Mechanistic f
 
 How do we decide whether a piece of the network "matters" on an input? The intuitive answer is to score it, by gradient attribution or by patching. Parameter decomposition takes a different route and defines importance directly:
 
-> A subcomponent is **causally unimportant** on an input to the extent that it can be ablated -- scaled down by any amount -- without changing the network's output.
+> A subcomponent is **causally unimportant** on an input to the extent that it can be ablated, scaled down by any amount, without changing the network's output.
 
 This turns a question about attribution into a question about invariance, and it dodges the well-documented unreliability of gradient attributions {% cite "kramar2024atp" %}. The catch is that checking it exhaustively is hopeless: with $C$ subcomponents there are infinitely many partial-ablation settings, so we cannot verify the property, only sample it.
 
@@ -108,7 +108,7 @@ Parameter faithfulness gets enforced by defining a residual $\Delta$-component t
 
 Causal importance is defined by what happens under ablation, so measuring it directly would mean re-running the model under every partial ablation of every combination of subcomponents, at every position of every input. That is the intractability that forced us to sample rather than verify.
 
-SPD proposes predicting the values instead of measuring them. A small network $\Gamma$ reads the target model's hidden activations and outputs $g^l_{b,t,c} \in [0,1]$ for every subcomponent $c$ of every matrix $l$, at every batch index $b$ and sequence position $t$ {% cite "bushnaq2025spd" %}.
+SPD proposes predicting the values instead of measuring them. A small network $\Gamma$, one tiny MLP per subcomponent, reading only that subcomponent's readout $\mathbf{h} \cdot \mathbf{v}_c$ rather than the full hidden state, outputs $g^l_{b,t,c} \in [0,1]$ for every subcomponent $c$ of every matrix $l$, at every batch index $b$ and sequence position $t$ {% cite "bushnaq2025spd" %}.
 
 Those predictions become ablation masks $m^l_{b,t,c} \in [g^l_{b,t,c}, 1]$. Since the predicted importance is itself the lower bound of that interval, it fixes how far the subcomponent may be scaled down. A subcomponent predicted important ($g = 1$) has only one legal mask value, 1, so it is left alone. One predicted unimportant ($g = 0$) can be masked by anything between 0 and 1. We then scale the subcomponents by their masks, assemble new weight matrices, run the model, and require the output to be unchanged:
 
@@ -116,34 +116,34 @@ $$
 \mathcal{L}_{\text{masked-recon}} = D\big(f(\mathbf{x} \mid W^1, \ldots, W^L),\; f(\mathbf{x} \mid W'^1(m^1), \ldots, W'^L(m^L))\big)
 $$
 
-where $D$ is KL divergence. Nothing yet stops $\Gamma$ from declaring everything important, which would make every mask 1 and this loss zero. An importance-minimality penalty $\sum |g|^p$ supplies the opposing pressure. The equilibrium is a function that marks a subcomponent important only when the model genuinely cannot proceed without it.
+where $D$ is an output-space divergence, such as the Kullback–Leibler (KL) divergence for a language model. Nothing yet stops $\Gamma$ from declaring everything important, which would make every mask 1 and this loss zero. An importance-minimality penalty $\sum |g|^p$ supplies the opposing pressure. At a successful optimum, the predictor keeps importance scores high only where lowering them would increase the sampled faithfulness loss. That operational criterion is weaker than proving the original model cannot use an alternative pathway.
 
 ## Sampling the Masks, and Why Adversarially
 
 Every subcomponent gets its own mask value at every sequence position, and those values are continuous. Even with only a thousand subcomponents, and even collapsing each one to a binary on-or-off choice, checking every setting would take $2^{1000}$ forward passes. So we sample instead, and the choice of sampler decides what the decomposition means.
 
-SPD draws its masks uniformly at random {% cite "bushnaq2025spd" %}. VPD adds a second sampler that picks masks by gradient ascent on the reconstruction loss, searching for the combination of ablations that pushes the masked model's output furthest from the original model's {% cite "bushnaq2026vpd" %}. The two ask different questions. Random sampling checks whether a typical ablation leaves the output intact; adversarial sampling checks whether the worst one does. Only the second tests the strong version of the requirement -- survive *any* combination of ablations, not merely a typical one -- which is what rules out the lookup table.
+SPD draws its masks uniformly at random {% cite "bushnaq2025spd" %}. VPD adds a second sampler that picks masks by gradient ascent on the reconstruction loss, searching for the combination of ablations that pushes the masked model's output furthest from the original model's {% cite "bushnaq2026vpd" %}. Random sampling checks whether a typical ablation leaves the output intact; adversarial sampling checks whether the worst one does. Only the second tests the strong version of the requirement, survive *any* combination of ablations, not merely a typical one, which is what rules out the lookup table.
 
 VPD does not fully satisfy the strong version itself. The decomposition holds up under roughly 20 steps of projected gradient descent on the masks (KL divergence 0.83 to the target model) and comes apart under more: 3.84 at 80 steps, 25.3 at 160, 40.2 at 320. There exist ablations of nominally unimportant subcomponents that wreck the model. The authors argue that perfect adversarial robustness is not even the goal, since a sufficiently determined adversary can exploit interference noise in genuinely unused circuitry, but they also say plainly that they would like substantially more robustness than they have. How much is enough is unresolved.
 
 ## Does It Work?
 
-On toy models with known ground truth, yes. In Elhage et al.'s toy model of superposition, the ground-truth mechanisms are the individual columns of $W$, each used only when its input feature is active {% cite "elhage2022toy" %}. APD recovers them with mean max cosine similarity $\approx 1$ but shrinks their magnitudes to about 0.9 of the target, an echo of feature shrinkage in SAEs {% cite "braun2025apd" %}. SPD recovers them with cosine similarity $1.000$ and magnitude ratios of $0.99$ to $1.03$, and needs far less hyperparameter tuning to get there {% cite "bushnaq2025spd" %}. SPD also handles two harder variants that defeat APD: a toy model with an identity matrix in the hidden space, and a three-block model of cross-layer distributed representations.
+On toy models with known ground truth, yes. In Elhage et al.'s toy model of superposition, the ground-truth mechanisms are the individual rows of $W$, each used only when its input feature is active {% cite "elhage2022toy" %}. APD recovers them with mean max cosine similarity $\approx 1$ but shrinks their magnitudes to about 0.9 of the target, an echo of feature shrinkage in sparse autoencoders {% cite "braun2025apd" %}. SPD recovers them with cosine similarity $1.000$ and magnitude ratios of $0.99$ to $1.03$, and needs far less hyperparameter tuning to get there {% cite "bushnaq2025spd" %}. SPD also handles two harder variants that defeat APD: a toy model with an identity matrix in the hidden space, and a three-layer model of cross-layer distributed representations.
 
 On a real language model there is no ground truth to recover, so the evidence is indirect and rests on how much of the model's behavior the decomposition reproduces. VPD decomposes a four-layer 67M-parameter transformer trained on the Pile, splitting its 24 weight matrices (embeddings excluded) into 38,912 rank-one subcomponents, of which about 10,000 are alive. Each token position uses around 205 of them, or 2.1%. Validation cross-entropy is 2.71 for the target model and 2.72 with the subcomponents unmasked, rising to 2.84 under stochastic masks and 2.94 to 3.02 under various rounded-mask schemes.
 
-Against transcoders, VPD wins on the reconstruction-versus-sparsity tradeoff and scores competitively on intruder detection, an automated interpretability measure that asks an LLM judge to spot the odd example out of a set of activating inputs {% cite "bushnaq2026vpd" %}. It beats per-layer and cross-layer transcoders trained end-to-end, and roughly ties those trained with a layerwise reconstruction loss.
+On the reconstruction-versus-sparsity tradeoff, VPD Pareto-dominates per-layer and cross-layer transcoders trained with their standard layerwise reconstruction losses; when all methods are trained and evaluated on matched objectives the dominance disappears, though VPD avoids the overfitting to its own training objective that the transcoders exhibit {% cite "bushnaq2026vpd" %}. On intruder detection, an automated interpretability measure that asks a large language model (LLM) judge to spot the odd example out of a set of activating inputs, VPD beats transcoders trained end-to-end and roughly ties those trained layerwise.
 
 ## No Feature Splitting
 
 If the strong version is doing its work, extra dictionary capacity should go unused, because there is no way to profit from splitting a mechanism into narrower pieces. That is what happens.
 
 <figure>
-  <img src="/topics/parameter-decomposition/images/no_feature_splitting.png" alt="Log-log plot of alive subcomponents against total subcomponent capacity. Per-layer and cross-layer transcoders track the y equals x diagonal, roughly doubling their alive latents when capacity doubles. VPD stays flat near 6,500 across a tenfold range of capacity.">
+  <img src="/topics/parameter-decomposition/images/no_feature_splitting.png" alt="Log-log plot of alive subcomponents against total subcomponent capacity. Per-layer and cross-layer transcoders track the y equals x diagonal, roughly doubling their alive latents when capacity doubles. VPD stays flat near 6,500 across an eightfold range of capacity.">
   <figcaption>Figure 2: Alive subcomponents against total capacity. Transcoder latent counts scale with dictionary size; VPD's stays flat, leaving the extra capacity unused rather than splitting features into it. From Bushnaq et al., <em>Interpreting Language Model Parameters</em>. {% cite "bushnaq2026vpd" %}</figcaption>
 </figure>
 
-Train VPD at $0.5\times$, $1\times$, $2\times$ and $4\times$ the subcomponent capacity and the number of alive subcomponents stays pinned around 6,500 to 7,000, with sparsity and reconstruction essentially unchanged.{% sidenote "This sweep counts a subcomponent as alive if it fires at least once every million tokens, which is a stricter test than the mean-causal-importance threshold behind the ~10,000 figure quoted earlier. The two numbers are not directly comparable; what matters here is that this one does not move when capacity does." %} Per-layer and cross-layer transcoders over the same range scale roughly linearly with dictionary size. The extra capacity is simply left on the floor, which is what it looks like when a method has found a fixed set of mechanisms rather than a resolution knob.
+Train VPD at $0.5\times$, $1\times$, $2\times$ and $4\times$ the subcomponent capacity and the number of alive subcomponents stays pinned around 6,500 to 7,000, with sparsity and reconstruction essentially unchanged.{% sidenote "This sweep counts a subcomponent as alive if it fires at least once every million tokens, which is a stricter test than the mean-causal-importance threshold behind the ~10,000 figure quoted earlier. The two numbers are not directly comparable; what matters here is that this one does not move when capacity does." %} Per-layer and cross-layer transcoders over the same range scale roughly linearly with dictionary size. The extra VPD capacity remains unused in this sweep, as we would expect if the objective preferred a stable set of mechanisms rather than splitting features as capacity grows. A wider sweep or different optimization could behave differently.
 
 The same qualitative result has held in every model the authors decomposed with SPD or VPD, across toy models with known ground truth and a second small language model trained on SimpleStories.
 
@@ -152,15 +152,15 @@ The same qualitative result has held in every model the authors decomposed with 
 
 Suppose VPD did split. With $4\times$ the capacity we would see roughly $4\times$ the alive subcomponents, each firing on a narrower slice of the data, and probably slightly better sparsity and reconstruction as the decomposition specialized. That is exactly the transcoder curve in Figure 2.
 
-Why can it not happen? Take a genuine mechanism spanning a two-dimensional subspace and try to split it into many narrow subcomponents inside that subspace, each aligned with one training activation, with only one marked important at a time. Under causal-importance masking alone this reconstructs beautifully. Under stochastic or adversarial masking, the subcomponents that were *not* marked important get switched partially on, and their contributions add to the output vector -- making it both too large and pointed the wrong way. The reconstruction collapses. Splitting is only profitable if unmarked subcomponents are guaranteed to stay off, and the sampler removes that guarantee.
+Why does the objective discourage it? Take a mechanism spanning a two-dimensional subspace and try to split it into many narrow subcomponents inside that subspace, each aligned with one training activation, with only one marked important at a time. Under causal-importance masking alone, this can reconstruct well. Under stochastic or adversarial masking, subcomponents that were *not* marked important can be switched partially on. Their contributions then add to the output vector, making it too large or pointing it the wrong way. This pressure makes splitting less profitable because the sampler prevents unmarked subcomponents from being guaranteed to stay off. It is evidence about the trained solutions, not a proof that splitting is impossible.
 
 </details>
 
 ## What This Does Not Buy Us
 
-Two things are unsettled: the scale at which any of this has been shown to work, and whether the simplicity criterion measures the right thing.
+The evidence leaves two questions open: whether the method scales, and whether its simplicity criterion measures the kind of structure we care about.
 
-The scale is small. A four-layer 67M-parameter model with roughly 28M non-embedding parameters decomposed, trained on the Pile, is a real language model and not a toy, but it is four orders of magnitude off frontier scale. Nothing here demonstrates that the approach survives the trip.
+The scale is small. A four-layer, 67-million-parameter model with roughly 28 million non-embedding parameters decomposed, trained on the Pile, is a real language model rather than a toy. It is still several orders of magnitude smaller than frontier systems, so these experiments do not show that the approach will survive that transition.
 
 Rank and firing frequency are proxies for simplicity, not measures of it. Subcomponents are constrained to be rank-one and penalized for firing often, and the authors are explicit that these are guesses at what computational simplicity means. A general-purpose measure of how much machinery a parameter subcomponent uses is an open problem, and it matters because minimizing the description length of the *parameters* used on a forward pass is not the same thing as minimizing the description length of the forward pass itself.
 
@@ -168,4 +168,4 @@ Rank and firing frequency are proxies for simplicity, not measures of it. Subcom
 
 We now have a decomposition of a language model's weights into around ten thousand rank-one pieces, most of which fire on recognizable categories of input. That is a set of units, not an understanding.
 
-The next article puts them to work: attention layers decompose into subcomponents that span multiple heads, which activation-based methods have struggled to do; the QK circuit becomes interactions between pairs of subcomponents; attribution graphs can be built with subcomponents as nodes; and a single rank-one edit is enough to rewrite one small piece of the model's algorithm. That article also carries a methodological result with consequences well beyond parameter decomposition: subnetworks found without an adversary in the loop come out systematically too small.
+The [next article](/topics/parameter-space-circuits/) puts them to work: attention layers decompose into subcomponents that span multiple heads, which activation-based methods have struggled to do; the query-key (QK) circuit becomes interactions between pairs of subcomponents; attribution graphs can be built with subcomponents as nodes; and a single rank-one edit is enough to rewrite one small piece of the model's algorithm. That article also carries a methodological result with consequences well beyond parameter decomposition: subnetworks found without an adversary in the loop come out systematically too small.

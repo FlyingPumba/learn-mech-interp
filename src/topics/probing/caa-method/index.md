@@ -9,7 +9,7 @@ prerequisites:
 
 ## From Single Pairs to Robust Directions
 
-If concepts are linear directions in activation space, we can find them by computing the difference between activations for contrasting inputs. But a single contrast pair may capture noise alongside the target concept. If "Love" and "Hate" differ in ways beyond just sentiment -- perhaps one is longer, mentions specific topics, or triggers different positional patterns -- the resulting vector encodes those differences too.{% sidenote "This is the same problem that arises with any contrastive method built from few samples. The steering vector captures the full difference between two activations, not just the semantically meaningful part. Averaging over many pairs mitigates this by canceling out pair-specific noise." %}
+If concepts are linear directions in activation space, we can find them by computing the difference between activations for contrasting inputs. But a single contrast pair may capture noise alongside the target concept. If "Love" and "Hate" differ in ways beyond just sentiment, perhaps one is longer, mentions specific topics, or triggers different positional patterns, the resulting vector encodes those differences too.{% sidenote "This is the same problem that arises with any contrastive method built from few samples. The steering vector captures the full difference between two activations, not just the semantically meaningful part. Averaging over many pairs mitigates this by canceling out pair-specific noise." %}
 
 This motivates a more robust approach: averaging over many contrast pairs to isolate the shared direction.
 
@@ -39,7 +39,7 @@ $$
 \mathbf{v} = \frac{1}{N} \sum_{i=1}^{N} \left( \mathbf{h}_i^{(+)} - \mathbf{h}_i^{(-)} \right)
 $$
 
-4. **The result is a concept direction** -- a vector that points in the direction of the target concept in activation space.
+4. **Treat the mean difference as a candidate concept direction.** It points from the negative class mean toward the positive class mean for this dataset.
 
 <figure>
   <img src="images/caa-method-overview.png" alt="Diagram of CAA steering vector generation. A contrast pair with positive and negative examples is fed through the model. At layer n, residual stream activations are extracted for both examples. The difference between activations at the answer token position is computed, then averaged over many pairs to produce the final steering vector.">
@@ -61,13 +61,13 @@ Not all layers are equally informative. Panickssery et al. found that **layers 1
 
 ## Applications: Sycophancy Detection
 
-CAA was applied to probe **sycophancy** -- the tendency to agree with the user regardless of accuracy:
+CAA was applied to probe **sycophancy**, the tendency to agree with the user regardless of accuracy:
 
 The computed sycophancy direction successfully distinguishes:
 - Responses that agree with the user (even when wrong)
 - Responses that provide truthful answers (even when contradicting the user)
 
-This demonstrates that abstract behavioral tendencies like sycophancy have a linear geometric representation that can be detected and measured.
+On these prompts and layers, a linear direction carries enough information to distinguish sycophantic from non-sycophantic responses. That does not show that sycophancy has only one representation or that the model uses this direction causally.
 
 <details class="pause-and-think">
 <summary>Pause and think: Designing contrast pairs</summary>
@@ -80,13 +80,13 @@ For contrast pairs, you would want prompts that elicit the same content but diff
 
 ## Additivity and Robustness
 
-A key finding: CAA directions are **robust** and combine well with other methods:
+The reported CAA directions transfer across prompt sets and combine with other interventions:
 
 - CAA + fine-tuning: the effects combine without interfering.
 - CAA + few-shot prompting: prompting effects and probing effects are additive.
 - Directions computed from different prompt sets for the same concept are highly correlated.
 
-This suggests that CAA is capturing genuine geometric structure in the model's representations, not artifacts of specific prompt choices.{% sidenote "The robustness of CAA directions across prompt sets is important evidence that these directions correspond to real concepts, not noise. If the direction changed dramatically with different prompt pairs for the same concept, we would have less confidence that we were measuring something meaningful." %}
+Transfer across prompt sets is evidence against pair-specific noise, but it does not prove that the direction is unique or causally used.{% sidenote "Different contrast sets can share unintended features such as tone, length, or formatting. A transferred direction may encode one of those common cues alongside the intended concept, so robustness tests should vary the construction of the pairs as well as their topics." %}
 
 ## Connection to Steering
 

@@ -1,6 +1,6 @@
 ---
 title: "LatentQA and Latent Interpretation Tuning"
-description: "Framing activation interpretation as question-answering: training decoder models on paired datasets of activations and Q&A to enable open-ended queries about what representations encode."
+description: "Treating activation interpretation as question answering, so a trained decoder can answer open-ended questions about what a hidden representation contains."
 order: 5
 prerequisites:
   - title: "Training Models to Explain Their Computations"
@@ -27,7 +27,7 @@ LatentQA follows the same pattern:
 - **Output:** A natural language answer
 - **Training:** Paired datasets of (activation, question, answer)
 
-The key insight is that activations, like images, are dense representations that can be "read" by a decoder trained on appropriate supervision. We are teaching models to perceive and describe activation vectors the way multimodal models perceive and describe images.
+LatentQA treats activations as another dense input modality. Just as a vision-language model learns a mapping from images and questions to answers, an activation decoder learns that mapping from supervised activation–question–answer triples.
 
 ## Latent Interpretation Tuning (LIT)
 
@@ -80,12 +80,12 @@ The decoder becomes not just a reading tool but a control signal for modifying r
 
 ### Safety Analysis
 
-The most striking application is safety research. Harmful knowledge may be encoded in activations even when models refuse to express it in text. By querying activations directly, we can detect:
+A safety-relevant application is testing whether activations contain information that the target model refuses to express in ordinary text. The reported queries target:
 - Whether bioweapon recipes are encoded in representations
 - Whether hacking techniques are represented
 - Whether the model has learned dangerous capabilities it normally refuses to express
 
-This does not bypass safety training, it reveals what safety training is blocking. Understanding where harmful knowledge resides helps evaluate and improve safety measures.
+In these experiments, the decoder recovers information that the target model does not emit under the ordinary prompt. That may reflect information blocked by refusal, but it can also reflect what the separately trained decoder reconstructs from correlated activation cues.
 
 <details class="pause-and-think">
 <summary>Pause and think: The dual-use nature of LatentQA</summary>
@@ -141,15 +141,15 @@ The Q&A format offers specific advantages:
 
 ## Why LatentQA Matters
 
-LatentQA demonstrates that treating activations as a modality, like images or audio, is a productive framing. Multimodal techniques developed for vision can be adapted for interpretability.
+LatentQA shows that multimodal-style supervision can produce flexible readouts of activations. Its answers are predictions by a trained decoder, so they require held-out evaluation and causal follow-up like any other probe.
 
 The Q&A format is particularly powerful because it:
 - Enables systematic benchmarking (correctness of answers can be evaluated)
 - Supports diverse queries without retraining
 - Provides a differentiable interface for control
 
-This sets the stage for building general-purpose activation interpreters that can answer any question about any activation. [Activation Oracles](/topics/activation-oracles/) pursues exactly this goal, scaling LatentQA to create broadly capable explanation models.
+This sets the stage for a broader question: can one decoder handle many interpretation tasks and transfer to task types withheld from training? [Activation Oracles](/topics/activation-oracles/) studies that goal with a more diverse training mixture.
 
 ## Looking Ahead
 
-LatentQA trains decoders on specific interpretation tasks. But can we create general-purpose explainers that work across diverse tasks and even generalize to scenarios not seen during training? [Activation Oracles](/topics/activation-oracles/) investigates this question, training broadly on many interpretation tasks to achieve zero-shot generalization to novel settings.
+LatentQA trains decoders on specified interpretation tasks. [Activation Oracles](/topics/activation-oracles/) asks how far a broader task mixture transfers to held-out questions and activation settings without additional task-specific training.

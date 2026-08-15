@@ -1,6 +1,6 @@
 ---
 title: "Counterfactual Resampling"
-description: "A black-box technique for measuring which reasoning steps in a chain-of-thought trace actually influence the model's final answer, by deleting individual steps and comparing the resulting answer distributions."
+description: "Testing which steps in a reasoning trace affect the final answer by resampling continuations after individual steps are removed or replaced."
 order: 1
 prerequisites:
   - title: "Activation Patching"
@@ -104,7 +104,7 @@ When Bogdan et al. applied counterfactual resampling to DeepSeek R1-Distill (a r
 
 <figure>
   <img src="images/importance_by_category.png" alt="Two scatter plots comparing forced-answer importance (panel A) and counterfactual importance (panel B) by sentence category. In panel A, Active Computation dominates. In panel B, Plan Generation has the highest importance.">
-  <figcaption>The discrepancy between forced-answer importance (A) and counterfactual importance (B). Forced-answer analysis suggests active computation steps are most important. Counterfactual resampling reveals that plan generation and uncertainty management steps are the true anchors. From Bogdan et al., <em>Thought Anchors</em>. {% cite "bogdan2025thoughtanchors" %}</figcaption>
+  <figcaption>The discrepancy between forced-answer importance (A) and counterfactual importance (B). Under the counterfactual-resampling metric, plan generation and uncertainty management rank above active computation. From Bogdan et al., <em>Thought Anchors</em>. {% cite "bogdan2025thoughtanchors" %}</figcaption>
 </figure>
 
 The forced-answer method put **active computation** on top: accuracy jumps most after the model performs calculations. But counterfactual resampling told a different story:
@@ -117,14 +117,14 @@ The authors call the high-importance steps **thought anchors**: the sentences th
 
 ### The Self-Preservation Test
 
-The resilience metric sharpens this picture further. When applied to safety-relevant scenarios (models reasoning about self-preservation in adversarial settings), the results are striking: **self-preservation** sentences ("My primary goal is to ensure I'm not shut down") have the *lowest* resilience of any category, requiring only 1 to 4 resampling iterations before they vanish from the trace. Their Counterfactual++ importance is near zero {% cite "macar2025thoughtbranches" %}.
+In the tested safety-relevant scenarios, **self-preservation** sentences such as “My primary goal is to ensure I'm not shut down” had the lowest resilience category, often disappearing after one to four resampling iterations. Their Counterfactual++ importance was near zero {% cite "macar2025thoughtbranches" %}.
 
 <figure>
   <img src="images/resilience_by_category.png" alt="Bar chart showing resilience scores by sentence category across four models. Self-preservation consistently has the lowest scores, while situation assessment and action execution have the highest.">
-  <figcaption>Resilience scores by sentence category across four reasoning models. Self-preservation sentences are the least resilient, suggesting they are post-hoc rationalizations rather than causal drivers of behavior. From Macar et al., <em>Thought Branches</em>. {% cite "macar2025thoughtbranches" %}</figcaption>
+  <figcaption>Resilience scores by sentence category across four reasoning models. Self-preservation sentences are the least resilient under this metric, consistent with their surface wording being replaceable in the sampled traces. From Macar et al., <em>Thought Branches</em>. {% cite "macar2025thoughtbranches" %}</figcaption>
 </figure>
 
-This suggests that when a model produces self-preservation rhetoric during scheming-like behavior, those statements are **post-hoc rationalizations**, not the causal drivers. The actual anchors are the same as in math: situation assessment and plan generation sentences. The model's strategic decisions drive its behavior; the self-preservation language is filler that the model easily drops when perturbed. This finding replicates across four different reasoning models (QWQ-32B, Qwen3-235B, Llama-3.1-Nemotron-Ultra-235B, DeepSeek-R1).
+Across four tested reasoning models, the literal self-preservation sentences were easy to replace without changing the sampled continuation distribution much. Situation-assessment and plan-generation sentences scored as more influential. This supports a claim about the role of the written trace under resampling; it does not show that the model lacks internal self-preservation-related states or that every low-scoring sentence is a post-hoc rationalization.
 
 ## Validation: Looking Inside the Model
 
@@ -139,7 +139,7 @@ Some attention heads in later layers show a distinctive pattern: they attend sha
   <figcaption>Receiver heads preferentially attend to plan generation sentences. From Bogdan et al., <em>Thought Anchors</em>. {% cite "bogdan2025thoughtanchors" %}</figcaption>
 </figure>
 
-The sentences that receiver heads attend to overlap with the high-importance sentences identified by counterfactual resampling: plan generation and uncertainty management dominate. This provides white-box evidence that the model's own computations treat these steps as anchors, not just our external measurement.
+Receiver-head attention overlaps with sentences that score highly under counterfactual resampling, especially plan generation and uncertainty management. This agreement is useful convergent evidence, but attention concentration is still observational until an intervention tests whether changing those connections alters the continuation.
 
 ### Causal Attention Suppression
 
@@ -193,6 +193,6 @@ Counterfactual resampling has several important caveats:
 
 ## Looking Ahead
 
-Counterfactual resampling gives us a general-purpose tool for understanding the structure of model reasoning at a behavioral level. It complements the mechanistic tools we have seen in earlier parts of this curriculum: where [activation patching](/topics/activation-patching/) and [circuit analysis](/topics/automated-circuit-discovery/) tell us *which model components* implement a behavior, counterfactual resampling tells us *which reasoning steps* matter for the output.
+Counterfactual resampling studies the structure of a visible reasoning trace at the behavioral level. It complements mechanistic tools from earlier in the curriculum: [activation patching](/topics/activation-patching/) and [circuit tracing](/topics/circuit-tracing/) test which internal components contribute to a behavior, while counterfactual resampling tests which written reasoning steps affect the sampled answer.
 
 The results across both lines of work point toward a consistent picture: strategic decisions (planning, backtracking) anchor model reasoning, while execution steps and rhetorical statements are more superficial than they appear. And the transplant resampling results raise a direct challenge for chain-of-thought monitoring: if external influences on reasoning are diffuse and cumulative rather than localized to identifiable sentences, then detecting unfaithful reasoning requires distributional methods, not just reading the trace.

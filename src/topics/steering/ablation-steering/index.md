@@ -1,6 +1,6 @@
 ---
 title: "Ablation Steering"
-description: "How projecting out directions from model activations can disable specific behaviors, demonstrating causal necessity of concept representations."
+description: "Projecting a concept direction out of model activations, measuring which behaviors disappear, and distinguishing causal evidence from complete erasure."
 order: 2
 prerequisites:
   - title: "Addition Steering"
@@ -9,9 +9,9 @@ prerequisites:
 
 ## The Complement to Addition
 
-[Addition steering](/topics/addition-steering/) demonstrates **sufficiency**: adding a concept direction causes the associated behavior. But can we also demonstrate **necessity**? Can we show that a direction is *required* for a behavior by removing it?
+[Addition steering](/topics/addition-steering/) asks what happens when we add a concept direction. The complementary intervention removes that direction: does the associated behavior weaken or disappear?
 
-This is the purpose of **ablation steering** -- projecting out a direction from the residual stream to disable the behavior it mediates. Where addition shows "adding X causes Y," ablation shows "removing X prevents Y."
+**Ablation steering** projects a direction out of the residual stream. If the measured behavior falls, the result is evidence that information along that direction participates causally in the behavior. Redundancy, reconstruction, and off-target effects keep this from being an unconditional necessity proof.
 
 > **Ablation Steering:** The inference-time modification of a model's internal activations by projecting out a concept direction from the residual stream. This removes the component of the activation that lies along the concept direction, disabling behaviors that depend on that direction.
 
@@ -34,13 +34,13 @@ This operation:
 
 The most dramatic demonstration of ablation steering targets the [refusal direction](/topics/refusal-direction/) {% cite "arditi2024refusal" %}. Chat models are trained to refuse harmful requests. But where is "refusal" encoded?
 
-Arditi et al. computed the refusal direction using [CAA](/topics/caa-method/) -- the mean difference between activations on harmful versus harmless prompts. Then they ablated this direction during inference.
+Arditi et al. computed the refusal direction using [CAA](/topics/caa-method/), the mean difference between activations on harmful versus harmless prompts. Then they ablated this direction during inference.
 
 The result: **refusal drops from 80-90% to near zero** across all models tested.
 
 ![Bar chart showing refusal rates before and after ablation across multiple models. Baseline refusal rates are 80-90% while post-ablation rates drop to near zero.](/topics/ablation-steering/images/refusal_ablation_results.png "Figure 1: Refusal ablation results. Removing the refusal direction drops refusal rates from 80-90% to near zero across all models tested.")
 
-One direction. One projection operation. Refusal disabled.
+Across those models and evaluations, one projection removes most measured refusal. The result is both a useful mechanistic clue and a warning that refusal behavior may be easier to bypass than broad capability benchmarks reveal.
 
 ## Necessity and Sufficiency Together
 
@@ -51,11 +51,9 @@ Ablation and [addition](/topics/addition-steering/) together establish causal ev
 | Addition | Add direction to harmless inputs | Model refuses harmless requests | **Sufficiency** |
 | Ablation | Remove direction from harmful inputs | Model complies with harmful requests | **Necessity** |
 
-This is the standard causal logic from [activation patching](/topics/activation-patching/):
-- Addition corresponds to **noising** -- add the signal, observe the effect.
-- Ablation corresponds to **denoising** -- remove the signal, observe the deficit.
+The logic resembles [activation patching](/topics/activation-patching/), but the vocabulary does not map directly. Noising and denoising exchange naturally occurring activations between paired runs; addition and ablation construct new activations by translating or projecting them.
 
-A direction that passes both tests is a genuine causal mediator of the behavior.
+A direction that passes both tests is a strong candidate causal mediator for the tested behavior. The tests do not establish that it is the only mediator or that the intervention changes nothing else.
 
 <details class="pause-and-think">
 <summary>Pause and think: One direction across many models</summary>
@@ -76,24 +74,24 @@ Arditi et al. tested this by permanently projecting out the refusal direction fr
 - **ARC:** within 99% of baseline
 - **GSM8K:** within 99% of baseline
 
-The target behavior (refusal) is remarkably **separable** from general capabilities. The model can lose its ability to refuse harmful requests while retaining its ability to answer questions, reason mathematically, and perform general tasks.{% sidenote "Weight orthogonalization is a permanent modification, unlike inference-time ablation which must be applied at each forward pass. It modifies the model's weight matrices to project out the direction, effectively creating a new model that never exhibits the ablated behavior." %}
+On MMLU, ARC, and GSM8K, measured capability remains close to baseline while refusal collapses. This shows separation on those benchmarks, not preservation of every capability or every safety-relevant behavior.{% sidenote "Weight orthogonalization permanently changes the checkpoint, unlike an inference-time hook. A benchmark result describes the tested distribution; it does not show that the modified model never refuses or that all off-target effects have been ruled out." %}
 
 ## Inference-Time vs. Permanent Ablation
 
 Ablation can be applied in two ways:
 
-**Inference-time ablation:** Project out the direction during each forward pass. Reversible -- stop applying the intervention and the behavior returns.
+**Inference-time ablation:** Project out the direction during each forward pass. Reversible, stop applying the intervention and the behavior returns.
 
 **Weight orthogonalization:** Modify the model's weight matrices to permanently project out the direction. Creates a new model checkpoint with the behavior permanently disabled.
 
-Both achieve the same effect, but weight orthogonalization is more concerning from a safety perspective -- it creates a permanently modified model that can be distributed.
+Both reduce refusal, but weight orthogonalization creates a permanently modified model that can be distributed.
 
 <details class="pause-and-think">
 <summary>Pause and think: When ablation fails</summary>
 
 Ablation assumes that a behavior is mediated by a single linear direction. Under what circumstances might ablation fail to disable a behavior?
 
-Ablation would fail if the behavior is encoded redundantly across multiple directions, or if later layers can reconstruct the ablated information from other signals. It would also fail if the behavior does not have a clean linear representation -- if it is distributed across many interacting components rather than concentrated in one direction. For robust erasure with formal guarantees, see [concept erasure with LEACE](/topics/concept-erasure/).
+Ablation would fail if the behavior is encoded redundantly across multiple directions, or if later layers can reconstruct the ablated information from other signals. It would also fail if the behavior does not have a clean linear representation, if it is distributed across many interacting components rather than concentrated in one direction. For robust erasure with formal guarantees, see [concept erasure with LEACE](/topics/concept-erasure/).
 
 </details>
 
@@ -115,14 +113,14 @@ The original activation $\mathbf{h}$ has some component along the ablated direct
 | Reversibility | Trivial (set $\alpha = 0$) | Trivial (stop projecting) |
 | Intensity control | Scaling factor $\alpha$ | Binary (project or not) |
 
-Addition is analog -- you can steer more or less strongly. Ablation is binary -- the direction is either present or removed.
+Addition exposes an explicit strength parameter. Full directional ablation removes the measured component, although partial projection is also possible and downstream behavioral effects need not be binary.
 
 ## Connection to the Toolkit
 
 Ablation steering completes the core operations on concept directions:
 
-- **Read** with [LAT](/topics/lat-probing/) and [CAA](/topics/caa-method/) -- detect what concepts are encoded.
-- **Add** with [addition steering](/topics/addition-steering/) -- steer behavior toward a concept.
-- **Remove** with ablation steering -- eliminate a concept's influence.
+- **Read** with [LAT](/topics/lat-probing/) and [CAA](/topics/caa-method/), detect what concepts are encoded.
+- **Add** with [addition steering](/topics/addition-steering/), steer behavior toward a concept.
+- **Remove** with ablation steering, eliminate a concept's influence.
 
-For applications requiring *guaranteed* erasure -- where even a sufficiently powerful non-linear classifier should not be able to recover the concept -- see [concept erasure with LEACE](/topics/concept-erasure/).
+For applications requiring *guaranteed* erasure, where even a sufficiently powerful non-linear classifier should not be able to recover the concept, see [concept erasure with LEACE](/topics/concept-erasure/).

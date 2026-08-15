@@ -1,6 +1,6 @@
 ---
 title: "Attention Probes"
-description: "How learned attention mechanisms inside probes solve the sequence aggregation problem, letting the probe decide which token positions matter for classification instead of relying on mean pooling or last-token heuristics."
+description: "Letting a probe learn which token positions matter, instead of compressing a whole sequence with mean pooling or reading only its final token."
 order: 5
 prerequisites:
   - title: "Probing Classifiers"
@@ -26,7 +26,7 @@ Both approaches discard information. Mean pooling washes out localized signals. 
 
 ## Letting the Probe Decide
 
-The core idea behind attention probes is to replace the fixed aggregation strategy with a *learned* one. Instead of the researcher choosing mean pooling or last-token, let the probe learn which positions matter for the classification task {% cite "shabalin2025attention" %}.
+Attention probes replace a fixed aggregation rule with a learned one. Instead of committing to mean pooling or the last token, we train the probe to weight positions for the classification task {% cite "shabalin2025attention" %}.
 
 An attention probe works in three steps:
 
@@ -93,17 +93,17 @@ On **Neurons in a Haystack datasets** (probing tasks from Gurnee et al.), result
 
 An important finding: switching the optimizer from AdamW to L-BFGS substantially improved mean and last-token probe performance, narrowing the gap with attention probes. Some of the advantage attributed to the attention architecture may have been compensating for suboptimal optimization of simpler baselines.{% sidenote "The optimizer finding is a useful cautionary note. In probing research, it is easy to attribute performance differences to the probe architecture when they actually stem from training details like optimizer choice, learning rate, or regularization strength. The probe is simple enough that these details matter." %}
 
-The honest summary: attention probes are **not uniformly better** than simpler alternatives. Their advantage is dataset-dependent, strongest when the relevant signal is localized to specific positions in the sequence and weakest when the signal is diffuse or concentrated at the last token.
+Attention probes are **not uniformly better** than simpler alternatives. Their advantage is dataset-dependent: strongest when useful signal is localized at variable positions, and weakest when it is diffuse or already concentrated at the final token.
 
 ## Reading the Probe's Attention
 
-One benefit of attention probes beyond raw accuracy is that the learned attention weights are themselves interpretable. We can inspect *which tokens the probe attends to* when making a classification, gaining insight into where the model encodes the relevant information.
+The learned attention weights show which token positions receive large coefficients in the probe's pooled representation. They can therefore suggest where the probe finds useful evidence.
 
-Shabalin and Belrose (2025) observed this on the Bias in Bios dataset (classifying professions from biographies): the attention probe's weights concentrated on tokens related to gender-associated terminology. The probe learned to focus on exactly the tokens that carry the demographic signal {% cite "shabalin2025attention" %}.
+Shabalin and Belrose (2025) observed this on the Bias in Bios dataset: weights concentrated on gender-associated terms while the probe classified professions from biographies {% cite "shabalin2025attention" %}.
 
-This is a form of built-in feature attribution. Unlike post-hoc attribution methods that explain a probe's decision after the fact, the attention weights are a direct readout of which sequence positions the probe uses. When the probe attends to a small number of positions, we know the relevant information is localized there. When attention is diffuse, the information is spread across the sequence.
+These weights are not a complete feature attribution. A position with high weight may carry a small value vector, and several low-weight positions may contribute coherently. The same caution that applies to a transformer's [attention patterns](/topics/reading-attention-patterns/) applies here: weights describe routing inside the probe, not the full effect of each token on its decision.
 
-McKenzie et al. (2025) used a similar attention-based aggregation strategy for detecting high-stakes interactions in deployed models {% cite "mckenzie2025probes" %}. Their attention probe variant learned which tokens in a conversation carry signals of potential harm, achieving over 0.95 AUROC while being orders of magnitude cheaper than using a separate LLM as a monitor. The interpretability of the attention weights was practically useful: it indicated *which parts* of a conversation triggered the detector.
+McKenzie et al. (2025) used a similar aggregation strategy for detecting high-stakes interactions, reporting an area under the receiver operating characteristic curve (AUROC) above 0.95 at far lower inference cost than a separate LLM monitor {% cite "mckenzie2025probes" %}. Inspecting high-weight positions helped researchers form hypotheses about which parts of a conversation influenced the detector.
 
 <details class="pause-and-think">
 <summary>Pause and think: When would attention probes help most?</summary>
