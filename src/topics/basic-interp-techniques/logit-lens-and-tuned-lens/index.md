@@ -12,8 +12,6 @@ glossary:
     definition: "An observational technique that applies the model's unembedding matrix to intermediate residual stream states, converting hidden representations into vocabulary-space predictions to see how the model's output evolves across layers."
   - term: "Tuned Lens"
     definition: "An improvement on the logit lens that trains a learned affine transformation at each layer (rather than reusing the final unembedding matrix), producing more accurate predictions of the model's evolving computation at intermediate layers."
-  - term: "Unembedding"
-    definition: "The learned linear map from the final residual representation to vocabulary logits. A subsequent softmax converts those logits into probabilities."
 ---
 
 ## Looking Inside the Model
@@ -24,7 +22,7 @@ The **logit lens** applies the unembedding matrix directly to intermediate layer
 
 ## The Logit Lens
 
-The unembedding matrix $W_U$ maps the final residual stream to vocabulary logits. The logit lens, introduced by nostalgebraist in 2020, asks a simple question: what if we applied $W_U$ to intermediate layers? {% cite "nostalgebraist2020logitlens" %}
+The [unembedding matrix](/topics/embeddings/#from-the-residual-stream-back-to-tokens) $W_U$ maps the final residual stream to vocabulary logits. The logit lens, introduced by nostalgebraist in 2020, asks a simple question: what if we applied $W_U$ to intermediate layers? {% cite "nostalgebraist2020logitlens" %}
 
 At each layer $\ell$, we apply the model's final readout early:
 

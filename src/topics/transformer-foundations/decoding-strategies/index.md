@@ -1,7 +1,7 @@
 ---
 title: "Decoding Strategies"
 description: "How transformer logits become text: greedy decoding, temperature scaling, top-k, nucleus sampling, and beam search, and why MI research mostly studies the forward pass directly."
-order: 8
+order: 10
 prerequisites:
   - title: "Transformer Architecture Intro"
     url: "/topics/transformer-architecture/"

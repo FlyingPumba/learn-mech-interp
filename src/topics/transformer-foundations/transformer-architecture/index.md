@@ -61,16 +61,17 @@ During training, a single sequence becomes $n$ training examples. Position 0 pre
 
 This parallel structure is why transformers are so efficient to train compared to earlier architectures like RNNs, which had to process tokens sequentially. RNNs compute a hidden state that depends on all previous hidden states, so computing the output at position $n$ requires $n$ sequential steps. Transformers sidestep this: attention lets every position look at every earlier position in a single parallel operation. This parallelism is a major reason transformers have become dominant.
 
-## Step 0: Tokens to Vectors
+## Step 0: Token Identity and Position
 
-Once we have our sequence of token IDs, we need to convert them into vectors that the neural network can process. Each token becomes a vector through two lookups:
+Once we have a sequence of token IDs, a learned lookup maps each ID to a vector in the residual stream:
 
 $$
-\mathbf{r}^0 = \text{Embed}(\text{tokens}) + \text{PE}
+\mathbf{e}_i = \text{Embed}(t_i).
 $$
 
-- **Token Embedding:** A learned lookup table maps each token ID to a high-dimensional vector. Tokens with similar meanings or usage patterns tend to end up with similar embedding vectors, though this is entirely learned from data.
-- **Positional Information:** Content-based attention alone is permutation-equivariant: permuting its inputs permutes its outputs in the same way. A decoder's causal mask supplies some order information by changing which earlier tokens each position can see, but it does not provide a general representation of distance or absolute position. Transformers therefore add or apply position-dependent information, using learned embeddings, sinusoidal encodings, rotary position embeddings, or related schemes.
+The [Embeddings](/topics/embeddings/) article develops this lookup, its learned geometry, and its relationship to the output unembedding. The lookup encodes token identity but not where the token occurs.
+
+Transformers supply order through a separate positional mechanism. Some add learned or sinusoidal vectors to $\mathbf{e}_i$. Others, including Rotary Position Embedding (RoPE), modify queries and keys inside attention, while methods such as Attention with Linear Biases (ALiBi) add distance-dependent attention biases. [Positional Embeddings](/topics/positional-embeddings/) compares these designs and their consequences for interpretability.
 
 ## Step 1: Attention (Information Routing)
 
@@ -145,7 +146,7 @@ $$
 \text{Logits} = \mathbf{r}^L \cdot W_U
 $$
 
-where $W_U$ is the **unembedding matrix**, which projects the $d_{\text{model}}$-dimensional residual stream into vocabulary-sized scores. The logits are then passed through softmax to get a proper probability distribution over the vocabulary:
+where $W_U$ is the [**unembedding matrix**](/topics/embeddings/#from-the-residual-stream-back-to-tokens), which projects the $d_{\text{model}}$-dimensional residual stream into vocabulary-sized scores. The logits are then passed through softmax to get a proper probability distribution over the vocabulary:
 
 $$
 p(\text{token}_i) = \frac{e^{\text{logit}_i}}{\sum_j e^{\text{logit}_j}}

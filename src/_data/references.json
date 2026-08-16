@@ -41,6 +41,34 @@
     "venue": "NeurIPS",
     "url": "https://arxiv.org/abs/1706.03762"
   },
+  "press2017outputembedding": {
+    "title": "Using the Output Embedding to Improve Language Models",
+    "authors": "Press, O., Wolf, L.",
+    "year": 2017,
+    "venue": "EACL",
+    "url": "https://aclanthology.org/E17-2025/"
+  },
+  "shaw2018relative": {
+    "title": "Self-Attention with Relative Position Representations",
+    "authors": "Shaw, P., Uszkoreit, J., Vaswani, A.",
+    "year": 2018,
+    "venue": "NAACL",
+    "url": "https://aclanthology.org/N18-2074/"
+  },
+  "su2021roformer": {
+    "title": "RoFormer: Enhanced Transformer with Rotary Position Embedding",
+    "authors": "Su, J., Lu, Y., Pan, S., et al.",
+    "year": 2021,
+    "venue": "arXiv",
+    "url": "https://arxiv.org/abs/2104.09864"
+  },
+  "press2022alibi": {
+    "title": "Train Short, Test Long: Attention with Linear Biases Enables Input Length Extrapolation",
+    "authors": "Press, O., Smith, N. A., Lewis, M.",
+    "year": 2022,
+    "venue": "ICLR",
+    "url": "https://arxiv.org/abs/2108.12409"
+  },
   "alammar2018illustrated": {
     "title": "The Illustrated Transformer",
     "authors": "Alammar, J.",

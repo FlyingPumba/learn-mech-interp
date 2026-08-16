@@ -2,7 +2,7 @@
 title: "MLPs in Transformers"
 seoTitle: "MLPs in Transformers: How Feed-Forward Layers Work"
 description: "How transformer MLPs transform each token position, why neurons can resemble key–value memories, and what causal studies reveal about factual recall."
-order: 4
+order: 6
 prerequisites:
   - title: "The Attention Mechanism"
     url: "/topics/attention-mechanism/"

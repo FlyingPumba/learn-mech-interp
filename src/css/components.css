@@ -155,6 +155,11 @@
 .article .article-body {
   padding-left: 0;
   padding-right: 0;
+  /* Grid and flex items default to min-width: auto, which lets a wide figure,
+     table, or code block enlarge the prose column into the TOC. Keep the
+     column shrinkable and let wide media handle its own overflow. */
+  min-width: 0;
+  width: 100%;
 }
 
 /* Code blocks scroll internally, but a scroll container still reports its
@@ -162,6 +167,20 @@
    code line inflates .article-body past its grid track and over the TOC. */
 .article-body pre {
   contain: inline-size;
+}
+
+/* Article media must stay inside the prose grid track. Raster images and
+   ordinary SVGs scale down; interactive diagrams can keep a larger internal
+   canvas when their own wrapper provides horizontal scrolling. */
+.article-body figure {
+  min-width: 0;
+  max-width: 100%;
+}
+
+.article-body figure img,
+.article-body figure > svg {
+  max-width: 100%;
+  height: auto;
 }
 
 /* Reduce dead space before first section heading */
@@ -1012,6 +1031,8 @@
 
 .article-content-wrapper {
   position: relative;
+  min-width: 0;
+  max-width: 100%;
 }
 
 .article-toc {

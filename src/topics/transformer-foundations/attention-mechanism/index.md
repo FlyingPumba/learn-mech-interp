@@ -1,16 +1,16 @@
 ---
 title: "The Attention Mechanism"
 description: "How queries and keys decide where to look, values determine what moves, and causal multi-head attention lets tokens exchange contextual information."
-order: 3
-prerequisites: []
+order: 5
+prerequisites:
+  - title: "Positional Embeddings"
+    url: "/topics/positional-embeddings/"
 
 glossary:
   - term: "Attention Head"
     definition: "An individual attention computation within a multi-head attention layer. Each head independently computes attention patterns over the input sequence and produces a weighted combination of value vectors."
   - term: "Attention Pattern"
     definition: "The matrix of attention weights produced by an attention head, showing how much each token position attends to every other position. Visualizing attention patterns is a foundational interpretability technique."
-  - term: "Embedding"
-    definition: "The mapping from discrete tokens to continuous vectors at the start of a transformer. The embedding matrix converts each token into a vector in the residual stream, where it can be read and modified by subsequent layers."
   - term: "Key Vector"
     definition: "The vector produced by applying the key weight matrix (W_K) to a token's representation. Key vectors are compared against query vectors via dot product to determine attention weights."
   - term: "Multi-Head Attention"
@@ -35,13 +35,13 @@ Attention organizes the communication between tokens around three learned roles.
 
 > **Attention (Intuition):** Each token participates in attention through three projections. The **query** ($\mathbf{q}$) asks "what am I looking for?", the **key** ($\mathbf{k}$) advertises "what do I contain?", and the **value** ($\mathbf{v}$) provides "what information do I send if attended to?"
 
-Each role is produced by multiplying the token's embedding by a learned weight matrix. For a token at position $i$ with embedding $\mathbf{x}_i \in \mathbb{R}^{d_{\text{model}}}$, the three projections are:
+Each role is produced by multiplying the current residual-stream representation by a learned weight matrix. For a token at position $i$ with input $\mathbf{x}_i \in \mathbb{R}^{d_{\text{model}}}$, the three projections are:
 
 $$
 \mathbf{q}_i = \mathbf{x}_i W_Q, \quad \mathbf{k}_i = \mathbf{x}_i W_K, \quad \mathbf{v}_i = \mathbf{x}_i W_V
 $$
 
-The projection matrices $W_Q, W_K \in \mathbb{R}^{d_{\text{model}} \times d_k}$ map the input down to a $d_k$-dimensional query/key space, while $W_V \in \mathbb{R}^{d_{\text{model}} \times d_v}$ maps to the value space. These are three different "views" of the same input, each optimized by gradient descent for a different purpose during training. Activations are row vectors throughout this curriculum and weight matrices act on the right, which matches the tensor shapes in PyTorch and TransformerLens.
+The projection matrices $W_Q, W_K \in \mathbb{R}^{d_{\text{model}} \times d_k}$ map the input down to a $d_k$-dimensional query/key space, while $W_V \in \mathbb{R}^{d_{\text{model}} \times d_v}$ maps to the value space. In the first layer, the input derives directly from [token embeddings](/topics/embeddings/) and positional information. In later layers it also contains contextual updates from earlier attention and MLP blocks. These are three different "views" of the same input, each optimized by gradient descent for a different purpose during training. Activations are row vectors throughout this curriculum and weight matrices act on the right, which matches the tensor shapes in PyTorch and TransformerLens.
 
 ## The Attention Equation
 

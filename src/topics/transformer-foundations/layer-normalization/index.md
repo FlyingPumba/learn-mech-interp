@@ -1,7 +1,7 @@
 ---
 title: "Layer Normalization"
 description: "How layer normalization controls activation scale, where it sits in a transformer, and why its input-dependent scaling complicates circuit analysis."
-order: 5
+order: 7
 prerequisites:
   - title: "Transformer Architecture Intro"
     url: "/topics/transformer-architecture/"
