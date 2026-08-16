@@ -1,5 +1,6 @@
 ---
 title: "Detecting Sleeper Agents with Mechanistic Interpretability"
+seoTitle: "Sleeper Agent Detection in Language Models"
 description: "How activation probes detect deliberately trained backdoors in language models, and why that result does not yet establish detection of emergent deception."
 order: 2
 prerequisites:

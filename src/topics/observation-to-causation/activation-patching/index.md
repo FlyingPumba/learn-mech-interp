@@ -1,5 +1,6 @@
 ---
 title: "Activation Patching and Causal Interventions"
+seoTitle: "Activation Patching: Causal Interventions"
 description: "Replacing an internal activation and measuring what changes: the clean/corrupted setup, noising versus denoising, metrics, and causal interpretation."
 order: 1
 prerequisites:

@@ -1,5 +1,6 @@
 ---
 title: "Induction Heads and In-Context Learning"
+seoTitle: "Induction Heads and In-Context Learning"
 description: "How two attention heads can compose into a pattern-copying circuit, plus the evidence and limits behind claims linking induction heads to in-context learning."
 order: 1
 prerequisites:

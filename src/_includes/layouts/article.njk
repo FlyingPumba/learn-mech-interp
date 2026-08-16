@@ -15,7 +15,7 @@ layout: layouts/base.njk
   <ol>
     <li><a href="/">Home</a></li>
     {% if blockTitle %}
-      <li>{{ blockTitle }}</li>
+      <li><a href="/topics/#{{ blockSlug }}">{{ blockTitle }}</a></li>
     {% endif %}
     <li aria-current="page">{{ title }}</li>
   </ol>
@@ -70,10 +70,12 @@ layout: layouts/base.njk
   "headline": {{ title | dump | safe }},
   "description": {{ description | default(site.description) | dump | safe }},
   "url": "{{ site.url }}{{ page.url }}",
+  "image": "{{ site.url }}{{ site.socialImage }}",
+  "inLanguage": {{ site.language | dump | safe }},
   "datePublished": "{{ datePublished }}",
   "dateModified": "{{ dateModified }}",
   "author": [{% for author in contributors %}{% if loop.index > 1 %},{% endif %}{"@type":"Person","name":{{ author | dump | safe }}}{% endfor %}],
-  "publisher": {"@type":"Organization","name":{{ site.name | dump | safe }},"url":"{{ site.url }}"},
+  "publisher": {"@type":"Organization","name":{{ site.name | dump | safe }},"url":"{{ site.url }}","logo":{"@type":"ImageObject","url":"{{ site.url }}{{ site.socialImage }}"}},
   "mainEntityOfPage": {"@type":"WebPage","@id":"{{ site.url }}{{ page.url }}"},
   "isPartOf": {"@type":"WebSite","name":{{ site.name | dump | safe }},"url":"{{ site.url }}"}
 }
@@ -86,7 +88,7 @@ layout: layouts/base.njk
   "@type": "BreadcrumbList",
   "itemListElement": [
     {"@type":"ListItem","position":1,"name":"Home","item":"{{ site.url }}/"}
-    {% if blockTitle %},{"@type":"ListItem","position":2,"name":{{ blockTitle | dump | safe }},"item":"{{ site.url }}/topics/"}
+    {% if blockTitle %},{"@type":"ListItem","position":2,"name":{{ blockTitle | dump | safe }},"item":"{{ site.url }}/topics/#{{ blockSlug }}"}
     ,{"@type":"ListItem","position":3,"name":{{ title | dump | safe }},"item":"{{ site.url }}{{ page.url }}"}
     {% else %},{"@type":"ListItem","position":2,"name":{{ title | dump | safe }},"item":"{{ site.url }}{{ page.url }}"}
     {% endif %}

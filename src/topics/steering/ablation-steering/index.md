@@ -38,7 +38,7 @@ Arditi et al. computed the refusal direction using [CAA](/topics/caa-method/), t
 
 Across the tested models, directional ablation reduced refusal rates from 80–90% to near zero.
 
-![Bar chart showing refusal rates before and after ablation across multiple models. Baseline refusal rates are 80-90% while post-ablation rates drop to near zero.](/topics/ablation-steering/images/refusal_ablation_results.png "Figure 1: Refusal ablation results. Removing the refusal direction drops refusal rates from 80-90% to near zero across all models tested.")
+![Bar chart showing refusal rates before and after ablation across multiple models. Baseline refusal rates are 80-90% while post-ablation rates drop to near zero.](/topics/refusal-direction/images/refusal_ablation_results.png "Figure 1: Refusal ablation results. Removing the refusal direction drops refusal rates from 80-90% to near zero across all models tested.")
 
 Across those models and evaluations, one projection removes most measured refusal. The result is both a useful mechanistic clue and a warning that refusal behavior may be easier to bypass than broad capability benchmarks reveal.
 
@@ -99,7 +99,7 @@ Ablation would fail if the behavior is encoded redundantly across multiple direc
 
 Ablation has a clean geometric interpretation:
 
-![Illustration of ablation in activation space. The original activation h is projected onto the hyperplane orthogonal to the ablated direction r, removing the component along r.](/topics/ablation-steering/images/ablation_geometry.png "Figure 2: Ablation projects the activation onto the hyperplane orthogonal to the ablated direction, removing all information along that direction.")
+![Illustration of ablation in activation space. The original activation h is projected onto the hyperplane orthogonal to the ablated direction r, removing the component along r.](/topics/ablation-steering/images/ablation_geometry.svg "Figure 2: Ablation projects the activation onto the hyperplane orthogonal to the ablated direction, removing all information along that direction.")
 
 The original activation $\mathbf{h}$ has some component along the ablated direction $\mathbf{r}$. Projection removes exactly that component, flattening the activation onto the orthogonal hyperplane. All other information is preserved.
 

@@ -1,5 +1,6 @@
 ---
 title: "Understanding Safety Mechanisms and MI-Based Monitoring"
+seoTitle: "MI Safety Mechanisms and Monitoring"
 description: "Using internal representations to monitor refusal, harmful intent, and misalignment, and the practical obstacles between promising probes and reliable safeguards."
 order: 5
 prerequisites:

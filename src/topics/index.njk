@@ -1,7 +1,7 @@
 ---
 title: Topics
 layout: layouts/base.njk
-description: Explore the full curriculum in suggested order or jump to any topic.
+description: Browse a structured mechanistic interpretability curriculum, from transformer foundations through causal methods, features, circuits, tools, and AI safety.
 permalink: /topics/
 eleventyExcludeFromCollections: true
 ---
@@ -41,7 +41,7 @@ eleventyExcludeFromCollections: true
     <p class="learning-path-description">Browse every block and topic in the recommended sequence.</p>
     <ol class="learning-path-blocks">
       {% for block in learningPath.blocks %}
-      <li class="learning-path-block">
+      <li class="learning-path-block" id="{{ block.slug }}">
         <div class="learning-path-block-header">
           <span class="learning-path-block-number">{{ loop.index }}</span>
           <div>

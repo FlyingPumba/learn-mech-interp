@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="420" viewBox="0 0 800 420" role="img" aria-labelledby="title desc">
+  <title id="title">Addition steering in activation space</title>
+  <desc id="desc">An activation h moves in the direction alpha v to a new activation h prime inside a target concept region.</desc>
+  <defs>
+    <marker id="arrow-blue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#2457a6"/>
+    </marker>
+    <linearGradient id="concept-fill" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#cfe8ff" stop-opacity="0.9"/>
+      <stop offset="1" stop-color="#dcd4ff" stop-opacity="0.65"/>
+    </linearGradient>
+  </defs>
+  <rect width="800" height="420" rx="18" fill="#ffffff"/>
+  <g stroke="#e6e9ef" stroke-width="1">
+    <path d="M80 80H740M80 150H740M80 220H740M80 290H740M80 360H740"/>
+    <path d="M120 45V375M240 45V375M360 45V375M480 45V375M600 45V375M720 45V375"/>
+  </g>
+  <ellipse cx="610" cy="155" rx="130" ry="88" fill="url(#concept-fill)" stroke="#6b63b5" stroke-width="2" stroke-dasharray="7 6"/>
+  <text x="610" y="62" text-anchor="middle" font-family="system-ui, sans-serif" font-size="18" fill="#4b4780">target concept region</text>
+  <line x1="235" y1="305" x2="545" y2="182" stroke="#2457a6" stroke-width="5" marker-end="url(#arrow-blue)"/>
+  <circle cx="235" cy="305" r="11" fill="#172554" stroke="#ffffff" stroke-width="4"/>
+  <circle cx="545" cy="182" r="11" fill="#7c3aed" stroke="#ffffff" stroke-width="4"/>
+  <text x="209" y="337" font-family="Georgia, serif" font-size="25" font-style="italic" fill="#172554">h</text>
+  <text x="560" y="177" font-family="Georgia, serif" font-size="25" font-style="italic" fill="#5b21b6">h′</text>
+  <text x="382" y="220" font-family="Georgia, serif" font-size="23" font-style="italic" fill="#2457a6">αv</text>
+  <text x="400" y="397" text-anchor="middle" font-family="system-ui, sans-serif" font-size="17" fill="#475569">h′ = h + αv</text>
+</svg>

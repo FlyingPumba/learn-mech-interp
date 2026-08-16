@@ -22,6 +22,79 @@ let sidenoteCounter = {};
 let marginCounter = {};
 let buildId = Date.now();
 
+function readRasterDimensions(filePath) {
+  const buffer = fs.readFileSync(filePath);
+
+  // PNG stores width and height as 32-bit integers in the IHDR chunk.
+  if (buffer.length >= 24 && buffer.toString("ascii", 1, 4) === "PNG") {
+    return {
+      width: buffer.readUInt32BE(16),
+      height: buffer.readUInt32BE(20),
+    };
+  }
+
+  // JPEG dimensions live in one of the start-of-frame segments.
+  if (buffer.length >= 4 && buffer[0] === 0xff && buffer[1] === 0xd8) {
+    const startOfFrameMarkers = new Set([
+      0xc0, 0xc1, 0xc2, 0xc3, 0xc5, 0xc6, 0xc7,
+      0xc9, 0xca, 0xcb, 0xcd, 0xce, 0xcf,
+    ]);
+    let offset = 2;
+    while (offset + 8 < buffer.length) {
+      if (buffer[offset] !== 0xff) {
+        offset++;
+        continue;
+      }
+      const marker = buffer[offset + 1];
+      if (marker === 0xd8 || marker === 0xd9) {
+        offset += 2;
+        continue;
+      }
+      const segmentLength = buffer.readUInt16BE(offset + 2);
+      if (startOfFrameMarkers.has(marker)) {
+        return {
+          height: buffer.readUInt16BE(offset + 5),
+          width: buffer.readUInt16BE(offset + 7),
+        };
+      }
+      if (segmentLength < 2) break;
+      offset += 2 + segmentLength;
+    }
+  }
+
+  return null;
+}
+
+function collectImageDimensions() {
+  const dimensions = new Map();
+
+  function addDirectory(sourceDir, urlPrefix) {
+    if (!fs.existsSync(sourceDir)) return;
+    for (const entry of fs.readdirSync(sourceDir, { withFileTypes: true })) {
+      if (!entry.isFile() || !/\.(?:png|jpe?g)$/i.test(entry.name)) continue;
+      const size = readRasterDimensions(path.join(sourceDir, entry.name));
+      if (size) dimensions.set(path.posix.join(urlPrefix, entry.name), size);
+    }
+  }
+
+  addDirectory("src/img", "/img");
+  for (const block of fs.readdirSync("src/topics", { withFileTypes: true })) {
+    if (!block.isDirectory()) continue;
+    const blockDir = path.join("src/topics", block.name);
+    for (const article of fs.readdirSync(blockDir, { withFileTypes: true })) {
+      if (!article.isDirectory()) continue;
+      addDirectory(
+        path.join(blockDir, article.name, "images"),
+        `/topics/${article.name}/images`
+      );
+    }
+  }
+
+  return dimensions;
+}
+
+const imageDimensions = collectImageDimensions();
+
 function validate() {
   const errors = [];
   const { blocks } = scanBlocks();
@@ -319,6 +392,34 @@ export default function(eleventyConfig) {
     var words = text.split(" ").filter(function(w) { return w.length > 0; }).length;
     var minutes = Math.ceil(words / 230);
     return minutes + " min read";
+  });
+
+  // Add intrinsic dimensions to local raster images to prevent layout shifts.
+  // Authors can keep article Markdown readable while the built HTML carries the
+  // width and height signals browsers need before an image downloads.
+  eleventyConfig.addTransform("local-image-dimensions", function(content) {
+    if (!this.page.outputPath?.endsWith(".html")) return content;
+
+    const outputRelative = path.relative("_site", this.page.outputPath)
+      .split(path.sep)
+      .join("/");
+    const pageDirectory = path.posix.dirname(outputRelative);
+
+    return content.replace(/<img\b[^>]*>/gi, (tag) => {
+      if (/\bwidth\s*=/.test(tag) && /\bheight\s*=/.test(tag)) return tag;
+      const sourceMatch = tag.match(/\bsrc\s*=\s*["']([^"']+)["']/i);
+      if (!sourceMatch || /^(?:https?:)?\/\//.test(sourceMatch[1])) return tag;
+
+      const sourcePath = sourceMatch[1].split(/[?#]/, 1)[0];
+      const imageUrl = sourcePath.startsWith("/")
+        ? path.posix.normalize(sourcePath)
+        : path.posix.join("/", pageDirectory, sourcePath);
+      const size = imageDimensions.get(imageUrl);
+      if (!size) return tag;
+
+      const closing = tag.endsWith("/>") ? "/>" : ">";
+      return `${tag.slice(0, -closing.length)} width="${size.width}" height="${size.height}"${closing}`;
+    });
   });
 
   return {

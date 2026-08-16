@@ -1,11 +1,11 @@
 ---
-title: Home
+title: Mechanistic Interpretability Course and Textbook
 layout: layouts/base.njk
 ---
 <section class="hero">
   <div class="hero-content">
     <h1 class="hero-title">Learn Mechanistic Interpretability</h1>
-    <p class="hero-description">Structured articles covering transformer internals, interpretability techniques, and frontier research.</p>
+    <p class="hero-description">A free, open-source textbook and structured course on reverse-engineering how neural networks compute.</p>
     <div class="hero-actions">
       {% set firstTopic = learningPath.blocks[0].topics[0] %}
       <a href="/topics/{{ firstTopic.slug }}/" class="btn btn-primary">Start Learning</a>
@@ -15,3 +15,40 @@ layout: layouts/base.njk
   </div>
 </section>
 
+<section class="features" aria-labelledby="start-with-a-question">
+  <h2 id="start-with-a-question">Start with a question</h2>
+  <p>Follow the full curriculum in order, or use these routes into the material.</p>
+  <div class="features-grid">
+    <div class="feature-card">
+      <h3>How does a transformer compute?</h3>
+      <p>Build the model from the <a href="/topics/transformer-architecture/">transformer architecture</a> through <a href="/topics/attention-mechanism/">attention</a> and <a href="/topics/mlps-in-transformers/">MLPs</a>.</p>
+    </div>
+    <div class="feature-card">
+      <h3>How do we test a causal claim?</h3>
+      <p>Move from observation to intervention with <a href="/topics/activation-patching/">activation patching</a>, then isolate paths with <a href="/topics/attribution-patching/">attribution patching</a>.</p>
+    </div>
+    <div class="feature-card">
+      <h3>Which research tools should I use?</h3>
+      <p>Compare the hooks and caches in <a href="/topics/transformerlens/">TransformerLens</a> with feature workflows built around <a href="/topics/saelens-and-neuronpedia/">SAE Lens and Neuronpedia</a>.</p>
+    </div>
+  </div>
+</section>
+
+<section class="features" aria-labelledby="what-you-will-learn">
+  <h2 id="what-you-will-learn">What you will learn</h2>
+  <p>The curriculum connects mathematical foundations to the experiments researchers use to explain, compare, and change model behavior.</p>
+  <div class="features-grid">
+    <div class="feature-card">
+      <h3>Representations and features</h3>
+      <p>Understand the <a href="/topics/linear-representation-hypothesis/">linear representation hypothesis</a>, <a href="/topics/superposition/">superposition</a>, and <a href="/topics/sparse-autoencoders/">sparse autoencoders</a>.</p>
+    </div>
+    <div class="feature-card">
+      <h3>Circuits and mechanisms</h3>
+      <p>Trace computations from <a href="/topics/induction-heads/">induction heads</a> to modern <a href="/topics/circuit-tracing/">attribution graphs</a>, with explicit tests of faithfulness.</p>
+    </div>
+    <div class="feature-card">
+      <h3>Steering and safety</h3>
+      <p>Study how representations can be changed, what those interventions establish, and where <a href="/topics/mi-safety-limitations/">mechanistic interpretability falls short for AI safety</a>.</p>
+    </div>
+  </div>
+</section>

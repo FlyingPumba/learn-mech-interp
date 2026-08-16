@@ -2,7 +2,9 @@
   "name": "Learn Mechanistic Interpretability",
   "shortName": "Learn MI",
   "url": "https://learnmechinterp.com",
-  "description": "Structured articles covering transformer internals, interpretability techniques, and frontier research.",
+  "description": "A free, open-source mechanistic interpretability textbook with a structured course on transformer internals, causal methods, circuits, features, and AI safety.",
   "language": "en",
-  "repo": "https://github.com/FlyingPumba/learn-mech-interp"
+  "repo": "https://github.com/FlyingPumba/learn-mech-interp",
+  "socialImage": "/img/curve-detector-logo.png",
+  "socialImageAlt": "Learn Mechanistic Interpretability curve detector logo"
 }

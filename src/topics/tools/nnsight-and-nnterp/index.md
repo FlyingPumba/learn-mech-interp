@@ -1,5 +1,6 @@
 ---
 title: "nnsight and nnterp"
+seoTitle: "nnsight and nnterp: Model Intervention Tools"
 description: "Using nnsight to inspect and intervene on Hugging Face models, and nnterp to write the same interpretability code across different architectures."
 order: 2
 prerequisites:

@@ -94,7 +94,7 @@ This suggests that steering operates in a direction somewhat orthogonal to gener
 
 Addition steering has a clean geometric interpretation:
 
-![Illustration of addition steering in activation space. The original activation h is shifted by adding the steering vector v, resulting in a new activation h' that is closer to the target concept region.](/topics/addition-steering/images/addition_steering_geometry.png "Figure 1: Addition steering shifts the activation from its original position toward the target concept by adding the steering vector.")
+![Illustration of addition steering in activation space. The original activation h is shifted by adding the steering vector v, resulting in a new activation h' that is closer to the target concept region.](/topics/addition-steering/images/addition_steering_geometry.svg "Figure 1: Addition steering shifts the activation from its original position toward the target concept by adding the steering vector.")
 
 The residual stream activation $\mathbf{h}$ is a point in high-dimensional space. Adding a steering vector $\mathbf{v}$ translates that point along the concept direction. The translated point $\mathbf{h}' = \mathbf{h} + \alpha \mathbf{v}$ is closer to (or further from, depending on $\alpha$) the region of activation space associated with the target concept.
 

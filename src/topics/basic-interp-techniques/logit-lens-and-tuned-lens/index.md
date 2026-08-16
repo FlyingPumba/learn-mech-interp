@@ -1,5 +1,6 @@
 ---
 title: "The Logit Lens and Tuned Lens"
+seoTitle: "Logit Lens and Tuned Lens"
 description: "Reading intermediate predictions in vocabulary space with the logit lens, then correcting its layer-by-layer distortions with the tuned lens."
 order: 1
 prerequisites:

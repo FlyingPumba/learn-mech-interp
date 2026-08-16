@@ -1,9 +1,10 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="{{ site.language }}">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>{% if title %}{{ title }} | {% endif %}Learn Mechanistic Interpretability</title>
+  {% set resolvedTitle = seoTitle | default(title) %}
+  <title>{% if page.url == "/" %}{{ resolvedTitle }}{% elif resolvedTitle %}{{ resolvedTitle }} | {{ site.shortName }}{% else %}{{ site.name }}{% endif %}</title>
   <meta name="description" content="{{ description | default(site.description) }}">
   {% if keywords %}<meta name="keywords" content="{{ keywords }}">{% endif %}
   <link rel="canonical" href="{{ site.url }}{{ page.url }}">
@@ -11,20 +12,46 @@
   <link rel="icon" type="image/png" sizes="32x32" href="/img/favicon-32.png">
   <link rel="apple-touch-icon" href="/img/apple-touch-icon.png">
   <meta property="og:type" content="{% if block %}article{% else %}website{% endif %}">
-  <meta property="og:title" content="{{ title }}">
+  <meta property="og:title" content="{{ resolvedTitle | default(site.name) }}">
   <meta property="og:description" content="{{ description | default(site.description) }}">
   <meta property="og:url" content="{{ site.url }}{{ page.url }}">
   <meta property="og:site_name" content="{{ site.name }}">
   <meta property="og:locale" content="en_US">
+  <meta property="og:image" content="{{ site.url }}{{ site.socialImage }}">
+  <meta property="og:image:width" content="400">
+  <meta property="og:image:height" content="400">
+  <meta property="og:image:alt" content="{{ site.socialImageAlt }}">
   {% if block %}
   <meta property="article:published_time" content="{{ datePublished }}">
   <meta property="article:modified_time" content="{{ dateModified }}">
   {% endif %}
   <meta name="twitter:card" content="summary">
-  <meta name="twitter:title" content="{{ title }}">
+  <meta name="twitter:title" content="{{ resolvedTitle | default(site.name) }}">
   <meta name="twitter:description" content="{{ description | default(site.description) }}">
+  <meta name="twitter:image" content="{{ site.url }}{{ site.socialImage }}">
+  <meta name="twitter:image:alt" content="{{ site.socialImageAlt }}">
   {% if noindex %}<meta name="robots" content="noindex">{% endif %}
   <link rel="alternate" type="application/atom+xml" title="{{ site.name }}" href="/feed.xml">
+  {% if page.url == "/" %}
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "name": {{ site.name | dump | safe }},
+    "alternateName": {{ site.shortName | dump | safe }},
+    "url": {{ site.url | dump | safe }},
+    "description": {{ site.description | dump | safe }},
+    "inLanguage": {{ site.language | dump | safe }},
+    "publisher": {
+      "@type": "Organization",
+      "name": {{ site.name | dump | safe }},
+      "url": {{ site.url | dump | safe }},
+      "logo": {"@type":"ImageObject","url":"{{ site.url }}{{ site.socialImage }}"},
+      "sameAs": [{{ site.repo | dump | safe }}]
+    }
+  }
+  </script>
+  {% endif %}
   <script>
   (function() {
     var t = localStorage.getItem('theme');

@@ -1,5 +1,6 @@
 ---
 title: "Concept Erasure with LEACE"
+seoTitle: "LEACE: Linear Concept Erasure Explained"
 description: "How LEACE removes linearly decodable information with minimum expected distortion, what its guarantee covers, and why nonlinear information may remain."
 order: 2
 prerequisites:

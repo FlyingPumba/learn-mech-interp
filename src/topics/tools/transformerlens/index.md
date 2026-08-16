@@ -1,6 +1,7 @@
 ---
 title: "TransformerLens"
-description: "A practical guide to TransformerLens: named hook points, activation caches, weight access, interventions, and the tradeoffs of reimplementing model architectures."
+seoTitle: "TransformerLens Guide: Hooks, Caches, and Patching"
+description: "How TransformerLens 3 instruments Hugging Face models with named hooks, activation caches, interventions, weight access, and cross-architecture adapters."
 order: 1
 prerequisites:
   - title: "What is Interpretability?"
@@ -10,156 +11,153 @@ prerequisites:
 
 glossary:
   - term: "HookPoint"
-    definition: "A named location in a TransformerLens model where activations can be intercepted, read, or modified during a forward pass. Every intermediate computation (attention patterns, residual stream states, MLP outputs) has a corresponding HookPoint."
+    definition: "A named location in an instrumented model where an activation can be read, cached, or replaced during a forward pass."
   - term: "Activation Cache"
-    definition: "A dictionary storing all intermediate activations from a model's forward pass, keyed by HookPoint name. Enables post-hoc inspection of every computation the model performed on a given input."
+    definition: "A mapping from HookPoint names to intermediate activations recorded during a model run, used for post-hoc inspection and as sources for interventions."
 ---
 
 ## Why a Dedicated Library?
 
-Mechanistic interpretability requires more than a standard deep learning framework. We need to peer inside models during inference: read the residual stream at every layer, inspect attention patterns for every head, and intervene on activations mid-forward-pass to test causal hypotheses. Standard PyTorch models do not expose these internals in a convenient way. You can register hooks manually, but doing so for dozens of components across dozens of layers quickly becomes unwieldy.
+A language model API normally returns logits or generated tokens. Mechanistic interpretability needs the computations in between: residual stream states, attention patterns, multi-layer perceptron (MLP) outputs, and the effects of replacing any of them during a forward pass. PyTorch hooks can expose those values, but architecture-specific module names make the same experiment difficult to move from GPT-2 to Gemma, Llama, or a recurrent model.
 
-**TransformerLens** solves this by providing a clean, purpose-built interface for MI research. It wraps transformer language models with hooks at every intermediate computation, letting researchers focus on interpretability questions rather than engineering boilerplate.
+**TransformerLens** gives those internal locations stable names and provides common operations for reading or changing them. The library turns questions such as “what did head 7 attend to?” and “does the layer-10 residual state cause this prediction?” into cache lookups and controlled interventions.
 
-## History
+> **HookPoint:** A named location in a model's computation where TransformerLens can record an activation or replace it while the forward pass continues.
 
-TransformerLens was created by **Neel Nanda** in 2022, originally under the name **EasyTransformer**. It provided a consistent interface for loading transformer models and exposing computations that ordinary inference APIs hide. The project was later renamed **TransformerLens** and is maintained as an open-source library.
+The abstraction separates an interpretability experiment from much of the model-specific wiring. It does not make the experiment valid by itself. A hook identifies where an intervention occurred; the prompt contrast, replacement value, metric, and controls still determine what the result means.
 
-TransformerLens is widely used in mechanistic-interpretability tutorials and research code. Names such as `hook_resid_pre` and `blocks.0.attn.W_Q` recur often enough that learning the vocabulary makes many implementations easier to read, though other libraries expose models through different abstractions.
+## TransformerLens 3 Uses a Bridge
 
-## Design Philosophy
+Neel Nanda created the library in 2022 under the name EasyTransformer. Early versions converted pretrained weights into a unified `HookedTransformer` implementation, which made model internals unusually transparent but required each architecture's forward pass to be reimplemented inside TransformerLens.
 
-TransformerLens reimplements transformer architectures from scratch rather than wrapping HuggingFace models directly. This is a deliberate choice with important tradeoffs.
+TransformerLens 3 changed the default architecture. New code loads models through **TransformerBridge**, which keeps the native Hugging Face implementation and maps its module graph onto generalized components such as embeddings, attention, MLPs, normalizations, and blocks. Architecture adapters then expose uniform hook points over those components.
 
-**Why reimplement?** Production-oriented model implementations often fuse operations or hide intermediate values. TransformerLens separates the query, key, and value projections; the attention pattern; the value-weighted sum; and the residual stream around each component. Named **HookPoints** let you read or modify these activations.{% sidenote "TransformerLens converts pretrained weights into its own forward pass. Researchers should check output agreement with the reference implementation for the exact model, precision, and configuration they use; operation ordering and unsupported details can create discrepancies." %}
+> **TransformerBridge:** The recommended TransformerLens 3 interface, which instruments a native Hugging Face model through an architecture adapter instead of converting it into the older unified forward pass.
 
-**The tradeoff.** Every new model architecture must be manually added to TransformerLens. When Meta releases a new Llama variant or Google releases a new Gemma version, someone needs to write the conversion code. This creates a lag between model release and TransformerLens support, and limits coverage to architectures that the community has prioritized. We will see in the [next article](/topics/nnsight-and-nnterp/) how nnsight and nnterp take a different approach to this problem.
+The two loading paths now have different roles:
 
-## Core Abstractions
+| Path | Model execution | Status | Best fit |
+|---|---|---|---|
+| `TransformerBridge.boot_transformers(...)` | Preserves the native Hugging Face model and wraps it with adapters | Recommended for new code | Current models, broad architecture coverage, and forward-pass fidelity |
+| `HookedTransformer.from_pretrained(...)` | Converts weights into the original TransformerLens implementation | Deprecated in version 3 and scheduled for removal in a future major release | Running and reproducing older notebooks during migration |
 
-TransformerLens is built around three key abstractions that make MI research practical.
+Existing `HookedTransformer` code continues to work in the 3.x line through compatibility machinery, but new experiments should begin with the bridge. The [official migration guide](https://transformerlensorg.github.io/TransformerLens/content/migrating_to_v3.html) documents API and weight-processing differences, while the [model tables](https://transformerlensorg.github.io/TransformerLens/content/model_tables.html) distinguish bridge coverage from legacy coverage.
 
-### HookPoints
+## Hook Names Form a Shared Vocabulary
 
-A **HookPoint** is a named location in the model where you can intercept activations. Every intermediate computation has one: after each attention head, after each MLP, at each residual stream state, and more. HookPoints are named with a consistent scheme:
+TransformerBridge gives each generalized component input and output hooks. These canonical names describe a path through the model rather than the private name used by one Hugging Face class:
 
-| HookPoint Name | What It Captures |
-|---|---|
-| `hook_embed` | Token embeddings |
-| `blocks.{L}.hook_resid_pre` | Residual stream before layer L |
-| `blocks.{L}.attn.hook_pattern` | Attention patterns at layer L |
-| `blocks.{L}.attn.hook_result` | Output of all attention heads at layer L |
-| `blocks.{L}.hook_mlp_out` | MLP output at layer L |
-| `blocks.{L}.hook_resid_post` | Residual stream after layer L |
+| Canonical HookPoint | What it captures | Common legacy alias |
+|---|---|---|
+| `embed.hook_out` | Token embeddings | `hook_embed` |
+| `blocks.{L}.hook_in` | Residual stream entering block L | `blocks.{L}.hook_resid_pre` |
+| `blocks.{L}.attn.hook_pattern` | Attention weights after softmax | `blocks.{L}.attn.hook_attention_weights` |
+| `blocks.{L}.attn.hook_hidden_states` | Attention component output used for caching | `blocks.{L}.attn.hook_result` |
+| `blocks.{L}.mlp.hook_out` | MLP output | `blocks.{L}.hook_mlp_out` |
+| `blocks.{L}.hook_out` | Residual stream leaving block L | `blocks.{L}.hook_resid_post` |
+| `unembed.hook_out` | Vocabulary logits | none |
 
-This naming convention has become the shared vocabulary of the MI community. When a paper refers to "the residual stream at layer 6," in code that is `cache["blocks.6.hook_resid_pre"]`.
+The alias layer explains why older papers and tutorials use names such as `hook_resid_pre` while current documentation recommends `hook_in`. Both may appear in real code, so the useful mental model is the computation being named: a block input, an attention pattern, or an MLP output.
 
-### The Activation Cache
+Architecture details still matter. A grouped-query attention model, a mixture-of-experts model, and Mamba do not contain identical tensors. The [model-structure reference](https://transformerlensorg.github.io/TransformerLens/content/model_structure.html) lists canonical hooks and expected shapes, and an experiment should check the adapter for the exact architecture it uses.
 
-The activation cache is a dictionary that stores every intermediate activation from a single forward pass. You fill it with one call:
+## Activation Caches Support Observation
 
-```python
-logits, cache = model.run_with_cache(tokens)
-```
-
-After this, `cache` contains every HookPoint's activation. You can inspect the attention pattern of head 3 in layer 5:
-
-```python
-pattern = cache["blocks.5.attn.hook_pattern"][:, 3]  # [batch, dest, src]
-```
-
-Or read the residual stream at layer 8:
+`run_with_cache` records intermediate activations while performing an ordinary forward pass:
 
 ```python
-resid = cache["blocks.8.hook_resid_pre"]  # [batch, pos, d_model]
+from transformer_lens.model_bridge import TransformerBridge
+
+model = TransformerBridge.boot_transformers("gpt2", device="cpu")
+logits, cache = model.run_with_cache("The Eiffel Tower is in")
+
+residual = cache["blocks.8.hook_in"]
+attention = cache["blocks.5.attn.hook_pattern"]
 ```
 
-The cache makes exploratory analysis fast. Run a forward pass once, then poke around the internals without rerunning the model.{% sidenote "Caching every activation consumes memory proportional to model size times sequence length. For large models or long sequences, you can selectively cache only the HookPoints you need by passing a filter function to run_with_cache." %}
+The **activation cache** lets us run the model once, then compare layers, positions, or heads without repeating inference. It also supplies replacement values for [activation patching](/topics/activation-patching/). A clean run can be cached, then selected clean activations can be inserted into a corrupted run.
 
-### Hooks for Intervention
-
-Reading activations is observational. To test causal hypotheses, we need to *intervene*: modify an activation and see what changes. TransformerLens supports this through hook functions that fire during a forward pass.
-
-A hook function receives the activation at a HookPoint and returns a (possibly modified) activation. For example, to zero out head 3 in layer 5:
-
-```python
-def zero_head_hook(activation, hook):
-    activation[:, :, 3, :] = 0  # zero out head 3
-    return activation
-
-model.run_with_hooks(
-    tokens,
-    fwd_hooks=[("blocks.5.attn.hook_result", zero_head_hook)]
-)
-```
-
-This is how researchers perform [activation patching](/topics/activation-patching/): replace one component's activation with its value from a different input, and measure the effect on the output. The hook interface makes it straightforward to implement patching, ablation, and [steering](/topics/addition-steering/) experiments.
-
-## Weight Matrices
-
-TransformerLens exposes model weights with a consistent naming scheme that maps directly to the mathematical framework from [QK/OV circuits](/topics/qk-ov-circuits/):
-
-| Weight Name | Meaning |
-|---|---|
-| `blocks.{L}.attn.W_Q` | Query projection, layer L |
-| `blocks.{L}.attn.W_K` | Key projection, layer L |
-| `blocks.{L}.attn.W_V` | Value projection, layer L |
-| `blocks.{L}.attn.W_O` | Output projection, layer L |
-| `blocks.{L}.mlp.W_in` | MLP input weights, layer L |
-| `blocks.{L}.mlp.W_out` | MLP output weights, layer L |
-| `embed.W_E` | Token embedding matrix |
-| `unembed.W_U` | Unembedding matrix |
-
-These names make it easy to compute the composed QK and OV matrices that the circuit analysis framework relies on. For example, the full OV circuit for head $h$ at layer $L$ is `W_V[L, h] @ W_O[L, h]`, and you can compute it directly from the named parameters.
-
-## Supported Models
-
-TransformerLens supports a wide range of transformer language models, with pretrained weights loaded automatically from HuggingFace. The most commonly used models in MI research include:
-
-- **GPT-2** (Small, Medium, Large, XL): The workhorse of MI research. Small enough to run on a single GPU, well-studied, and the subject of most foundational MI papers.
-- **Pythia** (70M to 12B): EleutherAI's suite of models trained on The Pile with checkpoints saved throughout training, enabling the study of how circuits form during training.
-- **Gemma / Gemma 2**: Google DeepMind's open models, used extensively with Gemma Scope SAEs.
-- **Llama 2/3**: Meta's open models. Larger and more capable, useful for testing whether findings from small models generalize.
-- **GPT-Neo / GPT-J / GPT-NeoX**: EleutherAI models of various sizes.
-
-Model coverage changes as architectures are added. Before planning an experiment, check the library's current supported-model list and verify that the relevant architectural details survive conversion.
+Caching every HookPoint can consume much more memory than the weights alone, especially for long sequences. Selective caching is therefore part of experimental design rather than a minor optimization: record the components needed for the hypothesis, and verify tensor shapes before comparing or patching them.
 
 <details class="pause-and-think">
-<summary>Pause and think: Cache vs. hooks</summary>
+<summary>Pause and think: Cache or hook?</summary>
 
-When would you use `run_with_cache` versus `run_with_hooks`? Consider the difference between observational analysis (understanding what the model computes) and causal analysis (testing what happens when you change something). The cache is for observation: run the model normally and inspect everything afterward. Hooks are for intervention: modify the computation as it happens. Many MI workflows start with cache-based exploration to identify interesting components, then switch to hook-based intervention to test causal hypotheses.
+You want to find heads that attend to a repeated token, then test whether one head causes the repeated-token prediction. Which interface belongs to each step?
+
+Use a cache to inspect attention patterns from an unchanged run. Once a candidate head or residual location is identified, use a forward hook to replace or ablate its activation and measure the output change. The cache supports observation; the hook performs the intervention.
 
 </details>
 
-## A Minimal Example
+## Hooks Support Intervention
 
-To give a concrete sense of how TransformerLens works in practice, here is how you would load a model, run a prompt, and inspect which token the model predicts:
+`run_with_hooks` calls a function at a named point while the model is computing. The function receives an activation and returns the value that downstream components will see. This example removes one MLP update:
 
 ```python
-import transformer_lens as tl
+def zero_mlp_output(activation, hook):
+    return activation * 0
 
-model = tl.HookedTransformer.from_pretrained("gpt2-small")
-logits, cache = model.run_with_cache("The Eiffel Tower is in")
-
-# What does the model predict for the next token?
-predicted_token = logits[0, -1].argmax()
-print(model.to_string(predicted_token))  # " Paris"
-
-# Which attention heads at the last layer attended to "Eiffel"?
-pattern = cache["blocks.11.attn.hook_pattern"][0, :, -1, :]  # all heads, last position
+ablated_logits = model.run_with_hooks(
+    "The Eiffel Tower is in",
+    fwd_hooks=[("blocks.5.mlp.hook_out", zero_mlp_output)],
+)
 ```
 
-From this starting point, you can investigate how the “Paris” prediction developed: which heads routed relevant information, which MLP outputs directly supported the logit, and how intermediate residual states decoded under a chosen lens. Combining these observations with interventions is the [direct logit attribution](/topics/direct-logit-attribution/) and [logit lens](/topics/logit-lens-and-tuned-lens/) workflow from earlier articles.
+Replacing the zero vector with a cached activation from another prompt produces an activation-patching experiment. More elaborate hook functions can clamp a feature, edit selected positions, or record derived quantities without retaining the full activation.
+
+The hook changes the model's computation, so a difference in logits supports a causal claim about that intervention. It does not show that the component has one stable role across prompts, or that zero is a neutral baseline. The controls in the [activation patching article](/topics/activation-patching/) still apply.
+
+## Native Weights Change the Tradeoff
+
+The original `HookedTransformer` made weights such as query, key, value, and output matrices easy to access in a standardized layout. It also folded layer normalization and centered some weights by default, changing the coordinate system from the raw checkpoint in ways that were convenient for analyses such as [direct logit attribution](/topics/direct-logit-attribution/).
+
+TransformerBridge preserves the native Hugging Face weights on load. This removes one source of forward-pass divergence and makes it easier to compare an intervention with the model used elsewhere. Analyses that depend on the legacy folded or centered representation must now enable compatibility processing explicitly and report it. The transformed and raw weights can support equivalent functions while giving different intermediate coordinates, so silently mixing them can invalidate a replication.
+
+This design also changes the relationship between TransformerLens and other tools. The bridge no longer requires a separate reimplementation for every checkpoint, but it still requires an adapter that understands the architecture well enough to expose meaningful generalized components.
+
+## Model Coverage Is Broad but Uneven
+
+TransformerBridge covers thousands of Hugging Face model IDs across more than 50 architecture families, including transformer, multimodal, and state-space families. The number changes quickly and should not be copied into an experiment as a guarantee. The live [supported-model tables](https://transformerlensorg.github.io/TransformerLens/content/model_tables.html) distinguish architecture support from checkpoints that have been verified end to end.
+
+Three checks matter before committing to a model:
+
+- The architecture has an adapter for the internal component the experiment needs.
+- The relevant hook exists and has the expected shape and semantics.
+- The bridged run agrees with the uninstrumented Hugging Face model within the tolerance appropriate for the device and precision.
+
+A model being loadable is weaker than every interpretability operation being meaningful. Fused projections, mixture-of-experts routing, recurrent state, and multimodal branches each require hooks that correspond to their actual computation.
+
+## A Minimal Causal Workflow
+
+A clean and corrupted prompt can share the same TransformerBridge instance. The sequence lengths and patched tensor shapes must match:
+
+```python
+clean_prompt = "When Mary and John met, John gave a book to"
+corrupted_prompt = "When Mary and John met, Mary gave a book to"
+
+clean_logits, clean_cache = model.run_with_cache(clean_prompt)
+
+def restore_block_input(activation, hook):
+    return clean_cache["blocks.6.hook_in"]
+
+patched_logits = model.run_with_hooks(
+    corrupted_prompt,
+    fwd_hooks=[("blocks.6.hook_in", restore_block_input)],
+)
+```
+
+The useful result is not `patched_logits` by itself. We need a metric such as the logit difference between the two candidate names, an unpatched corrupted baseline, and a sweep over locations or controls that could distinguish the proposed mechanism from a generic restoration effect.
 
 <details class="pause-and-think">
-<summary>Pause and think: Limitations of reimplementation</summary>
+<summary>Pause and think: What did the patch establish?</summary>
 
-TransformerLens reimplements models from scratch rather than wrapping HuggingFace directly. What problems might this cause? Consider: (1) a researcher finds an interesting behavior in a TransformerLens model, how confident can they be it also occurs in the original HuggingFace model? (2) a new model architecture is released, how quickly can researchers study it? These are real tradeoffs. The [next article](/topics/nnsight-and-nnterp/) covers tools that take a different approach.
+Restoring the clean residual stream at block 6 recovers the correct name. Does that prove block 6 computed the name?
+
+No. The restored state contains everything represented at that position and layer, including information computed earlier. The result shows that replacing this state is sufficient to restore behavior in this prompt pair. Finer patches, alternative corruptions, and path-specific tests are needed to locate the computation that produced the useful information.
 
 </details>
 
 ## Looking Ahead
 
-TransformerLens lowers the engineering cost of MI experiments through named HookPoints, activation caches, and intervention hooks. Its conventions also provide a common vocabulary across many tutorials and codebases.
+TransformerLens provides a common language for model internals: canonical components, named hooks, cached activations, and interventions. Version 3 extends that language over native Hugging Face models, while legacy aliases keep much of the field's existing code readable during migration.
 
-But the reimplementation approach has limits. New architectures require manual porting, and the gap between TransformerLens's internal representation and the original model weights can occasionally matter. The [next article](/topics/nnsight-and-nnterp/) introduces nnsight and nnterp, which take a complementary approach: working directly with HuggingFace models while providing standardized access to their internals.
+The [next article](/topics/nnsight-and-nnterp/) covers nnsight and nnterp. Their overlap with TransformerLens has grown now that both can work with native Hugging Face models, but their emphases differ: TransformerLens standardizes interpretability components and familiar MI workflows, while nnsight builds a general intervention trace and supports remote execution through the National Deep Inference Fabric.
