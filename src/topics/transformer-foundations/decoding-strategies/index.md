@@ -1,12 +1,15 @@
 ---
 title: "Decoding Strategies"
-description: "How transformer logits become text: greedy decoding, temperature scaling, top-k, nucleus sampling, and beam search, and why MI research mostly studies the forward pass directly."
+seoTitle: "Transformer Decoding: Greedy, Top-k, and Top-p"
+description: "How transformer logits become text through greedy decoding, temperature, top-k, top-p, and beam search, and how each strategy selects the next token."
 order: 10
 prerequisites:
   - title: "Transformer Architecture Intro"
     url: "/topics/transformer-architecture/"
 
 glossary:
+  - term: "Greedy Decoding"
+    definition: "A deterministic decoding strategy that selects the highest-probability token at every generation step. It is reproducible but can produce repetitive sequences."
   - term: "Temperature (sampling)"
     definition: "A hyperparameter that scales logits before the softmax during text generation. Temperature below 1 sharpens the distribution (more deterministic), temperature above 1 flattens it (more random), and temperature approaching 0 recovers greedy decoding."
   - term: "Nucleus Sampling (top-p)"
@@ -29,9 +32,9 @@ Each probability $P(t_i)$ is positive, and the probabilities sum to 1. Tokens wi
 
 All decoding strategies start from these probabilities (or from the logits themselves, in the case of temperature scaling). The strategies differ in how they select a token from this distribution.
 
-## Greedy Decoding
+## Greedy Decoding Always Picks the Highest-Probability Token
 
-The simplest strategy: always pick the token with the highest probability.
+Greedy decoding always selects the token with the highest probability at the current step.
 
 $$t^* = \arg\max_i P(t_i)$$
 

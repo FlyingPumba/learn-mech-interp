@@ -1,5 +1,6 @@
 ---
 title: "Activation Oracles"
+seoTitle: "Activation Oracles Explained: General-Purpose Decoders"
 description: "Training one activation interpreter across varied tasks, then testing which natural-language questions and held-out activation settings it can answer reliably."
 order: 7
 prerequisites:
@@ -33,8 +34,6 @@ The combination matters. Each task type contributes different knowledge:
 In the reported comparisons, the mixed-task oracle transfers better across several evaluations than decoders trained on narrower mixtures.
 
 ## The Generalization Result
-
-The main generalization test uses information introduced by fine-tuning:
 
 The main test asks whether an AO can recover information introduced by fine-tuning even though its own training mixture did not include activations from those fine-tuned variants.
 

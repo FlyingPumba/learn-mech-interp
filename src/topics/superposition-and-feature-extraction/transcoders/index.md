@@ -1,6 +1,7 @@
 ---
 title: "Transcoders: Interpretable MLP Replacements"
-description: "How transcoders replace opaque MLP layers with sparse interpretable alternatives, enabling feature-level circuit analysis of what MLPs compute."
+seoTitle: "Transcoders Explained: Interpretable MLP Replacements"
+description: "How a transcoder replaces an opaque transformer MLP with sparse interpretable features, exposing input-to-output computations for circuit tracing."
 order: 5
 prerequisites:
   - title: "SAE Variants, Evaluation, and Limitations"

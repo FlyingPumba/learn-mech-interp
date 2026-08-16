@@ -1,6 +1,7 @@
 ---
 title: "The Linear Representation Hypothesis"
-description: "Why neural networks appear to represent concepts as linear directions in activation space, and why individual neurons fail as units of analysis."
+seoTitle: "Linear Representation Hypothesis Explained"
+description: "Why the linear representation hypothesis models concepts as directions in activation space, what evidence supports it, and where linear features fail."
 order: 2
 prerequisites:
   - title: "What Is Mechanistic Interpretability?"

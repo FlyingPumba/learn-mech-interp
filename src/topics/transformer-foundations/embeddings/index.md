@@ -74,6 +74,8 @@ $$
 
 Column $j$ of $W_U$ is the **unembedding direction** for token $j$. Its logit is $z_{i,j}=\mathbf{h}_i W_U[:,j]+b_{U,j}$, so moving $\mathbf{h}_i$ along that column raises the token's score. Softmax converts all $V$ logits into probabilities. Because softmax depends on their relative values, raising every logit by the same amount changes no probability.
 
+A [decoding strategy](/topics/decoding-strategies/) turns those probabilities into a generated token. Greedy decoding selects the highest-probability token, while sampling methods trade determinism for diversity.
+
 For two candidate tokens $a$ and $b$, the model's preference before softmax is captured by a logit difference:
 
 $$
