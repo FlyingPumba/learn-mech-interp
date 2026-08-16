@@ -41,6 +41,20 @@
     "venue": "NeurIPS",
     "url": "https://arxiv.org/abs/1706.03762"
   },
+  "shazeer2019mqa": {
+    "title": "Fast Transformer Decoding: One Write-Head is All You Need",
+    "authors": "Shazeer, N.",
+    "year": 2019,
+    "venue": "arXiv",
+    "url": "https://arxiv.org/abs/1911.02150"
+  },
+  "ainslie2023gqa": {
+    "title": "GQA: Training Generalized Multi-Query Transformer Models from Multi-Head Checkpoints",
+    "authors": "Ainslie, J., Lee-Thorp, J., de Jong, M., et al.",
+    "year": 2023,
+    "venue": "EMNLP",
+    "url": "https://arxiv.org/abs/2305.13245"
+  },
   "press2017outputembedding": {
     "title": "Using the Output Embedding to Improve Language Models",
     "authors": "Press, O., Wolf, L.",

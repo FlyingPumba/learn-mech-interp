@@ -1,6 +1,6 @@
 ---
 title: "The Attention Mechanism"
-description: "How queries and keys decide where to look, values determine what moves, and causal multi-head attention lets tokens exchange contextual information."
+description: "How queries and keys decide where to look, values determine what moves, and multi-head, multi-query, and grouped-query attention organize routing."
 order: 5
 prerequisites:
   - title: "Positional Embeddings"
@@ -15,6 +15,10 @@ glossary:
     definition: "The vector produced by applying the key weight matrix (W_K) to a token's representation. Key vectors are compared against query vectors via dot product to determine attention weights."
   - term: "Multi-Head Attention"
     definition: "The mechanism of running multiple independent attention heads in parallel within a single layer, allowing the model to attend to different types of relationships simultaneously and combine their outputs."
+  - term: "Multi-Query Attention"
+    definition: "An attention variant with multiple query heads but one key head and one value head shared by all of them, reducing the key-value cache used during autoregressive decoding."
+  - term: "Grouped-Query Attention"
+    definition: "An attention variant that divides query heads into groups, with each group sharing one key head and one value head. It interpolates between multi-head and multi-query attention."
   - term: "Query Vector"
     definition: "The vector produced by applying the query weight matrix (W_Q) to a token's representation. Query vectors are compared against key vectors to compute attention scores that determine how much each position attends to others."
   - term: "Value Vector"
@@ -177,6 +181,92 @@ Separate heads make it easier to represent all three relationships at once. Each
 
 An attention head is one information-moving operation, but its behavior may change with the input and may only make sense together with other heads. Mechanistic analysis therefore studies both individual heads and the circuits they form.
 
+## Multi-Query Attention
+
+Autoregressive generation exposes a cost that parallel training hides. After processing a prompt, the model generates one new token at a time. Each layer computes a query for the new token and compares it with keys for every earlier token, then mixes the corresponding values. Recomputing all earlier keys and values would waste work, so inference systems store them in a **key-value (KV) cache**.
+
+In ordinary **multi-head attention (MHA)**, every head has its own key and value projections. A layer with $H_q$ query heads therefore caches $H_q$ key vectors and $H_q$ value vectors per previous token. Long contexts make repeatedly loading this cache a major memory-bandwidth cost.
+
+> **Multi-Query Attention (MQA):** MQA keeps $H_q$ distinct query heads but uses one key projection and one value projection shared by all of them.
+
+For query head $h$, MQA computes
+
+$$
+\text{head}_h
+=
+\text{Attn}\left(XW_Q^h,\;XW_K,\;XW_V\right).
+$$
+
+The queries can still ask different questions, producing different attention patterns against the shared keys. Those patterns then mix the same shared value vectors in different proportions. Each head also retains its own slice $W_O^h$ of the output projection, so the resulting writes to the residual stream can differ.
+
+Shazeer introduced MQA to reduce the memory traffic of incremental decoding {% cite "shazeer2019mqa" %}. Ignoring batch size and bytes per number, a decoder with $L$ layers, context length $T$, head width $d_h$, and $H_{kv}$ key-value heads stores a cache proportional to
+
+$$
+M_{KV} \propto 2LTH_{kv}d_h.
+$$
+
+The factor 2 accounts for keys and values. Standard MHA has $H_{kv}=H_q$; MQA has $H_{kv}=1$, reducing this part of the cache by a factor of $H_q$. Queries are not cached for previous tokens because only the current destination token's queries are needed at each decoding step.
+
+The sharing is a capacity tradeoff rather than a free algebraic rewrite. MQA forces all query heads to use the same key features for deciding where to read and the same value features for deciding what source information is available. The original experiments reported much faster decoding with only minor quality degradation in their tested models, but the size of that tradeoff depends on the model and training setup {% cite "shazeer2019mqa" %}.
+
+## Grouped-Query Attention
+
+MQA chooses the most aggressive sharing possible. **Grouped-query attention (GQA)** places intermediate points between one shared key-value head and a separate pair for every query head {% cite "ainslie2023gqa" %}.
+
+> **Grouped-Query Attention (GQA):** GQA partitions $H_q$ query heads into $H_{kv}$ groups. Every query head keeps its own query and output projections, while all heads in one group share a key projection and a value projection.
+
+Assume $H_{kv}$ divides $H_q$ and number both from zero. Query head $h$ uses group
+
+$$
+g(h)=\left\lfloor\frac{hH_{kv}}{H_q}\right\rfloor,
+$$
+
+so its output is
+
+$$
+\text{head}_h
+=
+\text{Attn}\left(XW_Q^h,\;XW_K^{g(h)},\;XW_V^{g(h)}\right).
+$$
+
+The endpoints recover the other architectures. Setting $H_{kv}=H_q$ gives MHA, with one key-value pair per query head. Setting $H_{kv}=1$ gives MQA. Values strictly between them are GQA. Ainslie et al. introduced GQA alongside a method for converting existing MHA checkpoints with additional training; in their experiments, uptrained GQA approached MHA quality with inference speed comparable to MQA {% cite "ainslie2023gqa" %}.
+
+The visualization fixes eight query heads and varies the number of key-value heads. Lines show which queries share a key-value projection. The cache bar shows the key-value cache relative to eight-head MHA under the simplifying assumption that all heads have the same width.
+
+<figure class="aq-figure">
+  <div class="aq-diagram" id="aq-sharing-viz" role="group" aria-label="Interactive comparison of multi-head, grouped-query, and multi-query attention" tabindex="0">
+    <p class="aq-scroll-hint">Scroll the diagram horizontally to see every query head.</p>
+    <svg id="aq-sharing-svg" viewBox="0 0 760 410" role="img" aria-label="Eight query heads connected to a selectable number of shared key-value heads, with a bar showing relative key-value cache size." aria-describedby="aq-sharing-readout">
+      <text x="380" y="205" text-anchor="middle">Loading interactive visualization…</text>
+    </svg>
+    <div class="aq-controls">
+      <label for="aq-kv-heads">Number of key-value heads
+        <input type="range" id="aq-kv-heads" min="0" max="3" step="1" value="1">
+        <output id="aq-kv-heads-output" for="aq-kv-heads">2</output>
+      </label>
+    </div>
+    <div class="aq-readout" id="aq-sharing-readout" aria-live="polite">GQA with eight query heads and two key-value heads.</div>
+  </div>
+  <figcaption>Sharing structure for eight query heads. Move the slider from one key-value head (MQA), through intermediate grouped-query configurations, to eight key-value heads (MHA). The query and output sides remain distinct even when the key and value projections are shared.</figcaption>
+</figure>
+
+| Architecture | Query heads | Key-value heads | Relative KV-cache size |
+|---|---:|---:|---:|
+| MHA | $H_q$ | $H_q$ | $1$ |
+| GQA | $H_q$ | $H_{kv}$, where $1<H_{kv}<H_q$ | $H_{kv}/H_q$ |
+| MQA | $H_q$ | $1$ | $1/H_q$ |
+
+For mechanistic interpretability, “head” now names a partly shared computation. Two query heads in the same GQA group have different query-key (QK) circuits because their query matrices differ, but the key-side read is shared. Their output-value (OV) circuits use the same value matrix and different slices of $W_O$, so they can select different source positions and write different results despite sharing part of the pathway. Ablating a shared key or value projection intervenes on every query head in its group; ablating one query head's output does not.
+
+<details class="pause-and-think">
+<summary>Pause and think: What remains head-specific?</summary>
+
+An eight-query-head GQA layer has two key-value heads. If query heads 0 through 3 share one key-value group, must they have identical attention patterns and residual-stream writes?
+
+No. They share keys and values, but each has its own query projection, so its query-key scores and softmax pattern can differ. Each also has its own output-projection slice, so differently weighted mixtures of the shared values can be written along different residual directions. Intervening on the shared value projection affects all four heads, while intervening after one head's weighted sum can isolate that head's output.
+
+</details>
+
 <details class="pause-and-think">
 <summary>Pause and think: From architecture to interpretability</summary>
 
@@ -189,3 +279,259 @@ If attention heads move information between positions, what determines *which* i
 Attention moves information between positions. Each transformer layer also contains an [MLP](/topics/mlps-in-transformers/), which transforms each position separately. The next article explains the MLP computation and examines evidence for interpreting some neurons as key-value-like memories.
 
 After that, [layer normalization](/topics/layer-normalization/) addresses the practical complication of keeping activations stable across many layers, and the [QK/OV circuit decomposition](/topics/qk-ov-circuits/) formalizes the two-circuit structure hinted at above into the mathematical framework that underpins mechanistic interpretability.
+
+<script>
+(function () {
+  var svgNS = "http://www.w3.org/2000/svg";
+  var kvOptions = [1, 2, 4, 8];
+  var queryHeads = 8;
+
+  function palette() {
+    var isDark = document.documentElement.getAttribute("data-theme") === "dark"
+      || (window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches
+          && document.documentElement.getAttribute("data-theme") !== "light");
+    return {
+      fg: isDark ? "#e6e6e6" : "#222222",
+      muted: isDark ? "#aeb2c0" : "#626776",
+      grid: isDark ? "rgba(255,255,255,0.15)" : "rgba(0,0,0,0.13)",
+      surface: isDark ? "#1a1a2e" : "#ffffff",
+      surfaceAlt: isDark ? "#25283a" : "#f4f5fa",
+      blue: isDark ? "#a0aee8" : "#5264c3",
+      blueSoft: isDark ? "#303752" : "#e8ebfa",
+      orange: isDark ? "#f0a36a" : "#c4672d",
+      orangeSoft: isDark ? "#4a3229" : "#fae9dd",
+      green: isDark ? "#82d39c" : "#27894c",
+      greenSoft: isDark ? "#243f31" : "#e2f3e8",
+      groups: isDark
+        ? ["#c5a6ed", "#f0a36a", "#82d39c", "#a0aee8", "#e38f9f", "#e6cf7a", "#78c9cb", "#bbbcc7"]
+        : ["#7952a8", "#c4672d", "#27894c", "#5264c3", "#b44b61", "#9a7b13", "#277e82", "#666b78"]
+    };
+  }
+
+  function node(tag, attrs, text) {
+    var element = document.createElementNS(svgNS, tag);
+    if (attrs) {
+      Object.keys(attrs).forEach(function (key) {
+        element.setAttribute(key, attrs[key]);
+      });
+    }
+    if (text !== undefined) element.textContent = text;
+    return element;
+  }
+
+  function addText(svg, x, y, text, color, size, anchor, weight) {
+    svg.appendChild(node("text", {
+      x: x,
+      y: y,
+      fill: color,
+      "font-size": size || 12,
+      "text-anchor": anchor || "start",
+      "font-weight": weight || "400"
+    }, text));
+  }
+
+  function modeName(kvHeads) {
+    if (kvHeads === 1) return "Multi-query attention (MQA)";
+    if (kvHeads === queryHeads) return "Multi-head attention (MHA)";
+    return "Grouped-query attention (GQA)";
+  }
+
+  function render() {
+    var svg = document.getElementById("aq-sharing-svg");
+    var input = document.getElementById("aq-kv-heads");
+    var output = document.getElementById("aq-kv-heads-output");
+    var readout = document.getElementById("aq-sharing-readout");
+    if (!svg || !input || !output || !readout) return;
+
+    var colors = palette();
+    var kvHeads = kvOptions[Number(input.value)];
+    var groupSize = queryHeads / kvHeads;
+    var ratio = kvHeads / queryHeads;
+    var mode = modeName(kvHeads);
+
+    output.textContent = String(kvHeads);
+    readout.textContent = mode + ": " + queryHeads + " query heads, " + kvHeads
+      + " key-value " + (kvHeads === 1 ? "head" : "heads")
+      + ", and " + (ratio * 100).toFixed(1).replace(".0", "") + "% of the MHA KV-cache size.";
+
+    while (svg.firstChild) svg.removeChild(svg.firstChild);
+
+    addText(svg, 380, 25, mode, colors.fg, 17, "middle", "600");
+    addText(svg, 380, 45, "Move the slider to change how query heads share keys and values", colors.muted, 11, "middle");
+
+    var queryStart = 43;
+    var queryWidth = 62;
+    var queryGap = 25;
+    var queryY = 78;
+    var queryHeight = 42;
+    function queryCenter(index) {
+      return queryStart + index * (queryWidth + queryGap) + queryWidth / 2;
+    }
+
+    addText(svg, 22, queryY + 26, "Q", colors.blue, 14, "middle", "700");
+    addText(svg, 22, queryY + 43, "current", colors.muted, 9, "middle");
+
+    var kvY = 196;
+    var kvHeight = 62;
+
+    for (var head = 0; head < queryHeads; head++) {
+      var group = Math.floor(head / groupSize);
+      var first = group * groupSize;
+      var last = first + groupSize - 1;
+      var groupCenter = (queryCenter(first) + queryCenter(last)) / 2;
+      svg.appendChild(node("line", {
+        x1: queryCenter(head), y1: queryY + queryHeight,
+        x2: groupCenter, y2: kvY,
+        stroke: colors.groups[group], "stroke-width": 1.8, opacity: 0.7
+      }));
+    }
+
+    for (var q = 0; q < queryHeads; q++) {
+      svg.appendChild(node("rect", {
+        x: queryStart + q * (queryWidth + queryGap), y: queryY,
+        width: queryWidth, height: queryHeight, rx: 6,
+        fill: colors.blueSoft, stroke: colors.blue, "stroke-width": 1.5
+      }));
+      addText(svg, queryCenter(q), queryY + 26, "Q" + q, colors.blue, 12, "middle", "600");
+    }
+
+    addText(svg, 22, kvY + 25, "K", colors.orange, 13, "middle", "700");
+    addText(svg, 22, kvY + 47, "V", colors.green, 13, "middle", "700");
+    addText(svg, 22, kvY + 66, "cached", colors.muted, 9, "middle");
+
+    for (var g = 0; g < kvHeads; g++) {
+      var groupFirst = g * groupSize;
+      var groupLast = groupFirst + groupSize - 1;
+      var center = (queryCenter(groupFirst) + queryCenter(groupLast)) / 2;
+      var available = groupSize * (queryWidth + queryGap) - queryGap;
+      var kvWidth = Math.min(140, Math.max(58, available - 12));
+      var kvX = center - kvWidth / 2;
+
+      svg.appendChild(node("rect", {
+        x: kvX, y: kvY, width: kvWidth, height: kvHeight / 2, rx: 5,
+        fill: colors.orangeSoft, stroke: colors.groups[g], "stroke-width": 1.7
+      }));
+      svg.appendChild(node("rect", {
+        x: kvX, y: kvY + kvHeight / 2, width: kvWidth, height: kvHeight / 2, rx: 5,
+        fill: colors.greenSoft, stroke: colors.groups[g], "stroke-width": 1.7
+      }));
+      addText(svg, center, kvY + 21, "K" + g, colors.orange, 11, "middle", "600");
+      addText(svg, center, kvY + 51, "V" + g, colors.green, 11, "middle", "600");
+      addText(svg, center, kvY + kvHeight + 17, groupSize === 1 ? "1 query" : groupSize + " queries", colors.muted, 10, "middle");
+    }
+
+    var barX = 190, barY = 317, barWidth = 500, barHeight = 34;
+    addText(svg, 45, barY + 14, "Relative", colors.fg, 12, "start", "600");
+    addText(svg, 45, barY + 30, "KV cache", colors.fg, 12, "start", "600");
+    svg.appendChild(node("rect", {
+      x: barX, y: barY, width: barWidth, height: barHeight, rx: 6,
+      fill: colors.surfaceAlt, stroke: colors.grid, "stroke-width": 1.5
+    }));
+    svg.appendChild(node("rect", {
+      x: barX, y: barY, width: barWidth * ratio, height: barHeight, rx: 6,
+      fill: colors.blue, opacity: 0.9
+    }));
+    addText(svg, barX + barWidth / 2, barY + 23,
+      (ratio * 100).toFixed(1).replace(".0", "") + "% of MHA",
+      ratio > 0.55 ? colors.surface : colors.fg, 12, "middle", "600");
+    addText(svg, barX, barY + 53, "Hₖᵥ / Hq = " + kvHeads + " / " + queryHeads, colors.muted, 11);
+    addText(svg, barX + barWidth, barY + 53, "MHA baseline", colors.muted, 11, "end");
+    addText(svg, 380, 402,
+      groupSize === 1
+        ? "Every query head has its own key-value head."
+        : "Each key-value head is shared by " + groupSize + " query heads.",
+      colors.fg, 12, "middle", "500");
+  }
+
+  function init() {
+    var input = document.getElementById("aq-kv-heads");
+    if (!input) return;
+    input.addEventListener("input", render);
+    render();
+
+    if (window.matchMedia) {
+      var media = window.matchMedia("(prefers-color-scheme: dark)");
+      if (media.addEventListener) media.addEventListener("change", render);
+    }
+    new MutationObserver(render)
+      .observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", init);
+  } else {
+    init();
+  }
+})();
+</script>
+
+<style>
+.aq-figure { margin: 2rem 0; }
+.aq-diagram {
+  max-width: 100%;
+  padding: 1rem;
+  overflow-x: auto;
+  background: var(--color-background, #fff);
+  border: 1px solid var(--color-border, rgba(0,0,0,0.1));
+  border-radius: var(--radius-lg, 8px);
+  text-align: left;
+}
+.aq-diagram svg {
+  display: block;
+  width: 100%;
+  min-width: 650px;
+  height: auto;
+}
+.aq-diagram svg text { font-family: var(--font-body, sans-serif); }
+.aq-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem 1.25rem;
+  margin-top: 0.75rem;
+  color: var(--color-text-secondary, rgba(0,0,0,0.6));
+  font-size: 0.875rem;
+}
+.aq-controls label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.aq-controls input[type="range"] {
+  width: 180px;
+  accent-color: var(--color-link, #5b6abf);
+}
+.aq-controls output {
+  min-width: 1.5rem;
+  color: var(--color-text, rgba(0,0,0,0.87));
+  font-family: var(--font-mono, ui-monospace, monospace);
+  font-variant-numeric: tabular-nums;
+}
+.aq-readout {
+  margin-top: 0.65rem;
+  color: var(--color-text-secondary, rgba(0,0,0,0.6));
+  font-family: var(--font-mono, ui-monospace, monospace);
+  font-size: 0.8rem;
+  font-variant-numeric: tabular-nums;
+}
+.aq-scroll-hint { display: none; }
+.aq-figure figcaption {
+  margin-top: 0.65rem;
+  color: var(--color-text-secondary, rgba(0,0,0,0.6));
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+@media (max-width: 680px) {
+  .aq-diagram { padding: 0.75rem; }
+  .aq-scroll-hint {
+    display: block;
+    margin: 0 0 0.5rem;
+    color: var(--color-text-muted, rgba(0,0,0,0.4));
+    font-size: 0.75rem;
+  }
+  .aq-controls label {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+  .aq-controls input[type="range"] { width: min(70vw, 220px); }
+}
+</style>
