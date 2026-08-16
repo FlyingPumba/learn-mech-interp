@@ -1,7 +1,7 @@
 ---
 title: "Natural Language Autoencoders"
 description: "Turning activations into readable explanations by jointly training a verbalizer and reconstructor, without labels that say what those activations encode."
-order: 7
+order: 8
 prerequisites:
   - title: "Activation Oracles"
     url: "/topics/activation-oracles/"
@@ -142,7 +142,7 @@ Two examples show what this buys you and where it is convincing.
 
 **Reasoning about a reward.** In a toy setup, a system prompt reveals that even numbers are rewarded, and the model is then asked for a random odd integer. It tends to answer with an even number and never mentions the reward. The NLA explanations show it knows even numbers are rewarded and even suspects it is being evaluated. Editing the explanations to say the reward is a *penalty* and steering with that difference flips the model back to odd answers. This case is cleaner than the rhyme, because the edited word ("penalty") is not itself a candidate output token, so the steering is acting on the model's belief about its situation rather than promoting a surface word {% cite "frasertaliente2026nla" %}.
 
-Both examples suggest a workflow: use an NLA description to form a hypothesis, then test it with a controlled steering experiment or a more localized method such as an [attribution graph](/topics/circuit-tracing/) {% cite "lindsey2025circuittracing" %}. Generating descriptions is computationally expensive at scale, but reading a selected output is convenient for a human.
+Both examples suggest a workflow: use an NLA description to form a hypothesis, then test it with a controlled steering experiment or a more localized method such as an [attribution graph](/topics/circuit-tracing/) {% cite "lindsey2025circuittracing" %}. This follows the same validation logic as [concept injection](/topics/concept-injection/): a description becomes more credible when a targeted internal change produces the predicted effect. Generating descriptions is computationally expensive at scale, but reading a selected output is convenient for a human.
 
 ## What It Costs
 
@@ -152,6 +152,6 @@ Two other limits shape how the method is used. An NLA reads a **single layer**, 
 
 ## Looking Ahead
 
-NLAs use less task-specific labeling than the supervised decoders in this block, but they are not supervision-free: the published recipe relies on labeled warm-start summaries before joint reconstruction training. [Patchscopes](/topics/patchscopes/) and [SelfIE](/topics/selfie-interpretation/) use prompted readouts, [training self-explanation](/topics/training-self-explanation/) and [LatentQA](/topics/latentqa/) add explicit targets, and [Activation Oracles](/topics/activation-oracles/) broaden the target mixture. NLAs then let reconstruction, constrained by the warm start and KL penalty, refine what the verbalizer says.
+NLAs use less task-specific labeling than the supervised decoders in this block, but they are not supervision-free: the published recipe relies on labeled warm-start summaries before joint reconstruction training. [Patchscopes](/topics/patchscopes/) and [SelfIE](/topics/selfie-interpretation/) use prompted readouts, while [concept injection](/topics/concept-injection/) causally tests a self-report about a known perturbation. [Training self-explanation](/topics/training-self-explanation/) and [LatentQA](/topics/latentqa/) add explicit targets, and [Activation Oracles](/topics/activation-oracles/) broaden the target mixture. NLAs then let reconstruction, constrained by the warm start and KL penalty, refine what the verbalizer says.
 
 The forward-looking view in the paper is that the AV and AR are two halves of a more general tool: a reader that maps activations to language and a writer that maps language to activations. Trained on many objectives rather than reconstruction alone, such an "activation language model" would let you ask what a token represents, or request a steering vector or a probe from a plain-English description, through one natural-language interface. Whether that interface can be made reliable enough to trust on claims we cannot cross-check, especially claims about a model's own cognition, is the open question that decides how far the approach goes.

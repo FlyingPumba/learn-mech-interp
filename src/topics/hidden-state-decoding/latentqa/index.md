@@ -1,7 +1,7 @@
 ---
 title: "LatentQA and Latent Interpretation Tuning"
 description: "Treating activation interpretation as question answering, so a trained decoder can answer open-ended questions about what a hidden representation contains."
-order: 5
+order: 6
 prerequisites:
   - title: "Training Models to Explain Their Computations"
     url: "/topics/training-self-explanation/"
@@ -141,7 +141,7 @@ The Q&A format offers specific advantages:
 
 ## Why LatentQA Matters
 
-LatentQA shows that multimodal-style supervision can produce flexible readouts of activations. Its answers are predictions by a trained decoder, so they require held-out evaluation and causal follow-up like any other probe.
+LatentQA shows that multimodal-style supervision can produce flexible readouts of activations. Its answers are predictions by a trained decoder, so they require held-out evaluation and causal follow-up like any other probe. For questions about a model's own state, [concept injection](/topics/concept-injection/) illustrates how a known internal intervention can test whether an answer is grounded in that state.
 
 The Q&A format is particularly powerful because it:
 - Enables systematic benchmarking (correctness of answers can be evaluated)

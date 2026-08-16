@@ -108,7 +108,7 @@ Patchscopes inherits limitations from its components:
 
 **Prompt sensitivity.** The target prompt strongly influences what information is extracted. A poorly designed prompt may fail to elicit relevant information or may impose the model's prior rather than reflecting the source representation.
 
-**Faithfulness uncertainty.** The model's generation is not guaranteed to be a faithful description of the patched representation. The model might hallucinate plausible-sounding descriptions that do not reflect the actual content.
+**Faithfulness uncertainty.** The model's generation is not guaranteed to be a faithful description of the patched representation. The model might hallucinate plausible-sounding descriptions that do not reflect the actual content. [Concept injection](/topics/concept-injection/) supplies a complementary test by reversing the problem: inject known content and ask whether the model reports the change.
 
 **Cross-model mapping.** When $S$ and $M$ have different architectures, the representation mapping may introduce distortions. Even when architectures match, layer-to-layer alignment is not guaranteed.
 

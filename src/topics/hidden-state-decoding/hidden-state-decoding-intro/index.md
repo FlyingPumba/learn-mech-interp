@@ -1,6 +1,6 @@
 ---
 title: "Hidden State Decoding: From Vectors to Language"
-description: "An introduction to LLM-based activation interpretation: using language models themselves to decode their hidden representations into human-readable natural language."
+description: "Using language models to translate hidden representations into natural language, with causal tests for whether those descriptions track activations."
 order: 1
 prerequisites:
   - title: "The Logit Lens and Tuned Lens"
@@ -43,9 +43,11 @@ This block covers several complementary approaches to hidden state decoding:
 
 [**Patchscopes**](/topics/patchscopes/) provides a unifying framework for activation inspection. By patching hidden states into carefully designed prompts, we can elicit natural language descriptions of what those states represent. Patchscopes generalizes several prior methods and enables cross-model interpretation.
 
-[**SelfIE**](/topics/selfie-interpretation/) focuses on self-interpretation. It injects an activation where the model expects a text representation, then prompts the model for a description. Experiments include ethically charged scenarios and prompt injections, but the generated text is an elicited readout rather than a direct transcript of the model's reasoning.
+[**SelfIE**](/topics/selfie-interpretation/) focuses on self-interpretation. It injects an activation where the model expects a text representation, then prompts the model for a description. The generated text is an elicited readout rather than a direct transcript of the model's reasoning.
 
-[**Training models to explain their computations**](/topics/training-self-explanation/) compares fine-tuned self-explainers with external explainers on targets produced by existing interpretation methods.
+[**Testing Introspection with Concept Injection**](/topics/concept-injection/) reverses the decoding problem. It injects a direction with known content and asks whether the model reports the induced internal change before expressing the concept in text.
+
+[**Training models to explain their computations**](/topics/training-self-explanation/) compares fine-tuned self-explainers with external explainers on targets produced by existing interpretation methods, then examines introspection adapters trained across models with deliberately implanted behaviors.
 
 [**LatentQA**](/topics/latentqa/) frames activation interpretation as question-answering. By training decoder models on paired datasets of activations and Q&A, we can ask arbitrary questions about what a representation encodes and receive natural language answers.
 
@@ -53,13 +55,13 @@ This block covers several complementary approaches to hidden state decoding:
 
 [**Natural Language Autoencoders**](/topics/natural-language-autoencoders/) remove the labels entirely. A verbalizer and a reconstructor are trained jointly to autoencode an activation through a natural-language bottleneck, so the explanations are learned from a reconstruction objective rather than from data whose answers we already know.
 
-## A Note on Faithfulness
+## Causal Tests for Faithfulness
 
-A persistent concern in interpretability is whether explanations are *faithful* to actual model computations. A model might produce plausible-sounding but incorrect descriptions of its activations. This is not unique to hidden state decoding; all interpretation methods face questions about whether their outputs reflect ground truth.
+A persistent concern is whether an explanation is *faithful* to the activation it claims to describe. Fluent text is weak evidence on its own: a decoder can rely on the prompt, visible context, or its prior beliefs and still produce a plausible answer.
 
-The methods in this block take different approaches to faithfulness. Some evaluate against held-out benchmarks. Others compare self-interpretation with external interpretation or train against targets from existing interpretability methods. Better task performance is useful evidence, but it does not by itself establish privileged introspective access or faithfulness to the original computation.
+[Concept injection](/topics/concept-injection/) reverses the usual decoding problem. Instead of starting with an unknown activation and asking what it means, construct a direction for a known concept, inject it into the residual stream, and ask whether the model reports the induced internal state. A convincing result needs more than the right word. The report should change with the injected state, distinguish it from no-injection and random-vector controls, and occur before the model has emitted the concept into its own visible context. This is causal evidence that the report depends on an internal intervention rather than only on sampled text {% cite "lindsey2025introspection" %}.
 
-We will examine these faithfulness considerations for each method. For now, the key point is that hidden state decoding is not a solved problem but a research frontier. The promise is significant, but so are the open questions.
+Even that experiment has limited scope. Detecting an artificial perturbation does not show that every natural-language explanation faithfully describes ordinary computation. Other methods in this block use held-out labels, reconstruction, comparisons with external explainers, and downstream interventions. Each validates a different link in the chain from activation to description.
 
 <details class="pause-and-think">
 <summary>Pause and think: What would convince you?</summary>

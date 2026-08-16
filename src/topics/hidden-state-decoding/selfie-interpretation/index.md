@@ -49,19 +49,6 @@ Models may encode harmful information even when they refuse to express it direct
 
 This is a double-edged sword. The same technique that helps researchers audit models for harmful knowledge could potentially be used to extract that knowledge. The authors are careful about this, using the method to identify where harmful knowledge resides rather than to elicit it directly.
 
-<details class="pause-and-think">
-<summary>Pause and think: Is self-interpretation trustworthy?</summary>
-
-When a model interprets its own embedding, how do we know the interpretation is accurate? The model could produce a plausible-sounding description that does not reflect the actual content.
-
-Consider two failure modes:
-1. **Underfitting:** The description is vaguer than the actual embedding content
-2. **Hallucination:** The description includes details not present in the embedding
-
-What experiments would help distinguish accurate self-interpretation from confabulation? One approach: check if interventions based on the interpretation produce predicted behavioral changes.
-
-</details>
-
 ## From Interpretation to Control
 
 SelfIE goes beyond observation to enable model editing through two complementary mechanisms:
@@ -110,4 +97,4 @@ SelfIE emphasizes self-reference; Patchscopes allows distinct source and target 
 
 ## Looking Ahead
 
-A natural question: can we train models to produce better self-explanations? Rather than hoping that off-the-shelf prompting works, we could fine-tune models specifically for the interpretation task. This is the focus of [Training Models to Explain Their Computations](/topics/training-self-explanation/), which investigates whether specialized training improves faithfulness and what we learn when models are explicitly taught to introspect.
+A SelfIE description is still an elicited readout whose faithfulness needs an independent test. The next article, [Testing Introspection with Concept Injection](/topics/concept-injection/), reverses the setup: it injects a state with known content and asks whether the model can report the internal change before expressing it in text.

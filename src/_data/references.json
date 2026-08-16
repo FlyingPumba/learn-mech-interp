@@ -328,12 +328,26 @@
     "venue": "ACL",
     "url": "https://arxiv.org/abs/2403.10949"
   },
+  "lindsey2025introspection": {
+    "title": "Emergent Introspective Awareness in Large Language Models",
+    "authors": "Lindsey, J.",
+    "year": 2025,
+    "venue": "Transformer Circuits Thread",
+    "url": "https://transformer-circuits.pub/2025/introspection/"
+  },
   "li2025training": {
     "title": "Training Language Models to Explain Their Own Computations",
     "authors": "Li, B. Z., Guo, Z. C., Huang, V., Steinhardt, J., Andreas, J.",
     "year": 2025,
     "venue": "arXiv",
     "url": "https://arxiv.org/abs/2511.08579"
+  },
+  "shenoy2026introspection": {
+    "title": "Introspection Adapters: Training LLMs to Report Their Learned Behaviors",
+    "authors": "Shenoy, K., Yang, L., Sheshadri, A., et al.",
+    "year": 2026,
+    "venue": "arXiv",
+    "url": "https://arxiv.org/abs/2604.16812"
   },
   "pan2024latentqa": {
     "title": "LatentQA: Teaching LLMs to Decode Activations Into Natural Language",

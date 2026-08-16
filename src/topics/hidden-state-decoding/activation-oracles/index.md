@@ -1,7 +1,7 @@
 ---
 title: "Activation Oracles"
 description: "Training one activation interpreter across varied tasks, then testing which natural-language questions and held-out activation settings it can answer reliably."
-order: 6
+order: 7
 prerequisites:
   - title: "LatentQA and Latent Interpretation Tuning"
     url: "/topics/latentqa/"
@@ -106,7 +106,7 @@ AOs offer several practical benefits over specialized interpretation tools:
 
 **Base model dependence.** AOs are trained on activations from specific models. Generalization to very different architectures may be limited.
 
-**Faithfulness uncertainty.** AOs produce fluent answers, but fluency does not guarantee correctness. Validation against ground truth remains important.
+**Faithfulness uncertainty.** AOs produce fluent answers, but fluency does not guarantee correctness. Validation against ground truth remains important. Controlled changes to known internal states or learned behaviors, as used in [concept injection](/topics/concept-injection/) and [introspection-adapter experiments](/topics/training-self-explanation/#a-different-source-of-ground-truth), provide stronger tests than agreement with another fluent explanation.
 
 **Adversarial robustness.** If models learn to encode information in ways that evade AO detection, the approach may become less effective. There is potential for an arms race between encoding and detection.
 
@@ -128,9 +128,10 @@ We have traced an arc through hidden state decoding:
 1. [**Introduction**](/topics/hidden-state-decoding-intro/) established the goal: translating activations to natural language.
 2. [**Patchscopes**](/topics/patchscopes/) showed that patching activations into prompts elicits interpretable generation.
 3. [**SelfIE**](/topics/selfie-interpretation/) demonstrated self-interpretation and control through embedding injection.
-4. [**Training self-explanation**](/topics/training-self-explanation/) found that models explain themselves better when explicitly trained to do so.
-5. [**LatentQA**](/topics/latentqa/) reframed interpretation as Q&A, enabling diverse queries and differentiable control.
-6. **Activation Oracles** trained one decoder across several task families and matched selected specialized baselines on the reported evaluations.
+4. [**Concept injection**](/topics/concept-injection/) tested whether self-reports track a known internal perturbation.
+5. [**Training self-explanation**](/topics/training-self-explanation/) covered both explainers trained on interpretation targets and a shared adapter that reports known behaviors in held-out model organisms.
+6. [**LatentQA**](/topics/latentqa/) reframed interpretation as Q&A, enabling diverse queries and differentiable control.
+7. **Activation Oracles** trained one decoder across several task families and matched selected specialized baselines on the reported evaluations.
 
 The sequence moves from targeted readouts toward broader learned decoders. These methods can recover useful information from hidden states; explaining how a model computes, rather than what one state contains, remains a harder causal problem.
 
