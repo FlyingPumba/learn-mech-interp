@@ -377,6 +377,34 @@
     "venue": "ICLR 2025",
     "url": "https://arxiv.org/abs/2405.14860"
   },
+  "gurnee2026manifolds": {
+    "title": "When Models Manipulate Manifolds: The Geometry of a Counting Task",
+    "authors": "Gurnee, W., Ameisen, E., Kauvar, I., et al.",
+    "year": 2026,
+    "venue": "arXiv",
+    "url": "https://arxiv.org/abs/2601.04480"
+  },
+  "bhalla2026saemanifolds": {
+    "title": "Do Sparse Autoencoders Capture Concept Manifolds?",
+    "authors": "Bhalla, U., Fel, T., Rager, C., et al.",
+    "year": 2026,
+    "venue": "arXiv",
+    "url": "https://arxiv.org/abs/2604.28119"
+  },
+  "wurgaft2026manifoldsteering": {
+    "title": "Manifold Steering Reveals the Shared Geometry of Neural Network Representation and Behavior",
+    "authors": "Wurgaft, D., Rager, C., Kowal, M., et al.",
+    "year": 2026,
+    "venue": "arXiv",
+    "url": "https://arxiv.org/abs/2605.05115"
+  },
+  "geiger2026worldinside": {
+    "title": "The World Inside Neural Networks",
+    "authors": "Geiger, A., Lubana, E. S., Fel, T., et al.",
+    "year": 2026,
+    "venue": "Goodfire",
+    "url": "https://www.goodfire.ai/research/the-world-inside-neural-networks"
+  },
   "shabalin2025attention": {
     "title": "Attention Probes",
     "authors": "Shabalin, S., Belrose, N.",

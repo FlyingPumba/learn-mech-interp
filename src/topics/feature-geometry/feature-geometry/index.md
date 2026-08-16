@@ -1,7 +1,7 @@
 ---
 title: "Feature Geometry: Beyond One-Dimensional Directions"
 description: "How categories form polytopes, periodic features trace circles, and hierarchies occupy subspaces, geometries that cannot be reduced to one direction."
-order: 5
+order: 1
 prerequisites:
   - title: "SAE Variants, Evaluation, and Limitations"
     url: "/topics/sae-variants-and-evaluation/"
@@ -107,12 +107,14 @@ These findings point toward a generalization of how we think about features. The
 
 This has direct consequences for the tools we use.
 
-**SAEs fragment multi-dimensional features.** A 1D SAE encountering a circular day-of-week feature will break it into many correlated dictionary elements, perhaps one per day, each pointing from the origin toward one point on the circle. The SAE cannot represent the circle as a single coherent feature. This is a structural limitation, not a training failure: the SAE's representational vocabulary simply does not include multi-dimensional atoms. In [SAE evaluation](/topics/sae-variants-and-evaluation/), this may manifest as clusters of highly correlated features that should really be a single entity.
+**SAEs may fragment multi-dimensional features.** A 1D SAE encountering a circular day-of-week feature can break it into many correlated dictionary elements, perhaps one per day, each pointing from the origin toward one part of the circle. A single dictionary element then describes only a local patch of the larger structure. The [next article](/topics/neural-manifolds/) examines when this tiling occurs, how to distinguish it from compact capture, and how groups of features can recover a manifold.
 
 **Hierarchical concepts challenge independence assumptions.** Because "mammal" and "animal" are colinear (they share a direction component), SAEs and similar methods that assume features are independent may misattribute activation along the shared direction. An SAE might find separate "animal" and "mammal" features that both fire on mammals, without representing the hierarchical relationship between them.
 
 **Capacity accounting changes.** In the one-dimensional picture, a model with residual dimension $d$ can store $O(d)$ features (or exponentially more under superposition, as we saw in [superposition](/topics/superposition/)). If features are $k$-dimensional, the capacity per feature is higher. A 2D feature costs roughly twice the capacity of a 1D feature, so the total number of representable features decreases. How much of a model's capacity goes to multi-dimensional features is an open empirical question.
 
-## Looking Ahead
+## From Geometric Examples to a Method
 
-Feature geometry is an active and rapidly evolving research area. The work covered here raises more questions than it answers. How prevalent are multi-dimensional features beyond the well-studied cyclic cases? Do irreducible 3D or higher-dimensional features exist in practice? How should decomposition methods adapt, and can we build SAEs or other tools with multi-dimensional atoms? These questions are among the most active frontiers in mechanistic interpretability research {% cite "sharkey2025openproblems" %}.
+Circles and simplices establish that one-dimensional directions are not the whole story, but a compelling projection is only the beginning of an interpretability result. We still need to determine whether a shape is stable across prompts, whether its intrinsic coordinates correspond to a meaningful variable, and whether the model actually computes with it.
+
+[Discovering and Interpreting Neural Manifolds](/topics/neural-manifolds/) develops that workflow. It also shows why features and manifolds are complementary descriptions: sparse features can act as local coordinates on a curved representation, while the manifold explains how those features fit together.

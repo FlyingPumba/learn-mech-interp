@@ -1,7 +1,7 @@
 ---
 title: "Transcoders: Interpretable MLP Replacements"
 description: "How transcoders replace opaque MLP layers with sparse interpretable alternatives, enabling feature-level circuit analysis of what MLPs compute."
-order: 6
+order: 5
 prerequisites:
   - title: "SAE Variants, Evaluation, and Limitations"
     url: "/topics/sae-variants-and-evaluation/"

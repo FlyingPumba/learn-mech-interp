@@ -117,6 +117,8 @@ Addition steering assumes **linearity**: that concepts are directions and that a
 
 For behaviors that resist single-direction steering, more sophisticated interventions may be needed.
 
+One option is to replace the straight-line intervention with a path that follows a learned low-dimensional surface. [Manifold Steering](/topics/manifold-steering/) develops this idea and tests whether staying near the model's observed activation geometry produces more natural intermediate behavior.
+
 ## Connection to the Toolkit
 
 Addition steering is one of three fundamental operations on concept directions:
