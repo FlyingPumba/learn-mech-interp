@@ -8,9 +8,13 @@ Guidelines for writing articles in the mechanistic interpretability curriculum.
 
 ### Articles are about concepts, not papers
 
-An article should cover a **technique**, **concept**, or **idea** that stands on its own as a unit of understanding. Articles are *not* summaries of individual papers.
+> **Non-negotiable organizing rule:** Organize the textbook by **technique, concept, or class of methods**, never by paper. Papers are sources of evidence. They do not determine article boundaries, titles, or section structure.
+
+An article should cover a **technique**, **concept**, or **idea** that stands on its own as a unit of understanding. Articles are *not* summaries of individual papers. A paper can supply definitions, methods, experiments, figures, and limitations, but those contributions must be placed under the concepts they teach.
 
 When someone suggests "add an article about Paper X," the right response is to read the paper and ask: *What techniques or concepts does this paper introduce or advance?* Sometimes a paper introduces one major concept worth covering. Sometimes it introduces several. Sometimes it contributes incremental improvements that belong in an existing article rather than a new one. Sometimes the contribution is too narrow or too application-specific for this curriculum.
+
+One paper may need to be split across several existing articles because it contributes to several techniques. Conversely, one technique article may synthesize evidence from many papers. Do not preserve a paper's contribution list or section order merely because the material arrived from that paper.
 
 **Good article topics:**
 - A technique: "Activation Patching," "Direct Logit Attribution," "Sparse Autoencoders"
@@ -23,6 +27,24 @@ When someone suggests "add an article about Paper X," the right response is to r
 - A dataset or benchmark: "The IOI Dataset" (instead: fold into the technique article that uses it)
 - A case study: "How GPT-2 Handles IOI" (instead, extract the techniques used, such as activation patching and circuit analysis; those are the articles)
 - A specific experimental finding: "World Models in Othello-GPT" (instead: if a reusable technique is involved, cover the technique; cite the finding as evidence)
+
+Before creating or substantially expanding an article, make a **contribution map**:
+
+1. List each reusable technique or concept in the source material.
+2. Separate those concepts from model-specific results, datasets, benchmarks, and case studies.
+3. Map each concept to the existing article that owns it.
+4. Create a new article only for a concept that deserves to be learned independently.
+5. Use the paper's experiments as evidence inside those concept articles.
+
+If a draft's table of contents mirrors a paper's sections, reorganize it before publication. The article should follow the questions a learner has about the technique: what problem it solves, how it works, how it is validated, where it applies, and how it fails.
+
+Apply this final check:
+
+- Does the title name a concept or technique rather than a paper, model, dataset, or finding?
+- Would the article's structure still make sense if a second paper supplied different evidence for the same technique?
+- If the source paper contains several distinct techniques, have they been integrated into their respective owner articles rather than bundled together?
+
+If any answer is no, the material is still organized by paper and must be restructured.
 
 ### When to create a new article vs. extend an existing one
 

@@ -57,6 +57,8 @@ Key points:
 
 ### 1. Choose the right block
 
+First identify the reusable technique or concept being taught. A paper is a source, not an organizing unit: split its contributions among the existing concept articles that own them, and create a new article only when a concept deserves to be learned independently.
+
 Articles are grouped into thematic blocks. Each block is a directory under `src/topics/` with a `_block.json` file. Pick the block that fits your article's topic.
 
 If no existing block fits, see [Adding a new block](#adding-a-new-block) below.
@@ -132,7 +134,7 @@ The build remaps nested image directories to flat output paths, so the URL does 
 
 **Before writing content, read `ARTICLE_GUIDELINES.md`.** It covers tone, structure, formatting, and the pedagogical approach. The short version:
 
-- Articles cover **techniques, concepts, or ideas** -- not individual papers
+- The textbook is organized by **techniques, concepts, or method families**, never by individual papers. Papers provide evidence inside those articles.
 - Start with motivation, then concrete examples, then abstractions
 - Use `{% sidenote "..." %}` for tangents and `{% marginnote "..." %}` for unnumbered margin notes
 - Use `<details class="pause-and-think">` for engagement prompts (aim for 1--3 per article)
