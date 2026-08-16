@@ -17,7 +17,7 @@ glossary:
 
 The preceding articles presented several safety applications with different evidence. [Defection probes](/topics/sleeper-agent-detection/) detect trained backdoors but may not transfer to other threats. [Internal probes](/topics/deception-detection/) detect alignment-faking examples, while the tested sparse autoencoders lose some of that signal. [Evaluation awareness](/topics/evaluation-awareness/) can change what a behavioral benchmark measures. A [refusal direction](/topics/refusal-direction/) is easy to intervene on, but refusal is only one part of model safety.
 
-This article steps back to examine limitations that recur across MI-based safety approaches. Not every limitation applies equally to every method, but each changes what conclusion the evidence can support.
+Across MI-based safety approaches, the same limitations recur with different severity. Each one narrows the conclusions that an audit, detector, or causal intervention can support.
 
 Calibration matters because a useful detector can still create false confidence if its operating conditions are forgotten. The right question is not whether an MI tool “works,” but which threat, model, input distribution, and error rate it has actually been tested against.
 
@@ -126,9 +126,9 @@ The controlled ground truth comes with a transfer cost. These target models were
 
 The AuditBench result in [Training Models for Self-Explanation](/topics/training-self-explanation/) is one use of this evaluation paradigm. There, the benchmark tests whether a fixed reporting adapter helps an investigator recover held-out learned behaviors.
 
-## The Gap
+## What Safety Assurance Would Require
 
-Stepping back, the distance between what MI currently provides and what AI safety requires comes into focus:
+Current MI evidence falls short of several requirements we might want from a safety-assurance method:
 
 **Stronger assurance may require:**
 
@@ -137,7 +137,7 @@ Stepping back, the distance between what MI currently provides and what AI safet
 - Real-time monitoring at deployment scale
 - Robustness against adversarial evasion
 
-**What MI provides:**
+**Current MI provides:**
 
 - Promising results in specific, controlled settings
 - Results that may not generalize beyond the tested conditions

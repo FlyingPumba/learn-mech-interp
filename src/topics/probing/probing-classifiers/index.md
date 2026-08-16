@@ -33,7 +33,7 @@ Why restrict probes to be linear? The restriction connects to the [linear repres
 
 Hewitt and Manning (2019) pushed probing beyond simple classification by introducing structural probes {% cite "hewitt2019structural" %}. Instead of asking "is this token a noun?", they asked: "does the geometry of the representations encode the entire syntax tree?"
 
-The key idea: find a linear transformation $B$ under which the squared L2 distance between word representations encodes parse tree distance:
+A structural probe finds a linear transformation $B$ under which the squared L2 distance between word representations encodes parse-tree distance:
 
 $$
 d_B(\mathbf{h}_i, \mathbf{h}_j)^2 = \left\| (\mathbf{h}_i - \mathbf{h}_j) B \right\|_2^2 \approx \text{tree\_distance}(i, j)
@@ -86,7 +86,7 @@ Elazar et al. (2021) added an intervention to the probing workflow {% cite "elaz
 
 Their method uses Iterative Null-Space Projection (INLP) to remove a probe-accessible subspace, then measures the downstream effect. A performance drop is evidence that information in the removed subspace mattered. No effect is weaker evidence: nonlinear, redundant, or differently encoded information may remain, and the projection can remove signals correlated with the target as well as the intended property.
 
-The key finding is a direct challenge to the probing paradigm: **conventional probing performance is not correlated with task importance**. Consider this scenario:
+Elazar et al. found that **conventional probing performance was not correlated with task importance** in their experiments. Consider this scenario:
 
 - A linear probe detects part-of-speech with 95% accuracy at layer 6.
 - But removing POS information from layer 6 does *not* hurt language modeling performance.

@@ -27,6 +27,15 @@ The model then generates a description conditioned on $\mathbf{h}$. Conditioning
 
 This distinction matters. Targeted prompts extract predetermined properties. Freeform interpretation may reveal unexpected aspects of what models represent, including nuances that a researcher would not have thought to query directly.
 
+<details class="pause-and-think">
+<summary>Pause and think: What would a convincing control remove?</summary>
+
+Suppose SelfIE describes an injected state as "a moral conflict about harming one person to save several." How could you test whether that description came from the hidden state rather than from the wording of the interpretation prompt?
+
+Keep the prompt fixed and compare the original state with unrelated states, a mean-state baseline, and states from nearby layers or positions. Then paraphrase the prompt while holding the state fixed. A grounded interpretation should track the injected state across prompt variants and change when the state changes; a prompt-driven guess will show the opposite pattern.
+
+</details>
+
 ## Revealing Internal Reasoning
 
 The original work tests whether SelfIE descriptions recover useful information across several domains:

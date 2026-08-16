@@ -43,7 +43,7 @@ where $\mathbf{r}^{l+}$ is the residual stream after attention in layer $l$. Lik
 
 ## MLPs as Key-Value Memories
 
-The first insight came from examining the structure of the MLP computation more carefully {% cite "geva2021kvmemories" %}. Consider what happens when we expand the matrix multiplication:
+Geva et al. interpreted the structure of the MLP computation as a key-value memory {% cite "geva2021kvmemories" %}. Expand the matrix multiplication:
 
 $$
 \text{MLP}(\mathbf{x}) = \sigma(\mathbf{x} W_{\text{in}}) \cdot W_{\text{out}} = \sum_{i=1}^{d_m} \sigma(\mathbf{k}_i \cdot \mathbf{x}) \; \mathbf{v}_i

@@ -45,7 +45,7 @@ Examples of tasks encoded as function vectors: "translate English to French," "c
 
 ## Robustness
 
-The central result is that function vectors can **transfer** across some inputs and contexts.
+Function vectors can **transfer** across some inputs and contexts.
 
 Extract a function vector from in-context examples, such as several English-to-Spanish translation pairs. Then inject it into a prompt with no demonstrations and measure task performance. In the reported settings, the intervention recovers part of the demonstrated behavior on held-out inputs.{% sidenote "For example, a vector extracted from pairs such as cat/gato and dog/perro can affect new translation items. Transfer beyond the extraction examples is evidence for task-level information, but performance and specificity determine how strong that claim should be." %}
 

@@ -90,13 +90,13 @@ On the reported MMLU, ARC, and GSM8K evaluations, refusal can be reduced without
 
 ## Implications for Safety Training
 
-The finding supports several narrower conclusions:
+The intervention supports two mechanistic conclusions and one dual-use warning:
 
 **Refusal has a low-dimensional mediator.** In the tested models, safety fine-tuning produces behavior that can be strongly altered through one direction. Upstream harm recognition and other safety-relevant computations may still be distributed.
 
 **Refusal and benchmark capability can be partly separated.** Removing the direction changes refusal far more than it changes the reported general benchmarks. This does not establish that refusal is wholly detached from reasoning, or that all safety training is shallow.
 
-**This is both encouraging and concerning.** Encouraging because we can understand the mechanism, a genuine success for mechanistic interpretability. Concerning because that same understanding enables adversarial use. Weight orthogonalization is a white-box jailbreak that permanently removes refusal with minimal capability loss.
+**The mechanism is interpretable and bypassable.** Weight orthogonalization turns the causal account into a white-box jailbreak, permanently reducing refusal while largely preserving the reported benchmark scores.
 
 <details class="pause-and-think">
 <summary>Pause and think: Designing robust safety training</summary>

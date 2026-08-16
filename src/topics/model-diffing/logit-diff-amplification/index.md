@@ -96,7 +96,7 @@ Not directly. LDA is a *discovery* tool, not a prevalence estimator. Softmax and
 
 The method exploits a structural property of how training modifies models. Fine-tuning changes the model's output distribution, but for rare behaviors, the change is small in absolute terms: the logit for a harmful token might increase by 0.1 while still being dominated by the logit for a safe token that sits at 5.0. Standard sampling almost always picks the safe token.
 
-LDA scales up that 0.1 difference. With $\alpha = 10$, the harmful token's advantage becomes 1.0, still not dominant but now competitive. The harmful continuation gets sampled often enough to be observed. The key insight is that the *direction* of the training-induced change is informative even when its *magnitude* is too small to produce observable behavior under normal sampling.
+LDA scales up that 0.1 difference. With $\alpha = 10$, the harmful token's advantage becomes 1.0, still not dominant but now competitive. The harmful continuation gets sampled often enough to be observed. The *direction* of a training-induced change can therefore be informative even when its *magnitude* is too small to produce observable behavior under normal sampling.
 
 The method works when the checkpoint difference assigns a consistent logit advantage to continuations associated with the behavior. Amplification can also magnify unrelated training changes, so surfaced samples reveal what lies along the combined checkpoint difference rather than isolating one causal update.
 

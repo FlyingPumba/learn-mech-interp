@@ -84,7 +84,7 @@ SAEs are trained on model activations, not raw text. The process works as follow
 
 The SAE trains on activation vectors rather than directly on text tokens. Each batch is encoded, sparsified, decoded, and scored by the reconstruction-plus-sparsity loss. The target model's weights remain frozen; the SAE is a separate learned decomposition, not a modification of the target model's normal forward pass.{% sidenote "The microscope analogy is useful only up to a point. A physical lens does not learn what to display, while an SAE's training objective and hyperparameters determine its decomposition. Treat its latents as hypotheses about structure, not passive observations." %}
 
-Several design decisions affect what the SAE discovers:
+Expansion factor, activation site, and training-data coverage all change the dictionary an SAE learns:
 
 - **Expansion factor:** How many latent dimensions relative to the input. Larger expansion means more potential features but also more dead features (latent dimensions that never activate) and higher compute cost.
 - **Where to apply the SAE:** A residual stream, MLP output, or attention output presents a different activation distribution and a different interpretive question. Results from one site should not be assumed to describe another.

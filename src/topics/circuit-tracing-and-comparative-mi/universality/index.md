@@ -112,16 +112,14 @@ Current evidence is more compatible with weak universality than with a one-to-on
 <details class="pause-and-think">
 <summary>Pause and think: Universality and safety</summary>
 
-If universality holds, MI results from one model may generalize to others. Why is this crucial for AI safety?
+If universality holds, MI results from one model may generalize to others. Why would that make safety analysis more scalable?
 
 Consider a safety evaluation that discovers a dangerous internal mechanism in Model A. If universality holds, we have reason to check whether Model B has a similar mechanism, and the tools (crosscoders, CKA) to test this efficiently. If universality does not hold, every model is a blank slate requiring full analysis from scratch. With models being deployed at increasing scale and speed, the ability to transfer safety insights across models could be the difference between tractable and intractable safety evaluation.
 
 </details>
 
-## Key Takeaways
+## Testing Transfer Beyond Language Models
 
-- The **universality hypothesis**, that different models learn similar features and circuits, has gained substantial evidence along three dimensions: training, scale, and architecture.
-- **CKA** is the standard metric for measuring representation similarity holistically. **SVCCA** was an earlier approach now largely superseded.
-- In one line of experiments, **1–5% of neurons** met the study's matching criteria across independently trained models and tended to be easier to interpret.
-- **Weak universality**, similar functions or structures, has meaningful empirical support. **Strong universality**, identical representations, remains difficult to establish.
-- Universality is crucial for scalable safety analysis: if features transfer across models, MI insights can generalize rather than being model-specific.
+Current evidence gives us concrete correspondences to test, not permission to assume that any interpretation transfers. Centered kernel alignment (CKA) can flag broad representational similarity, matched units can identify local candidates, and crosscoders can separate shared from model-specific features. Causal interventions must still establish whether a matched feature plays the same role in both systems.
+
+Architecture-level transfer becomes harder when the inputs and computations change. [Multimodal Mechanistic Interpretability](/topics/multimodal-mi/) asks which parts of the language-model toolkit survive in vision-language and diffusion models, and which modality-specific structures demand new methods.

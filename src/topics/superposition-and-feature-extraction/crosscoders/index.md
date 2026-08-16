@@ -72,13 +72,6 @@ Each variant extends the core idea of sparse dictionary learning to answer a dif
 
 The model diffing application of crosscoders, comparing base and fine-tuned models to understand what safety training changes, is covered in detail in [Feature-Level Model Diffing](/topics/feature-level-model-diffing/).
 
-## Key Takeaways
-
-- **Crosscoders** extend SAEs to operate across multiple layers or models, learning a shared dictionary from concatenated activations.
-- **Three applications**: resolving cross-layer superposition, simplifying circuits by collapsing persistent features, and comparing models via shared dictionaries.
-- Crosscoders complement [CKA and SVCCA](/topics/universality/), which measure representation similarity holistically. CKA tells you *whether* models are similar; crosscoders tell you *how* they differ.
-- The model diffing application is particularly safety-relevant. For a deep dive into applying crosscoders to understand fine-tuning, see [Feature-Level Model Diffing](/topics/feature-level-model-diffing/).
-
 ## From Sparse Dictionaries to Feature Geometry
 
 Crosscoders extend the sparse-feature picture across layers and models, but they retain its basic unit: a one-dimensional dictionary element. The next block asks when that unit is too small. [Feature Geometry](/topics/feature-geometry/) starts with concepts that occupy subspaces, circles, and polytopes, then develops methods for recovering and intervening on the manifolds that groups of sparse features may collectively describe.

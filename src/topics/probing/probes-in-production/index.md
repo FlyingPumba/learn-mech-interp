@@ -19,7 +19,7 @@ glossary:
 
 A research probe may be trained on a curated dataset, tested on a held-out split from the same distribution, and evaluated with a balanced metric. A production probe must handle varied sequence lengths, shifting traffic, rare failures, and adversarial users while keeping false positives low enough for legitimate use.
 
-Two recent efforts have pushed probes into this production regime. Cunningham et al. (2025) deployed linear probes as part of Anthropic's jailbreak detection system, ensembled with external classifiers in a cascade architecture {% cite "cunningham2025constitutional" %}. Kramár et al. (2026) developed novel probe architectures for Google's Gemini that handle long-context distribution shifts and cascade with LLM classifiers {% cite "kramar2026probes" %}. Together, these efforts reveal a set of recurring challenges and architectural patterns for deploying probes at scale.
+Cunningham et al. (2025) deployed linear probes in Anthropic's jailbreak-detection system, combining them with external classifiers in a cascade {% cite "cunningham2025constitutional" %}. Kramár et al. (2026) developed probe architectures for Google's Gemini that handle long-context distribution shifts and defer uncertain cases to LLM classifiers {% cite "kramar2026probes" %}. Together, the deployments expose recurring constraints on aggregation, calibration, cost, and distribution shift.
 
 ## The Distribution Shift Problem
 

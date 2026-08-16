@@ -76,7 +76,7 @@ $$
 
 Attention is the mechanism that allows tokens to communicate with each other. Each position can look at all previous positions, decide which are relevant, and gather information from them.
 
-The core idea: every token plays three roles simultaneously:
+In self-attention, every token plays three roles simultaneously:
 - **Query:** "What am I looking for?"
 - **Key:** "What do I contain?"
 - **Value:** "What information do I send if attended to?"
@@ -173,7 +173,7 @@ Once trained, the model produces a probability distribution over next tokens. Ch
 
 At each generation step, the selected token becomes part of the next input. Implementations usually cache earlier keys and values instead of recomputing the entire prefix, but this changes efficiency rather than the mathematical result. The model is not given a boundary marking prompt tokens versus its own generated tokens unless the prompt format includes one.
 
-## Why This Matters for MI
+## The Architecture Defines the Search Space
 
 Mechanistic interpretability treats the model as a computation graph we can inspect and intervene on. The architecture exposes repeated components and a shared residual stream, so researchers can cache, replace, or ablate particular activations. Softmax attention, MLP nonlinearities, and normalization still make the model as a whole nonlinear.
 

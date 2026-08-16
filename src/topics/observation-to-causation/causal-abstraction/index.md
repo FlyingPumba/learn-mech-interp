@@ -69,7 +69,7 @@ The maximum IIA is bounded by the model's task accuracy. If the model gets 15% o
 
 ## Why Not Just Use Probes?
 
-A natural reaction is: couldn't we just train a [probe](/topics/probing-classifiers/) to check whether a representation encodes the high-level variable? Probes test for *correlational* structure, interchange interventions test for *causal* structure, and the difference matters.
+A [probe](/topics/probing-classifiers/) can test whether a representation encodes the high-level variable, but not whether the network uses that variable. Probes test *correlational* structure; interchange interventions test *causal* structure.
 
 Geiger et al. construct an explicit example where a probe achieves perfect accuracy detecting a variable in a representation, yet interchange interventions show the representation plays no causal role in the computation {% cite "geiger2021causal" %}. The information is *present* but not *used*. A probe cannot distinguish "the network stores X here and uses it downstream" from "the network stores X here as a byproduct but ignores it." Interchange interventions can, because they directly test whether changing the representation changes the output in the predicted way.
 
@@ -81,7 +81,7 @@ The framework so far requires us to specify *where* in the network to look for e
 
 **Distributed Alignment Search (DAS)** automates this {% cite "geiger2023causal" %}. The idea: learn a rotation of the representation space such that specific subspaces become aligned with high-level causal variables. DAS optimizes an orthogonal rotation matrix $Q$ to maximize IIA across interchange interventions.
 
-The key insight is that causal variables may not align with individual neurons. A concept like "above the lower bound" might be encoded as a direction in the high-dimensional activation space, distributed across many neurons. DAS finds these directions by learning the rotation that makes them axis-aligned, so they can be cleanly intervened on.
+A causal variable need not align with an individual neuron. A concept like "above the lower bound" may be encoded as a direction distributed across many neurons. DAS searches for these directions by learning a rotation that makes them axis-aligned, allowing a clean intervention in the rotated coordinates.
 
 <figure>
   <img src="images/distributed_interchange.png" alt="Diagram showing a high-level causal model with boolean variables at top, and a neural network's layered representations below. Interchange interventions swap representations in the rotated subspace between a base and source input.">

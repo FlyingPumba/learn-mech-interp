@@ -36,7 +36,7 @@ The most dramatic demonstration of ablation steering targets the [refusal direct
 
 Arditi et al. computed the refusal direction using [CAA](/topics/caa-method/), the mean difference between activations on harmful versus harmless prompts. Then they ablated this direction during inference.
 
-The result: **refusal drops from 80-90% to near zero** across all models tested.
+Across the tested models, directional ablation reduced refusal rates from 80–90% to near zero.
 
 ![Bar chart showing refusal rates before and after ablation across multiple models. Baseline refusal rates are 80-90% while post-ablation rates drop to near zero.](/topics/ablation-steering/images/refusal_ablation_results.png "Figure 1: Refusal ablation results. Removing the refusal direction drops refusal rates from 80-90% to near zero across all models tested.")
 

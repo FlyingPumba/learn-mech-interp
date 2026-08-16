@@ -1,6 +1,6 @@
 ---
 title: "Testing Introspection with Concept Injection"
-description: "Using known activation interventions to test whether language-model self-reports are accurate, causally grounded, and internal."
+description: "Testing language-model introspection by injecting known concepts into hidden states, then checking whether self-reports track the intervention rather than visible cues."
 order: 4
 prerequisites:
   - title: "SelfIE: Self-Interpretation of Embeddings"

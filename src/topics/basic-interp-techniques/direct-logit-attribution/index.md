@@ -13,7 +13,7 @@ glossary:
     definition: "The feedforward sublayer in a transformer block, consisting of two linear projections with a nonlinearity between them. MLP layers process each token position independently and are believed to store factual knowledge and perform feature transformations."
 ---
 
-## The Key Insight
+## Additive Writes Become Logit Contributions
 
 Every component in a transformer writes additively into [the residual stream](/topics/transformer-architecture/#the-residual-stream). The final residual stream is a sum of contributions: the token embedding, each attention head's output, and each MLP layer's output. Because the unembedding matrix $W_U$ maps this final residual stream to output logits through a linear operation, the logits are also a sum of contributions. Each component's effect on the output can be measured independently.
 
@@ -64,14 +64,14 @@ The vector $W_U[:, \text{Mary}] - W_U[:, \text{John}]$ defines a single directio
 
 ## Per-Token Attribution: A Screening Tool
 
-In practice, DLA is used as a first step in circuit discovery. The workflow is straightforward:
+Direct logit attribution (DLA) is often the first screening step in circuit discovery:
 
 1. Run the model on a prompt where you know the correct next token.
 2. Cache every component's output at the position of interest.
 3. Compute each component's DLA for the correct token (or the logit difference between correct and incorrect).
 4. Sort components by DLA magnitude to find the biggest contributors.
 
-This is how researchers first identified which heads to study in the IOI circuit analysis. The Name Mover heads (9.9, 10.0, 9.6) had the largest positive DLA for the indirect object token, immediately flagging them as the most important components for this task {% cite "wang2022ioi" %}. Without DLA, finding these heads among 144 candidates would require testing each one individually with more expensive methods.{% sidenote "DLA was also the tool that first identified induction heads in the mathematical framework analysis. When Elhage et al. computed DLA for the repeated token in sequences of the form [A][B]...[A], the induction head had by far the largest positive attribution, directing attention to the discovery of the two-step mechanism." %}
+In the indirect object identification (IOI) analysis, the Name Mover heads (9.9, 10.0, 9.6) had the largest positive DLA for the correct name, narrowing 144 candidate heads to a small set for further study {% cite "wang2022ioi" %}. Testing every head individually with causal methods would have required many more model runs.{% sidenote "DLA also helped identify induction heads in the mathematical framework analysis. For sequences of the form [A][B]...[A], one head had an unusually large positive direct contribution to the repeated continuation, motivating study of its two-step mechanism." %}
 
 DLA is useful for screening because it needs one forward pass followed by dot products, with no additional model runs or gradients. It quickly ranks components by direct contribution. “Direct” matters: a small value can hide a large indirect effect, and a large value need not survive downstream processing.
 
@@ -90,7 +90,7 @@ DLA tells us *how much* each head contributes to the prediction, but not *how* i
 
 An attention pattern is an $n \times n$ matrix where entry $(i, j)$ gives how much position $i$ attends to position $j$. Each row sums to 1, forming a probability distribution over source positions. Visualized as a heatmap, these patterns reveal what a head is "looking at."
 
-Four common attention patterns appear frequently across models:
+Previous-token, induction, anchor-token, and approximately uniform patterns recur across models:
 
 **Diagonal pattern.** Each position attends primarily to the token immediately before it. This produces a shifted diagonal line in the attention matrix. Heads with this pattern are called **previous token heads**, and they play the first role in [induction circuits](/topics/induction-heads/) by writing "my predecessor was token X" into the residual stream.
 
@@ -113,11 +113,11 @@ No. Attention patterns come from the QK circuit and show *where* a head looks. T
 
 ## The Limitation: Observation, Not Causation
 
-DLA is a powerful screening tool, but it has a fundamental limitation. It measures a component's *direct* contribution to the output logits, the first-order effect of each component acting alone. It does not capture indirect effects or interactions between components.
+DLA is a powerful screening tool, but it has a fundamental limitation. It measures a component's *direct* projection onto an output direction. The additive decomposition is exact before final normalization, but it does not include indirect effects mediated by later components or allocate interactions among components.
 
-One caveat is that **later components can counteract earlier writes**. Suppose head 5.3 writes a strong positive signal for “Paris,” but a later MLP writes in the opposite direction. DLA records both direct writes; it does not tell us how the earlier write changed the later MLP's computation.{% sidenote "The distinction is between a direct residual-stream contribution and a total causal effect. Later layers can amplify, redirect, or cancel earlier information, and they may themselves behave differently when an earlier component is changed." %}
+**Later components can counteract earlier writes.** Suppose head 5.3 writes a strong positive signal for “Paris,” but a later MLP writes in the opposite direction. DLA records both direct writes; it does not tell us how the earlier write changed the later MLP's computation.{% sidenote "The distinction is between a direct residual-stream contribution and a total causal effect. Later layers can amplify, redirect, or cancel earlier information, and they may themselves behave differently when an earlier component is changed." %}
 
-This means DLA tells us about *correlation* between a component's output and the model's prediction, not *causation*. A component with high DLA is correlated with the correct prediction, but we cannot be sure the model relies on that component. The information might be erased downstream, or it might be redundant with other components.
+A large direct contribution does not show that the model relies on that component. Downstream layers may erase the information, or another component may supply a redundant path. DLA therefore supports an observational claim about what was written, not a causal claim about what the computation required.
 
 To test a causal hypothesis, use an intervention such as [activation patching](/topics/activation-patching/). If replacing a component changes the chosen metric, that component mediates some effect under the specific patch. A small effect can instead reflect redundancy, self-repair, an unsuitable corruption, or a component that simply is not important in that context.
 

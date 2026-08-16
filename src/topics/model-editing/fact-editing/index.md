@@ -15,7 +15,7 @@ glossary:
 
 ## Editing Facts in Weights
 
-Language models store factual associations in their weights. When GPT asks "The Eiffel Tower is located in ___" and answers "Paris," that association is encoded somewhere in the network's parameters. A natural question arises: can we *edit* specific facts without retraining the model? Change "Paris" to "London" for the Eiffel Tower while leaving everything else intact?
+Language models store factual associations in their weights. When a model completes "The Eiffel Tower is located in ___" with "Paris," some part of its parameters supports that association. A targeted editor tries to replace "Paris" with "London" for this subject without retraining the model or disturbing unrelated knowledge.
 
 This question matters for both practical and scientific reasons. Practically, models acquire outdated or incorrect information during training, and targeted editing would be cheaper than retraining. Scientifically, the ability to edit a fact by modifying specific weights would constitute strong evidence that the fact is *localized* in those weights, a causal claim about where knowledge lives in the network.
 

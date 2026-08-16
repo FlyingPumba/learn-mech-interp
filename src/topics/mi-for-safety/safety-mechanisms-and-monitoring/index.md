@@ -116,7 +116,7 @@ The remaining gap includes novel threats and correlated failures between layers.
 
 </details>
 
-## Verdict
+## What the Evidence Supports
 
 Several safety-relevant model organisms expose linearly accessible signals, and refusal has a low-dimensional causal mediator in the models tested. These are promising case studies, not yet a general law about how models represent dangerous behavior.
 

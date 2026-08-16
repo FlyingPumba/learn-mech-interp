@@ -21,7 +21,7 @@ Minder et al. (2025) found that narrow fine-tuning leaves readable traces in act
 
 ## The Method
 
-The core idea is simple. Given a base model and a model fine-tuned from it, compute the activation difference at each token position on unrelated text:
+Given a base model and a model fine-tuned from it, compute the activation difference at each token position on unrelated text:
 
 $$\boldsymbol{\delta}_{\ell,j} = \mathbf{h}_{\ell,j}^{\text{ft}} - \mathbf{h}_{\ell,j}^{\text{base}}$$
 
@@ -153,13 +153,8 @@ Activation differences and crosscoder-based model diffing operate at different l
 
 The two approaches are complementary. Activation differences can quickly flag that a model has been narrowly fine-tuned and provide initial hypotheses about the domain. Crosscoders can then provide a detailed feature-level breakdown of what changed and why.
 
-## Key Takeaways
+## What a Trace Can Support
 
-- **Narrow fine-tuning creates strong, constant biases** in model activations that encode the fine-tuning domain, detectable even on unrelated text.
-- **Three analysis tools** extract information from these biases: Patchscope/Logit Lens (surface domain-relevant tokens), steering (generate domain-relevant text), and interpretability agents (identify the fine-tuning objective).
-- The technique worked **across the tested architectures and scales** (Gemma, LLaMA, and Qwen models from 1B to 32B) and fine-tuning scenarios (false facts, emergent misalignment, subliminal learning, and taboo games).
-- These traces likely reflect **overfitting to semantically homogeneous data** and can be mitigated by mixing pretraining data into the fine-tuning corpus.
-- A predefined concept direction supports a different audit: **measure whether fine-tuning moved a known trait**, rather than discover the fine-tuning domain from scratch.
-- A warning for interpretability researchers: narrowly fine-tuned **model organisms may not be realistic proxies** for studying broader fine-tuning, because their traces are artificially strong.
+An activation difference can reveal a narrow fine-tuning domain even on unrelated text, and a predefined concept direction can test whether a known trait moved. Neither readout identifies the individual weight changes that produced the shift. The strongest traces also appear under semantically homogeneous fine-tuning, so success there should not be generalized to diverse post-training without a fresh evaluation.
 
-Both ADL and trait-specific projections are readouts. [Interpretability-Guided Training](/topics/interpretability-guided-training/) asks what changes when an internal signal is used to filter training data, alter activations during fine-tuning, or shape the optimization objective.
+Both activation difference learning (ADL) and trait-specific projections observe the result of training. [Interpretability-Guided Training](/topics/interpretability-guided-training/) asks what changes when an internal signal instead filters data, alters activations during fine-tuning, or shapes the optimization objective.

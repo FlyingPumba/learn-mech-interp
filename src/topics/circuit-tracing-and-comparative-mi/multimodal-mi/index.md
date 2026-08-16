@@ -15,9 +15,9 @@ glossary:
 
 Everything we have studied so far, [SAEs](/topics/sparse-autoencoders/), [transcoders](/topics/transcoders/), [activation patching](/topics/activation-patching/), [attribution graphs](/topics/circuit-tracing/), [crosscoders](/topics/crosscoders/), was developed for and applied to language models. But AI systems increasingly process images, video, audio, and combinations of modalities. Does mechanistic interpretability transfer beyond text?
 
-The answer, surveyed by Lin et al. (2025), is cautiously optimistic {% cite "lin2025multimodal" %}. Probing, sparse decomposition, patching, and steering can all be adapted beyond text. Shared image–text spaces can also suggest labels for visual features. But those labels remain hypotheses, and multimodal models introduce interfaces and time-dependent computations that language-only methods were not designed to handle.{% sidenote "Compared with text-model interpretability, multimodal work has fewer widely replicated circuit case studies and less settled evaluation practice. It is safer to describe that qualitative gap than to assign it a precise number of years." %}
+Probing, sparse decomposition, patching, and steering have all been adapted beyond text {% cite "lin2025multimodal" %}. Shared image–text spaces can also suggest labels for visual features. Those labels remain hypotheses, however, and multimodal models introduce interfaces and time-dependent computations that language-only methods were not designed to handle.{% sidenote "Compared with text-model interpretability, multimodal work has fewer widely replicated circuit case studies and less settled evaluation practice. It is safer to describe that qualitative gap than to assign it a precise number of years." %}
 
-This article covers three model families: contrastive vision-language models (CLIP), generative vision-language models (VLMs like LLaVA and GPT-4V), and text-to-image diffusion models. For each, we examine what works, what is still early, and what remains unknown.
+Three model families expose different parts of this transfer problem: contrastive vision-language models such as CLIP, generative vision-language models (VLMs), and text-to-image diffusion models.
 
 <figure>
   <img src="images/multimodal-mi-taxonomy.png" alt="Taxonomy diagram of multimodal mechanistic interpretability. Left column shows methods split into two groups: methods adapted from LLM interpretability (linear probing, logit lens, causal tracing, representation decomposition, general task vectors, sparse autoencoders, neuron-level descriptions) and multimodal-specific methods (text-explanations of internal embeddings, network dissection, cross-attention based interpretation, training data attribution, feature visualization). Center column shows three model architectures: non-generative vision-language models with contrastive learning, generative vision-language models with an adapter between image encoder and LLM, and text-to-image generative models with denoising. Right column lists applications including mitigating spurious correlations, zero-shot segmentation, in-context learning, model editing, detecting hallucinations, improving safety, improving compositionality, and controllable generation.">
@@ -115,7 +115,7 @@ What other model architectures might require fundamentally new MI approaches? Co
 
 ## What the Evidence Supports So Far
 
-The state of multimodal MI can be summarized concisely:
+The evidence separates demonstrated capabilities from missing end-to-end accounts:
 
 **What has been demonstrated:**
 - SAEs can learn interpretable candidate features in tested vision encoders, including CLIP
@@ -130,10 +130,4 @@ The state of multimodal MI can be summarized concisely:
 **The gap:**
 - Much multimodal MI remains observational. Causal studies exist, but there are fewer end-to-end, replicated circuit accounts than in language-model work.{% sidenote "A field need not advance in a fixed sequence from observation to intervention to circuits. Still, separating those evidence types helps: a labeled feature, a causal effect, and an end-to-end mechanism answer different questions." %}
 
-## Key Takeaways
-
-- **CLIP interpretability** benefits from a shared text–image space, which can propose labels for visual SAE features. Some learned features also respond predictably to steering interventions.
-- **VLM interpretability** is early-stage. Visual tokens are processed similarly to text tokens, but integration mechanisms between modalities are not yet well understood.
-- **Diffusion model interpretability** reveals functionally distinct attention mechanisms and temporal concept evolution across denoising steps, a dimension absent from language model analysis.
-- The field is expanding from single-model, single-modality analysis to cross-model, cross-modal investigation. The toolkit (SAEs, patching, steering) transfers, but each new modality introduces new challenges.
-- **Persistent challenges:** no canonical multimodal circuit example, causal analysis lags behind observational findings, and the temporal dimension of diffusion models requires new methods.
+The most useful next benchmark would force all three levels of evidence into one analysis: interpretable candidate features, interventions showing that they matter, and an end-to-end account of how they interact. Language-model work has examples that approach this standard; multimodal MI does not yet have a similarly canonical circuit. Until it does, claims about shared features, causal control, and mechanism should remain separate.

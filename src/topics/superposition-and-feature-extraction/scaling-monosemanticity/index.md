@@ -127,6 +127,6 @@ The scaling results provide many interpretable latents and selected examples wit
 
 To build full mechanistic understanding, we need to trace how features connect, which features cause which other features, and how information flows through the network at the feature level rather than the head level. This is the domain of attribution graphs and circuit tracing, which build on SAE features as their basic vocabulary.
 
-The progression mirrors what we saw with attention heads. First, we identified individual heads (Name Movers, S-Inhibition heads). Then, we traced connections between heads to discover circuits (the IOI circuit). SAE features are at the "identifying individual components" stage. The next step is connecting them into feature-level circuits.
+Individual SAE features are analogous to the Name Mover and S-Inhibition heads before their connections were traced: they provide candidate components, not yet a circuit. Connecting those features into behaviorally validated computational paths is the next step.
 
 The SAE architecture itself also has room for improvement. The L1-regularized SAE used in these experiments has known biases, and newer objectives try to reduce them without giving up sparse, labelable latents. The [next article on SAE variants and evaluation](/topics/sae-variants-and-evaluation/) covers those changes and the remaining failure modes.

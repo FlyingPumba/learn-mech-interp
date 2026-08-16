@@ -96,7 +96,7 @@ Consider the adversarial dynamic: if probes are part of the training loop, the m
 
 </details>
 
-## Verdict
+## What the Evidence Supports
 
 Defection probes separate triggered and non-triggered examples in the tested models with greater than 99% AUROC. This is evidence that activation monitoring can help detect some deliberately inserted backdoors.
 

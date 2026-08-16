@@ -133,10 +133,8 @@ Crosscoder-based model diffing fills a specific niche in the landscape of model 
 
 These approaches are complementary. CKA can quickly assess whether two models are representationally similar. If they are mostly similar (as base and chat models tend to be), crosscoders can identify the specific directions that differ. And LDA can surface the rare behavioral consequences of those differences.
 
-## Key Takeaways
+## Choosing the Comparison That Matches the Question
 
-- **Feature-level model diffing** trains crosscoders on concatenated activations from two models to classify features as shared, base-exclusive, or chat-exclusive.
-- **L1 sparsity artifacts** (Complete Shrinkage and Latent Decoupling) cause L1 crosscoders to systematically misclassify shared features as model-specific, inflating apparent differences between models.
-- **Latent Scaling** diagnoses these artifacts by measuring how well a supposedly exclusive latent actually explains the other model's activations.
-- **BatchTopK crosscoders** reduce the measured shrinkage and decoupling artifacts in the study, yielding cleaner candidates related to refusal, false-information detection, personal questions, and chat-template processing.
-- The choice of sparsity penalty changes *what you find*. Methodology shapes conclusions about what fine-tuning does to a model.
+Use a holistic similarity metric when the question is whether two representation spaces broadly align, logit diff amplification when rare behavioral differences are the target, and a crosscoder when the goal is to propose individual shared or model-specific features. A crosscoder's answer remains conditional on its dictionary and sparsity objective: complete shrinkage and latent decoupling can make shared computation look exclusive, while latent scaling provides a direct check for that mistake.
+
+The next article takes a cheaper, coarser view of model change. [Fine-Tuning Traces](/topics/finetuning-traces/) asks what we can learn from the aggregate activation shift between a base model and a narrowly fine-tuned descendant, without first fitting a feature dictionary.

@@ -147,9 +147,9 @@ where $A^h$ is the attention pattern matrix produced by the QK circuit and softm
 
 This decomposition is the foundation for the composition framework covered in the next article. When we stack multiple layers, layer 2 heads can read the outputs of layer 1 heads from the residual stream, creating [composed behaviors](/topics/composition-and-virtual-heads/) that neither head could achieve alone.
 
-## Why This Matters
+## From Token Space to Feature Space
 
-The QK/OV decomposition is not just a mathematical curiosity. It provides the conceptual vocabulary that the entire field of mechanistic interpretability uses to describe what attention heads do. When researchers say a head is a "previous token head" or an "induction head," they are making claims about the head's QK circuit (what it attends to) and its OV circuit (what it copies). The framework from Elhage et al. {% cite "elhage2021mathematical" %} transforms the four opaque weight matrices of an attention head into two interpretable objects with clear functional roles.
+The QK/OV decomposition provides the vocabulary researchers use to describe what attention heads do. Calling a head a "previous token head" or an "induction head" makes two claims: its QK circuit selects a particular source, and its OV circuit writes a particular effect. The framework from Elhage et al. {% cite "elhage2021mathematical" %} turns four opaque weight matrices into two objects with distinct functional roles.
 
 The mathematical framework also gives us concrete, inspectable matrices. The end-to-end QK circuit $W_E W_{QK}^h W_E^T$ is a vocabulary-sized matrix we can examine entry by entry. The end-to-end OV circuit $W_E W_{OV}^h W_U$ directly tells us how attending to each token affects the output logits. These are not abstractions; they are real, computable objects that researchers use every day to understand what transformers learn.
 

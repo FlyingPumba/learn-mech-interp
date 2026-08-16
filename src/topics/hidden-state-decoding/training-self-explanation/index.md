@@ -128,7 +128,7 @@ A key advantage of trained explainers is scalability. Once trained, the explaine
 
 Consider the alternative: analyzing each SAE feature individually requires extensive human effort or automated analysis. A trained explainer can describe new features by leveraging patterns learned from previously analyzed features.
 
-This creates a bootstrapping opportunity:
+One trained explainer can amortize the expensive analyses used to supervise it:
 1. Analyze a subset of internal states using expensive techniques
 2. Train an explainer on this subset
 3. Use the explainer to analyze the remaining states
@@ -152,7 +152,7 @@ The approach scales interpretation capacity without proportionally scaling inter
 
 ## Implications for Interpretability
 
-The finding that self-explanation outperforms external explanation has important implications:
+The reported advantage for self-explanation motivates three testable uses:
 
 **Self-reference is testable.** Rather than treating interpretation as purely external, we can compare reports across controlled internal interventions or controlled changes to learned behavior.
 

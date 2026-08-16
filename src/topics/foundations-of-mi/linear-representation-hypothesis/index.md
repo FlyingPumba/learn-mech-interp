@@ -38,7 +38,7 @@ This is a simple picture: the residual stream is a sum of feature vectors, and w
 
 ## Why Linear?
 
-Three properties of transformer architecture make linear representations a useful default hypothesis.{% sidenote "This is an architectural motivation, not a proof. Transformers contain nonlinear MLPs and input-dependent attention, and a useful property can be distributed across several directions or encoded nonlinearly." %}
+Linear information is easy to read, linear reads compose with linear writes, and sparse linear features can share a representation space. Together, these architectural properties make linear representations a useful default hypothesis.{% sidenote "This is an architectural motivation, not a proof. Transformers contain nonlinear MLPs and input-dependent attention, and a useful property can be distributed across several directions or encoded nonlinearly." %}
 
 **Linear information is easy to read.** Every attention and MLP block begins by applying learned linear maps to its input. A property available along a direction can therefore influence a downstream preactivation through a dot product. The full transformer is not linear: attention weights depend on the input, and MLP activations are nonlinear. The narrower point is that linearly accessible information fits naturally into the operations every block already performs.
 
@@ -48,7 +48,7 @@ Three properties of transformer architecture make linear representations a usefu
 
 ## Empirical Evidence
 
-Several lines of evidence support the linear representation hypothesis.
+Evidence comes from embedding arithmetic, probes, sparse dictionaries, relational maps, and controlled synthetic tasks.
 
 **Word embedding arithmetic.** The classic result: "king - man + woman = queen." Semantic relationships correspond to vector arithmetic in embedding space. If "king" and "queen" differ by a direction encoding gender, and "man" and "woman" differ by the same direction, then the analogy holds as vector addition and subtraction. This is exactly what the LRH predicts: concepts like gender are encoded as linear directions, and manipulating those directions produces the expected semantic changes.{% sidenote "Word embedding arithmetic predates the LRH as a formalized hypothesis. The famous word2vec results from Mikolov et al. (2013) demonstrated these linear relationships in static word embeddings. The LRH extends this observation to contextualized representations in transformer activations, where the same principle appears to hold at intermediate layers." %}
 

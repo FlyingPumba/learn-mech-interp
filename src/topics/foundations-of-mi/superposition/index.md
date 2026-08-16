@@ -104,7 +104,7 @@ The phase diagram has two clear regions. The blue region (high importance, low s
 
 Why does importance matter? Interference on a high-importance feature is expensive, so the model has a stronger incentive to dedicate an orthogonal dimension to it. A low-importance feature can tolerate more reconstruction error and is therefore a better candidate for a superposed representation.
 
-Why does sparsity matter? This is the key insight that makes superposition work. If two features are both dense (frequently active), they interfere constantly. The cost of superposition is high. But if two features are sparse (rarely active), they rarely co-occur. Interference happens only when both are active simultaneously:
+Sparsity makes superposition economical. Two dense features interfere constantly, but two sparse features rarely co-occur. They interfere only when both are active simultaneously:
 
 $$
 P(A\text{ and }B\text{ active}) = P(A\text{ active})P(B\text{ active})

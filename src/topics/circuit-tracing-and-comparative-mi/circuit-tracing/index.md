@@ -234,8 +234,6 @@ Computing every query-key feature interaction also scales quadratically with con
 
 ![Timeline showing four generations of circuit analysis: manual head-level (IOI, 2022), automated head-level (ACDC, 2023), feature-level circuits (Marks et al., 2024), and feature-level at scale (attribution graphs, 2025).](/topics/circuit-tracing/images/circuit_evolution.png "The evolution of circuit analysis. Each generation gained resolution and automation but also added complexity. The fundamental challenge, going from per-input analysis to global understanding, remains across all generations.")
 
-The progression tells a clear story:
-
 - **2022: Manual head-level analysis (IOI).** 26 heads, 7 classes. Months of researcher effort for one circuit in a 117M-parameter model. Nodes are polysemantic attention heads.
 - **2023: Automated head-level analysis (ACDC).** Conmy et al. automated path patching {% cite "conmy2023ioi" %}. Still head-level granularity, but the search is algorithmic rather than manual.
 - **2024: Feature-level circuits (Marks et al.).** SAE features as circuit nodes {% cite "marks2024sparse" %}. Higher resolution than heads, but still per-layer and patching-based.
@@ -253,11 +251,8 @@ Consider that different inputs might activate different subsets of features, use
 
 </details>
 
-## Key Takeaways
+## From One Model to Many
 
-- **Sparse feature circuits** use SAE features as circuit nodes, bridging feature discovery with causal circuit analysis. SHIFT demonstrates that these circuits are editable, not just descriptive.
-- **Attribution graphs** combine cross-layer transcoders with backward Jacobian tracing to produce input-specific maps of a replacement model. Applications to reasoning, multilingual processing, and constrained generation show that these maps can expose interpretable computational chains.
-- **Attention-resolved tracing** adds head loadings and QK attribution, separating which heads carry an edge from which feature pairs make them attend.
-- **Limitations are serious:** per-input analysis, feature and replacement-model approximation quality, active features only, softmax competition, and local normalization. Attribution graphs are a tool for investigation, not a final understanding.
-- The field has evolved from manual tracing of 26 attention heads (IOI, 2022) to automated tracing of thousands of features (attribution graphs, 2025). Resolution and automation have increased dramatically, but the core challenge of global circuit understanding remains.
-- These tools find safety applications in [detecting sleeper agents](/topics/sleeper-agent-detection/) and monitoring model behavior, where feature-level circuit analysis can reveal hidden computational patterns that behavioral testing alone would miss.
+Attribution graphs have moved circuit analysis from tens of polysemantic heads to thousands of sparse features, while attention-resolved tracing recovers some of the routing that frozen-attention replacements hide. The additional resolution does not remove the need for causal validation: every graph is conditional on an input, a replacement model, an attribution rule, and a pruning threshold.
+
+The next question is whether a circuit learned in one model tells us anything about another. [Universality Across Models](/topics/universality/) examines the evidence that independently trained networks converge on analogous features and mechanisms, and the stronger claim that their internal representations can be put into one-to-one correspondence.

@@ -23,7 +23,7 @@ The cost creates a methodological bottleneck: screen only a tractable subset and
 
 ## Attribution Patching: The Gradient Approximation
 
-The core insight of attribution patching is that we can approximate the effect of patching each component without actually performing the patch. The idea relies on a first-order Taylor approximation: if we know how sensitive the output metric is to changes at each activation (the gradient), and we know how much each activation changes between clean and corrupted runs (the activation difference), we can estimate the patching effect as their product.{% sidenote "Attribution patching is closely related to 'gradient times input' attribution methods from the broader interpretability literature. The key difference is that instead of multiplying the gradient by the input itself, we multiply it by the *difference* between clean and corrupted activations. This focuses the attribution on task-relevant changes rather than absolute activation magnitudes." %}
+Attribution patching approximates the effect of patching every component without performing each patch. A first-order Taylor approximation combines how sensitive the metric is to an activation (the gradient) with how much that activation differs between clean and corrupted runs (the activation difference). Their product estimates the patching effect.{% sidenote "Attribution patching is closely related to 'gradient times input' attribution methods from the broader interpretability literature. Instead of multiplying the gradient by the input itself, it uses the *difference* between clean and corrupted activations, focusing the attribution on task-relevant changes rather than absolute activation magnitudes." %}
 
 Formally, the estimated patching effect for activation $a_i$ is:
 
@@ -109,6 +109,6 @@ Attribution, activation, and path patching answer related questions at different
 
 3. **Path patching** for mechanistic understanding. Once the key components are identified, trace the connections between them. This reveals not just which components participate in the circuit but how information flows between them.
 
-The progression moves from "something is happening at layer 9" (attribution patching) to "head 9.9 is causally important" (activation patching) to "head 9.9 receives S-Inhibition information through its queries and copies name identity through its OV circuit to the output logits" (path patching). Each step adds resolution and mechanistic detail.
+Attribution patching may localize an effect to layer 9; activation patching can test head 9.9 directly; path patching can then ask whether that head receives S-Inhibition information through its queries and copies a name through its OV circuit. Each intervention narrows the causal claim.
 
 To see this full toolkit applied to the most ambitious circuit analysis ever attempted, continue to [The IOI Circuit: Discovery and Mechanism](/topics/ioi-circuit/).

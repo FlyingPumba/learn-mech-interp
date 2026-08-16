@@ -36,7 +36,7 @@ Before looking inside the model, consider how a simple algorithm might solve IOI
 
 The circuit analysis suggests that GPT-2 Small implements something close to this algorithm. Researchers grouped 26 attention heads into functional classes that contribute at different stages. The resulting account is human-readable, even though the weights themselves emerged through training rather than being programmed by hand.
 
-This is the key framing for understanding the IOI circuit. It is not a list of 26 important heads. It is an **algorithm**: detect the duplicate, suppress it, output the remainder. The heads are the mechanism that implements the algorithm.
+The IOI circuit is not merely a list of 26 important heads. Its proposed **algorithm** detects the duplicate, suppresses it, and outputs the remaining name; the circuit maps each step to the heads that implement it.
 
 ## The Discovery Methodology
 

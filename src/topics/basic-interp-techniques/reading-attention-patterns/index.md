@@ -11,6 +11,8 @@ prerequisites:
 
 An attention pattern is a matrix with one row for each destination position and one column for each source position. Cell $(i,j)$ contains the weight $\alpha_{i,j}$: how much the head at position $i$ reads from position $j$. Plotting this matrix as a heatmap turns a large table of numbers into shapes we can recognize.
 
+> **Attention Pattern:** The matrix of normalized attention weights for one head. Row $i$ shows how the destination at position $i$ distributes its read across source positions $j$.
+
 Check the axis labels before interpreting any heatmap. Some tools transpose the display, so a diagonal still looks like a diagonal while a vertical stripe becomes horizontal. Causal masking should leave the forbidden half of the matrix blank; that is a quick way to confirm which axis is which.
 
 Consider GPT-2 Small processing a repeated sequence: "The cat sat on the mat. The cat sat on the." Two heads display distinctive patterns:

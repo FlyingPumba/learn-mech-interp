@@ -37,7 +37,7 @@ In plain terms: head $h_1$ copies some information to the residual stream, and h
 
 K-composition lets the model condition attention patterns on the results of earlier computation. Here is a concrete example: head $h_1$ copies the subject noun to a later position in the residual stream. Head $h_2$ then uses that copied information as part of its key, effectively attending based on "which position contains information about the subject?" without the subject needing to be at that position originally.
 
-This is powerful because it means attention patterns in later layers are not fixed functions of the original token embeddings. They can depend on what earlier layers have already computed. The model can dynamically route information based on the context it has built up.
+Later-layer attention patterns are therefore not fixed functions of the original token embeddings. They can route information according to features computed by earlier layers.
 
 ## Q-Composition
 
@@ -107,7 +107,7 @@ The number of candidate two-head paths grows rapidly with model size. With $H$ h
 
 The count explains a practical search problem: characterizing heads one at a time leaves thousands of possible cross-layer interactions untested. Circuit analysis therefore asks which candidate compositions are active and behaviorally relevant, rather than assuming every possible pair matters.
 
-This is both the promise and the challenge of mechanistic interpretability. The mathematical framework gives us the tools to analyze individual heads and their circuits. But the search problem of finding which compositions matter for any given behavior remains the central difficulty of the field.
+The mathematical framework makes each candidate path inspectable, but it also exposes the search problem: among thousands of possible compositions, which ones are active and behaviorally relevant on the inputs we care about?
 
 ## TransformerLens Vocabulary
 

@@ -120,7 +120,7 @@ $$
 
 No L1 term at all. No shrinkage. No magnitude distortion. The L0 penalty counts active features, and the STE provides the gradients needed to train the thresholds that control which features are active.
 
-The result: state-of-the-art reconstruction fidelity at a given sparsity level on Gemma 2 9B, outperforming both Gated and TopK SAEs.
+On Gemma 2 9B, JumpReLU achieved better reconstruction fidelity at a given sparsity level than the tested Gated and TopK sparse autoencoders.
 
 ## The Evolution at a Glance
 

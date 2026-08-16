@@ -93,7 +93,7 @@ There is no single right weighting of the criteria. They form a framework for st
 
 The evaluation criteria described above are intuitive but informal. Can we do better? Chan et al. at Redwood Research proposed **causal scrubbing** as a formal method for testing circuit hypotheses {% cite "chan2022causalscrubbing" %}.
 
-The core idea: an interpretability hypothesis specifies which activations should be *interchangeable* without affecting behavior. Causal scrubbing tests this by systematically resampling activations according to the hypothesis and checking whether behavior is preserved.
+An interpretability hypothesis specifies which activations should be *interchangeable* without affecting behavior. Causal scrubbing tests that claim by resampling activations according to the hypothesis and checking whether behavior is preserved.
 
 The procedure has three steps:
 

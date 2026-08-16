@@ -58,7 +58,7 @@ The ability to generalize to fine-tuned models is particularly relevant for safe
 
 ## Matching White-Box Baselines
 
-A natural question: how do AOs compare to white-box methods that have full access to model internals (weights, gradients, etc.)?
+Activation oracles (AOs) are useful only if their answers compare well with white-box methods that have direct access to weights and gradients.
 
 On most tasks in the reported benchmark, AOs match or exceed the selected white-box baselines.
 

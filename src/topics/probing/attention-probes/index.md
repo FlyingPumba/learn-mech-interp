@@ -118,7 +118,7 @@ SQL injection detection is a case where the relevant signal is highly localized:
 
 Attention probes occupy a specific niche in the probing toolkit. They add a small amount of learned computation (position-wise aggregation) to the standard linear probe, without adding nonlinear feature computation over the representation dimensions.
 
-The progression of probe complexity in this curriculum:
+Probe families differ in how much work they learn to do before the final linear classification:
 
 | Probe type | Aggregation | Classification | Use case |
 |-----------|------------|---------------|----------|

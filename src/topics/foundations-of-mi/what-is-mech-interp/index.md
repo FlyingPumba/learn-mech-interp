@@ -17,7 +17,7 @@ Deep learning models are powerful but opaque. A language model can write fluent 
 
 Behavioral testing can catch known failure modes, but a finite test suite cannot cover every future input. Looking inside a model offers a complementary source of evidence: not a guarantee of safety, but a chance to discover computations that behavioral tests did not elicit.
 
-This is the motivation for interpretability: making neural networks understandable to humans. And within interpretability, a specific subfield has emerged that takes this goal to its most ambitious form. Rather than treating models as black boxes whose outputs we can only observe, **mechanistic interpretability** aims to reverse-engineer them into human-understandable algorithms by analyzing the computations performed by individual components and their interactions {% cite "bereska2024review" %}.
+Interpretability tries to make neural networks understandable to humans. **Mechanistic interpretability** pursues a particularly ambitious version of that goal: reverse-engineering models into human-understandable algorithms by analyzing the computations performed by individual components and their interactions {% cite "bereska2024review" %}.
 
 ## A Brief History: From Vision to Language
 
@@ -86,7 +86,7 @@ But there is a bug. The head that stores "keep triggers mind" cannot know what c
 
 **Concrete Example: Induction Heads.** A more sophisticated circuit spans two layers. In layer 0, a "previous token head" makes every position attend to the position directly behind it, copying that token's identity into its own residual stream. In layer 1, an "induction head" asks "who comes after the token that matches my current token?" The layer-0 copying enables layer-1 matching.
 
-The result: if you see "...Barack Obama...Barack", the model predicts "Obama." This works even for random tokens that never appeared in training. The model learns a general pattern-completion algorithm, not specific facts. This is the [induction head circuit](/topics/induction-heads/), discovered by Elhage et al. {% cite "elhage2021mathematical" %}, and we will study it in detail later.
+After seeing "...Barack Obama...Barack", the model predicts "Obama." The same mechanism works on random token sequences that never appeared in training, evidence that it implements a general pattern-completion algorithm rather than retrieving specific facts. This is the [induction head circuit](/topics/induction-heads/), discovered by Elhage et al. {% cite "elhage2021mathematical" %} and examined in detail later in the curriculum.
 
 **Circuits as the Unit of Understanding.** The circuit view suggests that individual heads are not the right unit of analysis. A head in isolation might seem to do nothing interpretable. But in composition with other heads, it implements a specific algorithm. Understanding a transformer means understanding its circuits.
 
@@ -111,7 +111,7 @@ This view has several implications:
 
 **Subspace Communication.** If a head in layer 2 wants to use information from a head in layer 1, they must share a subspace. Layer 1 writes to some directions in the residual stream; layer 2 reads from those same directions. If they use orthogonal subspaces, they cannot communicate. The model learns which subspaces to use for what purposes.{% sidenote "In high-dimensional spaces like a 768-dimensional residual stream, there is enormous room for nearly-orthogonal subspaces. Components can store different types of information without interfering, as long as they use different directions." %}
 
-**Early Unembedding.** You can take the residual stream at any intermediate layer and apply the unembedding matrix directly. Surprisingly, you do not get nonsense. You get a rough approximation of the model's final prediction, which improves as you go deeper. The [logit lens](/topics/logit-lens-and-tuned-lens/) technique exploits this to see how the model's prediction evolves layer by layer.
+**Early Unembedding.** You can take the residual stream at any intermediate layer and apply the unembedding matrix directly. The resulting vocabulary scores provide a rough approximation of the model's final prediction, and the approximation tends to improve in deeper layers. The [logit lens](/topics/logit-lens-and-tuned-lens/) uses this projection to track how the prediction evolves.
 
 **Direct Logit Attribution.** The final residual stream is a sum of component outputs, so before the final normalization we can ask how much each output aligns with a logit direction such as “Paris minus Rome.” [Direct logit attribution](/topics/direct-logit-attribution/) measures that direct contribution; causal responsibility still requires interventions and attention to downstream nonlinearities.
 

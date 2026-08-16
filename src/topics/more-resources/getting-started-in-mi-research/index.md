@@ -5,7 +5,7 @@ order: 2
 prerequisites: []
 ---
 
-## What This Is
+## A Roadmap from Learning to Research
 
 Neel Nanda's [How To Become A Mechanistic Interpretability Researcher](https://www.alignmentforum.org/posts/jP9KDyMkchuv6tHwm/how-to-become-a-mechanistic-interpretability-researcher) is a detailed, opinionated guide to entering the field as a practitioner. Where this curriculum covers the *concepts* of mechanistic interpretability, Nanda's post covers the *process*: how to learn, how to do research, and how to build a career.
 

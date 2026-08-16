@@ -19,7 +19,7 @@ Deep transformers are difficult to optimize when the scale of the residual strea
 
 The [residual stream](/topics/transformer-architecture/#the-residual-stream) remains an exact sum of component updates in a pre-norm transformer, but later sublayers read a normalized version of that sum. Their responses are therefore not linear functions of the earlier contributions. Direct additive decompositions are exact at the point of addition and approximate when used to describe downstream effects.
 
-This article covers what layer normalization does, why transformers need it, and how MI researchers handle the complications it introduces.
+For mechanistic interpretability (MI), normalization complicates an otherwise clean picture of the residual stream as a sum of component writes. We therefore need to understand both what layer normalization computes and when an analysis may safely approximate it.
 
 ## What Layer Normalization Does
 

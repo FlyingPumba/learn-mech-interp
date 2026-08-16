@@ -31,15 +31,15 @@ The architecture has the same broad parts as an SAE: an encoder, a sparse bottle
 
 ![Diagram comparing SAE and transcoder architectures. The SAE takes an activation as input and reconstructs the same activation. The transcoder takes the MLP input and produces an approximation of the MLP output.](/topics/transcoders/images/transcoder_vs_sae.png "Figure 1: SAE vs. transcoder architecture. SAEs reconstruct the same activation (representation). Transcoders map MLP inputs to MLP outputs (computation). This difference is what enables circuit tracing through MLPs.")
 
-## Why This Matters for Circuits
+## From Sparse Replacement to Circuit Node
 
-The difference between SAEs and transcoders is exactly what enables feature-level circuit analysis:
+Sparse autoencoders (SAEs) decompose representations, whereas transcoders decompose computations:
 
 **SAEs** decompose what a layer *represents*. Given activation $\mathbf{h}$, an SAE finds sparse features $\mathbf{f}$ such that $\mathbf{h} \approx \mathbf{f} W_{\text{dec}}$. This is useful for understanding individual layers but does not reveal how features at one layer produce features at the next.
 
 **Transcoders** decompose what a layer *computes*. Given MLP input $\mathbf{x}_{\text{in}}$, a transcoder finds sparse features that produce the MLP output. Because the transcoder's features map inputs to outputs, we can trace how upstream features contribute to downstream features through the MLP.{% sidenote "In the residual stream picture, attention heads move information between positions while MLPs transform information at each position. SAEs decompose the residual stream at a point. Transcoders decompose the transformation that happens between points. Both are needed for complete circuit analysis." %}
 
-This means we can trace causal paths *through* MLP layers, not just around them. Before transcoders, circuit analysis could follow information through attention (which is linear in its inputs) but had to treat each MLP as a black box.
+The input-output map lets us trace attributed paths *through* MLP layers rather than treating each MLP as a black box. The claim remains about the transcoder replacement until interventions confirm that the corresponding pathway matters in the original model.
 
 ## Clean Factorization
 
@@ -90,9 +90,8 @@ We gain a more granular hypothesis for each node, and we can trace through MLPs 
 
 </details>
 
-## Key Takeaways
+## Looking Ahead
 
-- **SAEs model one activation site; transcoders model an input-output map.** The latter can serve as a sparse replacement for tracing through an MLP.
-- **Factorization** into input-dependent activations and fixed decoder directions supports weight-based attribution inside the replacement.
-- In matched evaluations, **transcoders outperformed the tested SAEs** on several interpretability measures, but both inherit approximation error and dictionary non-uniqueness.
-- Cross-layer transcoders are one foundation for the [attribution-graph approach](/topics/circuit-tracing/) covered next.
+Sparse autoencoders describe what is present at one activation site; transcoders approximate the map from one site to another. That input-output factorization makes multilayer perceptrons easier to include in a circuit, but the circuit describes the replacement only as faithfully as the transcoder reconstructs the original computation.
+
+[Circuit Tracing and Attribution Graphs](/topics/circuit-tracing/) builds on cross-layer transcoders to trace input-specific effects through thousands of features, then examines how approximation error, frozen attention, and local attribution limit the resulting graphs.

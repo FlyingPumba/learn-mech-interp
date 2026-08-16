@@ -87,7 +87,7 @@ The two updates are not coupled. The AR update does not backpropagate into the A
 2. Update the AR with one regression step toward the true activations.
 3. Update the AV with one RL step using the reconstruction reward.
 
-Two adjustments make this behave. The reward is passed through a monotonic (logarithmic) transform, and a KL penalty pulls the AV back toward its warm-started initialization, which preserves the fluency of the explanations as training proceeds {% cite "frasertaliente2026nla" %}. Run this loop and the FVE grows roughly linearly in the logarithm of the number of steps, reaching $0.6$ to $0.8$ for the NLAs in the paper. The explanations also grow measurably more informative over the same period, even though nothing in the objective rewards informativeness directly.
+A monotonic logarithmic reward transform stabilizes the scale, while a Kullback-Leibler (KL) penalty pulls the activation verbalizer toward its warm-started initialization and helps preserve fluency {% cite "frasertaliente2026nla" %}. Under this training loop, fraction of variance explained (FVE) grows roughly linearly with the logarithm of the number of steps, reaching $0.6$ to $0.8$ for the natural-language autoencoders in the paper. The explanations also become measurably more informative, even though the objective does not directly reward informativeness.
 
 <details class="pause-and-think">
 <summary>Pause and think: Why is the AV trained with RL but the AR with gradient descent?</summary>
@@ -136,7 +136,7 @@ Concretely: obtain the explanation $z$ for an activation, make a targeted edit t
 
 $$h \;\rightarrow\; h + \alpha \, \lVert h \rVert \, \frac{\Delta}{\lVert \Delta \rVert}$$
 
-Two examples show what this buys you and where it is convincing.
+The rhyme-planning and reward-reasoning examples pair a readable description with a targeted intervention.
 
 **Planning a rhyme.** Earlier work found that when a model writes a rhyming couplet, it decides on the end-rhyme of the second line before writing the line {% cite "anthropic2025biology" %}. Running an NLA over the couplet *"He saw a carrot and had to grab it, / His hunger was like a starving rabbit,"* the explanation at the line break already talks about ending on *"rabbit."* Rewriting the rhyme in the explanation (rabbit to mouse, habit to house, carrots to cheese) and steering with the resulting difference makes the model complete with *"mouse"* and *"house"* instead. That is causal evidence that what the NLA surfaced actually drives the output. The effect is only partial, succeeding about half the time, which is a fair illustration of the method's reliability.
 
@@ -148,7 +148,7 @@ Both examples suggest a workflow: use an NLA description to form a hypothesis, t
 
 The bill for this expressiveness is real. Training is joint RL over two full-size language models on top of two supervised warm-starts, and inference generates several hundred tokens per activation. That last point is the binding constraint in practice: you cannot run an NLA on every token of a long transcript, and analysis is limited to selected regions rather than everything at once. {% sidenote "As a concrete reference point, the Gemma-3-27B NLA took roughly 1.5 days on two 8xH100 nodes to reach 0.70 FVE. The open-model recipe uses GRPO with a group size of 8, explanations averaging about 130 tokens, a KL penalty toward the warm-started AV, and a learning rate of 1e-5." %}
 
-Two other limits shape how the method is used. An NLA reads a **single layer**, so it can miss information accessible elsewhere. The AV is also a **black box**: it does not localize which activation directions caused each phrase. Probes and SAE features offer more localized hypotheses, though they too require causal and distributional validation.
+An NLA reads a **single layer**, so it can miss information accessible elsewhere. Its activation verbalizer is also a **black box**: it does not localize which activation directions caused each phrase. Probes and sparse-autoencoder features offer more localized hypotheses, though they too require causal and distributional validation.
 
 ## Looking Ahead
 

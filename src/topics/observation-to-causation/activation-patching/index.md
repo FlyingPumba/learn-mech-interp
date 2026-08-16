@@ -17,7 +17,7 @@ glossary:
 
 Mechanistic interpretability begins with observational tools. The logit lens shows what a model would predict if processing stopped at a given layer. Probing classifiers reveal what information is linearly decodable from [the residual stream](/topics/transformer-architecture/#the-residual-stream). Attention patterns display where each head directs its focus. These techniques are powerful, but they share a fundamental limitation: they show what information *exists* in a model's internals, not what information the model actually *uses*.
 
-The gap matters. A probing classifier might detect part-of-speech information at 95% accuracy from layer 6 activations, yet removing that information has no effect on the model's downstream performance. The information was there, but the model did not rely on it. Observation reveals correlation. We need causation.
+A probing classifier might detect part-of-speech information at 95% accuracy from layer 6 activations, yet removing that information might leave downstream performance unchanged. The information was present, but the model did not rely on it. Observation establishes accessibility; testing use requires an intervention.
 
 **Activation patching** replaces a specific activation in one model run with the corresponding activation from another, then measures the change in behavior {% cite "heimersheim2024patching" %}. A change supports a causal claim about this intervention and input pair. Interpreting that claim still requires care about what was patched, which baseline supplied the replacement, and how downstream components responded.
 
@@ -141,7 +141,7 @@ The gap between these two values is what we want to explain: which internal comp
 
 ![Bar chart showing patching recovery by layer. Layers 0-4 show small effect, layers 5-6 moderate, layers 7-8 large (S-Inhibition heads), layers 9-10 the largest (Name Mover heads).](/topics/activation-patching/images/act_patch_layers.png "Figure 2: Layer-by-layer activation patching results on the IOI task. Layers 7-10 carry the most causally important information.")
 
-The results tell a clear story:
+The patching heatmaps localize the behavior at progressively finer resolution:
 
 - **Layers 0-4:** Small effect. Early processing (token embeddings, positional information) does not contribute much on its own.
 - **Layers 5-6:** Moderate effect. Induction-style heads begin to contribute.

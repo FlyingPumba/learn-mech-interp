@@ -57,7 +57,7 @@ If a categorical concept with $k$ values forms a $(k{-}1)$-simplex, what happens
 
 Concepts do not exist in isolation. They form hierarchies: animal > mammal > dog. Park et al. {% cite "park2024geometry" %} show that these hierarchies impose precise geometric constraints.
 
-The central result is an orthogonality condition. If "mammal" is a child of "animal," then the representation vector for "animal" is orthogonal to the vector $(\text{mammal} - \text{animal})$. In notation: $\mathbf{v}_{\text{animal}} \perp (\mathbf{v}_{\text{mammal}} - \mathbf{v}_{\text{animal}})$.
+Hierarchical representations obeyed an orthogonality condition in the tested models. If "mammal" is a child of "animal," the representation vector for "animal" is orthogonal to the difference $(\text{mammal} - \text{animal})$. In notation: $\mathbf{v}_{\text{animal}} \perp (\mathbf{v}_{\text{mammal}} - \mathbf{v}_{\text{animal}})$.
 
 > **Hierarchical Orthogonality:** The parent concept's representation vector is orthogonal to the difference between a child and the parent. Formally, $\mathbf{v}_{\text{parent}} \perp (\mathbf{v}_{\text{child}} - \mathbf{v}_{\text{parent}})$ for each child concept.
 

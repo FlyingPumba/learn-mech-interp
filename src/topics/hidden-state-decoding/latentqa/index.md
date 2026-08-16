@@ -54,7 +54,7 @@ The resulting decoder can answer novel questions about novel activations, enabli
 
 ## Applications
 
-LatentQA enables several practical capabilities:
+The same decoder supports extraction, activation optimization, and safety analysis.
 
 ### Extraction
 
@@ -105,7 +105,7 @@ There are no easy answers. The tension between transparency and misuse potential
 
 ## Architecture
 
-The decoder model receives activations through a projection layer that maps them into the decoder's input space. Several design choices matter:
+The decoder receives activations through a projection into its input space. Layer choice, presentation method, and decoder capacity determine what it can recover:
 
 **Which layers to read.** Different layers encode different information. Early layers may encode syntactic features; later layers may encode semantic content. The decoder can be trained on activations from specific layers or from all layers.
 
@@ -124,7 +124,7 @@ LatentQA builds on insights from earlier approaches:
 | Trained explanation | Activation | Explanation | Freeform |
 | LatentQA | Activation + question | Answer | Q&A |
 
-The Q&A format offers specific advantages:
+Questions constrain the output space, permit targeted follow-ups, and supply differentiable objectives:
 - Questions constrain the output space, making evaluation easier
 - Arbitrary questions enable flexible interrogation
 - Differentiable answers enable optimization for control

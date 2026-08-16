@@ -117,7 +117,7 @@ If the corrupted point sits in a flat region, some of the interpolation points w
 
 ### Faithfulness over Overlap
 
-The key finding from Hanna et al. is methodological: they show that **circuit overlap** (how many nodes match a ground-truth circuit) is a misleading evaluation metric. EAP and EAP-IG produce circuits with similar node overlap to ground-truth circuits, but EAP circuits are significantly **less faithful** (they reproduce less of the model's behavior when isolated).
+Hanna et al. show that **circuit overlap** (how many nodes match a ground-truth circuit) can be a misleading evaluation metric. Edge attribution patching (EAP) and its integrated-gradients variant (EAP-IG) produce circuits with similar node overlap, yet the EAP circuits are substantially **less faithful**: when isolated, they reproduce less of the model's behavior.
 
 > Overlap tells you whether you found the right components. Faithfulness tells you whether the circuit actually *works*.
 
@@ -166,6 +166,6 @@ The practical recommendation is the same as for basic attribution patching: use 
 
 ## Looking Forward
 
-The progression from AtP to AtP\* to EAP-IG and EAP-GP illustrates a recurring pattern: introduce a scalable approximation, characterize where it fails, then add targeted corrections. Each refinement narrows the gap between a fast screening score and a direct intervention.
+Attribution patching (AtP), AtP\*, EAP-IG, and EAP-GP follow the same research cycle: introduce a scalable approximation, characterize its failures, and add targeted corrections. Each refinement narrows the gap between a fast screening score and a direct intervention.
 
 These attribution methods support automated circuit discovery by prioritizing edges for further testing. Better screening can improve the resulting circuit, but high-scoring edges still need validation with direct interventions. The [IOI circuit](/topics/ioi-circuit/) provides a detailed example of how attribution and patching can be combined.

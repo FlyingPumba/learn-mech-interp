@@ -66,7 +66,7 @@ The number $f'(x_0)$ is the derivative. The approximation is called **first-orde
   <figcaption>The blue curve is <em>f(x)</em>. The red line is its <em>tangent</em> at x₀: the best linear approximation. The green dot is the true value f(x₀ + Δx); the red dot is the linear prediction f(x₀) + f′(x₀)·Δx. The gap between them is the first-order error, which grows as Δx moves away from zero.</figcaption>
 </figure>
 
-The key point: near $x_0$, the curve *looks linear*. First-order means we take that local straightening seriously and use it to predict small displacements.
+Near $x_0$, the curve *looks linear*. A first-order approximation uses that local straightening to predict small displacements.
 
 ### ...to many dimensions
 
@@ -143,7 +143,7 @@ $$
 J_\ell \;=\; \mathbb{E}_{\,t,\; t' \ge t,\; \text{prompt}} \left[\, \left( \frac{\partial\, \mathbf{h}_{\text{final}, t'}}{\partial\, \mathbf{h}_{\ell, t}} \right)^{\!T} \,\right].
 $$
 
-Three things are being averaged:
+The expectation averages over source positions, reachable destination positions, and prompts:
 
 1. **Over source positions $t$** within each prompt. A concept encoded at layer $\ell$ should be readable regardless of *where* in the sequence it appears.
 2. **Over subsequent positions $t' \ge t$**. We do not care only about how $\mathbf{h}_{\ell, t}$ shapes the immediate next-token logits; we care about how it shapes any downstream logit it can influence.
@@ -193,7 +193,7 @@ Normally the model computes $\mathbf{h}_L$ from $\mathbf{h}_\ell$ by running thr
 
 The averaged Jacobian $J_\ell$ is the best single linear map that approximates $F_\ell$ across contexts. So *replacing* $F_\ell$ with $J_\ell$ means: pretend the model, from layer $\ell$ onward, is just this linear map. Then the final residual stream would be $\mathbf{h}_\ell J_\ell$, and the model's readout would be $\text{norm}(\mathbf{h}_\ell J_\ell) \, W_U$.
 
-That is exactly the lens formula. Nothing extra is going on.
+This gives us the lens formula directly.
 
 <figure class="jl-figure">
   <div class="jl-diagram" id="jl-layer-compression">

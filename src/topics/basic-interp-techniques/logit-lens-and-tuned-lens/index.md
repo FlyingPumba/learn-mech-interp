@@ -19,7 +19,7 @@ glossary:
 
 [Direct logit attribution](/topics/direct-logit-attribution/) projects component writes toward output logits, while attention patterns show where a head reads. Vocabulary lenses ask a different observational question: what token-level scores can we extract from an intermediate residual state?
 
-This article covers vocabulary projection methods for reading intermediate representations: the logit lens, which applies the unembedding matrix directly to intermediate layers, and the tuned lens, which learns per-layer corrections to handle basis changes. Both are powerful observational tools, but neither can establish whether the detected information is causally necessary for the model's behavior.
+The **logit lens** applies the unembedding matrix directly to intermediate layers. The **tuned lens** learns a correction for each layer's changing basis. Both reveal decodable information, but neither shows that the model uses it.
 
 ## The Logit Lens
 

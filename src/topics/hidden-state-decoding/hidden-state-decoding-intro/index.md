@@ -25,9 +25,9 @@ Language models are trained to produce coherent, contextually appropriate text. 
 
 The approach takes various forms. We can patch activations into a model and observe how its generation changes. We can train models to answer questions about activations. We can fine-tune models on datasets pairing activations with descriptions. But the underlying principle is consistent: use the linguistic competence of LLMs to bridge the gap between vector representations and human understanding.
 
-## Why This Matters
+## What Natural Language Adds
 
-Hidden state decoding addresses several limitations of existing interpretability methods:
+Natural-language decoding changes the interface to an activation in four ways:
 
 **Scalability.** Manual interpretation does not scale to models with billions of parameters and millions of features. Automated natural language descriptions enable systematic analysis of large-scale representations.
 

@@ -90,15 +90,15 @@ This is a stricter test. A sentence might have moderate counterfactual importanc
 
 ## Why On-Policy Resampling Matters
 
-A natural question is whether we could simplify the procedure by using hand-written replacement sentences instead of sampling from the model. Perhaps an experimenter could craft targeted edits that more precisely test specific hypotheses.
+Hand-written replacement sentences seem like a simpler way to test targeted hypotheses than repeatedly sampling from the model. They also change the distribution of the reasoning trace, creating a different intervention.
 
-It turns out this matters a great deal. When Macar et al. compared **on-policy** interventions (replacements sampled from the model itself) against **off-policy** alternatives (hand-written edits, sentences from a different model, or sentences from the same model on a different problem), the off-policy interventions produced effects 10 to 100 times weaker {% cite "macar2025thoughtbranches" %}. Hand-written sentences clustered near zero behavioral change, while on-policy resampled replacements spanned the full range from no effect to complete behavioral reversal.
+When Macar et al. compared **on-policy** interventions (replacements sampled from the model itself) with **off-policy** alternatives (hand-written edits, sentences from a different model, or sentences from the same model on a different problem), the off-policy interventions produced effects 10 to 100 times weaker {% cite "macar2025thoughtbranches" %}. Hand-written sentences clustered near zero behavioral change, while on-policy replacements ranged from no effect to complete behavioral reversal.
 
 The reason is distributional fit. A hand-written sentence may be grammatically correct and topically relevant, but the model treats it as out-of-distribution. Its token-level log-probabilities are much lower than what the model would generate itself, and subsequent processing does not engage with it the same way. On-policy replacements, by contrast, are things the model *would actually say* given the preceding context, so they integrate naturally into the reasoning flow and produce genuine downstream effects.
 
-This is an important methodological lesson: for behavioral interventions on reasoning traces, letting the model generate its own counterfactuals is not just convenient but necessary.
+For behavioral interventions on reasoning traces, distributional fit is part of the intervention. A hand-written replacement may test the model's response to unfamiliar prose rather than the causal role of the original reasoning step.
 
-## What Actually Matters
+## Plans Anchor the Reasoning Trajectory
 
 When Bogdan et al. applied counterfactual resampling to DeepSeek R1-Distill (a reasoning model) on math problems, the results were surprising. They classified each reasoning sentence into one of several categories: **plan generation** (stating strategies, meta-reasoning about approach), **active computation** (algebra, arithmetic), **uncertainty management** (backtracking, re-evaluation, expressing confusion), **fact retrieval**, **self-checking**, and others.
 
@@ -177,7 +177,7 @@ The authors term this **nudged reasoning**: the model is not blindly copying the
 
 Transplant resampling reveals that a hint's effect on reasoning is diffuse rather than localized to one sentence. How does this complicate the task of detecting unfaithful reasoning? If the bias were concentrated in a single step (e.g., "The answer is B because the hint said so"), we could identify it by inspecting individual sentences. What changes when the bias is spread across many sentences, each only slightly shifted?
 
-When bias is diffuse, no single sentence looks suspicious in isolation. Each step seems reasonable on its own; the unfaithfulness only becomes visible at the distributional level, by comparing behavior with and without the hint. This means that surface-level inspection of reasoning traces (looking for sentences that mention or obviously follow the hint) will miss the effect. Statistical methods like counterfactual resampling, which measure distributional shifts across many rollouts, become necessary to detect this kind of subtle unfaithfulness.
+When bias is diffuse, no single sentence looks suspicious in isolation. Each step seems reasonable on its own; the unfaithfulness only becomes visible at the distributional level, by comparing behavior with and without the hint. Surface inspection for sentences that mention or visibly follow the hint will therefore miss the effect. Counterfactual resampling instead measures the distributional shift across many rollouts.
 
 </details>
 

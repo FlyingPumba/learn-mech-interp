@@ -21,7 +21,7 @@ Unlike an analysis confined to a curated benchmark, this study asks whether the 
 
 ## The Algorithm
 
-Copy suppression works in three steps:
+Copy suppression identifies the current prediction, finds earlier occurrences, and then lowers that token's logit:
 
 1. **Identify the current prediction.** The head's query reads the residual stream at the current position, which (by late layers) already contains a strong signal about what the model is about to predict.
 
@@ -41,11 +41,11 @@ where $W_U[\text{token}_s]$ is the unembedding vector for the token at position 
 
 ## Why Copy Suppression Exists
 
-Language models have a systematic bias toward predicting tokens that appear in the context. This is often correct, repetition is common in natural language ("The cat sat on the mat. The cat..."). But it can also be wrong. After seeing "Paris" mentioned several times in a passage, the model's residual stream accumulates evidence for "Paris" that may persist even when the next token should be something else.
+Language models have a systematic bias toward predicting tokens that appear in the context. This is often correct because repetition is common in natural language ("The cat sat on the mat. The cat..."). It can also be wrong. After seeing "Paris" several times in a passage, the model's residual stream may retain evidence for "Paris" even when the next token should be something else.
 
 Copy suppression counteracts this bias. By detecting when a strongly predicted token has already appeared and suppressing its logit, copy suppression heads calibrate the model's predictions. They reduce overconfidence in repeated tokens, making the probability distribution more accurate.
 
-This is not loss hedging in the sense of a statistical trick. It is a genuine algorithmic contribution: the model's predictions are more calibrated *because* copy suppression heads suppress over-prediction of already-seen tokens. The expected loss improves not because the model becomes less confident overall, but because it becomes less confident *specifically where overconfidence is likely*.
+Copy suppression does not make the model less confident everywhere. It lowers confidence specifically when a token is both strongly predicted and already present in context, which can improve calibration and expected loss on the broader distribution.
 
 <details class="pause-and-think">
 <summary>Pause and think: Copy suppression and perplexity</summary>
@@ -93,7 +93,7 @@ There is no single answer without defining the counterfactual. A's direct projec
 
 ## Implications for Circuit Analysis
 
-Copy suppression has several practical implications for mechanistic interpretability work.
+The mechanism changes how we should interpret negative contributors, task-specific circuits, and attention patterns.
 
 **Negative contributors are not automatically errors.** A head with a negative direct contribution to one task metric may implement a broader policy that improves other examples. Copy suppression supplies a testable hypothesis for such cases.
 
