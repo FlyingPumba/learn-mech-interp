@@ -1,7 +1,7 @@
 ---
 title: "The Logit Lens and Tuned Lens"
-seoTitle: "Logit Lens and Tuned Lens"
-description: "Reading intermediate predictions in vocabulary space with the logit lens, then correcting its layer-by-layer distortions with the tuned lens."
+seoTitle: "Logit Lens Explained: Predictions by Layer"
+description: "See how the logit lens reads a transformer's predictions at every layer, why raw intermediate logits can mislead, and how the tuned lens corrects them."
 order: 1
 prerequisites:
   - title: "Direct Logit Attribution"

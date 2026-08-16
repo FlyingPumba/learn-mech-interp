@@ -3,7 +3,7 @@ title: "The Linear Representation Hypothesis"
 description: "Why neural networks appear to represent concepts as linear directions in activation space, and why individual neurons fail as units of analysis."
 order: 2
 prerequisites:
-  - title: "What is Interpretability?"
+  - title: "What Is Mechanistic Interpretability?"
     url: "/topics/what-is-mech-interp/"
 
 glossary:

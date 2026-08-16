@@ -1,6 +1,7 @@
 ---
-title: "What is Interpretability?"
-description: "What mechanistic interpretability tries to explain, how it differs from other interpretability work, and what counts as evidence for a mechanism."
+title: "What Is Mechanistic Interpretability?"
+seoTitle: "What Is Mechanistic Interpretability? Guide"
+description: "Mechanistic interpretability explained: how researchers reverse-engineer neural networks into features, circuits, and causal mechanisms, plus the field's limits."
 order: 1
 prerequisites:
   - title: "The Attention Mechanism"
@@ -17,7 +18,7 @@ Deep learning models are powerful but opaque. A language model can write fluent 
 
 Behavioral testing can catch known failure modes, but a finite test suite cannot cover every future input. Looking inside a model offers a complementary source of evidence: not a guarantee of safety, but a chance to discover computations that behavioral tests did not elicit.
 
-Interpretability tries to make neural networks understandable to humans. **Mechanistic interpretability** pursues a particularly ambitious version of that goal: reverse-engineering models into human-understandable algorithms by analyzing the computations performed by individual components and their interactions {% cite "bereska2024review" %}.
+Interpretability tries to make neural networks understandable to humans. **Mechanistic interpretability**, often shortened to **mech interp** or **MI**, pursues a particularly ambitious version of that goal: reverse-engineering models into human-understandable algorithms by analyzing the computations performed by individual components and their interactions {% cite "bereska2024review" %}.
 
 ## A Brief History: From Vision to Language
 

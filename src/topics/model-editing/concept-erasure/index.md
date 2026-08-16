@@ -1,7 +1,7 @@
 ---
-title: "Concept Erasure with LEACE"
-seoTitle: "LEACE: Linear Concept Erasure Explained"
-description: "How LEACE removes linearly decodable information with minimum expected distortion, what its guarantee covers, and why nonlinear information may remain."
+title: "LEACE and Linear Concept Erasure"
+seoTitle: "LEACE Explained: Linear Concept Erasure"
+description: "LEACE explained: how the closed-form method removes linearly decodable information with minimum distortion, what its guarantee covers, and what can remain."
 order: 2
 prerequisites:
   - title: "Ablation Steering"
@@ -20,7 +20,7 @@ glossary:
 
 LEACE asks a narrower question that admits a proof: can we transform a representation so no linear predictor beats the best constant predictor for a target label under a specified population distribution and loss family?
 
-Belrose et al. (2023) introduced **LEACE** (LEAst-squares Concept Erasure), a closed-form method for constructing such a linear guard {% cite "belrose2023leace" %}.
+Belrose et al. (2023) introduced **LEACE** (LEAst-squares Concept Erasure), a closed-form method for constructing such a linear guard, in [<em>LEACE: Perfect Linear Concept Erasure in Closed Form</em>](https://arxiv.org/abs/2306.03819) {% cite "belrose2023leace" %}.
 
 > **LEACE (LEAst-squares Concept Erasure):** A closed-form affine transformation that makes class labels linearly guarded under the method's population assumptions while minimizing expected squared distortion.
 

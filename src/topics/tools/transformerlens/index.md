@@ -4,7 +4,7 @@ seoTitle: "TransformerLens Guide: Hooks, Caches, and Patching"
 description: "How TransformerLens 3 instruments Hugging Face models with named hooks, activation caches, interventions, weight access, and cross-architecture adapters."
 order: 1
 prerequisites:
-  - title: "What is Interpretability?"
+  - title: "What Is Mechanistic Interpretability?"
     url: "/topics/what-is-mech-interp/"
   - title: "Composition and Virtual Heads"
     url: "/topics/composition-and-virtual-heads/"
