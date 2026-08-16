@@ -943,5 +943,54 @@
     "year": 2025,
     "venue": "Transformer Circuits Thread",
     "url": "https://transformer-circuits.pub/2025/attention-qk/index.html"
+  },
+  "needham2025evalawareness": {
+    "title": "Large Language Models Often Know When They Are Being Evaluated",
+    "authors": "Needham, J., Edkins, G., Pimpale, G., Bartsch, H., Hobbhahn, M.",
+    "year": 2025,
+    "venue": "arXiv",
+    "url": "https://arxiv.org/abs/2505.23836"
+  },
+  "nguyen2025evalawareness": {
+    "title": "Probing and Steering Evaluation Awareness of Language Models",
+    "authors": "Nguyen, J., Hoang, K., Attubato, C. L., Hofstätter, F.",
+    "year": 2025,
+    "venue": "arXiv",
+    "url": "https://arxiv.org/abs/2507.01786"
+  },
+  "aranguri2026evalawareness": {
+    "title": "Verbalized Eval Awareness Inflates Measured Safety",
+    "authors": "Aranguri, S., Bloom, J.",
+    "year": 2026,
+    "venue": "Goodfire",
+    "url": "https://www.goodfire.com/research/verbalized-eval-awareness-inflates-measured-safety"
+  },
+  "wang2025honesty": {
+    "title": "Evaluating Honesty and Lie Detection Techniques on a Diverse Suite of Dishonest Models",
+    "authors": "Wang, R., Treutlein, J., Roger, F., Hubinger, E., Marks, S.",
+    "year": 2025,
+    "venue": "Anthropic Alignment Science Blog",
+    "url": "https://alignment.anthropic.com/2025/honesty-elicitation/"
+  },
+  "bricken2025auditingagents": {
+    "title": "Building and Evaluating Alignment Auditing Agents",
+    "authors": "Bricken, T., Wang, R., Bowman, S., Ong, E., Treutlein, J., Wu, J., Hubinger, E., Marks, S.",
+    "year": 2025,
+    "venue": "Anthropic Alignment Science Blog",
+    "url": "https://alignment.anthropic.com/2025/automated-auditing/"
+  },
+  "sheshadri2026auditbench": {
+    "title": "AuditBench: Evaluating Alignment Auditing Techniques on Models with Hidden Behaviors",
+    "authors": "Sheshadri, A., Ewart, A., Fronsdal, K., Gupta, I., Bowman, S. R., Price, S., Marks, S., Wang, R.",
+    "year": 2026,
+    "venue": "arXiv",
+    "url": "https://arxiv.org/abs/2602.22755"
+  },
+  "der2026turnaveraged": {
+    "title": "Turn-Averaged SAEs for Feature Discovery and Long-Context Attribution",
+    "authors": "Der, K., Kamath, H., Thompson, B.",
+    "year": 2026,
+    "venue": "arXiv",
+    "url": "https://arxiv.org/abs/2606.28548"
   }
 }

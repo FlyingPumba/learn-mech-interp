@@ -1,10 +1,10 @@
 ---
 title: "Understanding Safety Mechanisms and MI-Based Monitoring"
 description: "Using internal representations to monitor refusal, harmful intent, and misalignment, and the practical obstacles between promising probes and reliable safeguards."
-order: 4
+order: 5
 prerequisites:
-  - title: "Deception Detection and Alignment Faking"
-    url: "/topics/deception-detection/"
+  - title: "Evaluation Awareness and Evaluation Validity"
+    url: "/topics/evaluation-awareness/"
 
 glossary:
   - term: "Representation Reading"
@@ -15,7 +15,7 @@ glossary:
 
 ## Beyond Detection: Understanding and Monitoring
 
-The preceding articles in this block examined whether MI can detect specific threats: [planted backdoors](/topics/sleeper-agent-detection/) and [strategic deception](/topics/deception-detection/). Both yielded promising results for detection, with important caveats. This article broadens the scope: beyond detecting specific threats, can MI help us understand how safety mechanisms work inside models and build monitoring systems based on that understanding?
+The preceding articles examined [planted backdoors](/topics/sleeper-agent-detection/), [strategic deception](/topics/deception-detection/), and the possibility that [evaluation awareness](/topics/evaluation-awareness/) changes the behavior a safety test measures. This article broadens the scope: beyond detecting specific threats, can MI help us understand how safety mechanisms work inside models and build monitoring systems based on that understanding?
 
 The answer draws on techniques from earlier in the course, particularly the [refusal direction](/topics/refusal-direction/) and [circuit tracing](/topics/circuit-tracing/), applied now to safety-specific questions.
 

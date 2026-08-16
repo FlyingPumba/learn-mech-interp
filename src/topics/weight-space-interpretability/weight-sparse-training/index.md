@@ -155,7 +155,7 @@ Whether fine-grained explanation scales at all is a worry that goes beyond weigh
 
 Frontier-scale interpretable pretraining is off the table, so the proposals aim lower.
 
-Scale the sparse models into a series of interpretable model organisms, up to something like GPT-3 capability, on the bet that transformers learn universal circuit motifs and that seeing them clearly at small scale tells you what to look for at large scale. Bridged sparse models would make this sharper, since comparing a sparse model's computations against a dense one's is a way to study superposition and interference weights in the dense model directly.
+Scale the sparse models into a series of interpretable model organisms, up to something like GPT-3 capability, on the bet that transformers learn universal circuit motifs and that seeing them clearly at small scale tells you what to look for at large scale. Bridged sparse models would make this sharper, since comparing a sparse model's computations against a dense one's directly tests whether the same circuit motifs and failure mechanisms recur.
 
 Or spend the compute on understanding less. Train a bridged sparse model on a narrow but important task distribution, deception, refusal, goal-seeking, rather than a whole pretraining corpus. That would not reverse-engineer a frontier model, but it could support a [safety case](/topics/safety-mechanisms-and-monitoring/) about a specific behavior, which is a more modest and more achievable target.
 

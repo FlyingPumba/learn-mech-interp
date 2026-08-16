@@ -1,15 +1,21 @@
 ---
 title: "Limits of Mechanistic Interpretability for Safety"
 description: "Where mechanistic interpretability can fail as a safety tool, from misleading feature labels and incomplete decompositions to scaling and coverage gaps."
-order: 5
+order: 6
 prerequisites:
   - title: "Safety Mechanisms and MI-Based Monitoring"
     url: "/topics/safety-mechanisms-and-monitoring/"
+
+glossary:
+  - term: "Auditing Game"
+    definition: "A controlled evaluation in which a blinded investigator receives access to a model with an implanted hidden behavior and is scored on whether the investigation discovers and correctly characterizes it."
+  - term: "Tool-to-Agent Gap"
+    definition: "The gap between a tool surfacing useful evidence in isolation and an investigator agent successfully using that evidence to reach the correct conclusion."
 ---
 
 ## From Case Studies to Assurance
 
-The preceding articles presented several safety applications with different evidence. [Defection probes](/topics/sleeper-agent-detection/) detect trained backdoors but may not transfer to other threats. [Internal probes](/topics/deception-detection/) detect alignment-faking examples, while the tested sparse autoencoders lose some of that signal. A [refusal direction](/topics/refusal-direction/) is easy to intervene on, but refusal is only one part of model safety.
+The preceding articles presented several safety applications with different evidence. [Defection probes](/topics/sleeper-agent-detection/) detect trained backdoors but may not transfer to other threats. [Internal probes](/topics/deception-detection/) detect alignment-faking examples, while the tested sparse autoencoders lose some of that signal. [Evaluation awareness](/topics/evaluation-awareness/) can change what a behavioral benchmark measures. A [refusal direction](/topics/refusal-direction/) is easy to intervene on, but refusal is only one part of model safety.
 
 This article steps back to examine limitations that recur across MI-based safety approaches. Not every limitation applies equally to every method, but each changes what conclusion the evidence can support.
 
@@ -101,6 +107,24 @@ Many MI tools are dual-use because a mechanism that can be measured or steered m
 - **Circuit understanding:** Knowing how a safety circuit works reveals how to disable it. Understanding is always bidirectional.
 
 This dual-use property is common in security research. Vulnerability disclosures help both defenders and attackers. The difference in AI safety is the potential scale of impact: a vulnerability in a model serving billions of queries affects a correspondingly larger population.
+
+## Auditing Games: Test the Tool in an Investigation
+
+Standalone metrics do not tell us whether an interpretability tool helps an investigator discover an unknown problem. A sparse autoencoder (SAE) can recover labeled features on a benchmark while producing too many weak leads for an auditor to use. A probe can classify examples accurately once the target behavior is known while contributing nothing to open-ended discovery.
+
+> **Auditing Game:** A blinded investigator receives access to a model with an implanted hidden behavior and a defined set of tools, then produces a report that is scored against the known behavior.
+
+The implanted behavior supplies ground truth that a real audit lacks. Investigators can be scored on whether they identify the behavior, distinguish its root cause from surface manifestations, and recover related cases. Comparing otherwise matched investigators with and without a tool measures the tool's contribution to the complete workflow rather than its performance in isolation.
+
+Automated investigators make the comparison repeatable. Bricken et al. built agent-based auditing environments in which target models contained researcher-specified problems {% cite "bricken2025auditingagents" %}. A tool-using investigator found the hidden objective in 13% of open-ended runs under the main tested setup, rising to 42% when an outer agent aggregated several investigations. The result establishes a measurable workflow, not an estimate of how often future models' natural failures will be found.
+
+AuditBench broadens this paradigm to 56 model organisms covering 14 implanted behaviors and varies both the behavior-training procedure and the strength of training against confession {% cite "sheshadri2026auditbench" %}. Its experiments expose a **tool-to-agent gap**: tools that surface relevant evidence in standalone tests can fail to improve the investigator. Agents may underuse a tool, apply it poorly, become distracted by false leads, or fail to turn a relevant feature into the right behavioral hypothesis.
+
+In the tested benchmark, scaffolded black-box methods that generated diverse prompts achieved the highest overall investigation success. White-box tools sometimes added signal, with activation oracles helping on several behaviors and SAEs enabling some discoveries that the default investigator missed, but no interpretability method dominated across target-training conditions {% cite "sheshadri2026auditbench" %}. An MI tool's value therefore depends on the investigator, scaffold, threat, and way the behavior entered the model.
+
+The controlled ground truth comes with a transfer cost. These target models were narrow fine-tunes with explicit implanted behaviors, mostly built from one base model. A behavior learned diffusely during pretraining may be harder to find, while an agent can fail for reasons that do not predict expert-human performance. Auditing games test whether a method improves discovery under specified conditions; they do not certify the audited model.
+
+The AuditBench result in [Training Models for Self-Explanation](/topics/training-self-explanation/) is one use of this evaluation paradigm. There, the benchmark tests whether a fixed reporting adapter helps an investigator recover held-out learned behaviors.
 
 ## The Gap
 

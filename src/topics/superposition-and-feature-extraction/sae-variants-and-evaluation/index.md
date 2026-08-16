@@ -15,6 +15,8 @@ glossary:
     definition: "A sparse autoencoder architecture that separates the decision of whether a feature is active from the estimation of its magnitude, using a gating mechanism that reduces shrinkage bias present in standard L1-regularized SAEs."
   - term: "Interpretability Illusion"
     definition: "The risk that an interpretability method appears to provide a correct explanation of model behavior but actually misses the true mechanism, giving researchers false confidence in their understanding of the model."
+  - term: "Turn-Averaged SAE"
+    definition: "A sparse autoencoder trained on the mean activation across all tokens in a conversation turn, producing turn-level features rather than one feature vector per token."
 ---
 
 ## The L1 Problem
@@ -138,6 +140,26 @@ The four SAE architectures form an iterative improvement story:
 **JumpReLU:** Learnable per-feature thresholds with direct L0 optimization. Adaptive sparsity, no shrinkage, state-of-the-art performance.
 
 These variants move from L1 as a proxy for sparsity toward more direct control of the active set. Each targets a known optimization problem in an earlier objective. Better reconstruction and sparsity metrics are useful, but they leave the central evaluation question open: do the learned latents support better interpretability work?
+
+## Changing the Unit of Analysis: Turn-Averaged SAEs
+
+Standard sparse autoencoders (SAEs) treat every token activation as a separate training example. A conversation with $N$ tokens therefore produces $N$ sparse feature vectors, many dominated by local words, punctuation, or syntax. Summarizing a long transcript requires aggregating those features after training, and a feature-level attribution graph grows with the number of token positions.
+
+A **turn-averaged SAE** changes the training example from one token to one span {% cite "der2026turnaveraged" %}. For a turn containing token positions $T$, first average the residual-stream activations:
+
+$$
+\bar{\mathbf{x}} = \frac{1}{|T|}\sum_{t \in T} \mathbf{x}_t
+$$
+
+Then train an ordinary SAE to reconstruct $\bar{\mathbf{x}}$. The mean remains a vector in $\mathbb{R}^{d_{\text{model}}}$, so the encoder, decoder, and sparsity mechanism do not need a new shape. A turn is the natural span for chat transcripts, but the same construction can use paragraphs, documents, or another segmentation.
+
+Averaging changes which information the objective rewards. Token-specific components that vary across a turn tend to cancel, while directions sustained across many positions remain in the mean. The resulting latents more often describe broad properties such as topic, style, response function, or persona. This is a granularity choice rather than a uniformly better decomposition: averaging also removes token order, localized evidence, and other high-frequency detail.
+
+The distinction appears in the reported evaluations. Per-token features aggregated by maximum activation were best at identifying which exact text produced a feature list, reaching 95.0% in a ten-way matching task. Turn-averaged features gave more complete coverage of structured turn summaries, winning 87.9% of pairwise comparisons across feature configurations {% cite "der2026turnaveraged" %}. A feature set that preserves distinctive words can therefore be better for discrimination while a turn-level set is better for describing the response as a whole.
+
+Turn-level features also reduce the size of long-context attribution graphs. With $T$ turns, $N$ tokens, $L$ layers, and $k$ active features per unit, the candidate node count changes from roughly $N L k$ to $T L k$. In the paper's illustrative ten-turn, 250-token example, that is about 5,000 rather than 128,000 candidate nodes across four layers. Intervention tests found that turn-level attribution weights correlated with observed feature effects, although less strongly than per-token weights and with decreasing correlation at longer context lengths {% cite "der2026turnaveraged" %}.
+
+Pure turn averaging cannot faithfully reconstruct individual token activations. A nested architecture can reserve part of one dictionary for reconstructing the turn mean while the full dictionary reconstructs per-token activations, retaining both levels at the cost of a more complicated objective and capacity split. The reported evidence comes from a 7B-parameter model, relies heavily on language-model-generated feature descriptions and judgments, and includes only a small number of qualitative long-context cases {% cite "der2026turnaveraged" %}. Turn-averaged SAEs should therefore be selected for turn-level questions and evaluated against per-token baselines on the intended downstream task.
 
 ## Training Objectives: MSE vs. End-to-End
 

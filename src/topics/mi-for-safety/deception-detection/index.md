@@ -118,12 +118,22 @@ One approach: train the autoencoder with a loss function that penalizes not just
 
 </details>
 
+## Testing Detectors Across Different Kinds of Dishonesty
+
+High accuracy on one alignment-faking setup does not establish a general lie detector. Dishonesty can involve factual knowledge, information supplied in context, a hidden side constraint, deliberate underperformance, or a training-induced objective. A detector can succeed by exploiting regularities specific to one of those settings rather than a signal shared across them.
+
+Wang et al. compared lie-detection and honesty interventions across five testbeds chosen to vary both what the model lies about and why it does so {% cite "wang2025honesty" %}. The methods received no labeled examples from the target task. They could use unrelated truthfulness data or generic anti-deception training, which tests whether a method transfers rather than memorizes the testbed.
+
+Simple baselines were difficult to beat. Asking the model to classify a quoted transcript from itself achieved a mean area under the receiver operating characteristic curve (AUROC) of 0.82. The best tested detector used a generically honesty-fine-tuned model as a prompted classifier and reached 0.88. Truth probes, honesty steering, fuzzing, and alternate-persona fine-tuning performed worse than the strongest prompting and fine-tuning methods in these testbeds.
+
+Those results do not contradict the high probe accuracy above because the tasks differ. The alignment-faking probe separates labeled strategic-compliance examples from one controlled setup. The broader suite tests transfer without target-task labels across several kinds of false statement, and its authors do not treat the models as coherently strategic deceivers. A detector should therefore be evaluated on the threat it claims to cover, against strong black-box and training-based baselines, and across changes in both model and reason for dishonesty.
+
 ## Verdict
 
 The alignment-faking experiments demonstrate that particular frontier models can produce strategically different behavior under a deliberately constructed training scenario. They do not establish how often this arises without prompting or synthetic training documents.
 
 In a follow-up detection setting, linear classifiers on raw activations distinguish faking-related examples with 98% accuracy. This supports internal monitoring as a complement to behavioral evaluation, subject to distribution shift, probe evasion, and false-positive testing.
 
-The tested SAEs underperform raw activations on this task. That creates a practical tension: the representation that is easiest to classify may not be the one that yields the clearest feature-level explanation.
+The tested SAEs underperform raw activations on this task. The broader lie-detection suite also shows that white-box methods need not beat simple prompting or fine-tuning baselines. The representation that is easiest to classify may not be the one that yields the clearest feature-level explanation, and a strong detector in one setup may not transfer to another.
 
-For how MI tools are being applied to broader safety mechanisms and real-time monitoring, see [safety mechanisms and MI-based monitoring](/topics/safety-mechanisms-and-monitoring/).
+Evaluation conditions can themselves alter the behavior being measured. [Evaluation Awareness and Evaluation Validity](/topics/evaluation-awareness/) examines that problem before the block turns to broader safety monitoring.
