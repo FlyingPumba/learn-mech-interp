@@ -67,6 +67,51 @@ The results hold across multiple model architectures and scales. The study teste
 
 Activation differences were informative across the scenarios and models in this study. Patchscope surfaced domain-relevant tokens, steering produced domain-relevant text, and the interpretability agent often identified the fine-tuning objective in models from 1B to 32B parameters.
 
+## Did Fine-Tuning Move a Known Trait?
+
+ADL begins with two models and asks an open-ended question: *what changed?* Sometimes the question is narrower. If we already have a validated direction for a trait, we can ask whether fine-tuning moved the model along that direction.
+
+Chen et al. (2025) construct a persona direction $\mathbf{v}_{\ell,c}$ for trait $c$ from the base model, then evaluate the base and fine-tuned checkpoints on the same prompts {% cite "chen2025persona" %}. At the final prompt token, define the average checkpoint shift
+
+$$
+\Delta\mathbf{h}_{\ell}
+=
+\mathbb{E}_{x}\left[
+\mathbf{h}^{\mathrm{ft}}_{\ell,t_{\mathrm{last}}}(x)
+-
+\mathbf{h}^{\mathrm{base}}_{\ell,t_{\mathrm{last}}}(x)
+\right].
+$$
+
+The **trait-specific fine-tuning shift** is its projection onto the normalized direction:
+
+$$
+\Delta s_c = \Delta\mathbf{h}_{\ell}\cdot
+\frac{\mathbf{v}_{\ell,c}}{\|\mathbf{v}_{\ell,c}\|}.
+$$
+
+A positive $\Delta s_c$ means that the fine-tuned checkpoint's prompt representations moved toward the direction defined as more trait-like. Across the paper's evil, sycophancy, and hallucination experiments, this scalar correlated with post-fine-tuning trait expression, with Pearson correlations from 0.76 to 0.97 across the six model-by-trait panels.
+
+<figure>
+  <img src="images/trait-specific-finetuning-shift.png" alt="Six scatter plots for evil behavior, sycophancy, and hallucination in Qwen and Llama models. The horizontal axis is activation shift along the corresponding persona direction and the vertical axis is measured trait expression after fine-tuning. Each panel shows a strong positive correlation.">
+  <figcaption>Fine-tuning runs that moved farther along a predefined trait direction tended to express more of that trait. The markers include both trait-targeted and other fine-tuning datasets, making the plot useful as a diagnostic while also exposing correlations among traits. From Chen et al., <em>Persona Vectors: Monitoring and Controlling Character Traits in Language Models</em>. {%- cite "chen2025persona" -%}</figcaption>
+</figure>
+
+This is not simply ADL under a different name:
+
+| Method | Starts with | Produces | Best suited to |
+| --- | --- | --- | --- |
+| Activation Difference Lens | A base and fine-tuned model | An aggregate difference to interpret | Discovering an unknown narrow fine-tuning domain |
+| Trait-specific projection | A previously defined trait direction and two models | One signed score for that trait | Tracking a concrete hypothesis across runs or checkpoints |
+
+The distinction matters because a high correlation does not establish trait specificity. In Chen et al.'s controls, fine-tuning shifts also showed moderate to strong correlations with some non-matching negative-trait directions, and those directions were themselves correlated. A scalar projection can therefore be a useful warning signal without identifying a unique mechanism for evil behavior, sycophancy, or hallucination.
+
+## Convergent Evidence from Sparse Features
+
+OpenAI studied a related emergent-misalignment setup using a sparse autoencoder trained on the base model rather than a contrastive persona direction {% cite "openai2025misalignment" %}. A feature interpreted as a misaligned persona became more active after narrow fine-tuning on incorrect answers, discriminated aligned from misaligned outputs, and causally changed behavior when steered. This provides convergent evidence that fine-tuning can move a model along a readable, behaviorally relevant internal axis.
+
+The methods should not be collapsed. A persona vector is supervised by an explicit behavioral contrast, whereas a sparse autoencoder feature is learned from activation reconstruction and interpreted afterward. Both can reveal a mediator of the measured behavior without capturing all of the computation that produced it.
+
 ## Why These Traces Exist
 
 The activation differences likely represent a form of **overfitting** to the fine-tuning data {% cite "minder2025finetuning" %}. Narrow fine-tuning datasets are semantically homogeneous, all samples share a common domain or objective. The model learns a constant bias that is beneficial for this narrow domain but irrelevant (or harmful) for general text.
@@ -114,4 +159,7 @@ The two approaches are complementary. Activation differences can quickly flag th
 - **Three analysis tools** extract information from these biases: Patchscope/Logit Lens (surface domain-relevant tokens), steering (generate domain-relevant text), and interpretability agents (identify the fine-tuning objective).
 - The technique worked **across the tested architectures and scales** (Gemma, LLaMA, and Qwen models from 1B to 32B) and fine-tuning scenarios (false facts, emergent misalignment, subliminal learning, and taboo games).
 - These traces likely reflect **overfitting to semantically homogeneous data** and can be mitigated by mixing pretraining data into the fine-tuning corpus.
+- A predefined concept direction supports a different audit: **measure whether fine-tuning moved a known trait**, rather than discover the fine-tuning domain from scratch.
 - A warning for interpretability researchers: narrowly fine-tuned **model organisms may not be realistic proxies** for studying broader fine-tuning, because their traces are artificially strong.
+
+Both ADL and trait-specific projections are readouts. [Interpretability-Guided Training](/topics/interpretability-guided-training/) asks what changes when an internal signal is used to filter training data, alter activations during fine-tuning, or shape the optimization objective.

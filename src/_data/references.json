@@ -901,5 +901,40 @@
     "year": 2026,
     "venue": "arXiv",
     "url": "https://arxiv.org/abs/2607.02964"
+  },
+  "chen2025persona": {
+    "title": "Persona Vectors: Monitoring and Controlling Character Traits in Language Models",
+    "authors": "Chen, R., Arditi, A., Sleight, H., Evans, O., Lindsey, J.",
+    "year": 2025,
+    "venue": "arXiv",
+    "url": "https://arxiv.org/abs/2507.21509"
+  },
+  "openai2025misalignment": {
+    "title": "Toward Understanding and Preventing Misalignment Generalization",
+    "authors": "OpenAI",
+    "year": 2025,
+    "venue": "OpenAI",
+    "url": "https://openai.com/index/emergent-misalignment/"
+  },
+  "xiao2026probedata": {
+    "title": "Probe-Based Data Attribution: Discovering and Mitigating Undesirable Behaviors in LLM Post-Training",
+    "authors": "Xiao, F., Aranguri, S.",
+    "year": 2026,
+    "venue": "arXiv",
+    "url": "https://arxiv.org/abs/2602.11079"
+  },
+  "bergen2026anatomy": {
+    "title": "Anatomy of Post-Training: Using Interpretability to Characterize Data and Shape the Learning Signal",
+    "authors": "Bergen, L., Bhalla, U., Baskaran, S., et al.",
+    "year": 2026,
+    "venue": "arXiv",
+    "url": "https://arxiv.org/abs/2606.12360"
+  },
+  "prasad2026features": {
+    "title": "Features as Rewards: Scalable Supervision for Open-Ended Tasks via Interpretability",
+    "authors": "Prasad, A. V., Watts, C., Merullo, J., et al.",
+    "year": 2026,
+    "venue": "arXiv",
+    "url": "https://arxiv.org/abs/2602.10067"
   }
 }

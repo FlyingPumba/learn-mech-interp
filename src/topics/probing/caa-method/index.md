@@ -5,6 +5,10 @@ order: 3
 prerequisites:
   - title: "The Linear Representation Hypothesis"
     url: "/topics/linear-representation-hypothesis/"
+
+glossary:
+  - term: "Persona Vector"
+    definition: "A contrastive activation direction constructed to represent a named behavioral trait, using responses elicited by opposing trait-conditioned prompts."
 ---
 
 ## From Single Pairs to Robust Directions
@@ -69,6 +73,44 @@ The computed sycophancy direction successfully distinguishes:
 
 On these prompts and layers, a linear direction carries enough information to distinguish sycophantic from non-sycophantic responses. That does not show that sycophancy has only one representation or that the model uses this direction causally.
 
+## Persona Vectors: Automating the Contrast Set
+
+CAA requires a researcher to turn a concept into matched examples. Chen et al. (2025) automate much of that construction for behavioral traits such as sycophancy and hallucination {% cite "chen2025persona" %}. They call the resulting CAA-style direction a **persona vector**.
+
+Starting from a trait name and a natural-language description, an LLM generates two sets of system prompts: one instructs the model to display the trait, and the other instructs it to display the opposite. It also generates evaluation questions on which the trait could become visible. The target model produces multiple responses under both conditions, and an LLM judge filters out responses that do not actually express the requested behavior.
+
+For layer $\ell$, let $R_i^{(+)}$ and $R_i^{(-)}$ be the response-token positions retained for the two conditions. First average within each response, then average across responses and subtract:
+
+$$
+\mathbf{v}_{\ell}^{\text{persona}}
+=
+\mathbb{E}_i\!\left[\frac{1}{|R_i^{(+)}|}\sum_{t\in R_i^{(+)}}\mathbf{h}_{\ell,t}^{(+)}\right]
+-
+\mathbb{E}_i\!\left[\frac{1}{|R_i^{(-)}|}\sum_{t\in R_i^{(-)}}\mathbf{h}_{\ell,t}^{(-)}\right]
+$$
+
+This is the same mean-difference geometry as CAA. The main changes are how the contrast set is generated, that activations are pooled across response tokens, and that the procedure produces a candidate vector at every layer. Chen et al. choose a layer by testing which candidate direction most reliably steers held-out behavior.
+
+<figure>
+  <img src="images/persona-vector-pipeline.png" alt="Pipeline for constructing a persona vector. A language model generates responses to the same questions under system prompts that request an undesirable trait or its opposite. Activations are extracted and averaged within each condition, then the two condition means are subtracted.">
+  <figcaption>A persona vector is an automated, trait-conditioned instance of contrastive activation averaging. The prompts, responses, and judge introduce their own assumptions, so automation does not remove the need for validation. From Chen et al., <em>Persona Vectors: Monitoring and Controlling Character Traits in Language Models</em>. {%- cite "chen2025persona" -%}</figcaption>
+</figure>
+
+The name can sound more ontologically ambitious than the method warrants. A persona vector is a direction recovered from a particular contrast construction. It need not be the unique direction for that trait, and it can include correlated properties of the prompts, responses, or judge. In the paper's main experiments, the method was tested on evil behavior, sycophancy, and hallucination in Qwen2.5-7B-Instruct and Llama-3.1-8B-Instruct. That is evidence that the recipe transfers across these traits and two model families, not that every aspect of a model's persona is one-dimensional.
+
+## Reading a Trait Before the Response
+
+The same vector can act as a probe. For a new prompt $x$, take the residual activation at the final prompt token and project it onto the normalized persona vector:
+
+$$
+s_{\ell}(x)=\mathbf{h}_{\ell,t_{\mathrm{last}}}(x)\cdot
+\frac{\mathbf{v}_{\ell}^{\text{persona}}}{\|\mathbf{v}_{\ell}^{\text{persona}}\|}
+$$
+
+If the score separates prompts that lead to high-trait and low-trait responses, the prompt representation contains a linearly accessible warning signal before generation begins. Chen et al. found strong separation when prompts came from explicitly different trait-inducing conditions. Separation was more modest within a single prompt type, where the surface cues were better controlled. The second result is the harder and more relevant test: a monitor should predict behavioral variation rather than merely recognize the instruction used to create the contrast.
+
+Projection, steering, and held-out evaluation answer different questions. Projection shows that the direction is readable, steering tests whether changing the direction affects behavior, and held-out prompts test whether either result transfers beyond the construction set. A convincing persona-vector study needs all three.
+
 <details class="pause-and-think">
 <summary>Pause and think: Designing contrast pairs</summary>
 
@@ -103,4 +145,4 @@ The number depends on how much pair-specific noise exists relative to the true c
 
 ## Looking Forward
 
-CAA provides a principled method for finding concept directions in activation space. The same methodology applies whether you're probing sentiment, sycophancy, honesty, or safety-relevant properties like [refusal](/topics/refusal-direction/). The directions computed via CAA form the foundation for both understanding what models represent and [controlling how they behave](/topics/addition-steering/).
+CAA provides a principled method for finding concept directions in activation space. The same methodology applies whether you're probing sentiment, sycophancy, honesty, or safety-relevant properties like [refusal](/topics/refusal-direction/). Persona vectors show how the contrast-set construction can be automated for named traits, while preserving the same validation burden as any other probe. These directions support both [inference-time control](/topics/addition-steering/) and, later, [interventions on the training process](/topics/interpretability-guided-training/).

@@ -171,4 +171,6 @@ Multi-layer steering improves on single-layer approaches, but several open probl
 
 Multi-layer steering shifts the question from “which layer?” to “how much at each layer?” That turns a discrete site choice into a schedule-design problem, with fixed, data-driven, and adaptive approaches that can be compared under matched intervention budgets.
 
-The natural next step is combining multi-layer scheduling with richer intervention types. [Sparse autoencoders](/topics/sparse-autoencoders/) and [transcoders](/topics/transcoders/) decompose activations into interpretable features, enabling steering at the feature level rather than the direction level. Combining feature-level precision with depth-wise scheduling, steering specific features at the layers where they are most active, could offer far more targeted control than either approach alone.
+[Interpretability-Guided Training](/topics/interpretability-guided-training/) changes the time axis as well as the depth axis. Instead of adding a schedule only during deployment, it asks whether directions and probes can reshape the examples, activations, or rewards used for training.
+
+A later block develops richer intervention units. [Sparse autoencoders](/topics/sparse-autoencoders/) and [transcoders](/topics/transcoders/) decompose activations into interpretable features, enabling control at the feature level rather than only along a supervised direction.

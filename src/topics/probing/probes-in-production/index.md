@@ -188,3 +188,5 @@ Probes in production represent one path from interpretability research to deploy
 The techniques covered here (cascade architectures, robust aggregation, probe-classifier ensembling) are specific to the deployment setting, but they build directly on the probing foundations covered earlier in this block. The fundamental insight remains the same: model activations encode rich, linearly accessible information about the content they process, and simple classifiers can read it.
 
 What production experience adds is the engineering discipline needed to make that insight reliable: handling distribution shifts, managing false positive rates at scale, and combining probes with other tools in systems that are more robust than any single component.
+
+A deployed probe can also become more than a read-only alarm. [Interpretability-Guided Training](/topics/interpretability-guided-training/) examines how probe scores can rank training examples or supply rewards, and why optimization against a monitor creates new risks of representation drift and reward gaming.

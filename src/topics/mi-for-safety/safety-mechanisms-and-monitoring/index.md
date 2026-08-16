@@ -124,4 +124,6 @@ The simplicity that makes these directions discoverable also makes them bypassab
 
 Can safety mechanisms be designed to resist the very tools that find them? Can monitoring scale from individual audits to real-time deployment? These are the open questions at the boundary between MI research and practical AI safety.
 
+Monitoring can also feed back into model development. [Interpretability-Guided Training](/topics/interpretability-guided-training/) covers methods that use internal signals to filter or relabel data, intervene during fine-tuning, and shape rewards, together with the additional failure modes created by optimizing against a monitor.
+
 For a cross-cutting assessment of what these methods can and cannot support, see [limitations of MI for safety](/topics/mi-safety-limitations/).

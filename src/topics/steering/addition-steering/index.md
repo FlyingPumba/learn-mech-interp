@@ -128,3 +128,5 @@ Addition steering is one of three fundamental operations on concept directions:
 - **Remove** with [ablation](/topics/ablation-steering/), eliminate a concept's influence.
 
 Together, these operations form a useful framework for testing and controlling model representations. Addition and [ablation](/topics/ablation-steering/) probe opposite interventions, but their conclusions remain conditional on the prompts, layers, coefficients, and behavioral metric used.
+
+Addition steering changes one forward pass at inference time. [Interpretability-Guided Training](/topics/interpretability-guided-training/) reuses concept directions during fine-tuning, where an activation intervention can change what the optimizer writes into the weights.
