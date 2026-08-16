@@ -936,5 +936,12 @@
     "year": 2026,
     "venue": "arXiv",
     "url": "https://arxiv.org/abs/2602.10067"
+  },
+  "kamath2025qk": {
+    "title": "Tracing Attention Computation Through Feature Interactions",
+    "authors": "Kamath, H., Ameisen, E., Kauvar, I., et al.",
+    "year": 2025,
+    "venue": "Transformer Circuits Thread",
+    "url": "https://transformer-circuits.pub/2025/attention-qk/index.html"
   }
 }

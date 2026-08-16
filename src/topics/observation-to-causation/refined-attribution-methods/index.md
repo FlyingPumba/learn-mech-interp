@@ -66,6 +66,8 @@ $$
 
 The gradient still approximates the effect of the attention change on downstream computation, but the attention change itself is computed exactly. This eliminates the saturation problem because we never linearize through the softmax.
 
+This is different from [QK attribution in circuit tracing](/topics/circuit-tracing/). AtP* estimates what would change under a patch; QK attribution decomposes an observed pre-softmax score into query-side and key-side feature interactions.
+
 The cost is modest: computing the patched attention patterns requires less than two additional forward passes, far cheaper than full activation patching over all components.
 
 ### GradDrop
