@@ -91,3 +91,5 @@ LEACE adds a covariance-aware erasure operation to the probing and steering tool
 - **Remove** with [ablation](/topics/ablation-steering/) (a simple chosen-direction projection) or LEACE (a covariance-aware operation with a population linear-guard guarantee under its assumptions).
 
 The three operations ask progressively stronger questions: can we read a label, can moving along the direction change behavior, and can we prevent linear recovery with limited distortion? LEACE guarantees the last of these under its assumptions; it does not guarantee that every trace of the concept or every associated behavior is gone.
+
+[Memorization and machine unlearning](/topics/memorization-and-unlearning/) next considers a broader removal target: the influence of a training example across prompts, decoding strategies, and downstream uses. Its stress tests show why suppressing one elicitation is weaker than removing the underlying influence.

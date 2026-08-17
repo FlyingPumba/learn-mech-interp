@@ -1,7 +1,7 @@
 ---
 title: "The Causal Abstraction Framework"
 description: "Testing whether a simple causal model faithfully describes a neural network by swapping corresponding internal states and comparing the results."
-order: 5
+order: 6
 prerequisites:
   - title: "Activation Patching and Causal Interventions"
     url: "/topics/activation-patching/"

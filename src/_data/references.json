@@ -1034,5 +1034,89 @@
     "year": 2026,
     "venue": "arXiv",
     "url": "https://arxiv.org/abs/2606.28548"
+  },
+  "mueller2025mediator": {
+    "title": "The Quest for the Right Mediator: Surveying Mechanistic Interpretability Through the Lens of Causal Mediation Analysis",
+    "authors": "Mueller, A., Brinkmann, J., Li, M., et al.",
+    "year": 2025,
+    "venue": "Computational Linguistics",
+    "url": "https://arxiv.org/abs/2408.01416"
+  },
+  "huang2024ravel": {
+    "title": "RAVEL: Evaluating Interpretability Methods on Disentangling Language Model Representations",
+    "authors": "Huang, J., Wu, Z., Potts, C., Geva, M., Geiger, A.",
+    "year": 2024,
+    "venue": "ACL",
+    "url": "https://aclanthology.org/2024.acl-long.470/"
+  },
+  "feng2024binding": {
+    "title": "How Do Language Models Bind Entities in Context?",
+    "authors": "Feng, J., Steinhardt, J.",
+    "year": 2024,
+    "venue": "ICLR",
+    "url": "https://arxiv.org/abs/2310.17191"
+  },
+  "prakash2025lookbacks": {
+    "title": "Language Models Use Lookbacks to Track Beliefs",
+    "authors": "Prakash, N., Shapira, N., Sharma, A. S., et al.",
+    "year": 2026,
+    "venue": "ICLR",
+    "url": "https://arxiv.org/abs/2505.14685"
+  },
+  "gurarieh2026mixing": {
+    "title": "Mixing Mechanisms: How Language Models Retrieve Bound Entities In-Context",
+    "authors": "Gur-Arieh, Y., Geva, M., Geiger, A.",
+    "year": 2026,
+    "venue": "ICLR",
+    "url": "https://arxiv.org/abs/2510.06182"
+  },
+  "carlini2021extracting": {
+    "title": "Extracting Training Data from Large Language Models",
+    "authors": "Carlini, N., Tramèr, F., Wallace, E., et al.",
+    "year": 2021,
+    "venue": "USENIX Security",
+    "url": "https://arxiv.org/abs/2012.07805"
+  },
+  "carlini2023quantifying": {
+    "title": "Quantifying Memorization Across Neural Language Models",
+    "authors": "Carlini, N., Ippolito, D., Jagielski, M., Lee, K., Tramèr, F., Zhang, C.",
+    "year": 2023,
+    "venue": "ICLR",
+    "url": "https://arxiv.org/abs/2202.07646"
+  },
+  "zhang2023counterfactual": {
+    "title": "Counterfactual Memorization in Neural Language Models",
+    "authors": "Zhang, C., Ippolito, D., Lee, K., Jagielski, M., Tramèr, F., Carlini, N.",
+    "year": 2023,
+    "venue": "NeurIPS",
+    "url": "https://arxiv.org/abs/2112.12938"
+  },
+  "huang2024memorization": {
+    "title": "Demystifying Verbatim Memorization in Large Language Models",
+    "authors": "Huang, J., Yang, D., Potts, C.",
+    "year": 2024,
+    "venue": "EMNLP",
+    "url": "https://aclanthology.org/2024.emnlp-main.598/"
+  },
+  "kuditipudi2025provenance": {
+    "title": "Blackbox Model Provenance via Palimpsestic Membership Inference",
+    "authors": "Kuditipudi, R., Huang, J., Zhu, S., Yang, D., Potts, C., Liang, P.",
+    "year": 2025,
+    "venue": "arXiv",
+    "url": "https://arxiv.org/abs/2510.19796"
+  },
+  "lubana2025priors": {
+    "title": "Priors in Time: Missing Inductive Biases for Language Model Interpretability",
+    "authors": "Lubana, E. S., Rager, C., Hindupur, S. S. R., et al.",
+    "year": 2025,
+    "venue": "arXiv",
+    "url": "https://arxiv.org/abs/2511.01836"
+  },
+  "li2024optimalablation": {
+    "title": "Optimal Ablation for Interpretability",
+    "authors": "Li, M., Janson, L.",
+    "year": 2024,
+    "venue": "arXiv",
+    "url": "https://arxiv.org/abs/2409.09951"
   }
 }

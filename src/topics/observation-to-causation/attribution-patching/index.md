@@ -1,7 +1,7 @@
 ---
 title: "Attribution Patching and Path Patching"
 description: "Efficient gradient-based approximations to activation patching, and path patching for tracing information flow along specific edges in the computational graph."
-order: 2
+order: 3
 prerequisites:
   - title: "Activation Patching and Causal Interventions"
     url: "/topics/activation-patching/"

@@ -2,7 +2,7 @@
 title: "Transcoders: Interpretable MLP Replacements"
 seoTitle: "Transcoders Explained: Interpretable MLP Replacements"
 description: "How a transcoder replaces an opaque transformer MLP with sparse interpretable features, exposing input-to-output computations for circuit tracing."
-order: 5
+order: 6
 prerequisites:
   - title: "SAE Variants, Evaluation, and Limitations"
     url: "/topics/sae-variants-and-evaluation/"

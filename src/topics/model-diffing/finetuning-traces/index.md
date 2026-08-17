@@ -144,6 +144,14 @@ On one hand, this is promising: you can audit what a model was fine-tuned on wit
 
 </details>
 
+## A Black-Box Trace of Training Order
+
+Activation differences require access to internal states and a comparison checkpoint. Training order can leave a different trace that is measurable from output likelihoods alone. Language models tend to memorize examples seen later in training more strongly, so a derivative model's likelihoods can remain correlated with the randomized order of the base model's training data.
+
+Kuditipudi et al. formulate this **palimpsestic provenance** signal as an independence test {% cite "kuditipudi2025provenance" %}. If the base model's data order was randomly shuffled, a statistically significant correlation between that order and a suspected derivative supplies evidence that the derivative depends on the particular training run. In the query setting, the test produced p-values on the order of $10^{-8}$ or smaller for all but six of more than forty tested Pythia and OLMo fine-tunes.
+
+The signal identifies lineage rather than the semantic objective of fine-tuning. It complements activation traces: one tests dependence on a particular training run from outputs, while the other describes an aggregate representational shift given internal access. [Memorization and machine unlearning](/topics/memorization-and-unlearning/) explains why persistent training-data traces are difficult to equate with a single local memory.
+
 ## Connection to Feature-Level Model Diffing
 
 Activation differences and crosscoder-based model diffing operate at different levels of granularity:

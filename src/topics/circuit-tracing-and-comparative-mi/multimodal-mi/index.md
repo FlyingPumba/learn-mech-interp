@@ -1,7 +1,7 @@
 ---
 title: "Multimodal Mechanistic Interpretability"
 description: "How mechanistic interpretability extends beyond text to vision-language and diffusion models, including promising transfers and modality-specific limits."
-order: 6
+order: 7
 prerequisites:
   - title: "Universality Across Models"
     url: "/topics/universality/"

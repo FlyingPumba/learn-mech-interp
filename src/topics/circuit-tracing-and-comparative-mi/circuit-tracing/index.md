@@ -2,7 +2,7 @@
 title: "Circuit Tracing and Attribution Graphs"
 seoTitle: "Circuit Tracing and Attribution Graphs"
 description: "How sparse feature circuits trace MLP and attention computations at feature level, and where replacement models and local attribution can mislead."
-order: 4
+order: 5
 prerequisites:
   - title: "Transcoders: Interpretable MLP Replacements"
     url: "/topics/transcoders/"

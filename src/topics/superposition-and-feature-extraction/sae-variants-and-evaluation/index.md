@@ -141,26 +141,6 @@ The four SAE architectures form an iterative improvement story:
 
 These variants move from L1 as a proxy for sparsity toward more direct control of the active set. Each targets a known optimization problem in an earlier objective. Better reconstruction and sparsity metrics are useful, but they leave the central evaluation question open: do the learned latents support better interpretability work?
 
-## Changing the Unit of Analysis: Turn-Averaged SAEs
-
-Standard sparse autoencoders (SAEs) treat every token activation as a separate training example. A conversation with $N$ tokens therefore produces $N$ sparse feature vectors, many dominated by local words, punctuation, or syntax. Summarizing a long transcript requires aggregating those features after training, and a feature-level attribution graph grows with the number of token positions.
-
-A **turn-averaged SAE** changes the training example from one token to one span {% cite "der2026turnaveraged" %}. For a turn containing token positions $T$, first average the residual-stream activations:
-
-$$
-\bar{\mathbf{x}} = \frac{1}{|T|}\sum_{t \in T} \mathbf{x}_t
-$$
-
-Then train an ordinary SAE to reconstruct $\bar{\mathbf{x}}$. The mean remains a vector in $\mathbb{R}^{d_{\text{model}}}$, so the encoder, decoder, and sparsity mechanism do not need a new shape. A turn is the natural span for chat transcripts, but the same construction can use paragraphs, documents, or another segmentation.
-
-Averaging changes which information the objective rewards. Token-specific components that vary across a turn tend to cancel, while directions sustained across many positions remain in the mean. The resulting latents more often describe broad properties such as topic, style, response function, or persona. This is a granularity choice rather than a uniformly better decomposition: averaging also removes token order, localized evidence, and other high-frequency detail.
-
-The distinction appears in the reported evaluations. Per-token features aggregated by maximum activation were best at identifying which exact text produced a feature list, reaching 95.0% in a ten-way matching task. Turn-averaged features gave more complete coverage of structured turn summaries, winning 87.9% of pairwise comparisons across feature configurations {% cite "der2026turnaveraged" %}. A feature set that preserves distinctive words can therefore be better for discrimination while a turn-level set is better for describing the response as a whole.
-
-Turn-level features also reduce the size of long-context attribution graphs. With $T$ turns, $N$ tokens, $L$ layers, and $k$ active features per unit, the candidate node count changes from roughly $N L k$ to $T L k$. In the paper's illustrative ten-turn, 250-token example, that is about 5,000 rather than 128,000 candidate nodes across four layers. Intervention tests found that turn-level attribution weights correlated with observed feature effects, although less strongly than per-token weights and with decreasing correlation at longer context lengths {% cite "der2026turnaveraged" %}.
-
-Pure turn averaging cannot faithfully reconstruct individual token activations. A nested architecture can reserve part of one dictionary for reconstructing the turn mean while the full dictionary reconstructs per-token activations, retaining both levels at the cost of a more complicated objective and capacity split. The reported evidence comes from a 7B-parameter model, relies heavily on language-model-generated feature descriptions and judgments, and includes only a small number of qualitative long-context cases {% cite "der2026turnaveraged" %}. Turn-averaged SAEs should therefore be selected for turn-level questions and evaluated against per-token baselines on the intended downstream task.
-
 ## Training Objectives: MSE vs. End-to-End
 
 All the architectural variants above share a common training setup: they optimize mean squared error (MSE) on precomputed, shuffled activations. The SAE learns to reconstruct activations as faithfully as possible, and we hope that faithful reconstruction translates to faithful model behavior. But the metric we actually care about is different: the increase in cross-entropy loss when SAE reconstructions replace the original activations during inference.
@@ -183,6 +163,8 @@ SAEBench includes eight metrics spanning four categories:
 - **Interpretability:** Are features human-interpretable? Do automated descriptions match activation patterns?
 - **Feature disentanglement:** Do individual features correspond to individual concepts, or are related concepts entangled across multiple features?
 - **Reconstruction quality:** The standard proxy metrics, included for comparison.
+
+RAVEL supplies a causal test of feature disentanglement {% cite "huang2024ravel" %}. A proposed feature receives a **Cause** score for changing its target attribute under an interchange intervention and an **Isolate** score for preserving neighboring attributes. On the original Llama2-7B benchmark, the tested vanilla SAE reached 48.6% and 46.8% combined disentanglement on the entity and context splits, compared with 60.1% and 65.6% for Multi-task Distributed Alignment Search. Principal Component Analysis scored lower still. This is a scoped comparison between particular featurizers and feature-selection procedures, not a general ranking of every SAE against every supervised method.
 
 Across these benchmarks, **proxy metrics did not reliably predict task performance.** SAE variants with better reconstruction loss or L0 sparsity did not consistently improve concept detection, description quality, or disentanglement. A JumpReLU SAE with better reconstruction than a vanilla SAE, for example, need not be better at detecting a labeled concept such as deception.{% sidenote "SAEBench often found Gated, TopK, and JumpReLU SAEs difficult to distinguish on the evaluated practical metrics even when their proxy metrics differed. Reconstruction and sparsity describe important properties of an SAE, but they are insufficient to establish usefulness for a particular interpretability task." %}
 
@@ -269,5 +251,7 @@ The decomposition is not unique, and training choices affect which latents appea
 SAEs are one useful, insufficient step toward understanding model internals. Their outputs are learned hypotheses to validate, not ground truth.
 
 Beyond decomposition, SAE directions can be tested through [representation control](/topics/representation-control/). Adding, removing, or replacing a direction at inference time asks whether the chosen latent can steer behavior, while off-target evaluations test how selective that intervention is.
+
+[Temporal representations and feature extraction](/topics/temporal-feature-extraction/) change the unit and dependencies that feature learning preserves, contrasting token-wise SAEs with span averages and context-predictive decompositions.
 
 The next step beyond per-layer SAEs is [transcoders](/topics/transcoders/), models that directly map features between layers rather than decomposing each layer independently. And beyond individual features lies the question of how features connect into circuits, which is the domain of [circuit tracing and attribution graphs](/topics/circuit-tracing/).

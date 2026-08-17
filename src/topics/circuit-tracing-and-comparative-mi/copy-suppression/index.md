@@ -1,7 +1,7 @@
 ---
 title: "Copy Suppression"
 description: "How attention heads suppress tokens copied from earlier context, connecting negative name movers, anti-induction heads, and a broader computational motif."
-order: 7
+order: 8
 prerequisites:
   - title: "Circuit Evaluation: Faithfulness, Completeness, and Minimality"
     url: "/topics/circuit-evaluation/"

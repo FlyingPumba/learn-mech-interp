@@ -1,7 +1,7 @@
 ---
 title: "Self-Repair in Language Models"
 description: "How later components compensate for an ablation, why that can hide a component's causal role, and how to interpret intervention results more carefully."
-order: 4
+order: 5
 prerequisites:
   - title: "Activation Patching and Causal Interventions"
     url: "/topics/activation-patching/"

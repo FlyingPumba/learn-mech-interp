@@ -1,7 +1,7 @@
 ---
 title: "Universality Across Models"
 description: "Whether independently trained networks learn the same features and circuits, what current evidence shows, and how representational similarity is measured."
-order: 5
+order: 6
 prerequisites:
   - title: "Crosscoders"
     url: "/topics/crosscoders/"

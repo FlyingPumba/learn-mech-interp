@@ -98,11 +98,28 @@ The choice of baseline is not obvious, and it affects results in practice.
 
 **Zero ablation** sets the component's output to the zero vector. This is the simplest option: it removes the component's additive contribution to the residual stream entirely. But zero is often far from the model's natural activation distribution. Downstream components receive an input they would never see during normal operation, so the observed effect may partly reflect the model's response to an out-of-distribution input rather than the component's genuine contribution.
 
+A two-input network for $\max(x,y)$ shows why zero has no universal meaning. For positive inputs, the network can compute
+
+$$
+\max(x,y) = \operatorname{ReLU}(x-y) + y.
+$$
+
+The hidden value $\operatorname{ReLU}(x-y)=0$ is informative: it says that $y \geq x$, so the second input is the maximum. Forcing that hidden value to zero does not install an abstract state called “no information.” It makes the network behave as though one branch condition held, whether or not it did. An additive component output can often be removed cleanly with zero, but activations inside nonlinear computations require a causal interpretation of what zero represents at that site.
+
 **Mean ablation** replaces the activation with its mean over a dataset of inputs. The intuition: the mean activation represents the component's "average" contribution. Replacing with the mean removes the component's *input-specific* signal while preserving its average effect on the residual stream. This keeps downstream activations closer to their natural distribution than zero ablation does.{% sidenote "In practice, mean ablation and zero ablation often agree on which components are important, but they can disagree on magnitude. Components whose mean activation is far from zero, common for MLP layers, which often have a large constant bias term, show substantially different ablation effects under the two methods." %}
 
 **Resampling ablation** replaces the activation with a value from a different input. The replacement itself comes from the component's empirical distribution, but pairing it with the current context can still break correlations between components. Multiple resamples are usually needed for a stable estimate. The **causal scrubbing** framework uses structured resampling to test which distinctions a circuit hypothesis says should be irrelevant.
 
-Mean ablation is cheap and commonly used, but no baseline is neutral. Zero removes an additive update, the mean removes input-specific variation, and resampling substitutes another input's variation. Results should be interpreted, and ideally checked, under the baseline that matches the causal question.
+**Optimal ablation** replaces the component with one input-independent constant chosen to minimize expected model loss under the ablation {% cite "li2024optimalablation" %}:
+
+$$
+\mathbf{a}^* = \arg\min_{\mathbf{a}}
+\mathbb{E}_{X}\!\left[L\!\left(M_{A\leftarrow\mathbf{a}}(X), M(X)\right)\right].
+$$
+
+Because the same $\mathbf{a}^*$ is used for every input, it cannot transmit input-specific information through the ablated component. Unlike mean ablation, it accounts for nonlinear downstream computation and the chosen loss. The optimization can still activate substitute behavior or understate a component's role in the intact model, so “optimal” means least disruptive under this objective, not causally neutral.
+
+Mean ablation is cheap and commonly used, but no baseline is neutral. Zero removes an additive update, the mean removes input-specific variation, resampling substitutes another input's variation, and optimal ablation learns the least disruptive constant for a specified loss. Results should be interpreted, and ideally checked, under the baseline that matches the causal question.
 
 ## Corruption Methods Matter
 
@@ -173,6 +190,22 @@ You have a model that correctly identifies sentiment in movie reviews. You want 
 A good approach: use clean prompts with clear sentiment ("This movie was absolutely brilliant") and corrupted prompts where the adjectives are replaced with neutral or opposite ones while preserving sentence structure ("This movie was absolutely terrible"). If patching the early layers (where token identity is processed) recovers the sentiment, the model relies on the specific words. If patching later layers matters more, the model may depend on higher-level structural features.
 
 </details>
+
+## Specificity: What Did the Patch Leave Alone?
+
+A patch that changes the target output can also move variables that the interpretation claims are separate. If a residual-stream vector after “Paris” encodes country, continent, language, and token identity, replacing the full vector may change all of them. A large target effect establishes **Cause**, but an attribute-specific claim also needs **Isolate**: the same intervention should preserve outputs controlled by neighboring attributes {% cite "huang2024ravel" %}.
+
+RAVEL operationalizes the pair with entity attributes. To test a proposed continent feature, patch its value from a Tokyo source into “Paris is in the continent of”; a successful Cause intervention changes the answer to *Asia*. Then apply the same patch to “People in Paris speak”; a successful Isolate intervention leaves *French* unchanged. High Cause with low Isolate means the feature is causally effective but entangled.
+
+Specificity controls should match the proposed interpretation. A sentiment patch can be tested on topic and writing style, a factual-recall patch on related attributes, and a refusal intervention on unrelated capabilities. Passing a broad benchmark is useful but weaker than testing the variables most likely to share the patched representation. [Choosing Causal Mediators](/topics/choosing-causal-mediators/) develops selectivity together with faithfulness, sparsity, and generality.
+
+## Multi-Source Composition
+
+A single-source patch can transplant the answer rather than the variable used to compute it. **Multi-source composition** patches proposed variables from different runs into one base computation. The strongest construction uses sources that do not contain the final answer token.
+
+Suppose a hypothesis says one site represents an entity and another represents which attribute to retrieve. Take the entity representation from a prompt that mentions the entity without stating the requested attribute, and take the attribute representation from a second prompt about a different entity. If patching both makes the base run produce the correct value for the new entity–attribute combination, the result cannot be explained by copying the answer from either source. It supports a compositional account in which the two sites mediate separable variables.
+
+The control is stronger than stacking two arbitrary patches. Each source must distinguish the intended variable from plausible alternatives, and single-patch conditions should show what each intervention does alone. A composed output can still depend on unpatched context and downstream model knowledge; it demonstrates that the patched variables combine causally, not that they form a complete mechanism.
 
 ## Attribution Patching
 

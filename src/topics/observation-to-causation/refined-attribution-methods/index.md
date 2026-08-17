@@ -1,7 +1,7 @@
 ---
 title: "Refined Attribution Methods"
 description: "How AtP*, EAP-IG, and EAP-GP reduce known failures of gradient-based circuit discovery, including saturated attention and effect cancellation."
-order: 3
+order: 4
 prerequisites:
   - title: "Attribution Patching and Path Patching"
     url: "/topics/attribution-patching/"

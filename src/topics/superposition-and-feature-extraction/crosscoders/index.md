@@ -1,7 +1,7 @@
 ---
 title: "Crosscoders"
 description: "Learning one sparse feature dictionary across several layers or models, so we can track representations over depth and compare model variants."
-order: 6
+order: 7
 prerequisites:
   - title: "SAE Variants, Evaluation, and Limitations"
     url: "/topics/sae-variants-and-evaluation/"
