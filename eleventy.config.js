@@ -99,6 +99,7 @@ function validate() {
   const errors = [];
   const { blocks } = scanBlocks();
   const refs = JSON.parse(fs.readFileSync("src/_data/references.json", "utf-8"));
+  const redirects = JSON.parse(fs.readFileSync("src/_data/redirects.json", "utf-8"));
 
   // 1. Check for duplicate reference titles and URLs
   const titleToKeys = new Map();
@@ -220,6 +221,28 @@ function validate() {
   for (const [term, slugs] of allGlossaryTerms) {
     if (slugs.length > 1) {
       errors.push(`Glossary term "${term}" defined in multiple articles: ${slugs.join(", ")}`);
+    }
+  }
+
+  // 9. Redirects must be unique topic routes with live topic destinations.
+  const redirectSources = new Set();
+  for (const redirect of redirects) {
+    if (!redirect.from?.match(/^\/topics\/[^/]+\/$/)) {
+      errors.push(`Invalid redirect source: ${redirect.from}`);
+    }
+    if (redirectSources.has(redirect.from)) {
+      errors.push(`Duplicate redirect source: ${redirect.from}`);
+    }
+    redirectSources.add(redirect.from);
+
+    const sourceSlug = redirect.from?.match(/^\/topics\/([^/]+)\/$/)?.[1];
+    if (sourceSlug && allArticleSlugs.has(sourceSlug)) {
+      errors.push(`Redirect source collides with a live topic: ${redirect.from}`);
+    }
+
+    const destinationSlug = redirect.to?.match(/^\/topics\/([^/]+)\/$/)?.[1];
+    if (!destinationSlug || !allArticleSlugs.has(destinationSlug)) {
+      errors.push(`Redirect destination is not a live topic: ${redirect.to}`);
     }
   }
 

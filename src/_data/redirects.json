@@ -1,0 +1,14 @@
+[
+  {
+    "from": "/topics/activation-engineering/",
+    "to": "/topics/addition-steering/"
+  },
+  {
+    "from": "/topics/sparse-feature-circuits/",
+    "to": "/topics/circuit-tracing/"
+  },
+  {
+    "from": "/topics/representation-engineering/",
+    "to": "/topics/representation-control/"
+  }
+]
