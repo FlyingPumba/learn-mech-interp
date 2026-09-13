@@ -323,6 +323,20 @@ export default function(eleventyConfig) {
       .sort((a, b) => order.indexOf(a.fileSlug) - order.indexOf(b.fileSlug));
   });
 
+  // Topics ordered by when their source article was first added to Git.
+  // Using the creation date (rather than the latest edit) keeps minor updates
+  // from making an older article appear new.
+  eleventyConfig.addCollection("recentTopics", function(collectionApi) {
+    return collectionApi.getFilteredByGlob("src/topics/*/*/index.md")
+      .sort((a, b) => {
+        const aPath = a.inputPath.replace(/^\.\//, "");
+        const bPath = b.inputPath.replace(/^\.\//, "");
+        const aCreated = a.data.gitMeta?.[aPath]?.created || a.date;
+        const bCreated = b.data.gitMeta?.[bPath]?.created || b.date;
+        return new Date(bCreated) - new Date(aCreated);
+      });
+  });
+
   // Pass through CSS files to _site/css/
   eleventyConfig.addPassthroughCopy("src/css");
 
@@ -405,6 +419,15 @@ export default function(eleventyConfig) {
   // ISO date filter for sitemap and structured data
   eleventyConfig.addFilter("dateToISO", (date) => {
     return new Date(date).toISOString().split("T")[0];
+  });
+
+  eleventyConfig.addFilter("readableDate", (date) => {
+    return new Intl.DateTimeFormat("en", {
+      day: "numeric",
+      month: "short",
+      year: "numeric",
+      timeZone: "UTC",
+    }).format(new Date(date));
   });
 
   // Reading time filter: strips HTML, counts words, returns "N min read"
