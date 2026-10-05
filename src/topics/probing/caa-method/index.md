@@ -128,7 +128,7 @@ The reported CAA directions transfer across prompt sets and combine with other i
 - CAA + few-shot prompting: prompting effects and probing effects are additive.
 - Directions computed from different prompt sets for the same concept are highly correlated.
 
-Transfer across prompt sets is evidence against pair-specific noise, but it does not prove that the direction is unique or causally used.{% sidenote "Different contrast sets can share unintended features such as tone, length, or formatting. A transferred direction may encode one of those common cues alongside the intended concept, so robustness tests should vary the construction of the pairs as well as their topics." %}
+Transfer across prompt sets suggests that the direction captures a pattern shared across those sets.{% sidenote "Different contrast sets can share unintended features such as tone, length, or formatting. A transferred direction may encode one of those common cues alongside the intended concept, so robustness tests should vary the construction of the pairs as well as their topics." %}
 
 ## Connection to Steering
 

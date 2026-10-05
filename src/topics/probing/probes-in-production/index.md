@@ -141,7 +141,7 @@ $$
 z_\text{final} = \alpha \cdot z_\text{probe} + (1 - \alpha) \cdot z_\text{classifier}
 $$
 
-with $\alpha \approx 0.55$ in the reported configuration {% cite "cunningham2025constitutional" %}. The selected weight is an empirical calibration result for that system and distribution, not a general optimum for probe-classifier ensembles.
+with $\alpha \approx 0.55$, calibrated for that system and its data distribution {% cite "cunningham2025constitutional" %}.
 
 Why do probes and classifiers complement each other? They read different signals. The probe operates directly on the model's internal activations, detecting patterns in how the model *represents* content. The LLM classifier evaluates the content *semantically*, reasoning about meaning. An adversarial input that fools the classifier's semantic reasoning may still produce distinctive activation patterns visible to the probe, and vice versa.
 

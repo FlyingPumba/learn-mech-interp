@@ -152,7 +152,7 @@ Moving from isolated features to a manifold hypothesis can follow a six-step wor
 5. Fit and validate intrinsic coordinates on held-out data.
 6. Test the group with ablation, patching, or coordinated steering.
 
-The graph is a discovery tool, not proof that every cluster is a coherent concept. Dataset frequency, feature splitting, and the SAE training objective all influence the learned interactions. Semantic labels should come after examining the geometry and testing it outside the discovery set.
+Dataset frequency, feature splitting, and the SAE training objective all influence the learned interactions. Semantic labels should come after examining the geometry and testing it outside the discovery set.
 
 <details class="pause-and-think">
 <summary>Pause and think: What would a single-feature test miss?</summary>

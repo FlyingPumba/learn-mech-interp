@@ -164,8 +164,6 @@ The MLP-as-knowledge-storage view connects to several techniques covered elsewhe
 
 ## Limitations
 
-The key-value memory view, while productive, has important caveats.
-
 **Individual neurons are not the whole story.** The clean "one neuron, one concept" picture holds for some neurons but not all. Many neurons are polysemantic, responding to multiple unrelated patterns. The key-value memory interpretation works best for neurons with clear, monosemantic keys. [Superposition](/topics/superposition/) means that the true units of analysis may be directions in activation space, not individual neurons, which is part of why [sparse autoencoders](/topics/sparse-autoencoders/) exist.
 
 **The three-stage pipeline is a simplification.** Factual recall involves parallel pathways, redundant encoding, and interactions between attention and MLPs that the clean three-stage story glosses over. Different facts may follow different retrieval pathways, and the boundaries between stages are not sharp.

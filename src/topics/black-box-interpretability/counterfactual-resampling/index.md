@@ -183,8 +183,6 @@ When bias is diffuse, no single sentence looks suspicious in isolation. Each ste
 
 ## Limitations
 
-Counterfactual resampling has several important caveats:
-
 - **Computational cost.** Each sentence requires $N = 100$ rollouts in both the original and counterfactual conditions. For a 50-sentence reasoning trace, that is 10,000 full generations. This limits the technique to relatively small-scale analysis.
 - **Overdetermination.** If multiple sentences independently produce the same downstream effect, removing any one of them may show low importance even though they are collectively essential. The technique measures individual, not joint, causal effects.
 - **Sampling variance.** Counterfactual importance estimates are noisy when few rollouts produce semantically divergent replacements (below 10 valid samples, estimates become unreliable).

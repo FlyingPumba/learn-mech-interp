@@ -39,7 +39,7 @@ This is a simple picture: the residual stream is a sum of feature vectors, and w
 
 ## Why Linear?
 
-Linear information is easy to read, linear reads compose with linear writes, and sparse linear features can share a representation space. Together, these architectural properties make linear representations a useful default hypothesis.{% sidenote "This is an architectural motivation, not a proof. Transformers contain nonlinear MLPs and input-dependent attention, and a useful property can be distributed across several directions or encoded nonlinearly." %}
+Linear information is easy to read, linear reads compose with linear writes, and sparse linear features can share a representation space. Together, these architectural properties make linear representations a useful default hypothesis.{% sidenote "Transformers also contain nonlinear MLPs and input-dependent attention, so a useful property can be distributed across several directions or encoded nonlinearly." %}
 
 **Linear information is easy to read.** Every attention and MLP block begins by applying learned linear maps to its input. A property available along a direction can therefore influence a downstream preactivation through a dot product. The full transformer is not linear: attention weights depend on the input, and MLP activations are nonlinear. The narrower point is that linearly accessible information fits naturally into the operations every block already performs.
 
@@ -59,7 +59,7 @@ Evidence comes from embedding arithmetic, probes, sparse dictionaries, relationa
 
 **Linear relational structure.** Linearity extends beyond individual features to *relations* between entities. Hernandez et al. {% cite "hernandez2023lre" %} showed that subject-object mappings (e.g., "Eiffel Tower → Paris") are approximated by single linear transformations in activation space, called **Linear Relational Embeddings**. This strengthens the LRH case: not only are concepts like "is a city" represented as directions, but the relation "located in" is approximately a linear map. This connects to factual recall methods like [ROME](/topics/fact-editing/), which implicitly assume that factual associations have linear structure in MLP weight space.
 
-**Linear structure in synthetic tasks.** Models trained to predict legal moves in board games provide a controlled example. Nonlinear probes initially appeared necessary to decode Othello board state, but later work found effective linear probes after changing the target coordinate frame {% cite "nanda2023othello" %}. The lesson is methodological: a failed probe can reflect how the property was parameterized, not only how the model represents it.
+**Linear structure in synthetic tasks.** Models trained to predict legal moves in board games provide a controlled example. Nonlinear probes initially appeared necessary to decode Othello board state, but later work found effective linear probes after changing the target coordinate frame {% cite "nanda2023othello" %}. A probe can fail because of how we define its target, even when the model represents the underlying information linearly.
 
 <details class="pause-and-think">
 <summary>Pause and think: Linearity and probing</summary>
@@ -84,7 +84,7 @@ The simplest approach to understanding a neural network is to look at individual
 
 > **Polysemanticity:** A neuron is polysemantic if it activates for multiple unrelated concepts. A monosemantic neuron activates for a single, coherent concept.
 
-**The Wolf and Coke Can Problem.** Early vision interpretability work found a neuron that responded strongly to both wolves and Coca-Cola cans {% cite "olah2020zoom" %}. One possible explanation is that rarely co-occurring features can share capacity with limited interference. The activation examples alone do not establish why training produced that particular mixture.
+**The Wolf and Coke Can Problem.** Early vision interpretability work found a neuron that responded strongly to both wolves and Coca-Cola cans {% cite "olah2020zoom" %}. One possible explanation is that rarely co-occurring features can share capacity with limited interference.
 
 Reusing capacity can help the model while misleading the interpreter. A neuron labeled from wolf images may indeed respond to wolves, yet still respond just as strongly to cans outside the labeling set. The label is not false so much as incomplete, which is why interpretation needs diverse counterexamples and causal tests.
 

@@ -86,7 +86,7 @@ Arditi et al. used **weight orthogonalization**, projecting out the refusal dire
 - **ARC:** within 99% of baseline
 - **GSM8K:** within 99% of baseline
 
-On the reported MMLU, ARC, and GSM8K evaluations, refusal can be reduced without a comparable drop in benchmark performance. This shows separability with respect to those measurements, not preservation of every capability or behavior.{% sidenote "Weight orthogonalization modifies weight matrices rather than intervening separately on every forward pass. The resulting model refuses far less on the tested prompts while retaining the reported benchmark scores, which makes the method relevant to white-box jailbreak analysis." %}
+On the MMLU, ARC, and GSM8K evaluations, refusal can be reduced without a comparable drop in benchmark performance.{% sidenote "Weight orthogonalization modifies weight matrices rather than intervening separately on every forward pass. The resulting model refuses far less on the tested prompts while retaining the reported benchmark scores, which makes the method relevant to white-box jailbreak analysis." %}
 
 ## Implications for Safety Training
 
@@ -94,7 +94,7 @@ The intervention supports two mechanistic conclusions and one dual-use warning:
 
 **Refusal has a low-dimensional mediator.** In the tested models, safety fine-tuning produces behavior that can be strongly altered through one direction. Upstream harm recognition and other safety-relevant computations may still be distributed.
 
-**Refusal and benchmark capability can be partly separated.** Removing the direction changes refusal far more than it changes the reported general benchmarks. This does not establish that refusal is wholly detached from reasoning, or that all safety training is shallow.
+**Refusal and benchmark capability can be partly separated.** Removing the direction changes refusal far more than it changes the general benchmarks tested in the study.
 
 **The mechanism is interpretable and bypassable.** Weight orthogonalization turns the causal account into a white-box jailbreak, permanently reducing refusal while largely preserving the reported benchmark scores.
 

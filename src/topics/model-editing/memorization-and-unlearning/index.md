@@ -85,7 +85,7 @@ Non-trivial repetition was required for reliable verbatim generation in this set
 
 The trigger for a memorized continuation was distributed across model states encoding high-level properties of the context. Once triggered, generation relied heavily on capabilities also used for ordinary language modeling. The experiments challenge a simple picture in which a passage sits in one weight, neuron, or dedicated memory module waiting to be deleted.
 
-This is a result from controlled continued pretraining of Pythia models, not proof that every kind of memorization in every model has the same mechanism. It does show that localizability must be tested rather than assumed.
+These experiments show why we need to test whether a memorized passage depends on a localized mechanism before trying to erase it at a single site.
 
 ## Stress-Testing Unlearning
 

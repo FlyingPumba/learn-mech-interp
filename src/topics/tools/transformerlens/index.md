@@ -116,7 +116,7 @@ This design also changes the relationship between TransformerLens and other tool
 
 ## Model Coverage Is Broad but Uneven
 
-TransformerBridge covers thousands of Hugging Face model IDs across more than 50 architecture families, including transformer, multimodal, and state-space families. The number changes quickly and should not be copied into an experiment as a guarantee. The live [supported-model tables](https://transformerlensorg.github.io/TransformerLens/content/model_tables.html) distinguish architecture support from checkpoints that have been verified end to end.
+TransformerBridge covers thousands of Hugging Face model IDs across more than 50 architecture families, including transformer, multimodal, and state-space families. Coverage changes quickly; the live [supported-model tables](https://transformerlensorg.github.io/TransformerLens/content/model_tables.html) distinguish architecture support from checkpoints that have been verified end to end.
 
 Three checks matter before committing to a model:
 

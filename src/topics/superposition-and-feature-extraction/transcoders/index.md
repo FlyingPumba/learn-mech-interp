@@ -40,7 +40,7 @@ Sparse autoencoders (SAEs) decompose representations, whereas transcoders decomp
 
 **Transcoders** decompose what a layer *computes*. Given MLP input $\mathbf{x}_{\text{in}}$, a transcoder finds sparse features that produce the MLP output. Because the transcoder's features map inputs to outputs, we can trace how upstream features contribute to downstream features through the MLP.{% sidenote "In the residual stream picture, attention heads move information between positions while MLPs transform information at each position. SAEs decompose the residual stream at a point. Transcoders decompose the transformation that happens between points. Both are needed for complete circuit analysis." %}
 
-The input-output map lets us trace attributed paths *through* MLP layers rather than treating each MLP as a black box. The claim remains about the transcoder replacement until interventions confirm that the corresponding pathway matters in the original model.
+The input-output map lets us trace attributed paths *through* MLP layers rather than treating each MLP as a black box. Interventions in the original model can then test whether it relies on the pathways found in the transcoder.
 
 ## Clean Factorization
 
@@ -49,7 +49,7 @@ Dunefsky et al. (2024) showed that transcoder circuits factorize cleanly into tw
 - An **input-dependent** term: which transcoder features activate on this particular input
 - An **input-invariant** term: how feature activations map to outputs through the decoder weights
 
-This factorization supports weight-based analysis through an MLP replacement. The decoder gives each transcoder latent a fixed output direction, while the encoder determines which latents fire on an input. The account remains approximate because the transcoder does not reproduce the original MLP perfectly and its learned latents may not be uniquely determined.
+The decoder gives each transcoder latent a fixed output direction, while the encoder determines which latents fire on an input. This lets us study connections between latents through the weights. Reconstruction errors and differences between learned dictionaries can affect the resulting analysis.
 
 Dunefsky et al. applied transcoders to GPT-2 Small's *greater-than circuit*, the circuit that processes prompts like "The war started in 1742 and ended in 17\_\_". Transcoders revealed sub-computations within the circuit that were invisible at the head level, showing that the circuit was more modular than previously understood.
 
@@ -70,7 +70,7 @@ Paulo et al. (2025) compared transcoders and SAEs trained on the same model and 
 - **Skip transcoders**, which add an affine skip connection, achieved lower reconstruction loss without a measured interpretability reduction in this comparison.
 - Transcoders also improved several tested SAEBench tasks, including feature-absorption and sparse-probing evaluations.
 
-The comparison gives transcoders a structural advantage for questions about what an MLP maps from input to output. SAEs remain suited to describing features present at one activation site, while either method can inherit dictionary non-uniqueness and reconstruction error.{% sidenote "A benchmark win does not make transcoders a universal replacement for SAEs. The choice depends on whether the object of interest is a representation at one site or a transformation between two sites." %}
+Transcoders are suited to studying how an MLP transforms its input, while SAEs describe features present at one activation site. Both methods can make reconstruction errors and learn different dictionaries from the same data.
 
 ## From Transcoders to Circuit Tracing
 

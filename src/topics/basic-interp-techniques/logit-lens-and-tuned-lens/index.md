@@ -80,7 +80,7 @@ No single readout is guaranteed to be equally calibrated at every depth. The fin
 
 ## Applications of the Logit Lens Observation
 
-The observation that layerwise projections differ has inspired [decoding methods](/topics/decoding-strategies/). **DoLa** (Decoding by Contrasting Layers) contrasts early- and late-layer logit distributions during generation {% cite "li2023dola" %}. It improved factuality metrics on the reported benchmarks without fine-tuning, supporting the practical value of the contrast even though the layerwise scores need not be literal beliefs.
+The observation that layerwise projections differ has inspired [decoding methods](/topics/decoding-strategies/). **DoLa** (Decoding by Contrasting Layers) contrasts early- and late-layer logit distributions during generation {% cite "li2023dola" %}. It improved factuality metrics on the benchmarks without fine-tuning.
 
 Wendler et al. {% cite "wendler2024latent" %} found that middle-layer vocabulary projections in multilingual models often skew toward English, even for non-English inputs and outputs. This is consistent with an English-biased intermediate representation. Because the unembedding and token frequencies can also favor English, stronger claims about internal translation require controls beyond the projection itself.
 
@@ -92,6 +92,6 @@ The logit lens and tuned lens show what the model would predict if processing st
 
 The logit lens shows "Paris" at layer 8, but is the computation at layer 8 *necessary* for predicting "Paris"? These observational tools establish *correlations*: the information co-occurs with the activations. To establish *causation*, we need a different kind of experiment, one where we *intervene* on the model's internals and observe changes in behavior.
 
-This is the shift from observation to causation. [Activation patching](/topics/activation-patching/) replaces one component's activation with an activation from a different input and measures the effect on predictions. These causal tools complete the methodological toolkit, moving us from "what exists?" to "what matters?"
+[Activation patching](/topics/activation-patching/) replaces one component's activation with an activation from a different input and measures the effect on predictions.
 
 Observation proposes what may be accessible; a well-designed intervention tests what changes under a specified counterfactual.

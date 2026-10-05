@@ -26,7 +26,7 @@ Training an SAE from scratch requires collecting a large activation dataset and 
 
 The typical workflow is to load a language model through [TransformerLens](/topics/transformerlens/) or another framework, load an SAE for one layer or component, run an input through the model, and encode that activation into sparse feature activations. SAE Lens records the metadata needed to match an SAE to its hook point, input width, architecture, and normalization choices.
 
-A successful load does not prove that the SAE is suitable for the target distribution. Before interpreting features, check that the model, activation site, preprocessing, and SAE release agree, then measure reconstruction error and sparsity on the data the experiment will use.
+Before interpreting features, check that the model, activation site, preprocessing, and SAE release agree, then measure reconstruction error and sparsity on the data the experiment will use.
 
 ### Training SAEs
 
@@ -61,7 +61,7 @@ The core unit for SAE analysis is the **feature dashboard**. A dashboard can inc
 
 > **Feature Dashboard:** A collection of evidence about one learned feature, including activating examples, statistics, logit effects, and candidate explanations.
 
-The dashboard is a hypothesis generator, not a completed interpretation. Top examples overrepresent strong positive cases, generated labels can collapse several patterns into one phrase, and the displayed dataset can omit counterexamples. A useful label should predict held-out positives, negatives, and confounders before it is used in a causal claim.{% sidenote "A dashboard can make a feature look more coherent than it is because the interface is optimized to display salient activations. Sampling random activations and deliberately searching for false positives gives a less flattering but more informative test." %}
+Top examples overrepresent strong positive cases, generated labels can collapse several patterns into one phrase, and the displayed dataset can omit counterexamples. A useful label should predict held-out positives, negatives, and confounders before it is used in a causal claim.{% sidenote "A dashboard can make a feature look more coherent than it is because the interface is optimized to display salient activations. Sampling random activations and deliberately searching for false positives gives a less flattering but more informative test." %}
 
 ### Search, Steering, and APIs
 
@@ -75,7 +75,7 @@ Feature data and several platform functions are also exposed through APIs. Progr
 
 The original **Gemma Scope** release provided pretrained SAEs across layers and sublayers of Google DeepMind's Gemma 2 models at several dictionary sizes {% cite "lieberum2024gemma" %}. **Gemma Scope 2** extends the collection to Gemma 3 and adds transcoders, including skip transcoders and cross-layer transcoders. Google DeepMind maintains the current [Gemma Scope release page](https://deepmind.google/models/gemma/gemma-scope/).
 
-The releases are available for programmatic analysis and through Neuronpedia's interactive views, making them a practical starting point when the research question fits Gemma and the released activation sites. Millions of hosted features do not remove the evaluation problem: a dashboard label remains a hypothesis until it predicts held-out activations and survives causal or behavioral tests.
+The releases are available for programmatic analysis and through Neuronpedia's interactive views, making them a practical starting point when the research question fits Gemma and the released activation sites.
 
 <details class="pause-and-think">
 <summary>Pause and think: From search result to evidence</summary>

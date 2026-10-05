@@ -39,7 +39,7 @@ The idea is to build an autoencoder whose bottleneck is a paragraph of natural l
 
 > **Activation Reconstructor (AR):** The decoder. It takes an explanation and produces a reconstructed activation.
 
-The reconstruction objective does not explicitly reward readability or faithfulness. With a supervised warm start and a penalty that keeps the verbalizer nearby, the reported models produce text that human evaluators can often interpret. Those extra ingredients matter, and reconstruction alone does not certify the explanations.
+The reconstruction objective does not explicitly reward readability or faithfulness. With a supervised warm start and a penalty that keeps the verbalizer close to its initial behavior, the models produce text that human evaluators can often interpret.
 
 ## The Reconstruction Objective
 
@@ -51,7 +51,7 @@ Here $\mathcal{H}$ is the distribution of layer-$l$ activations you get by runni
 
 $$\text{FVE} = 1 - \frac{\mathcal{L}}{\mathbb{E}_{h_l \sim \mathcal{H}} \, \lVert h_l - \bar{h}_l \rVert_2^2}$$
 
-An FVE of $0$ matches the mean-activation baseline, while an FVE of $1$ is perfect reconstruction on the evaluated distribution. In the reported recipe, activations are normalized to unit $L_2$ norm and the target layer is chosen in the middle-to-late network. Those are design choices, not a guarantee that such layers contain only abstract content.
+An FVE of $0$ matches the mean-activation baseline, while an FVE of $1$ is perfect reconstruction on the evaluated distribution. In the experiments, activations are normalized to unit $L_2$ norm and the target layer is chosen from the middle or later layers of the network.
 
 ## Two Language Models, Wired Back to Back
 
@@ -100,13 +100,13 @@ The AR produces a continuous vector, so reconstruction loss differentiates throu
 
 ## Avoiding Degenerate Codes
 
-Optimizing reconstruction alone should be easy to cheat. Two failure modes are worth naming, because understanding why they do not dominate is most of the intuition for why NLAs work at all {% cite "frasertaliente2026nla" %}.
+The AV and AR could achieve low reconstruction error by communicating in ways humans cannot interpret {% cite "frasertaliente2026nla" %}.
 
-The first is **steganography**. The AV could emit text that encodes an activation in a private scheme only the AR understands. Reconstruction would be good and the explanation useless. The warm start and KL penalty reduce this risk by biasing training toward the initial summarization style. They do not prove that every remaining phrase uses ordinary human semantics.
+The first is **steganography**. The AV could emit text that encodes an activation in a private scheme only the AR understands. Reconstruction would be good and the explanation useless. The warm start and KL penalty reduce this risk by biasing training toward the initial summarization style.
 
 The second is **input inversion**: the AV could quote context and let the AR recompute the activation. A token budget shorter than the training contexts prevents full transcription and makes compression necessary. It does not force semantic explanation; a compressed code or selective quotation could still reconstruct well.
 
-Neither defense is a guarantee. With enough optimization pressure either pathology could re-emerge, and the paper is explicit that this is an open risk rather than a solved problem.
+Stronger optimization pressure could make the AV and AR favor these shortcuts despite the constraints.
 
 <details class="pause-and-think">
 <summary>Pause and think: would verbatim copying win if the bottleneck were unlimited?</summary>
@@ -126,7 +126,7 @@ The catch is **confabulation**. Explanations regularly make claims about the con
 - **Read themes more confidently than specifics.** In the study, topic-level statements were supported more often than names or quotations.
 - **Use repetition as one signal.** Claims recurring across adjacent positions were supported more often, but repetition can also propagate the same confabulation.
 
-Because you always have the original context the NLA ran on, obvious factual hallucinations are cheap to check. Claims about the model's internal processing are the ones to hold loosely, since those are exactly the claims you cannot cross-check. {% sidenote "A structural reason for caution: the AV is a full language model, so it has the capacity to make inferences beyond what the activation actually stores. A fluent, plausible sentence about the model's reasoning is not proof that the reasoning was encoded in the vector. This 'excessive expressivity' is the flip side of using a whole LM as the decoder." %}
+The original context lets us check names, quotations, and other factual details. It cannot verify claims about the model's internal processing. {% sidenote "The AV is a full language model and can infer details that are not stored in the activation. Its explanations can therefore mix information from the activation with its own inferences, a risk sometimes described as 'excessive expressivity.'" %}
 
 ## Using NLAs to Intervene
 

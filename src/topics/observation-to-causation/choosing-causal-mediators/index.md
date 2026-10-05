@@ -80,7 +80,7 @@ RAVEL turns selectivity into two intervention scores {% cite "huang2024ravel" %}
 
 A high Cause score with a low Isolate score means the intervention moves the target but also moves attributes that should have remained fixed. Full-vector patching is an instructive baseline because it carries all the information at the site and can therefore cause the desired answer for the wrong level of abstraction.
 
-RAVEL’s Llama2-7B comparison found that counterfactually supervised subspace methods achieved stronger combined Cause and Isolate scores than the tested principal-component and sparse-autoencoder baselines. The result concerns those methods, model, attributes, and feature-selection procedures; it does not establish a universal ordering between supervised subspaces and every sparse autoencoder.
+RAVEL’s Llama2-7B comparison found that counterfactually supervised subspace methods achieved stronger combined Cause and Isolate scores than the tested principal-component and sparse-autoencoder baselines.
 
 ## A Practical Selection Procedure
 

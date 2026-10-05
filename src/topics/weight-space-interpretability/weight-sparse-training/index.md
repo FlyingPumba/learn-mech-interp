@@ -159,10 +159,10 @@ Scale the sparse models into a series of interpretable model organisms, up to so
 
 Or spend the compute on understanding less. Train a bridged sparse model on a narrow but important task distribution, deception, refusal, goal-seeking, rather than a whole pretraining corpus. That would not reverse-engineer a frontier model, but it could support a [safety case](/topics/safety-mechanisms-and-monitoring/) about a specific behavior, which is a more modest and more achievable target.
 
-Or treat sparse circuits as primitives for automated interpretability. Dictionary learning gave the field a language in which computations are simpler to state, and sparse circuits give another; if automation is bottlenecked on primitives rather than on the automation itself, better primitives are what unblocks it.
+Sparse circuits could also serve as building blocks for automated interpretability. Like dictionary features, they may make computations easier to describe, giving automated tools more interpretable units to work with.
 
 ## Looking Ahead
 
-Both halves of this block push against an assumption the rest of the curriculum shares, that interpretability is something applied to a model after the fact. [Parameter decomposition](/topics/parameter-decomposition/) keeps the model and changes the coordinates; weight-sparse training changes the model. Neither has been demonstrated near frontier scale, and both are honest about it.
+Both halves of this block push against an assumption the rest of the curriculum shares, that interpretability is something applied to a model after the fact. [Parameter decomposition](/topics/parameter-decomposition/) keeps the model and changes the coordinates; weight-sparse training changes the model. Neither has been demonstrated near frontier scale.
 
 The [next block](/topics/refusal-direction/) turns to what interpretability is for. Many of the arguments there assume we can locate a behavior in a model we did not train, using methods whose faithfulness is contested, a tension the [limitations](/topics/mi-safety-limitations/) article takes up directly. The work here is one response to that tension: if the mechanisms we need are not legible in models as they are built, perhaps the models should be built differently.

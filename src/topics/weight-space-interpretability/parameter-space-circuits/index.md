@@ -132,7 +132,7 @@ Each subcomponent is a rank-one matrix with one read direction and one write dir
 
 Against LoRA adapters trained on the same layer to do the same job, the manual edit loses. A LoRA trained on 947 examples beats it on off-target damage both locally and globally. A LoRA trained on just 10 examples beats it locally, in the setting it was trained on, and the two are comparable globally. The authors call the example cherry-picked, chosen because this model happened to have subcomponents devoted almost exclusively to emoticons.
 
-The edit required no training data and no gradient steps on the target behavior, and we can say in one sentence what was changed and why. That, rather than any performance advantage, is the case for it: a proof of concept for a class of interventions that operate on identified mechanisms. Compare the [localized fact editing](/topics/fact-editing/) line, where the recurring lesson is that a successful edit at a located site does not license the conclusion that the site stores the fact. Here the edit and the identification are the same object, which is a different epistemic position, though not yet a better practical one.
+The edit required no training data or gradient steps on the target behavior. The researchers identified a subcomponent that responded to emoticons, then changed what it wrote. In [localized fact editing](/topics/fact-editing/), a successful output change can leave open whether the edited site stored the original fact. Here, the interpretation of the subcomponent guided the edit directly.
 
 <details class="pause-and-think">
 <summary>Pause and think: why leave the read direction alone?</summary>

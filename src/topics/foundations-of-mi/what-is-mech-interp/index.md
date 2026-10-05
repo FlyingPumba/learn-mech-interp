@@ -16,7 +16,7 @@ glossary:
 
 Deep learning models are powerful but opaque. A language model can write fluent text, answer complex questions, and reason through multi-step problems. But *how* does it do this? What algorithms has it learned? If we deploy these systems in high-stakes settings, we face an uncomfortable question: can we trust behavior we do not understand?
 
-Behavioral testing can catch known failure modes, but a finite test suite cannot cover every future input. Looking inside a model offers a complementary source of evidence: not a guarantee of safety, but a chance to discover computations that behavioral tests did not elicit.
+Behavioral testing can catch known failure modes, but a finite test suite cannot cover every future input. Looking inside a model can reveal computations that behavioral tests did not elicit.
 
 Interpretability tries to make neural networks understandable to humans. **Mechanistic interpretability**, often shortened to **mech interp** or **MI**, pursues a particularly ambitious version of that goal: reverse-engineering models into human-understandable algorithms by analyzing the computations performed by individual components and their interactions {% cite "bereska2024review" %}.
 
@@ -55,13 +55,13 @@ The goal is not just to describe *what* the model does, but to explain *how* it 
 
 ## The Three Claims: Features, Circuits, Universality
 
-In "Zoom In: An Introduction to Circuits," Olah et al. proposed three deliberately speculative claims about the understandability of neural networks {% cite "olah2020zoom" %}. These claims are not proven laws. They are a framework, a bet on how neural networks organize their computations. The value lies in the framework itself: even if some claims need revision, they give us a concrete vocabulary and a research program.
+In "Zoom In: An Introduction to Circuits," Olah et al. proposed three speculative claims about how neural networks organize their computations {% cite "olah2020zoom" %}. The claims provide a vocabulary for describing those computations and a research program for testing how they work.
 
-The authors draw an analogy to cell theory in biology. In 1839, Theodor Schwann proposed three claims about cells: all living organisms are composed of cells, the cell is the basic unit of life, and cells arise from spontaneous generation. Two of these survived. The third (spontaneous generation) was wrong. But the *framework* of cell theory transformed biology into a science. Olah et al. propose an analogous framework for neural networks, with the same epistemic humility: some claims may not fully hold, and that is fine. The framework is what matters.
+The authors draw an analogy to cell theory in biology. In 1839, Theodor Schwann proposed three claims about cells: all living organisms are composed of cells, the cell is the basic unit of life, and cells arise from spontaneous generation. Two of these survived. The third (spontaneous generation) was wrong. But the *framework* of cell theory transformed biology into a science. Olah et al. suggest that a framework for neural networks could guide research in the same way, even if some of its claims later need revision.
 
 ### Claim 1: Features
 
-> **Feature (linear view):** A direction in activation space associated with a property useful to the model. This is a productive hypothesis about neural-network representations, not a guarantee that every useful property is one-dimensional or easy to name.
+> **Feature (linear view):** A direction in activation space associated with a property useful to the model.
 
 Not individual neurons, but *directions*, vectors in the high-dimensional activation space. A feature corresponds to a direction $\mathbf{d}_f \in \mathbb{R}^{d_{\text{model}}}$. To measure how strongly feature $f$ is active in a residual stream state $\mathbf{r}$:
 
@@ -71,7 +71,7 @@ $$
 
 This is a dot product, a linear operation. The feature activation is the projection of the residual stream onto the feature direction. For a transformer, this might be a direction in the residual stream that activates strongly when the model processes mentions of Paris, or a direction that encodes the concept of "this token is the subject of the sentence."
 
-Why directions rather than neurons? Individual neurons can be **polysemantic**, responding to several apparently unrelated patterns. A direction can combine several neuron coordinates, making it a more flexible candidate unit of analysis, though not automatically a uniquely correct one.
+Why directions rather than neurons? Individual neurons can be **polysemantic**, responding to several apparently unrelated patterns. A direction can combine several neuron coordinates, making it a more flexible unit of analysis.
 
 ### Claim 2: Circuits
 

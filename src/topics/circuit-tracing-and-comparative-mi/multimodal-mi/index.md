@@ -40,7 +40,7 @@ Recent work (2024-2025) applies SAEs to CLIP's vision encoder with encouraging r
 
 - SAE features in CLIP can correspond to recognizable visual patterns such as objects, textures, spatial arrangements, and scene types.
 - Text-space projections can yield labels that agree with many highly activating images, making them a useful starting point for evaluation rather than an automatic interpretation.
-- A subset of features can be **steered**: modifying them changes measured outputs in predictable ways on the tested data. This parallels [feature steering](/topics/scaling-monosemanticity/) in text models and supplies causal evidence for a feature's effect, though not a complete semantic account.{% sidenote "Reported steerability rates depend on the model, SAE, intervention strength, and success metric. A feature that fails an individual steering test may have a small effect, participate in a larger circuit, or be poorly captured by the learned dictionary." %}
+- A subset of features can be **steered**: modifying them changes measured outputs in predictable ways on the tested data. This parallels [feature steering](/topics/scaling-monosemanticity/) in text models and supplies causal evidence for a feature's effect.{% sidenote "Reported steerability rates depend on the model, SAE, intervention strength, and success metric. A feature that fails an individual steering test may have a small effect, participate in a larger circuit, or be poorly captured by the learned dictionary." %}
 
 ### Steering in Vision
 

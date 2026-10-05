@@ -215,7 +215,7 @@ The equivalence is a first-order approximation, not an equality. Two things make
 - **Non-linearity.** Real transformer layers are non-linear. $J_\ell$ is a *local* linearization; the further $\mathbf{h}_\ell$ is from the point around which we linearized, the worse the approximation.
 - **Averaging.** The single $J_\ell$ we use is an *average* over contexts. On any particular prompt, the true local Jacobian would differ from $J_\ell$.
 
-In the reported evaluations, this approximation produces coherent vocabulary readouts at some depths where the raw logit lens is less informative. The examples support the J-lens as a useful diagnostic. They do not make every top token a faithful description of what the model is “holding in mind”; prompt, corpus, and first-order approximation errors remain possible.
+In the evaluations, this approximation produced coherent vocabulary readouts at some depths where the raw logit lens was less informative. The readouts depend on the prompt, the corpus used to average the Jacobians, and the accuracy of the first-order approximation.
 
 ### The J-lens vectors
 

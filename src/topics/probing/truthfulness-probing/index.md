@@ -21,7 +21,7 @@ Language models can produce confident falsehoods. If some internal states reliab
 
 This question is sometimes called **Eliciting Latent Knowledge (ELK)**: can we extract what the model "believes" as opposed to what it outputs? The distinction matters because a model might encode accurate information internally while producing an incorrect answer due to surface-level patterns in training data, instruction-following pressures, or sycophantic tendencies.
 
-The research we cover in this article provides both good and cautionary news. Truth and falsehood do appear to have clean linear structure in activation space. Simple probes can extract this structure, and interventions along the identified directions causally affect model behavior. But there are serious questions about whether probes truly detect "truth" or merely learn correlated features.
+Truth and falsehood do appear to have clean linear structure in activation space. Simple probes can extract this structure, and interventions along the identified directions causally affect model behavior. But there are serious questions about whether probes truly detect "truth" or merely learn correlated features.
 
 ## Unsupervised Truth Discovery: CCS
 
@@ -101,7 +101,7 @@ Observing linear structure is necessary but not sufficient. As the [probing clas
 
 Marks and Tegmark tested this with a direct causal experiment: intervene on the truth direction during inference and measure whether the model's outputs change accordingly. They added multiples of the truth direction to activations during processing of ambiguous statements and found that the model's outputs shifted toward more truthful (or more false) completions, depending on the sign of the intervention.
 
-This adds causal evidence: changing the activation along the candidate direction changes measured behavior in the predicted direction. It shows that the intervention reaches a behaviorally relevant pathway. It does not establish that the direction is a pure representation of truth or that the intact model normally relies on that exact one-dimensional variable.{% sidenote "ITI and other steering results provide related intervention evidence. Across all such studies, a successful intervention supports causal relevance under the tested manipulation while leaving uniqueness, normal use, and semantic purity as separate questions." %}
+A successful intervention can affect truthfulness even if the direction also encodes other properties or the model normally computes truthfulness some other way. The experiment tests the effect of changing this direction, leaving those questions open.
 
 ## From Probing to Steering: Inference-Time Intervention
 
@@ -160,7 +160,7 @@ The supervised probing critique is equally sharp. Probes trained on positive fac
 
 {% sidenote "The Marks and Tegmark results partially address this critique. Their difference-in-means probes transfer across topics that have very different surface features (city facts to numerical comparisons), which is harder to explain via surface feature detection. And their causal intervention results show that truth directions affect model behavior, not just probe accuracy. But the Levinstein and Herrmann challenge stands for CCS specifically and for the general difficulty of confirming that any probe has learned 'truth' rather than a convenient correlate." %}
 
-These critiques do not invalidate the entire research program, but they demand caution. A probe that appears to detect truth in one evaluation regime may be learning something else entirely. The strongest evidence for genuine truth representations comes from *combined* results: linear separability across diverse topics, transfer to unseen domains, and causal effects under intervention. Any single signal in isolation could be a confound.
+A probe that appears to detect truth in one evaluation regime may be learning something else entirely. The strongest evidence for genuine truth representations comes from *combined* results: linear separability across diverse topics, transfer to unseen domains, and causal effects under intervention. Any single signal in isolation could be a confound.
 
 ## Limitations
 

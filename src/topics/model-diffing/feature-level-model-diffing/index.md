@@ -42,7 +42,7 @@ A value near 1 indicates a chat-only latent, because the base decoder has near-z
 
 A crosscoder finds features shared between a base model and its chat variant. What would it mean if *most* features are shared? What if very few are?
 
-If most well-reconstructed features are shared, one hypothesis is that fine-tuning preserves much of the base representation while changing a smaller set of directions. If few are shared, either the representations changed broadly or the crosscoder failed to align corresponding features. The rest of this article shows why sparsity artifacts make that methodological alternative essential.
+If most well-reconstructed features are shared, one hypothesis is that fine-tuning preserves much of the base representation while changing a smaller set of directions. If few are shared, either the representations changed broadly or the crosscoder failed to align corresponding features. The following sections explain how sparsity penalties can cause the crosscoder to miss shared features.
 
 </details>
 

@@ -51,7 +51,7 @@ Both produce a direction in activation space. The difference is methodology:
 - **CAA** computes the direction directly from activation differences.
 - **LAT** learns the direction by training a classifier to distinguish the concepts.
 
-The methods can produce similar directions when the class covariances are well behaved. LAT directly optimizes classification and supplies held-out accuracy as an accessibility measure; CAA estimates a mean shift without fitting a decision boundary. Neither metric alone measures causal use or semantic purity.{% sidenote "LAT is closely related to the probing classifiers discussed earlier. The mathematical procedure is probing; the Representation Engineering framing emphasizes reusing the learned direction for analysis and possible intervention." %}
+The methods can produce similar directions when the class covariances are well behaved. LAT trains a classifier and measures how accurately it decodes labels on held-out data; CAA computes a difference between class means without fitting a decision boundary. Neither result tells us whether the model uses that direction or whether it also encodes other properties.{% sidenote "LAT is closely related to the probing classifiers discussed earlier. The mathematical procedure is probing; the Representation Engineering framing emphasizes reusing the learned direction for analysis and possible intervention." %}
 
 ## Probing Safety-Relevant Properties
 

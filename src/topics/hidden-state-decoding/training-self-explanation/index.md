@@ -43,7 +43,7 @@ Methods like gradient-based attribution provide supervision. If the token "Frenc
 
 ## Comparing Self- and External Explanation
 
-On the study's explanation targets and evaluation metrics, fine-tuned self-explainers outperform the tested external explainers, including some larger models. That is not the result we would get by assuming linguistic sophistication alone determines explanation quality: a larger model $M$ might describe a smaller model $S$ fluently while lacking a well-matched interface to $S$'s internal state. The result is specific to the study's targets and scoring procedure; it does not establish privileged or generally faithful introspective access.
+On the study's explanation targets and evaluation metrics, fine-tuned self-explainers outperform the tested external explainers, including some larger models. A larger model $M$ may describe a smaller model $S$ fluently yet be less able to read $S$'s internal states.
 
 <details class="pause-and-think">
 <summary>Pause and think: Why might self-explanation work better?</summary>
@@ -89,7 +89,7 @@ $$
 
 The adapter cannot solve this test from a fixed answer associated with its own weights, because its weights do not change between organisms. It must use something that differs across the base fine-tunes. This design does not prove what information it reads or where that information is stored, but it gives the report a clearer target than an open-ended explanation of ordinary computation.
 
-The pipeline below keeps the reporting adapter fixed while the behavior-bearing fine-tune changes. Training across several behavior families matters: an adapter trained on only one family tends to treat familiar training behaviors as its vocabulary of possible explanations. More diverse model organisms improve transfer to unseen behavior families, with diminishing returns in the reported experiments.
+The pipeline below keeps the reporting adapter fixed while switching between fine-tuned models with different learned behaviors. An adapter trained on only one family of behaviors tends to explain unfamiliar behaviors in terms of that family. Training on more diverse model organisms improves transfer to unseen behavior families, with diminishing returns in the experiments.
 
 <figure>
   <img src="/topics/training-self-explanation/images/introspection-adapter.png" alt="Introspection adapter pipeline. A common base model is fine-tuned into model organisms with known behaviors, one shared adapter learns to report those behaviors, and the adapter is evaluated on a held-out organism with a new behavior.">
@@ -142,7 +142,7 @@ The approach scales interpretation capacity without proportionally scaling inter
 
 **Distribution shift.** Explainers may not generalize well to internal states very different from their training distribution. Novel computations may require new training data.
 
-**Explanation vs. understanding.** Generating accurate explanations does not guarantee that the explanations are useful for human understanding. The model might produce technically correct but uninformative descriptions.
+**Explanation vs. understanding.** Technically correct descriptions can still be too vague to help a reader understand the computation.
 
 **Computational cost.** Training requires substantial compute for generating ground-truth explanations and fine-tuning. This may limit applicability to very large models.
 

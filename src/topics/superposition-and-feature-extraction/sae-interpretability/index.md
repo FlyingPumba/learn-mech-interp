@@ -94,7 +94,7 @@ The combination of all four evaluation methods, detailed case studies for import
 
 Feature dashboards and automated interpretability give us tools to inspect what SAE features represent. But inspection is only the first step. The deeper question is whether these features can serve as the building blocks for a mechanistic understanding of the model.
 
-When an SAE latent is stable, predictively describable, and causally useful, it offers a path around the [polysemanticity problem](/topics/superposition/#why-superposition-makes-interpretability-hard) that frustrates neuron-level analysis. Feature-level circuit analysis can then use a more specific unit than a whole neuron or head. The evaluation burden matters because a coherent label alone does not establish those stronger properties.
+When an SAE latent is stable, has a description that predicts its activations, and helps explain the model's behavior under intervention, it offers a path around the [polysemanticity problem](/topics/superposition/#why-superposition-makes-interpretability-hard) that frustrates neuron-level analysis. Feature-level circuit analysis can then use a more specific unit than a whole neuron or head.
 
 Whether this promise holds at scale is the subject of the next articles. [Scaling monosemanticity](/topics/scaling-monosemanticity/) examines what happens in much larger models. [SAE variants and evaluation](/topics/sae-variants-and-evaluation/) then covers architectural improvements and failure modes that feature dashboards alone cannot reveal.
 

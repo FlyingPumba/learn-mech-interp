@@ -71,7 +71,7 @@ $$
 
 where $\odot$ is elementwise multiplication and $\mathbf{1}[\cdot]$ is the indicator function. The gate decides which features are on. The magnitude pathway decides how strong they are. The sparsity penalty cannot distort magnitudes because it only touches the gate.
 
-In the reported comparison, Gated SAEs improve the reconstruction–sparsity frontier over the vanilla baseline: at matched $L_0$ (number of active features), they achieve lower reconstruction error. This is a result for the tested training setup, not a guarantee over every dataset and architecture.
+In the comparison, Gated SAEs achieved lower reconstruction error than the vanilla baseline at the same $L_0$ (number of active features).
 
 ## TopK SAEs: Direct Sparsity Enforcement
 
@@ -164,11 +164,11 @@ SAEBench includes eight metrics spanning four categories:
 - **Feature disentanglement:** Do individual features correspond to individual concepts, or are related concepts entangled across multiple features?
 - **Reconstruction quality:** The standard proxy metrics, included for comparison.
 
-RAVEL supplies a causal test of feature disentanglement {% cite "huang2024ravel" %}. A proposed feature receives a **Cause** score for changing its target attribute under an interchange intervention and an **Isolate** score for preserving neighboring attributes. On the original Llama2-7B benchmark, the tested vanilla SAE reached 48.6% and 46.8% combined disentanglement on the entity and context splits, compared with 60.1% and 65.6% for Multi-task Distributed Alignment Search. Principal Component Analysis scored lower still. This is a scoped comparison between particular featurizers and feature-selection procedures, not a general ranking of every SAE against every supervised method.
+RAVEL supplies a causal test of feature disentanglement {% cite "huang2024ravel" %}. A proposed feature receives a **Cause** score for changing its target attribute under an interchange intervention and an **Isolate** score for preserving neighboring attributes. On the original Llama2-7B benchmark, the tested vanilla SAE reached 48.6% and 46.8% combined disentanglement on the entity and context splits, compared with 60.1% and 65.6% for Multi-task Distributed Alignment Search. Principal Component Analysis scored lower still.
 
 Across these benchmarks, **proxy metrics did not reliably predict task performance.** SAE variants with better reconstruction loss or L0 sparsity did not consistently improve concept detection, description quality, or disentanglement. A JumpReLU SAE with better reconstruction than a vanilla SAE, for example, need not be better at detecting a labeled concept such as deception.{% sidenote "SAEBench often found Gated, TopK, and JumpReLU SAEs difficult to distinguish on the evaluated practical metrics even when their proxy metrics differed. Reconstruction and sparsity describe important properties of an SAE, but they are insufficient to establish usefulness for a particular interpretability task." %}
 
-This result does not invalidate the architectural improvements. Better reconstruction and lower shrinkage address real failure modes. It does show that reconstruction loss alone is insufficient for many downstream tasks, so an SAE should also be evaluated on the use for which it was chosen.
+Better reconstruction and lower shrinkage address real failure modes. Reconstruction loss alone is insufficient for many downstream tasks, so an SAE should also be evaluated on the use for which it was chosen.
 
 The field lacks consensus on what "a good SAE" means in practice. Proxy metrics are insufficient. Task-specific evaluation is necessary but depends on having ground-truth concepts to test against. Building better evaluation methods remains one of the most important open problems in SAE research.
 
@@ -221,7 +221,7 @@ Consider this scenario:
 
 This is not a hypothetical concern. Automated interpretability scoring systems are vulnerable to exactly this failure mode. A feature with good recall but poor precision gets a high interpretability score because the scoring system sees that the label matches the activations. But the label is incomplete.
 
-The practical consequence: safety-relevant conclusions based on SAE features may be less reliable than they appear. A "deception feature" that actually represents "social interaction" gives a false sense of security when monitored. Its activation (or lack thereof) does not tell us what we think it tells us.
+A "deception feature" that actually represents "social interaction" gives a false sense of security when monitored: its activation cannot reliably distinguish deceptive interactions from honest ones.
 
 ### When Simple Baselines Outperform SAEs
 
@@ -231,7 +231,7 @@ Wu et al. {% cite "wu2025axbench" %} benchmarked SAEs against simple baselines o
 
 Kantamneni et al. {% cite "kantamneni2025saesuseful" %} arrived at a similar conclusion from the probing direction. Across 113 binary classification datasets spanning diverse domains, SAE probes won against standard logistic regression baselines on only 2.2% of tasks. The results held across four challenging regimes: data scarcity, class imbalance, label noise, and covariate shift. Under covariate shift specifically, SAE probes generalized *worse* than baselines, because SAE features can encode surface-level distributional properties (like English-specific tokens) that fail to transfer out-of-distribution.
 
-An important methodological finding: prior work reporting SAE advantages over baselines was often comparing against **insufficiently strong baselines**. When Kantamneni et al. improved baseline token pooling from max-pooling to attention-based pooling, the SAE win rate dropped from 19.6% to 8.7%.
+Prior work reporting SAE advantages was often comparing against **insufficiently strong baselines**. When Kantamneni et al. improved baseline token pooling from max-pooling to attention-based pooling, the SAE win rate dropped from 19.6% to 8.7%.
 
 These benchmarks do not make SAEs useless. They show that when the target concept is already labeled, a supervised baseline can optimize for it directly and may outperform selecting an SAE latent. SAEs answer a different question by proposing an unsupervised sparse decomposition across many activations. That can support hypothesis generation for concepts a researcher did not predefine, but discovery quality also needs benchmarks: an SAE may omit a useful concept, split it across latents, or produce an appealing correlate.
 

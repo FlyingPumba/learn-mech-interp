@@ -61,7 +61,7 @@ ranks examples by whether their chosen-versus-rejected contrast resembles the ac
 
 Xiao and Aranguri (2026) apply this idea to 378,000 preference pairs used for Direct Preference Optimization (DPO) of OLMo 2 7B {% cite "xiao2026probedata" %}. They first build behavior vectors from responses to harmful requests, then compare those vectors with chosen-versus-rejected differences from the original checkpoint. Retraining after editing the ranked data supplies the causal test. Filtering the top 30,000 examples reduced distractor-triggered harmful compliance by 63%, while switching their labels reduced it by 78%. Once the probe was trained, ranking the full dataset cost more than ten times less than the evaluated gradient-attribution and LLM-judge baselines.
 
-These numbers belong to one behavior, dataset, and training pipeline. The general lesson is methodological: similarity produces a hypothesis about responsible data, while editing and retraining test whether the ranked examples actually influence the behavior. A high attribution score without the retraining step could reflect a correlated style or topic.
+Similarity identifies candidate training examples; editing them and retraining tests whether they actually influence the behavior. A high attribution score without the retraining step could reflect a correlated style or topic.
 
 Persona directions support a related form of data screening {% cite "chen2025persona" %}. Instead of scoring a response's raw projection, Chen et al. compare the training response with the base model's natural response to the same prompt and project that activation difference onto the persona direction. The comparison asks how the proposed example would shift the representation away from what the checkpoint already tends to produce. In their experiments, this relative score predicted which fine-tuning datasets would induce undesirable traits better than the raw response score.
 
@@ -107,7 +107,7 @@ Prasad et al. (2026) demonstrate RLFR on hallucination correction with Gemma-3-1
 
 <figure>
   <img src="images/features-as-rewards.png" alt="A comparison between supervision for open-ended tasks using a verifier or language-model judge and an alternative that reads model features with a reward probe. A curve illustrates the probe score tracking the probability that a statement is true.">
-  <figcaption>Feature rewards amortize an expensive supervision source into a cheap internal readout. They do not eliminate the source: labeled examples and external checks are still needed to train and validate the probe. From Prasad et al., <em>Features as Rewards: Scalable Supervision for Open-Ended Tasks via Interpretability</em>. {%- cite "prasad2026features" -%}</figcaption>
+  <figcaption>Feature rewards use an inexpensive probe to approximate costly supervision. Labeled examples and external checks are needed to train and validate the probe. From Prasad et al., <em>Features as Rewards: Scalable Supervision for Open-Ended Tasks via Interpretability</em>. {%- cite "prasad2026features" -%}</figcaption>
 </figure>
 
 The reward is not a probe score in isolation. It multiplies the relevant correction or retraction probe score by checks for legibility and substantive relevance. During training, the probe is run on the base model's activations for the candidate intervention rather than on the changing student's activations. Keeping the readout model fixed makes the reward function more stationary, although the student can still find outputs that exploit its blind spots.

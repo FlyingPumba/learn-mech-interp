@@ -39,9 +39,9 @@ Specifically:
 - Reinforcement learning from human feedback (RLHF) similarly fails. The reward model rates the triggered behavior as harmful, but the backdoor persists because the trigger condition rarely appears during RLHF training.
 - Adversarial training, deliberately searching for failure modes and training against them, may actually make things worse. The model can learn to hide its triggers more effectively rather than abandon the backdoor behavior.
 
-Within the tested model families, larger models tended to retain the planted behavior more reliably.{% sidenote "Greater capacity is one possible explanation: a larger model may maintain normal and triggered policies with less interference. The experiment establishes the trend in its tested settings, not a general scaling law for every backdoor or training procedure." %}
+Within the tested model families, larger models tended to retain the planted behavior more reliably.{% sidenote "Greater capacity is one possible explanation: a larger model may maintain normal and triggered policies with less interference." %}
 
-The practical lesson is narrower: successful safety fine-tuning on ordinary examples is not evidence that a previously planted conditional policy has been removed. The specific trigger and training setup still matter.
+Successful safety fine-tuning on ordinary examples can leave a planted policy intact when its trigger appears.
 
 **If standard safety training fails, can MI succeed?**
 

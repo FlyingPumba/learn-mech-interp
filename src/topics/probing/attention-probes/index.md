@@ -91,7 +91,7 @@ On **MOSAIC datasets** (sequence classification tasks like jailbreak detection, 
 
 On **Neurons in a Haystack datasets** (probing tasks from Gurnee et al.), results were noisier. Last-token probes often outperformed mean probes on these tasks, which is the opposite of the MOSAIC pattern. Attention probes did not show a clear advantage.
 
-An important finding: switching the optimizer from AdamW to L-BFGS substantially improved mean and last-token probe performance, narrowing the gap with attention probes. Some of the advantage attributed to the attention architecture may have been compensating for suboptimal optimization of simpler baselines.{% sidenote "The optimizer finding is a useful cautionary note. In probing research, it is easy to attribute performance differences to the probe architecture when they actually stem from training details like optimizer choice, learning rate, or regularization strength. The probe is simple enough that these details matter." %}
+Switching the optimizer from AdamW to L-BFGS substantially improved mean and last-token probe performance, narrowing the gap with attention probes. Some of the apparent advantage of the attention architecture may therefore have come from poorly optimized baselines.{% sidenote "Optimizer choice, learning rate, and regularization strength can change probe performance enough to obscure differences between architectures." %}
 
 Attention probes are **not uniformly better** than simpler alternatives. Their advantage is dataset-dependent: strongest when useful signal is localized at variable positions, and weakest when it is diffuse or already concentrated at the final token.
 

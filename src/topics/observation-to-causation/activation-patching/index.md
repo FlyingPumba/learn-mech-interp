@@ -62,11 +62,11 @@ The logit difference is continuous, linear in [residual stream](/topics/transfor
 
 The direction of the replacement changes the causal question.
 
-**Denoising** (clean into corrupted): Run the corrupted prompt and replace one activation with its clean value. This asks whether that replacement can restore some of the clean behavior. It resembles a sufficiency test, but the patched component is not acting alone: the rest of the corrupted model still supplies context and downstream computation.{% sidenote "Denoising and noising are often described as sufficiency and necessity tests. The analogy is useful if kept local to the intervention. A single patch does not establish philosophical or model-wide sufficiency or necessity, because components interact and the replacement may itself be off-distribution in its new context." %}
+**Denoising** (clean into corrupted): Run the corrupted prompt and replace one activation with its clean value. This asks whether that replacement can restore some of the clean behavior. It resembles a sufficiency test, but the patched component is not acting alone: the rest of the corrupted model still supplies context and downstream computation.{% sidenote "Denoising and noising are often described as tests of sufficiency and necessity within a particular intervention. Components interact, and an activation taken from one prompt may be unusual in the context of another." %}
 
 **Noising** (corrupted into clean): Run the clean prompt and replace one activation with its corrupted value. This asks whether that replacement damages the clean behavior. It resembles a necessity test, but a small effect does not prove the component is dispensable: redundant paths or self-repair may hide its contribution.
 
-These two directions answer different causal questions, and the difference is not merely academic. Sufficiency and necessity are not the same thing. A component can be sufficient without being necessary (if there are backups), or necessary without being sufficient (if it needs help from other components).
+A component can be sufficient without being necessary (if there are backups), or necessary without being sufficient (if it needs help from other components).
 
 **The AND/OR gate analogy.** Heimersheim and Nanda offer a clarifying analogy {% cite "heimersheim2024patching" %}:
 
@@ -195,7 +195,7 @@ A good approach: use clean prompts with clear sentiment ("This movie was absolut
 
 A patch that changes the target output can also move variables that the interpretation claims are separate. If a residual-stream vector after “Paris” encodes country, continent, language, and token identity, replacing the full vector may change all of them. A large target effect establishes **Cause**, but an attribute-specific claim also needs **Isolate**: the same intervention should preserve outputs controlled by neighboring attributes {% cite "huang2024ravel" %}.
 
-RAVEL operationalizes the pair with entity attributes. To test a proposed continent feature, patch its value from a Tokyo source into “Paris is in the continent of”; a successful Cause intervention changes the answer to *Asia*. Then apply the same patch to “People in Paris speak”; a successful Isolate intervention leaves *French* unchanged. High Cause with low Isolate means the feature is causally effective but entangled.
+RAVEL tests both criteria using entity attributes. To test a proposed continent feature, patch its value from a Tokyo source into “Paris is in the continent of”; a successful Cause intervention changes the answer to *Asia*. Then apply the same patch to “People in Paris speak”; a successful Isolate intervention leaves *French* unchanged. High Cause with low Isolate means the feature is causally effective but entangled.
 
 Specificity controls should match the proposed interpretation. A sentiment patch can be tested on topic and writing style, a factual-recall patch on related attributes, and a refusal intervention on unrelated capabilities. Passing a broad benchmark is useful but weaker than testing the variables most likely to share the patched representation. [Choosing Causal Mediators](/topics/choosing-causal-mediators/) develops selectivity together with faithfulness, sparsity, and generality.
 
@@ -245,7 +245,7 @@ Activation patching directly tests interventions on model internals, but it has 
 
 Several mechanisms contribute to self-repair. **LayerNorm rescaling** accounts for a significant fraction: when a component's contribution is removed from the residual stream, the magnitude of the stream changes, and LayerNorm renormalizes it. This mechanical rescaling can recover up to 30% of the ablated effect without any "intelligent" compensation {% cite "mcgrath2023hydra" %}. **Backup components** provide another source: heads that are nearly inactive under normal operation activate when primary components are removed, picking up their function. The [IOI circuit's Backup Name Movers](/topics/circuit-evaluation/) are the canonical example. Beyond these identified mechanisms, a substantial fraction of self-repair remains unexplained {% cite "rushing2024selfrepair" %}.
 
-The practical consequence is that an ablation effect is not an intrinsic percentage of “importance.” Compensation can make the measured change smaller than a component's role in the intact computation, while an implausible replacement can make it larger. Report the intervention, baseline, and metric, then look explicitly for changes in downstream components.
+Compensation can make an ablation's measured effect smaller than a component's role in the intact computation, while an implausible replacement can make it larger. The effect size therefore depends on the intervention, baseline, and metric. Report these choices and look for changes in downstream components.
 
 **Resample ablation** replaces a component's activation with a value from another input. The replacement is drawn from an empirical marginal distribution, which can be more plausible than zero, but it may be inconsistent with the current context. Mean ablation makes a different compromise. Comparing plausible baselines is more informative than treating one as universally correct.
 

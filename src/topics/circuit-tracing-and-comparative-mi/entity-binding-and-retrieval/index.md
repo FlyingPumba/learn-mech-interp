@@ -22,7 +22,7 @@ This is the **binding problem**: how can a distributed representation associate 
 
 > **Entity Binding:** Associating an entity with its context-specific attributes so that later computation can retrieve the correct pair rather than merely detect that both items occurred.
 
-The [IOI circuit](/topics/ioi-circuit/) solves a related reference problem by detecting a duplicated name, suppressing it, and copying the other name. Binding research asks a broader representational question: what internal code lets a model distinguish several entity–attribute pairs, and how does the model dereference that code later? These accounts should not be collapsed into one mechanism because they were established on different models, tasks, and intervention sites.
+The [IOI circuit](/topics/ioi-circuit/) solves a related reference problem by detecting a duplicated name, suppressing it, and copying the other name. Binding research asks how a model keeps several entity–attribute pairs distinct and later retrieves the attribute associated with a particular entity. The mechanisms described in these studies were identified in different models, tasks, and intervention sites.
 
 ## Content Plus an Identifier
 

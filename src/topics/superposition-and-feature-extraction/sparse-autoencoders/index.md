@@ -29,7 +29,7 @@ $$
 
 where $\mathbf{f}$ is a sparse row vector and each row of $W_d$ is a dictionary direction, learning $W_d$ and inferring $\mathbf{f}$ from observed activations $\mathbf{x}$ is a **dictionary learning** problem. It is related to compressed sensing: recovering a high-dimensional sparse signal from fewer observed dimensions.{% sidenote "Sparse recovery can be unique under conditions on sparsity and dictionary geometry, such as sufficiently low coherence. Sparsity alone does not guarantee uniqueness, and a learned SAE is not guaranteed to recover a ground-truth dictionary even when one exists." %}
 
-Without an additional constraint, an overcomplete dictionary admits many decompositions of the same activation. Sparsity can make recovery identifiable when the active set is small and the dictionary satisfies suitable geometric conditions. Those conditions motivate SAEs; they do not guarantee that a trained SAE has uniquely “undone” the model's representation.
+Without an additional constraint, an overcomplete dictionary admits many decompositions of the same activation. Sparsity can make recovery identifiable when the active set is small and the dictionary satisfies suitable geometric conditions.
 
 Bricken et al. use a deliberately simple, one-layer autoencoder for this dictionary learning problem {% cite "bricken2023monosemanticity" %}. A linear decoder and simple encoder limit how much computation the interpreter can hide inside the decomposition. This makes each latent easier to inspect, though architectural similarity to an MLP does not by itself show that the target model reads or writes the same feature.
 
@@ -109,9 +109,9 @@ $$
 512 \text{ neurons} \longrightarrow 4{,}000+ \text{ interpretable features}
 $$
 
-Many inspected latents admitted concise labels, including Arabic script, DNA sequences, legal language, HTTP requests, Hebrew text, and nutrition statements. The SAE produced roughly eight times as many live, interpretable latents as the original layer had neurons. This is consistent with the superposition picture, but the experiment does not establish a one-to-one match between SAE latents and the model's unique “true features.”
+Many inspected latents had recognizable activation patterns, including Arabic script, DNA sequences, legal language, HTTP requests, Hebrew text, and nutrition statements. The SAE produced roughly eight times as many live, interpretable latents as the original layer had neurons, consistent with the superposition picture.
 
-Human raters judged approximately 70% of a large random sample of SAE latents interpretable under the study's rubric, compared with much lower scores for individual neurons {% cite "bricken2023monosemanticity" %}. That is evidence that the SAE produced more labelable units in this setting, not that every label was complete or causally correct. Some latents remained polysemantic, especially in smaller dictionaries, while larger dictionaries produced cleaner examples in the reported comparison.{% sidenote "Concurrent work by Cunningham et al. (2023), published at ICLR 2024, also extracted interpretable SAE latents from language models. Results across research groups and model families reduce the chance that the basic phenomenon is unique to one setup, although they do not establish that SAEs recover a model's one true feature decomposition." %}
+Human raters judged approximately 70% of a large random sample of SAE latents interpretable under the study's rubric, compared with much lower scores for individual neurons {% cite "bricken2023monosemanticity" %}. Some latents remained polysemantic, especially in smaller dictionaries, while larger dictionaries produced cleaner examples in the comparison.{% sidenote "Concurrent work by Cunningham et al. (2023), published at ICLR 2024, also extracted interpretable SAE latents from language models. Results across research groups and model families reduce the chance that the basic phenomenon is unique to one setup." %}
 
 Bricken et al. provided four distinct lines of evidence for the quality of their features:
 
@@ -120,7 +120,7 @@ Bricken et al. provided four distinct lines of evidence for the quality of their
 3. **Automated interpretability (activations):** LLMs generated descriptions from activation patterns, then tested those descriptions on held-out data.
 4. **Automated interpretability (logit weights):** Analysis of how features influence the model's output distribution.
 
-The methods answer complementary questions. Detailed case studies examine individual latents closely; human evaluation estimates how often people can assign coherent labels under a rubric; and automated methods scale predictive description tests to thousands of latents. Agreement across them is stronger evidence than any one score, but it still does not uniquely identify the model's computational units.
+The methods answer complementary questions. Detailed case studies examine individual latents closely; human evaluation estimates how often people can assign coherent labels under a rubric; and automated methods scale predictive description tests to thousands of latents. Agreement across them is stronger evidence than any one score.
 
 The results show that an SAE can replace a difficult neuron basis with a much sparser basis containing many human-interpretable latents, at least in this small model. Whether those latents faithfully recover the model's own computational units is a stronger question, taken up in the later article on [SAE evaluation](/topics/sae-variants-and-evaluation/).
 

@@ -107,7 +107,7 @@ The model "knows" POS in the sense that the information is linearly decodable fr
 
 ## Attention Patterns Are Another Observational Readout
 
-[Attention heatmaps](/topics/reading-attention-patterns/) and probes make the same kind of epistemic move at different levels. A probe shows that information can be decoded from an activation; a heatmap shows where a head assigns its reading weight. Neither establishes what the model's downstream computation needs. For attention, we must also inspect the OV circuit and intervene on the head before turning a visible pattern into a mechanistic claim.
+A probe shows what information can be decoded from an activation; an [attention heatmap](/topics/reading-attention-patterns/) shows which token positions a head attends to. Neither tells us whether the model needs that information to produce its output. To understand a head's role, we also need to inspect what its OV circuit writes and test how intervening on the head changes the output.
 
 ## The Key Limitation: Observation Cannot Establish Causation
 
@@ -117,4 +117,4 @@ None of these tools establish whether the detected information is *causally nece
 
 All observational tools establish *correlations*: the information co-occurs with the activations. To establish *causation*, we need a different kind of experiment, one where we *intervene* on the model's internals and observe changes in behavior. If we *change* an intermediate activation and observe a *change* in the model's output, we have causal evidence.
 
-[Activation patching](/topics/activation-patching/) replaces an internal activation and measures the downstream change; path patching narrows the intervention to a proposed connection. These methods move from “what can we decode?” toward “what changes under this intervention?”, a stronger claim, though still not proof that the resulting description is complete.
+[Activation patching](/topics/activation-patching/) replaces an internal activation and measures the downstream change; path patching narrows the intervention to a proposed connection. These methods test how changing the information affects the model's behavior.

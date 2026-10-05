@@ -21,7 +21,7 @@ Lindsey {% cite "lindsey2025introspection" %} reverses the experiment. Start wit
 
 > **Concept injection:** Adding an activation direction associated with a known concept while a model answers a question about its internal state. If the self-report changes with the intervention, the experiment establishes a causal link that ordinary prompting cannot provide.
 
-The claim is narrower than general self-understanding. A model might learn to detect a few unusual activation patterns without being able to inspect arbitrary computations. The experiments test a functional capacity to report some current or prior internal states, not consciousness or subjective experience.
+A model might learn to detect a few unusual activation patterns without being able to inspect arbitrary computations.
 
 ## Constructing the Intervention
 
@@ -67,7 +67,7 @@ The evaluation counts a trial as successful only when the model affirms that it 
 
 ## Results and Failure Modes
 
-At the best layer and strength, Claude Opus 4.1 met the study's success criteria on roughly 20% of trials. The best layer was around two-thirds of the way through the model. Production-model control trials produced no false detections in 100 attempts, although some experimental model variants were less well calibrated. Random vectors needed a larger norm and were detected less often. These results demonstrate an unreliable capability in particular tested models, not a general property of language models {% cite "lindsey2025introspection" %}.
+At the best layer and strength, Claude Opus 4.1 met the study's success criteria on roughly 20% of trials. The best layer was around two-thirds of the way through the model. Production-model control trials produced no false detections in 100 attempts, although some experimental model variants were less well calibrated. Random vectors needed a larger norm and were detected less often {% cite "lindsey2025introspection" %}.
 
 The model often reports no injection even though the concept visibly influences its later text. At excessive strength it becomes confused, incoherent, or makes elaborate claims about emotions and bodily sensations that the intervention cannot verify. In other trials it recognizes the concept only after saying it. That last case shows causal influence, but fails the internality test because the model could read the evidence from its own output. Failures remain the norm.
 
@@ -94,7 +94,7 @@ The experiment then retroactively adds the matching concept direction to activat
   <figcaption>Injecting a matching concept before a forced output changes whether the model later treats that output as intended. From Lindsey, <em>Emergent Introspective Awareness in Large Language Models</em>. {% cite "lindsey2025introspection" %}</figcaption>
 </figure>
 
-This result is consistent with a circuit that compares the previous output with a cached representation of what the model was about to say. Its most sensitive layer was earlier than the layer for direct concept detection, suggesting that the two behaviors need not share one general introspection mechanism. The intervention is artificial, the behavior is model-specific, and several simpler consistency-checking mechanisms could explain it. It is evidence for access to a prior internal representation, not evidence about subjective experience.
+This result is consistent with a circuit that compares the previous output with a cached representation of what the model was about to say. Its most sensitive layer was earlier than the layer for direct concept detection, suggesting that the two behaviors need not share one general introspection mechanism. Several simpler consistency-checking mechanisms could also explain the result.
 
 ## What the Experiments Establish
 

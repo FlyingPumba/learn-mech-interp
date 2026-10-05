@@ -175,7 +175,7 @@ The two interactions reveal parallel heuristics. One searches broadly for a name
   <figcaption>Suppressing the role-linked key feature inside the selected heads' QK circuits removes the specific induction prediction and leaves generic aunt-name predictions. This supports a role-binding mechanism alongside the broader attend-to-names heuristic on this prompt. From Kamath et al., <em>Tracing Attention Computation Through Feature Interactions</em>. {%- cite "kamath2025qk" -%}</figcaption>
 </figure>
 
-The intervention changes only the selected feature contribution inside the relevant QK circuits. Its effect on both attention and the next-token prediction is stronger evidence than reading feature labels from the attribution matrix alone. It remains evidence about one prompt family and model, not proof that every induction head implements the same feature interactions.
+The intervention changes only the selected feature contribution inside the relevant QK circuits. Its effect on both attention and the next-token prediction is stronger evidence than reading feature labels from the attribution matrix alone.
 
 ## What Attribution Graphs Can Reveal
 

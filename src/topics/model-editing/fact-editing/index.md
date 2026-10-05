@@ -74,7 +74,7 @@ The ROME story illustrates several principles that extend beyond fact editing.
 
 **The distributed nature of knowledge.** Factual knowledge in transformers is not stored in a single MLP layer like an entry in a database. It is distributed across layers, encoded redundantly, and accessed through multiple pathways. The residual stream carries information forward from many sources, and later layers integrate contributions from earlier ones. Any technique that assumes strict localization of knowledge will encounter the same fundamental problem.
 
-MEMIT {% cite "meng2023memit" %} extended ROME to edit multiple facts by distributing updates across several layers. This improves edit capacity, but the same evidential gap remains: output-level success does not show that old associations and all of their consequences have been coherently replaced throughout the model.
+MEMIT {% cite "meng2023memit" %} extended ROME to edit multiple facts by distributing updates across several layers. It can edit more facts at once, but a successful output change still leaves open whether old associations and their consequences persist elsewhere in the model.
 
 ## Lessons for Interpretability Rigor
 

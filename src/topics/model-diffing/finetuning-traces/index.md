@@ -104,13 +104,13 @@ This is not simply ADL under a different name:
 | Activation Difference Lens | A base and fine-tuned model | An aggregate difference to interpret | Discovering an unknown narrow fine-tuning domain |
 | Trait-specific projection | A previously defined trait direction and two models | One signed score for that trait | Tracking a concrete hypothesis across runs or checkpoints |
 
-The distinction matters because a high correlation does not establish trait specificity. In Chen et al.'s controls, fine-tuning shifts also showed moderate to strong correlations with some non-matching negative-trait directions, and those directions were themselves correlated. A scalar projection can therefore be a useful warning signal without identifying a unique mechanism for evil behavior, sycophancy, or hallucination.
+In Chen et al.'s controls, fine-tuning shifts also correlated moderately to strongly with directions for other negative traits, and those directions were themselves correlated. A large projection onto a trait direction can therefore flag a behavioral change without isolating the mechanism for that particular trait, such as evil behavior, sycophancy, or hallucination.
 
 ## Convergent Evidence from Sparse Features
 
 OpenAI studied a related emergent-misalignment setup using a sparse autoencoder trained on the base model rather than a contrastive persona direction {% cite "openai2025misalignment" %}. A feature interpreted as a misaligned persona became more active after narrow fine-tuning on incorrect answers, discriminated aligned from misaligned outputs, and causally changed behavior when steered. This provides convergent evidence that fine-tuning can move a model along a readable, behaviorally relevant internal axis.
 
-The methods should not be collapsed. A persona vector is supervised by an explicit behavioral contrast, whereas a sparse autoencoder feature is learned from activation reconstruction and interpreted afterward. Both can reveal a mediator of the measured behavior without capturing all of the computation that produced it.
+A persona vector is trained using an explicit contrast between behaviors. A sparse autoencoder feature is learned by reconstructing activations and interpreted afterward. Both can identify a direction that influences the measured behavior.
 
 ## Why These Traces Exist
 
