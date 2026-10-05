@@ -76,13 +76,34 @@ A single influential paper might spawn zero articles (if its contributions are i
 ### Voice
 - **Second-person inclusive**: Use "we" to bring the reader along. "We can decompose the output..." rather than "The output can be decomposed..."
 - **Direct and confident**: State claims clearly. Avoid excessive hedging ("it seems like," "it might be the case that"). When something is uncertain, be explicit about *why* it's uncertain rather than hedging vaguely.
-- **Intellectually honest**: Acknowledge limitations, open questions, and areas of genuine uncertainty. Don't oversell results.
+- **Intellectually honest**: State concrete limitations and unresolved questions where they affect the explanation. Don't oversell results or append generic disclaimers to demonstrate caution.
 
 ### Register
 - Academic but accessible. Imagine the reader is a motivated graduate student or self-learner who has the math background but is new to the specific topic.
 - Avoid hype language ("groundbreaking," "revolutionary," "game-changing").
 - Avoid LLM-isms ("delve into," "crucial," "it's important to note that").
 - Technical vocabulary is fine when necessary, but define terms on first use.
+
+### Write natural sentences
+
+Write as if explaining the mechanism to a technically literate reader. Use concrete subjects and familiar verbs. Unpack dense noun phrases, name what an abstract phrase refers to, and split sentences that make the reader hold several relationships in mind at once. Technical precision should make the explanation easier to follow.
+
+| Awkward | Natural |
+|---------|---------|
+| The reported addition transcoders consequently split the operation across highly specific features. | In the addition experiments, transcoders used separate features for specific cases. |
+| Their sparse units make different claims about computation. | Each active transcoder feature contributes along a fixed output direction; each active MOLT transform applies a linear map to the input. |
+| Its decoder vector provides a fixed candidate meaning for its output. | We can examine its fixed decoder vector to interpret what it contributes to the output. |
+| Trading a global account for a more legible local one. | Restricting the graph to one prompt makes the computation easier to inspect. |
+
+Read the prose aloud. If a sentence sounds strained, or a reader must translate it into ordinary language to understand it, rewrite it. Vary sentence length naturally; do not turn every explanation into a sequence of clipped statements or repeat the same transition throughout the article.
+
+### Cut empty disclaimers
+
+Do not append a disclaimer to every example or result. Sentences such as "This does not prove the model's true algorithm" or "These examples do not establish a general circuit" add nothing when the text already presents a hypothetical example or a result for a specific prompt. Delete them instead of merely rephrasing them. An illustrative example does not need a warning that it is illustrative.
+
+Keep a limitation when it identifies a concrete failure, assumption, measurement gap, or unresolved comparison that changes how the reader should interpret the result. State it directly where it matters, without repeating it after each example. "The reconstruction and Jacobian experiments used different models" identifies a specific gap in the evidence. "These results should be interpreted with caution" does not explain anything.
+
+Ask of each caveat: *What specific misunderstanding does this prevent, and is that already clear from the surrounding text?* If it adds no information, remove it. The requirement to discuss limitations is not a requirement to include boilerplate warnings.
 
 ### Every sentence must carry content
 
@@ -289,7 +310,7 @@ The convention is stated for the reader once, in the attention article, which is
 - **Conceptual understanding**: The *why* behind techniques, not just the *how*.
 - **Concrete examples**: Work through a specific case before generalizing.
 - **Mathematical grounding**: Enough math to be precise, but motivated by intuition.
-- **Limitations and caveats**: What doesn't work, what's unknown, where the technique breaks down.
+- **Limitations and caveats**: Concrete failures, assumptions, and open questions that affect the reader's understanding. Omit generic warnings and repeated reminders of limits already clear from the text.
 - **Connections to safety**: Where relevant, tie MI techniques to AI safety applications.
 - **Original sources**: Cite papers with `{% cite "key" %}`. The bibliography is centralized.
 
@@ -457,12 +478,13 @@ Before finalizing an article:
 - [ ] Is there at least one concrete example before generalizing?
 - [ ] Are equations explained in words, not just displayed?
 - [ ] Do equations follow the row-vector convention, including matrix shapes, row/column prose, and any interactive diagrams?
-- [ ] Are limitations and caveats acknowledged?
+- [ ] Are relevant limitations stated concretely, without empty or repeated disclaimers?
 - [ ] Is there at least one "Pause and Think" section?
 - [ ] Are relevant other articles cross-linked?
 - [ ] Does the closing connect to what comes next?
 - [ ] Are all citations in place?
 - [ ] Is the tone direct and free of hype/LLM-isms?
+- [ ] Does the prose sound natural when read aloud? Replace strained wording and dense noun phrases with clear subjects, actions, and relationships.
 - [ ] Is the `description` between roughly 140 and 180 characters?
 - [ ] Is every acronym expanded at its first use *in this article*?
 - [ ] Does every verdict come after the definition it depends on? Cut preview paragraphs that state a conclusion the reader cannot yet assess.
