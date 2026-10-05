@@ -95,4 +95,6 @@ We gain a more granular hypothesis for each node, and we can trace through MLPs 
 
 Sparse autoencoders describe what is present at one activation site; transcoders approximate the map from one site to another. That input-output factorization makes multilayer perceptrons easier to include in a circuit, but the circuit describes the replacement only as faithfully as the transcoder reconstructs the original computation.
 
+[Sparse Mixtures of Linear Transforms](/topics/sparse-mixtures-of-linear-transforms/) replace fixed transcoder decoder directions with gated low-rank maps. This can preserve geometric computations that a feature-based replacement would split into many lookup-table-like units.
+
 [Circuit Tracing and Attribution Graphs](/topics/circuit-tracing/) builds on cross-layer transcoders to trace input-specific effects through thousands of features, then examines how approximation error, frozen attention, and local attribution limit the resulting graphs.

@@ -286,6 +286,20 @@
     "venue": "NeurIPS",
     "url": "https://arxiv.org/abs/2406.11944"
   },
+  "lindsey2025molt": {
+    "title": "Sparse Mixtures of Linear Transforms",
+    "authors": "Lindsey, J., Chen, B., Pearce, A., Hydrie, S., Conerly, T.",
+    "year": 2025,
+    "venue": "Transformer Circuits Thread",
+    "url": "https://transformer-circuits.pub/2025/bulk-update/index.html"
+  },
+  "oldfield2025mxd": {
+    "title": "Towards Interpretability Without Sacrifice: Faithful Dense Layer Decomposition with Mixture of Decoders",
+    "authors": "Oldfield, J., Im, S., Li, S., Nicolaou, M. A., Patras, I., Chrysos, G. G.",
+    "year": 2025,
+    "venue": "NeurIPS",
+    "url": "https://arxiv.org/abs/2505.21364"
+  },
   "marks2024sparse": {
     "title": "Sparse Feature Circuits: Discovering and Editing Interpretable Causal Graphs in Language Models",
     "authors": "Marks, S., Rager, C., Michaud, E. J., et al.",

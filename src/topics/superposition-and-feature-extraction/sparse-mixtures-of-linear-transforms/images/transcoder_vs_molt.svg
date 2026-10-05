@@ -1,0 +1,82 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="480" viewBox="0 0 960 480" role="img" aria-labelledby="title desc">
+  <title id="title">Transcoder and MOLT computational units</title>
+  <desc id="desc">A transcoder sums fixed decoder vectors scaled by feature activations. A MOLT sums transformed inputs scaled by gate activations. Arrows show the two contributions in each panel flowing into a sum to produce the output.</desc>
+  <defs>
+    <style>
+      .panel { fill: #f8fafc; stroke: #cbd5e1; stroke-width: 2; }
+      .input { fill: #e0f2fe; stroke: #0284c7; stroke-width: 2; }
+      .gate { fill: #fef3c7; stroke: #d97706; stroke-width: 2; }
+      .fixed { fill: #ede9fe; stroke: #7c3aed; stroke-width: 2; }
+      .map { fill: #dcfce7; stroke: #16a34a; stroke-width: 2; }
+      .output { fill: #fce7f3; stroke: #db2777; stroke-width: 2; }
+      .title { font-family: system-ui, sans-serif; font-size: 24px; font-weight: 700; fill: #172033; }
+      .label { font-family: system-ui, sans-serif; font-size: 17px; font-weight: 600; fill: #172033; text-anchor: middle; dominant-baseline: middle; }
+      .small { font-family: system-ui, sans-serif; font-size: 15px; fill: #475569; text-anchor: middle; }
+      .formula { font-family: Georgia, serif; font-size: 17px; font-style: italic; fill: #172033; text-anchor: middle; dominant-baseline: middle; }
+      .sum { font-family: Georgia, serif; font-size: 27px; fill: #172033; text-anchor: middle; dominant-baseline: middle; }
+      .wire { fill: none; stroke: #536579; stroke-width: 2; stroke-linejoin: round; marker-end: url(#arrow); }
+    </style>
+    <marker id="arrow" viewBox="0 0 8 8" refX="8" refY="4" markerWidth="8" markerHeight="8" markerUnits="userSpaceOnUse" orient="auto">
+      <path d="M 0 0 L 8 4 L 0 8 Z" fill="#536579"/>
+    </marker>
+  </defs>
+
+  <rect class="panel" x="20" y="20" rx="18" width="445" height="440"/>
+  <rect class="panel" x="495" y="20" rx="18" width="445" height="440"/>
+
+  <text class="title" x="48" y="58">Transcoder</text>
+  <text class="small" x="242" y="88">active features scale fixed directions</text>
+
+  <rect class="input" x="50" y="168" rx="12" width="82" height="62"/>
+  <text class="formula" x="91" y="199">x</text>
+
+  <rect class="gate" x="177" y="118" rx="12" width="92" height="54"/>
+  <rect class="gate" x="177" y="226" rx="12" width="92" height="54"/>
+  <text class="formula" x="223" y="145">a₁(x)</text>
+  <text class="formula" x="223" y="253">a₂(x)</text>
+
+  <rect class="fixed" x="315" y="118" rx="12" width="105" height="54"/>
+  <rect class="fixed" x="315" y="226" rx="12" width="105" height="54"/>
+  <text class="formula" x="367" y="145">a₁(x) d₁</text>
+  <text class="formula" x="367" y="253">a₂(x) d₂</text>
+
+  <path class="wire" d="M 132 190 L 177 145"/>
+  <path class="wire" d="M 132 208 L 177 253"/>
+  <path class="wire" d="M 269 145 H 315"/>
+  <path class="wire" d="M 269 253 H 315"/>
+  <path class="wire" d="M 420 145 H 442 V 345 H 397"/>
+  <path class="wire" d="M 367 280 V 315"/>
+  <circle class="output" cx="367" cy="345" r="30"/>
+  <text class="sum" x="367" y="345">∑</text>
+  <path class="wire" d="M 367 375 V 397"/>
+  <text class="formula" x="367" y="411">ŷ</text>
+  <text class="small" x="242" y="439">weighted sum of fixed directions</text>
+
+  <text class="title" x="523" y="58">MOLT</text>
+  <text class="small" x="717" y="88">active transforms act on the input</text>
+
+  <rect class="input" x="525" y="168" rx="12" width="82" height="62"/>
+  <text class="formula" x="566" y="199">x</text>
+
+  <rect class="gate" x="644" y="118" rx="12" width="92" height="54"/>
+  <rect class="gate" x="644" y="226" rx="12" width="92" height="54"/>
+  <text class="formula" x="690" y="145">a₁(x)</text>
+  <text class="formula" x="690" y="253">a₂(x)</text>
+
+  <rect class="map" x="782" y="118" rx="12" width="105" height="54"/>
+  <rect class="map" x="782" y="226" rx="12" width="105" height="54"/>
+  <text class="formula" x="834" y="145">a₁(x) x A₁</text>
+  <text class="formula" x="834" y="253">a₂(x) x A₂</text>
+
+  <path class="wire" d="M 607 190 L 644 145"/>
+  <path class="wire" d="M 607 208 L 644 253"/>
+  <path class="wire" d="M 736 145 H 782"/>
+  <path class="wire" d="M 736 253 H 782"/>
+  <path class="wire" d="M 887 145 H 916 V 345 H 864"/>
+  <path class="wire" d="M 834 280 V 315"/>
+  <circle class="output" cx="834" cy="345" r="30"/>
+  <text class="sum" x="834" y="345">∑</text>
+  <path class="wire" d="M 834 375 V 397"/>
+  <text class="formula" x="834" y="411">ŷ</text>
+  <text class="small" x="717" y="439">weighted sum of transformed inputs</text>
+</svg>
