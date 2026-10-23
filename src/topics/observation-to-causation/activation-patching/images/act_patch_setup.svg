@@ -1,0 +1,204 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="620" viewBox="0 0 960 620" role="img" aria-labelledby="title desc">
+  <title id="title">Activation patching setup with three forward passes</title>
+  <desc id="desc">Three transformer forward passes drawn as vertical stacks of embedding, layers, and unembedding. The corrupted run predicts John, the clean run predicts Mary. In the patched run, the residual stream after layer 2 is copied from the clean run into the corrupted run; the layers above it recompute and the output shifts toward Mary.</desc>
+  <defs>
+    <style>
+      .panel { fill: #f8fafc; stroke: #cbd5e1; stroke-width: 2; }
+      .box-clean { fill: #dcfce7; stroke: #16a34a; stroke-width: 2; }
+      .box-corr { fill: #ffe4e6; stroke: #e11d48; stroke-width: 2; }
+      .box-recomp { fill: #e0f2fe; stroke: #0284c7; stroke-width: 2; }
+      .box-out { fill: #ffffff; stroke: #cbd5e1; stroke-width: 2; }
+      .sub { fill: #ffffff; stroke: #94a3b8; stroke-width: 1.5; }
+      .node { stroke-width: 2.5; }
+      .wire { fill: none; stroke-width: 2; }
+      .s-clean { stroke: #16a34a; } .s-corr { stroke: #e11d48; } .s-recomp { stroke: #0284c7; }
+      .m-clean { marker-end: url(#arr-clean); } .m-corr { marker-end: url(#arr-corr); } .m-recomp { marker-end: url(#arr-recomp); }
+      .dashed { stroke-dasharray: 5 4; }
+      .copy { fill: none; stroke: #16a34a; stroke-width: 3.5; marker-end: url(#arr-copy); }
+      .subwire { fill: none; stroke: #94a3b8; stroke-width: 1.5; marker-end: url(#arr-sub); }
+      text { font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+      .title { font-size: 18px; font-weight: 700; fill: #172033; text-anchor: middle; }
+      .subtitle { font-size: 13px; fill: #475569; text-anchor: middle; }
+      .label { font-size: 15px; font-weight: 600; }
+      .mid { text-anchor: middle; }
+      .t-clean { fill: #14532d; } .t-corr { fill: #881337; } .t-recomp { fill: #0c4a6e; }
+      .small { font-size: 13px; fill: #334155; text-anchor: middle; }
+      .barlabel { font-size: 13px; fill: #334155; text-anchor: end; }
+      .pred { font-size: 13px; font-weight: 600; fill: #172033; text-anchor: middle; }
+      .prompt { font-size: 13px; fill: #172033; text-anchor: middle; }
+      .name-corr { font-weight: 700; fill: #be123c; }
+      .name-clean { font-weight: 700; fill: #15803d; }
+      .dots { font-size: 16px; fill: #64748b; text-anchor: middle; }
+      .note { font-size: 12px; fill: #475569; text-anchor: end; }
+      .copylabel { font-size: 13px; font-weight: 700; fill: #15803d; text-anchor: middle; }
+      .legend { font-size: 13px; fill: #334155; }
+      .bar-hi { fill: #475569; } .bar-lo { fill: #cbd5e1; } .bar-mid { fill: #94a3b8; }
+    </style>
+    <marker id="arr-clean" viewBox="0 0 8 8" refX="8" refY="4" markerWidth="8" markerHeight="8" markerUnits="userSpaceOnUse" orient="auto"><path d="M 0 0 L 8 4 L 0 8 Z" fill="#16a34a"/></marker>
+    <marker id="arr-corr" viewBox="0 0 8 8" refX="8" refY="4" markerWidth="8" markerHeight="8" markerUnits="userSpaceOnUse" orient="auto"><path d="M 0 0 L 8 4 L 0 8 Z" fill="#e11d48"/></marker>
+    <marker id="arr-recomp" viewBox="0 0 8 8" refX="8" refY="4" markerWidth="8" markerHeight="8" markerUnits="userSpaceOnUse" orient="auto"><path d="M 0 0 L 8 4 L 0 8 Z" fill="#0284c7"/></marker>
+    <marker id="arr-sub" viewBox="0 0 8 8" refX="8" refY="4" markerWidth="7" markerHeight="7" markerUnits="userSpaceOnUse" orient="auto"><path d="M 0 0 L 8 4 L 0 8 Z" fill="#94a3b8"/></marker>
+    <marker id="arr-copy" viewBox="0 0 8 8" refX="8" refY="4" markerWidth="11" markerHeight="11" markerUnits="userSpaceOnUse" orient="auto"><path d="M 0 0 L 8 4 L 0 8 Z" fill="#16a34a"/></marker>
+  </defs>
+
+  <rect width="960" height="620" rx="18" fill="#ffffff"/>
+
+  <!-- Corrupted run -->
+  <rect class="panel" x="10" y="8" rx="14" width="300" height="576"/>
+  <text class="title" x="160" y="40">Corrupted run</text>
+  <text class="subtitle" x="160" y="60">no intervention</text>
+  <rect class="box-out" x="40" y="70" rx="10" width="240" height="80"/>
+  <text class="barlabel" x="88" y="92">Mary</text>
+  <rect class="bar-lo" x="96" y="80" rx="3" width="40" height="14"/>
+  <text class="barlabel" x="88" y="112">John</text>
+  <rect class="bar-hi" x="96" y="100" rx="3" width="165" height="14"/>
+  <text class="pred" x="160" y="138">predicts “John”</text>
+  <path class="wire s-corr m-corr" d="M 160 170 V 152"/>
+  <rect class="box-corr" x="90" y="170" rx="10" width="140" height="30"/>
+  <text class="label mid t-corr" x="160" y="190">Unembed</text>
+  <path class="wire s-corr m-corr" d="M 160 218 V 202"/>
+  <rect class="box-corr" x="50" y="218" rx="10" width="220" height="50"/>
+  <text class="label t-corr" x="64" y="248">Layer L</text>
+  <rect class="sub" x="138" y="230" rx="6" width="52" height="26"/>
+  <text class="small" x="164" y="248">Attn</text>
+  <path class="subwire" d="M 190 243 H 204"/>
+  <rect class="sub" x="206" y="230" rx="6" width="50" height="26"/>
+  <text class="small" x="231" y="248">MLP</text>
+  <path class="wire dashed s-corr m-corr" d="M 160 308 V 270"/>
+  <text class="dots" x="144" y="294">⋮</text>
+  <path class="wire s-corr" d="M 160 338 V 318"/>
+  <circle class="node box-corr" cx="160" cy="318" r="10"/>
+  <rect class="box-corr" x="50" y="338" rx="10" width="220" height="50"/>
+  <text class="label t-corr" x="64" y="368">Layer 2</text>
+  <rect class="sub" x="138" y="350" rx="6" width="52" height="26"/>
+  <text class="small" x="164" y="368">Attn</text>
+  <path class="subwire" d="M 190 363 H 204"/>
+  <rect class="sub" x="206" y="350" rx="6" width="50" height="26"/>
+  <text class="small" x="231" y="368">MLP</text>
+  <path class="wire s-corr m-corr" d="M 160 406 V 390"/>
+  <rect class="box-corr" x="50" y="406" rx="10" width="220" height="50"/>
+  <text class="label t-corr" x="64" y="436">Layer 1</text>
+  <rect class="sub" x="138" y="418" rx="6" width="52" height="26"/>
+  <text class="small" x="164" y="436">Attn</text>
+  <path class="subwire" d="M 190 431 H 204"/>
+  <rect class="sub" x="206" y="418" rx="6" width="50" height="26"/>
+  <text class="small" x="231" y="436">MLP</text>
+  <path class="wire s-corr m-corr" d="M 160 474 V 458"/>
+  <rect class="box-corr" x="90" y="474" rx="10" width="140" height="30"/>
+  <text class="label mid t-corr" x="160" y="494">Embed</text>
+  <path class="wire s-corr m-corr" d="M 160 522 V 506"/>
+  <rect class="box-corr" x="22" y="522" rx="10" width="276" height="54"/>
+  <text class="prompt" x="160" y="544">When Mary and John went to the store,</text>
+  <text class="prompt" x="160" y="564"><tspan class="name-corr">Mary</tspan> gave a drink to ___</text>
+
+  <!-- Clean run -->
+  <rect class="panel" x="330" y="8" rx="14" width="300" height="576"/>
+  <text class="title" x="480" y="40">Clean run</text>
+  <text class="subtitle" x="480" y="60">no intervention</text>
+  <rect class="box-out" x="360" y="70" rx="10" width="240" height="80"/>
+  <text class="barlabel" x="408" y="92">Mary</text>
+  <rect class="bar-hi" x="416" y="80" rx="3" width="165" height="14"/>
+  <text class="barlabel" x="408" y="112">John</text>
+  <rect class="bar-lo" x="416" y="100" rx="3" width="40" height="14"/>
+  <text class="pred" x="480" y="138">predicts “Mary”</text>
+  <path class="wire s-clean m-clean" d="M 480 170 V 152"/>
+  <rect class="box-clean" x="410" y="170" rx="10" width="140" height="30"/>
+  <text class="label mid t-clean" x="480" y="190">Unembed</text>
+  <path class="wire s-clean m-clean" d="M 480 218 V 202"/>
+  <rect class="box-clean" x="370" y="218" rx="10" width="220" height="50"/>
+  <text class="label t-clean" x="384" y="248">Layer L</text>
+  <rect class="sub" x="458" y="230" rx="6" width="52" height="26"/>
+  <text class="small" x="484" y="248">Attn</text>
+  <path class="subwire" d="M 510 243 H 524"/>
+  <rect class="sub" x="526" y="230" rx="6" width="50" height="26"/>
+  <text class="small" x="551" y="248">MLP</text>
+  <path class="wire dashed s-clean m-clean" d="M 480 308 V 270"/>
+  <text class="dots" x="464" y="294">⋮</text>
+  <path class="wire s-clean" d="M 480 338 V 318"/>
+  <circle class="node box-clean" cx="480" cy="318" r="10"/>
+  <rect class="box-clean" x="370" y="338" rx="10" width="220" height="50"/>
+  <text class="label t-clean" x="384" y="368">Layer 2</text>
+  <rect class="sub" x="458" y="350" rx="6" width="52" height="26"/>
+  <text class="small" x="484" y="368">Attn</text>
+  <path class="subwire" d="M 510 363 H 524"/>
+  <rect class="sub" x="526" y="350" rx="6" width="50" height="26"/>
+  <text class="small" x="551" y="368">MLP</text>
+  <path class="wire s-clean m-clean" d="M 480 406 V 390"/>
+  <rect class="box-clean" x="370" y="406" rx="10" width="220" height="50"/>
+  <text class="label t-clean" x="384" y="436">Layer 1</text>
+  <rect class="sub" x="458" y="418" rx="6" width="52" height="26"/>
+  <text class="small" x="484" y="436">Attn</text>
+  <path class="subwire" d="M 510 431 H 524"/>
+  <rect class="sub" x="526" y="418" rx="6" width="50" height="26"/>
+  <text class="small" x="551" y="436">MLP</text>
+  <path class="wire s-clean m-clean" d="M 480 474 V 458"/>
+  <rect class="box-clean" x="410" y="474" rx="10" width="140" height="30"/>
+  <text class="label mid t-clean" x="480" y="494">Embed</text>
+  <path class="wire s-clean m-clean" d="M 480 522 V 506"/>
+  <rect class="box-clean" x="342" y="522" rx="10" width="276" height="54"/>
+  <text class="prompt" x="480" y="544">When Mary and John went to the store,</text>
+  <text class="prompt" x="480" y="564"><tspan class="name-clean">John</tspan> gave a drink to ___</text>
+
+  <!-- Patched run -->
+  <rect class="panel" x="650" y="8" rx="14" width="300" height="576"/>
+  <text class="title" x="800" y="40">Patched run</text>
+  <text class="subtitle" x="800" y="60">corrupted prompt + one clean activation</text>
+  <rect class="box-out" x="680" y="70" rx="10" width="240" height="80"/>
+  <text class="barlabel" x="728" y="92">Mary</text>
+  <rect class="bar-hi" x="736" y="80" rx="3" width="110" height="14"/>
+  <text class="barlabel" x="728" y="112">John</text>
+  <rect class="bar-mid" x="736" y="100" rx="3" width="95" height="14"/>
+  <text class="pred" x="800" y="138">shifts toward “Mary”</text>
+  <path class="wire s-recomp m-recomp" d="M 800 170 V 152"/>
+  <rect class="box-recomp" x="730" y="170" rx="10" width="140" height="30"/>
+  <text class="label mid t-recomp" x="800" y="190">Unembed</text>
+  <path class="wire s-recomp m-recomp" d="M 800 218 V 202"/>
+  <rect class="box-recomp" x="690" y="218" rx="10" width="220" height="50"/>
+  <text class="label t-recomp" x="704" y="248">Layer L</text>
+  <rect class="sub" x="778" y="230" rx="6" width="52" height="26"/>
+  <text class="small" x="804" y="248">Attn</text>
+  <path class="subwire" d="M 830 243 H 844"/>
+  <rect class="sub" x="846" y="230" rx="6" width="50" height="26"/>
+  <text class="small" x="871" y="248">MLP</text>
+  <path class="wire dashed s-recomp m-recomp" d="M 800 308 V 270"/>
+  <text class="dots" x="784" y="294">⋮</text>
+  <path class="wire s-corr" d="M 800 338 V 318"/>
+  <circle class="node box-clean" cx="800" cy="318" r="10"/>
+  <rect class="box-corr" x="690" y="338" rx="10" width="220" height="50"/>
+  <text class="label t-corr" x="704" y="368">Layer 2</text>
+  <rect class="sub" x="778" y="350" rx="6" width="52" height="26"/>
+  <text class="small" x="804" y="368">Attn</text>
+  <path class="subwire" d="M 830 363 H 844"/>
+  <rect class="sub" x="846" y="350" rx="6" width="50" height="26"/>
+  <text class="small" x="871" y="368">MLP</text>
+  <path class="wire s-corr m-corr" d="M 800 406 V 390"/>
+  <rect class="box-corr" x="690" y="406" rx="10" width="220" height="50"/>
+  <text class="label t-corr" x="704" y="436">Layer 1</text>
+  <rect class="sub" x="778" y="418" rx="6" width="52" height="26"/>
+  <text class="small" x="804" y="436">Attn</text>
+  <path class="subwire" d="M 830 431 H 844"/>
+  <rect class="sub" x="846" y="418" rx="6" width="50" height="26"/>
+  <text class="small" x="871" y="436">MLP</text>
+  <path class="wire s-corr m-corr" d="M 800 474 V 458"/>
+  <rect class="box-corr" x="730" y="474" rx="10" width="140" height="30"/>
+  <text class="label mid t-corr" x="800" y="494">Embed</text>
+  <path class="wire s-corr m-corr" d="M 800 522 V 506"/>
+  <rect class="box-corr" x="662" y="522" rx="10" width="276" height="54"/>
+  <text class="prompt" x="800" y="544">When Mary and John went to the store,</text>
+  <text class="prompt" x="800" y="564"><tspan class="name-corr">Mary</tspan> gave a drink to ___</text>
+
+  <!-- Patched slot label and copy arrow -->
+  <text class="note" x="464" y="306">residual stream</text>
+  <text class="note" x="464" y="319">after layer 2</text>
+  <text class="note" x="464" y="332">one position</text>
+  <path class="copy" d="M 492 318 Q 640 250 788 318"/>
+  <text class="copylabel" x="640" y="307">copy clean activation</text>
+
+  <!-- Legend -->
+  <rect class="box-corr" x="215" y="594" rx="3" width="14" height="14"/>
+  <text class="legend" x="235" y="606">corrupted activations</text>
+  <rect class="box-clean" x="409" y="594" rx="3" width="14" height="14"/>
+  <text class="legend" x="429" y="606">clean activations</text>
+  <rect class="box-recomp" x="576" y="594" rx="3" width="14" height="14"/>
+  <text class="legend" x="596" y="606">recomputed after the patch</text>
+</svg>

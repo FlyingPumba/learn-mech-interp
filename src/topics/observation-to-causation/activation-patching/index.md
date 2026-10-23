@@ -40,7 +40,7 @@ Now run the corrupted prompt, but replace one layer or [attention head](/topics/
 
 > **Activation Patching:** Activation patching replaces activation $a_i$ in one run with the corresponding value $a_i'$ from another: $\hat{y} = M(x;\; a_i \leftarrow a_i')$. The model then recomputes all downstream activations. The change $\hat{y} - y_{\text{original}}$ measures the effect of that particular replacement for this input pair.
 
-![Diagram showing the activation patching setup with clean and corrupted model runs side by side, with an arrow indicating activation replacement at a specific layer.](/topics/activation-patching/images/act_patch_setup.png "Figure 1: The activation patching setup. Run the model on both clean and corrupted inputs, then replace specific activations from one run into the other to measure causal effects.")
+![Three transformer forward passes drawn as stacks of embedding, layers, and unembedding. The corrupted run predicts John and the clean run predicts Mary. In the patched run, the residual stream after layer 2 is copied from the clean run into the corrupted run, the layers above it recompute, and the output shifts toward Mary.](/topics/activation-patching/images/act_patch_setup.svg "Figure 1: The activation patching setup, in its denoising form. The corrupted and clean prompts differ in one token, and the model predicts different names for them. The patched run processes the corrupted prompt but takes one activation, the residual stream after layer 2 at one position, from the clean run. Every layer above the patch recomputes, and the output logits shift toward the clean answer.")
 
 **What makes a good clean/corrupted pair?** The two prompts should differ in exactly one semantically meaningful way:
 
