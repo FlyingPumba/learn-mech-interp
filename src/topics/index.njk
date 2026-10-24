@@ -37,9 +37,13 @@ eleventyExcludeFromCollections: true
 
 <section class="learning-path">
   <div class="learning-path-content">
-    <h2 class="learning-path-title">Curriculum Map</h2>
-    <p class="learning-path-description">Browse every block and topic in the recommended sequence.</p>
-    <ol class="learning-path-blocks">
+    <h2 class="learning-path-title" id="topics-list-title">Curriculum Map</h2>
+    <p class="learning-path-description" id="topics-list-description">Browse every block and topic in the recommended sequence.</p>
+    <div class="topics-sort" role="group" aria-label="Topic order" hidden>
+      <button type="button" data-sort-mode="curriculum" aria-pressed="true">Curriculum</button>
+      <button type="button" data-sort-mode="recent" aria-pressed="false">Recently added</button>
+    </div>
+    <ol class="learning-path-blocks" data-topics-view="curriculum">
       {% for block in learningPath.blocks %}
       <li class="learning-path-block" id="{{ block.slug }}">
         <div class="learning-path-block-header">
@@ -59,5 +63,18 @@ eleventyExcludeFromCollections: true
       </li>
       {% endfor %}
     </ol>
+    <ol class="recent-topics" data-topics-view="recent" hidden>
+      {% for topic in collections.recentTopics %}
+      <li class="recent-topic">
+        <a href="{{ topic.url }}">{{ topic.data.title }}</a>
+        <div class="recent-topic-meta">
+          {% for block in learningPath.blocks %}{% if block.slug == topic.data.block %}<span>{{ block.title }}</span>{% endif %}{% endfor %}
+          <time datetime="{{ topic.data.datePublished | dateToISO }}">Added {{ topic.data.datePublished | readableDate }}</time>
+        </div>
+      </li>
+      {% endfor %}
+    </ol>
   </div>
 </section>
+
+<script src="/js/topics-sort.js?v={{ buildId }}"></script>

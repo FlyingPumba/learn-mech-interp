@@ -1297,6 +1297,54 @@
   line-height: 1.6;
 }
 
+.topics-sort {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: max-content;
+  max-width: 100%;
+  margin: calc(-1 * var(--spacing-md, 1rem)) auto var(--spacing-xl, 2rem);
+  padding: 0.25rem;
+  border: 1px solid var(--color-border-strong, rgba(0, 0, 0, 0.2));
+  border-radius: 999px;
+  background: var(--color-background-subtle, rgba(0, 0, 0, 0.02));
+}
+
+.topics-sort[hidden],
+[data-topics-view][hidden] {
+  display: none;
+}
+
+.topics-sort button {
+  padding: 0.5rem 0.9rem;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--color-text-secondary, rgba(0, 0, 0, 0.6));
+  font: inherit;
+  font-size: var(--font-size-small, 0.875rem);
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color var(--transition-fast, 150ms ease),
+              color var(--transition-fast, 150ms ease),
+              box-shadow var(--transition-fast, 150ms ease);
+}
+
+.topics-sort button:hover:not([aria-pressed="true"]) {
+  color: var(--color-text, rgba(0, 0, 0, 0.87));
+}
+
+.topics-sort button[aria-pressed="true"] {
+  background: var(--color-btn-primary, var(--color-link, #004276));
+  color: #ffffff;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.16);
+}
+
+.topics-sort button:focus-visible {
+  outline: 2px solid var(--color-link, #004276);
+  outline-offset: 2px;
+}
+
 .learning-path-blocks {
   list-style: none;
   margin: 0;
@@ -1384,6 +1432,37 @@
   height: var(--spacing-lg, 1.5rem);
   background: var(--color-border, rgba(0, 0, 0, 0.1));
   margin: calc(-1 * var(--spacing-lg, 1.5rem)) auto var(--spacing-lg, 1.5rem);
+}
+
+.recent-topics {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  border-top: 1px solid var(--color-border, rgba(0, 0, 0, 0.08));
+}
+
+.recent-topic {
+  padding: var(--spacing-md, 1rem) 0;
+  border-bottom: 1px solid var(--color-border, rgba(0, 0, 0, 0.08));
+}
+
+.recent-topic > a {
+  color: var(--color-link, #004276);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.recent-topic > a:hover {
+  text-decoration: underline;
+}
+
+.recent-topic-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem var(--spacing-md, 1rem);
+  margin-top: 0.25rem;
+  color: var(--color-text-secondary, rgba(0, 0, 0, 0.6));
+  font-size: var(--font-size-small, 0.875rem);
 }
 
 @media (min-width: 768px) {
