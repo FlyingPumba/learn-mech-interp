@@ -14,7 +14,7 @@ glossary:
 
 ## Features as Directions
 
-In the previous article, we introduced the features claim: neural networks represent human-understandable concepts as directions in activation space. But why should features be *linear* directions? Why not some more complex, nonlinear encoding? The **linear representation hypothesis** provides both a theoretical motivation and substantial empirical evidence for this claim {% cite "park2023lrh" %}.
+In the previous article, we introduced the features claim: neural networks represent human-understandable concepts as directions in activation space. But why should features be *linear* directions? Why not some more complex, nonlinear encoding? Lee et al. survey the theoretical motivations and empirical evidence for the **linear representation hypothesis** across models, layers, and features {% cite "lee2026lrhsurvey" %}.
 
 > **Linear Representation Hypothesis (LRH):** High-level concepts are represented as linear directions in a neural network's activation space. The activation of a concept is measured by a dot product with the corresponding direction vector.
 
@@ -32,9 +32,11 @@ $$
 
 This is a simple picture: the residual stream is a sum of feature vectors, and we can read off any feature's activation with a dot product. But why would the model learn to do things this way?
 
+Figure 1 compares three ways to study linear structure.
+
 <figure>
-  <img src="images/causal-inner-product-geometry.png" alt="Two spheres illustrating the geometry of linear representations. On the left sphere, embedding directions for concepts like male/female and singular/plural are shown as vectors, with the causal inner product measuring alignment between concept directions. On the right sphere, the same concepts are shown from the unembedding perspective, demonstrating that concept directions maintain geometric structure across the embedding and unembedding spaces.">
-  <figcaption>The geometry of linear representations. Concept directions (such as gender or grammatical number) can be visualized as vectors on a sphere in activation space. The causal inner product measures whether two directions represent related or independent concepts. From Park et al., <em>The Linear Representation Hypothesis and the Geometry of Large Language Models</em>. {%- cite "park2023lrh" -%}</figcaption>
+  <img src="images/lrh-three-approaches.svg" alt="Three model diagrams show a probe reading Othello board state, a steering direction entering the final layer, and a relation-specific map from France to Paris.">
+  <figcaption><strong>Figure 1. Three ways to study linear representations.</strong> Nanda et al. use a linear probe to read board state from a model trained on Othello moves. {% cite "nanda2023othello" %} Park et al. define a causal inner product relating binary concept directions in unembedding space to steering directions at the final hidden state. {% cite "park2023lrh" %} Hernandez et al. and Merullo et al. study linear relational embeddings that map a subject representation (France) to an estimated object representation (Paris) for a given relation. {% cite "hernandez2023lre" %} {% cite "merullo2025frequency" %}</figcaption>
 </figure>
 
 ## Why Linear?
@@ -60,6 +62,13 @@ Evidence comes from embedding arithmetic, probes, sparse dictionaries, relationa
 **Linear relational structure.** Linearity extends beyond individual features to *relations* between entities. Hernandez et al. {% cite "hernandez2023lre" %} showed that subject-object mappings (e.g., "Eiffel Tower → Paris") are approximated by single linear transformations in activation space, called **Linear Relational Embeddings**. This strengthens the LRH case: not only are concepts like "is a city" represented as directions, but the relation "located in" is approximately a linear map. This connects to factual recall methods like [ROME](/topics/fact-editing/), which implicitly assume that factual associations have linear structure in MLP weight space.
 
 **Linear structure in synthetic tasks.** Models trained to predict legal moves in board games provide a controlled example. Nonlinear probes initially appeared necessary to decode Othello board state, but later work found effective linear probes after changing the target coordinate frame {% cite "nanda2023othello" %}. A probe can fail because of how we define its target, even when the model represents the underlying information linearly.
+
+Figure 2 illustrates how to test whether the model uses a feature that a probe can read.
+
+<figure>
+  <img src="images/lrh-formation-use.svg" alt="A hidden state leads to circles and triangles separated by a linear boundary. An arrow crosses the boundary from the original state to an edited state, whose model output is compared with the original.">
+  <figcaption><strong>Figure 2. Linear representation formation and use.</strong> Circles and triangles mark two feature values across inputs. A linear boundary separates their hidden states (formation). The orange arrow shows a feature-targeted edit from <i>h</i> to <i>h′</i> for one input. To test use, run the remaining layers with the edited state and compare output <i>y′</i> with the original output <i>y</i> for the predicted change. Adapted from Lee et al. (2026), §5.2. {% cite "lee2026lrhsurvey" %}</figcaption>
+</figure>
 
 <details class="pause-and-think">
 <summary>Pause and think: Linearity and probing</summary>
