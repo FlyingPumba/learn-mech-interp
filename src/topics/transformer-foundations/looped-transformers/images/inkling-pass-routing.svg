@@ -1,0 +1,57 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="540" height="444" viewBox="0 0 540 444" role="img" aria-labelledby="title desc">
+  <title id="title">Routes between passes in Inkling 2 Mini</title>
+  <desc id="desc">A prelude of six layers sends its output to all three passes. Each pass calls layers 7 to 12 followed by 13 to 18. Outputs from both middle blocks form a gated message for the next pass. The final six layers run after pass three.</desc>
+  <style>
+    text { font-family: system-ui, sans-serif; fill: #263c44; }
+    .title { font-size: 21px; font-weight: 650; }
+    .label { font-size: 18px; }
+    .pass { font-size: 18px; font-weight: 650; fill: #145b53; }
+    .layers { font-size: 20px; font-weight: 600; fill: #124c46; }
+    .message { font-size: 17px; font-weight: 520; fill: #704165; }
+    .rail, .feedback { fill: none; stroke-width: 2.5; stroke-linejoin: round; }
+    .rail { stroke: #42637a; }
+    .feedback { stroke: #835076; }
+  </style>
+  <rect x="1" y="1" width="538" height="442" rx="14" fill="#fbfaf6" stroke="#d7deda"/>
+
+  <rect x="22" y="18" width="232" height="58" rx="9" fill="#e2ecf2" stroke="#8ba6b6"/>
+  <text x="40" y="44" class="title">Prelude</text>
+  <text x="40" y="66" class="label">Layers 1–6</text>
+
+  <g class="rail">
+    <path d="M82 76v236h61m-7-5 7 5-7 5"/>
+    <path d="M82 122h61m-7-5 7 5-7 5"/>
+    <path d="M82 217h61m-7-5 7 5-7 5"/>
+  </g>
+  <g fill="#42637a">
+    <circle cx="82" cy="122" r="3.5"/>
+    <circle cx="82" cy="217" r="3.5"/>
+  </g>
+  <g fill="#e1f0e9" stroke="#80a99a">
+    <rect x="150" y="94" width="366" height="56" rx="8"/>
+    <rect x="150" y="189" width="366" height="56" rx="8"/>
+    <rect x="150" y="284" width="366" height="56" rx="8"/>
+  </g>
+  <g class="pass">
+    <text x="170" y="129">Pass 1</text>
+    <text x="170" y="224">Pass 2</text>
+    <text x="170" y="319">Pass 3</text>
+  </g>
+  <path d="M249 105v34m0 61v34m0 61v34" stroke="#adcabd"/>
+  <g class="layers" text-anchor="middle">
+    <text x="381" y="129">Layers 7–12 → 13–18</text>
+    <text x="381" y="224">Layers 7–12 → 13–18</text>
+    <text x="381" y="319">Layers 7–12 → 13–18</text>
+  </g>
+  <g class="feedback">
+    <path d="M273 150v34m-5-7 5 7 5-7"/>
+    <path d="M273 245v34m-5-7 5 7 5-7"/>
+  </g>
+  <g class="message">
+    <text x="286" y="175">Gated message</text>
+    <text x="286" y="270">Gated message</text>
+  </g>
+  <path d="M333 340v36m-5-7 5 7 5-7" class="rail"/>
+  <rect x="150" y="382" width="366" height="43" rx="8" fill="#273f48"/>
+  <text x="333" y="410" class="title" text-anchor="middle" style="fill:#fff">Final layers 19–24</text>
+</svg>

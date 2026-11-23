@@ -1174,5 +1174,68 @@
     "year": 2024,
     "venue": "arXiv",
     "url": "https://arxiv.org/abs/2409.09951"
+  },
+  "dehghani2019universal": {
+    "title": "Universal Transformers",
+    "authors": "Dehghani, M., Gouws, S., Vinyals, O., Uszkoreit, J., Kaiser, Ł.",
+    "year": 2019,
+    "venue": "ICLR",
+    "url": "https://arxiv.org/abs/1807.03819"
+  },
+  "giannou2023looped": {
+    "title": "Looped Transformers as Programmable Computers",
+    "authors": "Giannou, A., Rajput, S., Sohn, J.-Y., Lee, K., Lee, J. D., Papailiopoulos, D.",
+    "year": 2023,
+    "venue": "ICML",
+    "url": "https://proceedings.mlr.press/v202/giannou23a.html"
+  },
+  "saunshi2025latent": {
+    "title": "Reasoning with Latent Thoughts: On the Power of Looped Transformers",
+    "authors": "Saunshi, N., Dikkala, N., Li, Z., Kumar, S., Reddi, S. J.",
+    "year": 2025,
+    "venue": "ICLR",
+    "url": "https://arxiv.org/abs/2502.17416"
+  },
+  "geiping2025recurrent": {
+    "title": "Scaling up Test-Time Compute with Latent Reasoning: A Recurrent Depth Approach",
+    "authors": "Geiping, J., McLeish, S., Jain, N., et al.",
+    "year": 2025,
+    "venue": "NeurIPS",
+    "url": "https://arxiv.org/abs/2502.05171"
+  },
+  "bae2025recursions": {
+    "title": "Mixture-of-Recursions: Learning Dynamic Recursive Depths for Adaptive Token-Level Computation",
+    "authors": "Bae, S., Kim, Y., Bayat, R., et al.",
+    "year": 2025,
+    "venue": "NeurIPS",
+    "url": "https://arxiv.org/abs/2507.10524"
+  },
+  "zhu2025ouro": {
+    "title": "Scaling Latent Reasoning via Looped Language Models",
+    "authors": "Zhu, R.-J., Wang, Z., Hua, K., et al.",
+    "year": 2025,
+    "venue": "arXiv",
+    "url": "https://arxiv.org/abs/2510.25741"
+  },
+  "lu2025depthrecurrent": {
+    "title": "Latent Chain-of-Thought? Decoding the Depth-Recurrent Transformer",
+    "authors": "Lu, W., Yang, Y., Lee, K., Li, Y., Liu, E.",
+    "year": 2025,
+    "venue": "COLM Workshop on the Application of LLM Explainability to Reasoning and Planning",
+    "url": "https://arxiv.org/abs/2507.02199"
+  },
+  "thinkingmachines2026inkling": {
+    "title": "Introducing Inkling 2 Mini",
+    "authors": "Thinking Machines Lab",
+    "year": 2026,
+    "venue": "Thinking Machines Lab",
+    "url": "https://thinkingmachines.ai/news/inkling-2-mini/"
+  },
+  "thinkingmachines2026inklingcard": {
+    "title": "Inkling 2 Mini Model Card",
+    "authors": "Thinking Machines Lab",
+    "year": 2026,
+    "venue": "Thinking Machines Lab",
+    "url": "https://thinkingmachines.ai/model-card/inkling-2-mini/"
   }
 }

@@ -118,4 +118,4 @@ Does the expert marked pink in layer 0 help the model predict `self` after the i
 
 ## Looking Ahead
 
-If removing the expert's output lowers the score for `self`, we have evidence that the expert helped predict it on this line. To explain how, we would need to work out what information the expert added at the indentation and how later layers used it to predict `self`. The next article explores [what makes an explanation mechanistic](/topics/what-is-mech-interp/).
+If removing the expert's output lowers the score for `self`, we have evidence that the expert helped predict it on this line. To explain how, we would need to work out what information the expert added at the indentation and how later layers used it to predict `self`. In a [looped transformer](/topics/looped-transformers/), we can ask this [mechanistic question](/topics/what-is-mech-interp/) about each visit to the same layer.
