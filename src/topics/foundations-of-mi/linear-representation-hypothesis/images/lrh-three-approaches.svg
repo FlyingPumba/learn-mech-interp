@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1110" height="330" viewBox="0 0 1110 330" role="img" aria-labelledby="title desc"><title id="title">Three ways to study linear representations</title><desc id="desc">Three parallel schematics show an intermediate-layer probe, concept directions under the causal inner product, and a relation-specific map from a subject state to an object prediction.</desc><rect width="100%" height="100%" fill="white"/>
+<defs><marker id="ink" viewBox="0 0 8 8" markerWidth="6" markerHeight="6" refX="7" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 Z" fill="#243440"/></marker></defs>
+<defs><marker id="blue" viewBox="0 0 8 8" markerWidth="6" markerHeight="6" refX="7" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 Z" fill="#21689a"/></marker></defs>
+<defs><marker id="orange" viewBox="0 0 8 8" markerWidth="6" markerHeight="6" refX="7" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 Z" fill="#ad5228"/></marker></defs>
+<defs><marker id="gray" viewBox="0 0 8 8" markerWidth="6" markerHeight="6" refX="7" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 Z" fill="#73808a"/></marker></defs>
+<text x="185" y="38" text-anchor="middle" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="22" font-weight="600" fill="#243440">Linear probing</text>
+<text x="185" y="310" text-anchor="middle" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#73808a">Nanda et al. (2023)</text>
+<rect x="38" y="138" width="90" height="93" fill="white" stroke="#243440" stroke-width="2"/>
+<text x="83" y="217" text-anchor="middle" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="17" font-weight="400" fill="#243440">Model</text>
+<path d="M83 258 V234" fill="none" stroke="#73808a" stroke-width="2" marker-end="url(#gray)"/>
+<text x="83" y="279" text-anchor="middle" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="18" font-weight="400" fill="#243440">Othello Moves</text>
+<text x="555" y="38" text-anchor="middle" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="22" font-weight="600" fill="#243440">Causal inner product</text>
+<text x="555" y="310" text-anchor="middle" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#73808a">Park et al. (2024)</text>
+<path d="M370 65 V278" fill="none" stroke="#d8dfe3" stroke-width="2"/>
+<rect x="408" y="138" width="90" height="93" fill="white" stroke="#243440" stroke-width="2"/>
+<text x="453" y="217" text-anchor="middle" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="17" font-weight="400" fill="#243440">Model</text>
+<path d="M453 258 V234" fill="none" stroke="#73808a" stroke-width="2" marker-end="url(#gray)"/>
+<text x="453" y="279" text-anchor="middle" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="18" font-weight="400" fill="#243440">Context</text>
+<text x="925" y="38" text-anchor="middle" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="22" font-weight="600" fill="#243440">Linear relational embedding (LRE)</text>
+<text x="925" y="310" text-anchor="middle" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#73808a">Hernandez et al. (2024), Merullo et al. (2025)</text>
+<path d="M740 65 V278" fill="none" stroke="#d8dfe3" stroke-width="2"/>
+<rect x="778" y="138" width="90" height="93" fill="white" stroke="#243440" stroke-width="2"/>
+<text x="823" y="217" text-anchor="middle" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="17" font-weight="400" fill="#243440">Model</text>
+<path d="M823 258 V234" fill="none" stroke="#73808a" stroke-width="2" marker-end="url(#gray)"/>
+<text x="823" y="279" text-anchor="middle" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="18" font-weight="400" fill="#243440">France</text>
+<rect x="83" y="162" width="36" height="10" fill="#e2eff8" stroke="#21689a" stroke-width="2"/>
+<path d="M121 167 H177" fill="none" stroke="#21689a" stroke-width="2" marker-end="url(#blue)"/>
+<text x="235" y="171" text-anchor="middle" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="19" font-weight="400" fill="#243440">Linear probe</text>
+<path d="M235 150 V124" fill="none" stroke="#73808a" stroke-width="2" marker-end="url(#gray)"/>
+<text x="235" y="111" text-anchor="middle" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="19" font-weight="400" fill="#243440">Board state</text>
+<rect x="435" y="133" width="36" height="10" fill="#fbe6da" stroke="#ad5228" stroke-width="2"/>
+<text x="451" y="118" text-anchor="middle" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="17" font-weight="400" fill="#243440">Final layer</text>
+<path d="M550 169 Q520 138 473 138" fill="none" stroke="#ad5228" stroke-width="2" marker-end="url(#orange)"/>
+<path d="M556 174 l39 -39" fill="none" stroke="#243440" stroke-width="2" marker-end="url(#ink)"/>
+<path d="M556 174 l39 39" fill="none" stroke="#243440" stroke-width="2" marker-end="url(#ink)"/>
+<path d="M565 165 l9 9 -9 9" fill="none" stroke="#ad5228" stroke-width="2"/>
+<text x="599" y="124" text-anchor="middle" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="17" font-weight="400" fill="#243440">Gender</text>
+<text x="608" y="235" text-anchor="middle" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="17" font-weight="400" fill="#243440">Language</text>
+<text x="657" y="172" text-anchor="middle" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="17" font-weight="400" fill="#243440">⊥ under</text>
+<text x="657" y="192" text-anchor="middle" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#243440">causal inner product</text>
+<rect x="817" y="165" width="36" height="10" fill="#e2eff8" stroke="#21689a" stroke-width="2"/>
+<path d="M856 170 Q923 170 923 128" fill="none" stroke="#21689a" stroke-width="2" marker-end="url(#blue)"/>
+<text x="932" y="151" text-anchor="start" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="17" font-weight="400" fill="#243440">Relation (capital_of)</text>
+<rect x="905" y="114" width="36" height="10" fill="#fbe6da" stroke="#ad5228" stroke-width="2"/>
+<text x="923" y="103" text-anchor="middle" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="23" font-weight="600" fill="#ad5228">Paris</text>
+</svg>

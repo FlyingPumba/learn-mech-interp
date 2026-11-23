@@ -408,9 +408,9 @@
   "park2023lrh": {
     "title": "The Linear Representation Hypothesis and the Geometry of Large Language Models",
     "authors": "Park, K., Choe, Y. J., Veitch, V.",
-    "year": 2023,
-    "venue": "arXiv",
-    "url": "https://arxiv.org/abs/2311.03658"
+    "year": 2024,
+    "venue": "ICML",
+    "url": "https://proceedings.mlr.press/v235/park24c.html"
   },
   "ghandeharioun2024patchscopes": {
     "title": "Patchscopes: A Unifying Framework for Inspecting Hidden Representations of Language Models",
@@ -644,11 +644,11 @@
     "url": "https://arxiv.org/abs/2301.04213"
   },
   "nanda2023othello": {
-    "title": "Actually, Othello-GPT Has A Linear Emergent World Representation",
-    "authors": "Nanda, N., Lee, A., Berber, M.",
+    "title": "Emergent Linear Representations in World Models of Self-Supervised Sequence Models",
+    "authors": "Nanda, N., Lee, A., Wattenberg, M.",
     "year": 2023,
-    "venue": "arXiv",
-    "url": "https://arxiv.org/abs/2309.00941"
+    "venue": "BlackboxNLP",
+    "url": "https://aclanthology.org/2023.blackboxnlp-1.2/"
   },
   "li2023othello": {
     "title": "Emergent World Representations: Exploring a Sequence Model Trained on a Synthetic Task",
@@ -813,10 +813,10 @@
   },
   "hernandez2023lre": {
     "title": "Linearity of Relation Decoding in Transformer Language Models",
-    "authors": "Hernandez, E., Li, B. Z., Andreas, J.",
-    "year": 2023,
-    "venue": "ICLR 2024",
-    "url": "https://arxiv.org/abs/2308.09124"
+    "authors": "Hernandez, E., Sharma, A. S., Haklay, T., et al.",
+    "year": 2024,
+    "venue": "ICLR",
+    "url": "https://proceedings.iclr.cc/paper_files/paper/2024/hash/2b6d7285306fe896fca9b2e9a02ff6ec-Abstract-Conference.html"
   },
   "liu2023incontext": {
     "title": "In-context Vectors: Making In Context Learning More Effective and Controllable Through Latent Space Steering",
@@ -1174,5 +1174,19 @@
     "year": 2024,
     "venue": "arXiv",
     "url": "https://arxiv.org/abs/2409.09951"
+  },
+  "merullo2025frequency": {
+    "title": "On Linear Representations and Pretraining Data Frequency in Language Models",
+    "authors": "Merullo, J., Smith, N. A., Wiegreffe, S., Elazar, Y.",
+    "year": 2025,
+    "venue": "ICLR",
+    "url": "https://proceedings.iclr.cc/paper_files/paper/2025/hash/b35c6f99df526a798433fabff039bd50-Abstract-Conference.html"
+  },
+  "lee2026lrhsurvey": {
+    "title": "A Survey on the Linear Representation Hypothesis",
+    "authors": "Lee, S., Canby, M. E., Cho, I., Hockenmaier, J.",
+    "year": 2026,
+    "venue": "BlackboxNLP",
+    "url": "https://aclanthology.org/2026.blackboxnlp-1.48/"
   }
 }
