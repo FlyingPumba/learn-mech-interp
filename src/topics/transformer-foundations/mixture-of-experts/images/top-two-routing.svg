@@ -1,0 +1,57 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="600" height="456" viewBox="0 0 600 456" role="img" aria-labelledby="title desc">
+  <title id="title">Top-two routing for the token “bank”</title>
+  <desc id="desc">The router assigns probabilities 0.60, 0.15, 0.05 and 0.20 to four experts. Only experts 1 and 4 process the token state. Their outputs (0, 4) and (8, 0) are scaled by 0.75 and 0.25 and added to give (2, 3).</desc>
+  <style>
+    text { font-family: system-ui, sans-serif; text-anchor: middle; fill: #1d3040; }
+    .heading { font-size: 19px; font-weight: 600; }
+    .label { font-size: 17px; }
+    .number { font-size: 23px; font-weight: 650; font-variant-numeric: tabular-nums; }
+    .teal { fill: #08665e; }
+    .plum { fill: #723c6c; }
+    .muted { fill: #526370; }
+    .line { fill: none; stroke-width: 2.5; stroke-linejoin: round; }
+  </style>
+  <rect x="1" y="1" width="598" height="454" rx="14" fill="#faf9f6" stroke="#d8dcd9"/>
+
+  <text x="300" y="41" class="heading">Token state <tspan font-style="italic">x</tspan> at “bank”</text>
+  <path d="M300 52v19m-5-5 5 5 5-5" class="line" stroke="#526370"/>
+
+  <rect x="20" y="80" width="560" height="104" rx="9" fill="#fff" stroke="#bcc8c9"/>
+  <text x="300" y="107" class="heading">Router probabilities</text>
+  <g class="label">
+    <text x="95" y="137" class="teal">Expert 1</text>
+    <text x="231" y="137" class="muted">Expert 2</text>
+    <text x="369" y="137" class="muted">Expert 3</text>
+    <text x="505" y="137" class="plum">Expert 4</text>
+  </g>
+  <g class="number">
+    <text x="95" y="167" class="teal">0.60</text>
+    <text x="231" y="167" class="muted">0.15</text>
+    <text x="369" y="167" class="muted">0.05</text>
+    <text x="505" y="167" class="plum">0.20</text>
+  </g>
+
+  <g class="line">
+    <path d="M95 184v37m-5-5 5 5 5-5" stroke="#08665e"/>
+    <path d="M505 184v37m-5-5 5 5 5-5" stroke="#723c6c"/>
+  </g>
+  <text x="300" y="211" class="label muted">Send <tspan font-style="italic">x</tspan> to the top two</text>
+  <rect x="20" y="231" width="192" height="71" rx="8" fill="#def1eb" stroke="#63a697"/>
+  <rect x="388" y="231" width="192" height="71" rx="8" fill="#f4e6ef" stroke="#b386a8"/>
+  <text x="116" y="257" class="label teal">Expert 1 returns</text>
+  <text x="484" y="257" class="label plum">Expert 4 returns</text>
+  <text x="116" y="286" class="number teal">(0, 4)</text>
+  <text x="484" y="286" class="number plum">(8, 0)</text>
+
+  <g class="line">
+    <path d="M116 303v45h157m-5-5 5 5-5 5" stroke="#08665e"/>
+    <path d="M484 303v45H327m5-5-5 5 5 5" stroke="#723c6c"/>
+  </g>
+  <text x="195" y="336" class="heading teal">× 0.75</text>
+  <text x="405" y="336" class="heading plum">× 0.25</text>
+  <circle cx="300" cy="348" r="19" fill="#fff" stroke="#84949d"/>
+  <path d="M292 348h16m-8-8v16" class="line" stroke="#1d3040"/>
+  <path d="M300 368v16m-5-5 5 5 5-5" class="line" stroke="#526370"/>
+  <rect x="76" y="394" width="448" height="42" rx="7" fill="#203d4a"/>
+  <text x="300" y="422" class="heading" style="fill: white">Add (2, 3) to the residual stream</text>
+</svg>

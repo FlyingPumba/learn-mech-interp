@@ -41,6 +41,48 @@
     "venue": "NeurIPS",
     "url": "https://arxiv.org/abs/1706.03762"
   },
+  "jacobs1991adaptive": {
+    "title": "Adaptive Mixtures of Local Experts",
+    "authors": "Jacobs, R. A., Jordan, M. I., Nowlan, S. J., Hinton, G. E.",
+    "year": 1991,
+    "venue": "Neural Computation",
+    "url": "https://people.eecs.berkeley.edu/~jordan/papers/mixtures-of-experts-bitmap.pdf"
+  },
+  "shazeer2017sparse": {
+    "title": "Outrageously Large Neural Networks: The Sparsely-Gated Mixture-of-Experts Layer",
+    "authors": "Shazeer, N., Mirhoseini, A., Maziarz, K., et al.",
+    "year": 2017,
+    "venue": "ICLR",
+    "url": "https://arxiv.org/abs/1701.06538"
+  },
+  "lepikhin2021gshard": {
+    "title": "GShard: Scaling Giant Models with Conditional Computation and Automatic Sharding",
+    "authors": "Lepikhin, D., Lee, H., Xu, Y., et al.",
+    "year": 2021,
+    "venue": "ICLR",
+    "url": "https://arxiv.org/abs/2006.16668"
+  },
+  "fedus2022switch": {
+    "title": "Switch Transformers: Scaling to Trillion Parameter Models with Simple and Efficient Sparsity",
+    "authors": "Fedus, W., Zoph, B., Shazeer, N.",
+    "year": 2022,
+    "venue": "Journal of Machine Learning Research",
+    "url": "https://www.jmlr.org/papers/v23/21-0998.html"
+  },
+  "jiang2024mixtral": {
+    "title": "Mixtral of Experts",
+    "authors": "Jiang, A. Q., Sablayrolles, A., Roux, A., et al.",
+    "year": 2024,
+    "venue": "arXiv",
+    "url": "https://arxiv.org/html/2401.04088v1"
+  },
+  "dai2024deepseekmoe": {
+    "title": "DeepSeekMoE: Towards Ultimate Expert Specialization in Mixture-of-Experts Language Models",
+    "authors": "Dai, D., Deng, C., Zhao, C., et al.",
+    "year": 2024,
+    "venue": "ACL",
+    "url": "https://aclanthology.org/2024.acl-long.70/"
+  },
   "shazeer2019mqa": {
     "title": "Fast Transformer Decoding: One Write-Head is All You Need",
     "authors": "Shazeer, N.",
