@@ -18,7 +18,7 @@ glossary:
 
 Consider the last word in “We paddled to the bank” and “I deposited cash at the bank.” Attention can use the earlier words to build a different representation of “bank” in each sentence. In a dense transformer, the same [multilayer perceptron (MLP)](/topics/mlps-in-transformers/) processes both representations. Widening that MLP gives the model more parameters, but it also makes the matrix multiplications more expensive for every token.
 
-A **mixture of experts (MoE)** gives the layer several MLPs, each with its own weights. A small learned network called the **router** reads the state at each position and selects which MLPs to run there. The idea of learning how to divide examples among networks goes back to Jacobs and colleagues {% cite "jacobs1991adaptive" %}. Shazeer and colleagues used a sparse router so they could add more expert networks while running only a few for each input {% cite "shazeer2017sparse" %}.
+A **mixture of experts (MoE)** gives the layer several MLPs, each with its own weights. A small learned network called the **router** reads the state at each position and selects which MLPs to run there. The idea of learning how to divide examples among networks goes back to Jacobs et al. {% cite "jacobs1991adaptive" %}. Shazeer et al. used a sparse router so they could add more expert networks while running only a few for each input {% cite "shazeer2017sparse" %}.
 
 > In a **sparse mixture-of-experts layer**, only the selected experts process a given token. The layer combines their output vectors into a single update to the residual stream at that position.
 

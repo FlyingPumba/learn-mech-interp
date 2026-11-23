@@ -22,7 +22,7 @@ glossary:
 
 The unsupervised methods have the opposite problem. The [logit lens](/topics/logit-lens-and-tuned-lens/) projects an activation onto the vocabulary {% cite "nostalgebraist2020logitlens" %}, and [sparse autoencoders](/topics/sparse-autoencoders/) decompose it into a sparse sum of learned features {% cite "bricken2023monosemanticity" %}. Neither needs labels, but both express their answer as a weighted combination of atoms from a fixed dictionary (tokens or features), and an SAE feature still needs a separate interpretation step before a human can read it.
 
-Natural Language Autoencoders, introduced by Fraser-Taliente, Kantamneni, Ong, and colleagues {% cite "frasertaliente2026nla" %}, try to get both properties at once: the open-ended discovery of an unsupervised objective, and output you can read directly because it is written in English.
+Natural Language Autoencoders, introduced by Fraser-Taliente et al. {% cite "frasertaliente2026nla" %}, try to get both properties at once: the open-ended discovery of an unsupervised objective, and output you can read directly because it is written in English.
 
 ## An autoencoder with a language bottleneck
 

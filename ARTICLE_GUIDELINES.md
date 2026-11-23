@@ -457,6 +457,7 @@ Use descriptive filenames (`sae_architecture.png`, `ioi_circuit_diagram.png`), n
 
 ### Citations
 - Use `{% cite "bibtex-key" %}` inline.
+- When shortening an author list in prose, use the first author’s surname followed by “et al.” (for example, “Jacobs et al.”). Never use “and colleagues” for author attribution.
 - Cite at the point where the claim is made, not at the end of a paragraph.
 
 ---
